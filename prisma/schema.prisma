@@ -1,0 +1,66 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum AppStatus {
+  HEALTHY
+  WARNING
+  CRITICAL
+  UNKNOWN
+}
+
+enum FindingSeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+model MonitoredApp {
+  id              String       @id @default(cuid())
+  name            String
+  url             String       @unique
+  ownerEmail      String
+  ownerName       String?
+  criticality     String       @default("medium")
+  status          AppStatus    @default(UNKNOWN)
+  lastCheckedAt   DateTime?
+  nextCheckAt     DateTime?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  monitorRuns     MonitorRun[]
+}
+
+model MonitorRun {
+  id               String          @id @default(cuid())
+  appId            String
+  app              MonitoredApp    @relation(fields: [appId], references: [id], onDelete: Cascade)
+  status           AppStatus
+  responseTimeMs   Int?
+  summary          String
+  startedAt        DateTime        @default(now())
+  completedAt      DateTime?
+  findings         Finding[]
+
+  @@index([appId, startedAt])
+}
+
+model Finding {
+  id              String           @id @default(cuid())
+  runId           String
+  run             MonitorRun       @relation(fields: [runId], references: [id], onDelete: Cascade)
+  code            String
+  title           String
+  description     String
+  severity        FindingSeverity
+  fixPrompt       String
+  createdAt       DateTime         @default(now())
+
+  @@index([runId, severity])
+}

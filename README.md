@@ -1,62 +1,119 @@
-# VibeSafe MVP
+# VibeSafe
 
-Outcome-focused production health + security monitoring for AI-generated apps.
+Production health + security monitoring for AI-generated apps. External scans, no SDK required.
 
-## What this ships (customer value)
-- Register internal/customer-facing app URLs in minutes
-- Run external scans (no SDK) for:
-  - functional accessibility baseline
-  - exposed key signatures in JS bundles
-  - missing security headers
-  - client-side auth bypass patterns
-- Generate actionable findings with a ready-to-paste AI fix prompt
-- Portfolio dashboard for IT governance visibility
-- Scheduled checks every 4 hours via Vercel Cron
-- Weekly governance report endpoint
+## The Problem
 
-## Manifesto alignment
-- **Outcome over activity:** every scan returns status + business-relevant risk finding + fix action
-- **Agent-first workflow:** scan -> detect -> explain -> remediate prompt
-- **API-first surface:** app registration, scan triggering, cron execution, dashboard, and weekly report all available via API routes
-- **Data moat from day one:** every run/finding is persisted for trend and governance history
+Employees at mid-market companies ship AI-built internal tools and customer-facing apps in hours using Cursor, Lovable, and Replit. IT leaders are accountable for those apps but have zero visibility into whether they're healthy or secure.
 
-## Stack
-- Next.js App Router + TypeScript strict mode
-- Prisma + SQLite (initial DB for fast launch)
-- Playwright for external monitoring checks
-- Vercel Cron for continuous execution
-- Vitest for critical test coverage
-- GitHub Actions CI (lint, typecheck, test, build)
+**VibeSafe solves this** with continuous external monitoring that requires no SDK integration in the monitored apps.
 
-## Quick start
+## What This Ships (Customer Value)
+
+- **Register apps in seconds** — just the URL, owner email, and criticality level
+- **External scans (no SDK)** for:
+  - Exposed API keys in client-side JavaScript (54% prevalence)
+  - Missing security headers (72% prevalence)
+  - Client-side auth bypass patterns (41% prevalence)
+- **Actionable findings** with plain-language explanations and AI fix prompts
+- **Portfolio dashboard** for IT governance visibility
+- **Scheduled checks every 4 hours** via Vercel Cron
+- **Weekly governance reports** for compliance documentation
+
+## Quick Start
+
 ```bash
+# Clone and install
+git clone https://github.com/pschlie1/vibesafe.git
+cd vibesafe
 npm install
+
+# Set up environment
 cp .env.example .env
+# Edit .env with your values
+
+# Initialize database
 npm run db:migrate
+
+# Run locally
 npm run dev
 ```
 
 Open http://localhost:3000
 
-## API endpoints
-- `GET /api/apps` – list monitored apps
-- `POST /api/apps` – register app
-- `POST /api/scan/:id` – run immediate scan
-- `GET /api/cron/run` – run due scans (requires `Authorization: Bearer $CRON_SECRET`)
-- `GET /api/dashboard` – portfolio summary + recent runs
-- `GET /api/reports/weekly` – weekly governance snapshot (requires cron auth)
+## Environment Variables
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `DATABASE_URL` | Yes | SQLite file path or Postgres connection string |
+| `CRON_SECRET` | Yes | Bearer token for cron endpoints |
+| `RESEND_API_KEY` | No | Resend.com API key for email alerts |
+| `ALERT_FROM_EMAIL` | No | From address for alert emails |
+
+## API Endpoints
+
+| Endpoint | Method | Auth | Description |
+|----------|--------|------|-------------|
+| `/api/apps` | GET | — | List all monitored apps |
+| `/api/apps` | POST | — | Register new app |
+| `/api/scan/:id` | POST | — | Run immediate scan |
+| `/api/cron/run` | GET | Bearer | Run all due scans (cron) |
+| `/api/dashboard` | GET | — | Portfolio summary + recent runs |
+| `/api/reports/weekly` | GET | Bearer | Weekly governance report |
+| `/api/health` | GET | — | Service health check |
 
 ## CI/CD
-GitHub Actions workflow: `.github/workflows/ci.yml`
-- npm ci
-- prisma generate
-- lint
-- typecheck
-- tests w/ coverage
-- production build
 
-## Production setup notes
-- Set `CRON_SECRET` in Vercel env
-- Add Vercel cron schedules from `vercel.json`
-- (Next step) wire Resend for outbound alerts and weekly digest emails
-- (Next step) migrate DB to Postgres/Supabase when pilot load grows
+GitHub Actions workflow in `.github/workflows/ci.yml`:
+- Lint (ESLint)
+- Typecheck (TypeScript strict)
+- Tests (Vitest with coverage)
+- Production build
+
+## Production Deployment (Vercel)
+
+1. Connect repo to Vercel
+2. Set environment variables:
+   - `DATABASE_URL` (use Vercel Postgres or Supabase)
+   - `CRON_SECRET` (random secret for cron auth)
+   - `RESEND_API_KEY` (optional, for email alerts)
+3. Cron schedules from `vercel.json` auto-register:
+   - Scans: every 4 hours
+   - Weekly report: Mondays at 12:00 UTC
+
+## Tech Stack
+
+- **Framework:** Next.js 16 (App Router, TypeScript strict)
+- **Database:** Prisma + SQLite (dev) → Postgres (prod)
+- **Scanning:** HTTP-based (serverless compatible)
+- **Scheduling:** Vercel Cron
+- **Testing:** Vitest
+- **CI/CD:** GitHub Actions
+
+## Architecture Decisions
+
+### HTTP-based scanning (not Playwright by default)
+- Works in serverless/container environments without system deps
+- Faster execution, lower resource usage
+- Playwright scanner available for local/advanced use
+
+### SQLite initial → Postgres migration path
+- Fast local development
+- Change `DATABASE_URL` to Postgres connection string for production
+- Run `npm run db:migrate` to apply schema
+
+### External monitoring (no SDK)
+- Zero instrumentation required in monitored apps
+- Works with any web app regardless of framework
+- Reduces enterprise sales friction
+
+## Manifesto Alignment
+
+- **Outcome over activity:** Every scan returns status + business risk + fix action
+- **Agent-first workflow:** scan → detect → explain → remediate prompt
+- **API-first surface:** All operations available via REST
+- **Data moat from day one:** Every run/finding persisted for trend analysis
+
+## License
+
+MIT

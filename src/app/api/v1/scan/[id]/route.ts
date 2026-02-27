@@ -1,16 +1,16 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { getSession } from "@/lib/auth";
+import { authenticateApiKey } from "@/lib/api-auth";
 import { runHttpScanForApp } from "@/lib/scanner-http";
 
-export async function POST(_req: Request, { params }: { params: Promise<{ id: string }> }) {
-  const session = await getSession();
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const orgId = await authenticateApiKey(req);
+  if (!orgId) return NextResponse.json({ error: "Invalid API key" }, { status: 401 });
 
   const { id } = await params;
 
   // Verify app belongs to org
-  const app = await db.monitoredApp.findFirst({ where: { id, orgId: session.orgId } });
+  const app = await db.monitoredApp.findFirst({ where: { id, orgId } });
   if (!app) return NextResponse.json({ error: "App not found" }, { status: 404 });
 
   try {

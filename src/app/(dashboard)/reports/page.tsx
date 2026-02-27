@@ -1,0 +1,95 @@
+export const dynamic = "force-dynamic";
+
+import { subDays, format } from "date-fns";
+import { db } from "@/lib/db";
+import { getSession } from "@/lib/auth";
+import { redirect } from "next/navigation";
+import { StatusBadge, SeverityBadge } from "@/components/status-badge";
+
+export default async function ReportsPage() {
+  const session = await getSession();
+  if (!session) redirect("/login");
+
+  const since = subDays(new Date(), 7);
+
+  const apps = await db.monitoredApp.findMany({
+    where: { orgId: session.orgId },
+    include: {
+      monitorRuns: {
+        where: { startedAt: { gte: since } },
+        include: { findings: { where: { status: "OPEN" } } },
+        orderBy: { startedAt: "desc" },
+      },
+    },
+  });
+
+  const totalRuns = apps.reduce((s, a) => s + a.monitorRuns.length, 0);
+  const allFindings = apps.flatMap((a) => a.monitorRuns.flatMap((r) => r.findings));
+  const criticalCount = allFindings.filter((f) => f.severity === "CRITICAL").length;
+  const highCount = allFindings.filter((f) => f.severity === "HIGH").length;
+
+  return (
+    <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
+      <div className="mb-6 flex items-end justify-between">
+        <div>
+          <h1 className="text-2xl font-bold">Weekly Governance Report</h1>
+          <p className="text-sm text-gray-500">
+            {format(since, "MMM d")} – {format(new Date(), "MMM d, yyyy")}
+          </p>
+        </div>
+      </div>
+
+      {/* Executive summary */}
+      <div className="mb-8 grid grid-cols-2 gap-3 sm:grid-cols-5">
+        <StatCard label="Apps monitored" value={apps.length} />
+        <StatCard label="Scans run" value={totalRuns} />
+        <StatCard label="Open findings" value={allFindings.length} accent={allFindings.length > 0 ? "text-red-600" : undefined} />
+        <StatCard label="Critical" value={criticalCount} accent={criticalCount > 0 ? "text-red-600" : undefined} />
+        <StatCard label="High" value={highCount} accent={highCount > 0 ? "text-orange-600" : undefined} />
+      </div>
+
+      {/* Per-app breakdown */}
+      <div className="space-y-4">
+        {apps.map((app) => {
+          const appFindings = app.monitorRuns.flatMap((r) => r.findings);
+          return (
+            <div key={app.id} className="rounded-lg border bg-white p-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <h3 className="font-semibold">{app.name}</h3>
+                  <StatusBadge status={app.status} />
+                </div>
+                <div className="text-xs text-gray-500">
+                  {app.monitorRuns.length} scans · {appFindings.length} open findings
+                </div>
+              </div>
+
+              {appFindings.length > 0 && (
+                <div className="mt-3 space-y-2">
+                  {appFindings.slice(0, 5).map((f) => (
+                    <div key={f.id} className="flex items-center gap-2 text-sm">
+                      <SeverityBadge severity={f.severity} />
+                      <span>{f.title}</span>
+                    </div>
+                  ))}
+                  {appFindings.length > 5 && (
+                    <p className="text-xs text-gray-400">+{appFindings.length - 5} more</p>
+                  )}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </main>
+  );
+}
+
+function StatCard({ label, value, accent }: { label: string; value: number; accent?: string }) {
+  return (
+    <div className="rounded-lg border bg-white p-4">
+      <p className="text-xs font-medium uppercase tracking-wider text-gray-500">{label}</p>
+      <p className={`mt-1 text-2xl font-bold ${accent ?? "text-gray-900"}`}>{value}</p>
+    </div>
+  );
+}

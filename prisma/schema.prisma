@@ -8,6 +8,8 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// ─── Enums ──────────────────────────────────────────
+
 enum AppStatus {
   HEALTHY
   WARNING
@@ -22,20 +24,143 @@ enum FindingSeverity {
   CRITICAL
 }
 
+enum UserRole {
+  OWNER
+  ADMIN
+  MEMBER
+  VIEWER
+}
+
+enum SubscriptionTier {
+  FREE
+  STARTER
+  PRO
+  ENTERPRISE
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  PAST_DUE
+  CANCELED
+  TRIALING
+}
+
+enum FindingStatus {
+  OPEN
+  ACKNOWLEDGED
+  IN_PROGRESS
+  RESOLVED
+  IGNORED
+}
+
+enum NotificationChannel {
+  EMAIL
+  SLACK
+  WEBHOOK
+}
+
+// ─── Multi-tenant: Organization ─────────────────────
+
+model Organization {
+  id                String             @id @default(cuid())
+  name              String
+  slug              String             @unique
+  stripeCustomerId  String?            @unique
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+
+  subscription      Subscription?
+  users             User[]
+  apps              MonitoredApp[]
+  invites           Invite[]
+  alertConfigs      AlertConfig[]
+  apiKeys           ApiKey[]
+  auditLogs         AuditLog[]
+}
+
+// ─── Auth: User ─────────────────────────────────────
+
+model User {
+  id              String        @id @default(cuid())
+  email           String        @unique
+  name            String?
+  passwordHash    String?
+  avatarUrl       String?
+  role            UserRole      @default(MEMBER)
+  orgId           String
+  org             Organization  @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  emailVerified   Boolean       @default(false)
+  lastLoginAt     DateTime?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  assignedFindings  FindingAssignment[]
+  auditLogs         AuditLog[]
+
+  @@unique([email, orgId])
+  @@index([orgId])
+}
+
+model Invite {
+  id        String       @id @default(cuid())
+  email     String
+  role      UserRole     @default(MEMBER)
+  orgId     String
+  org       Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  token     String       @unique
+  expiresAt DateTime
+  createdAt DateTime     @default(now())
+
+  @@index([orgId])
+}
+
+// ─── Billing: Subscription ──────────────────────────
+
+model Subscription {
+  id                   String             @id @default(cuid())
+  orgId                String             @unique
+  org                  Organization       @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  tier                 SubscriptionTier   @default(FREE)
+  status               SubscriptionStatus @default(TRIALING)
+  stripeSubscriptionId String?            @unique
+  stripePriceId        String?
+  currentPeriodStart   DateTime?
+  currentPeriodEnd     DateTime?
+  cancelAtPeriodEnd    Boolean            @default(false)
+  maxApps              Int                @default(2)
+  maxUsers             Int                @default(1)
+  trialEndsAt          DateTime?
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+}
+
+// ─── Core: Monitored Apps ───────────────────────────
+
 model MonitoredApp {
-  id              String       @id @default(cuid())
+  id              String        @id @default(cuid())
+  orgId           String
+  org             Organization  @relation(fields: [orgId], references: [id], onDelete: Cascade)
   name            String
-  url             String       @unique
+  url             String
   ownerEmail      String
   ownerName       String?
-  criticality     String       @default("medium")
-  status          AppStatus    @default(UNKNOWN)
+  criticality     String        @default("medium")
+  techStack       String?
+  status          AppStatus     @default(UNKNOWN)
   lastCheckedAt   DateTime?
   nextCheckAt     DateTime?
-  createdAt       DateTime     @default(now())
-  updatedAt       DateTime     @updatedAt
+  uptimePercent   Float?
+  avgResponseMs   Int?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
   monitorRuns     MonitorRun[]
+
+  @@unique([orgId, url])
+  @@index([orgId, status])
 }
+
+// ─── Core: Monitor Runs ─────────────────────────────
 
 model MonitorRun {
   id               String          @id @default(cuid())
@@ -44,12 +169,15 @@ model MonitorRun {
   status           AppStatus
   responseTimeMs   Int?
   summary          String
+  checksRun        Int             @default(0)
   startedAt        DateTime        @default(now())
   completedAt      DateTime?
   findings         Finding[]
 
   @@index([appId, startedAt])
 }
+
+// ─── Core: Findings with Remediation Workflow ───────
 
 model Finding {
   id              String           @id @default(cuid())
@@ -60,7 +188,89 @@ model Finding {
   description     String
   severity        FindingSeverity
   fixPrompt       String
+  status          FindingStatus    @default(OPEN)
+  resolvedAt      DateTime?
+  acknowledgedAt  DateTime?
+  notes           String?
   createdAt       DateTime         @default(now())
 
+  assignments     FindingAssignment[]
+
   @@index([runId, severity])
+  @@index([status])
+}
+
+model FindingAssignment {
+  id         String   @id @default(cuid())
+  findingId  String
+  finding    Finding  @relation(fields: [findingId], references: [id], onDelete: Cascade)
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  assignedAt DateTime @default(now())
+
+  @@unique([findingId, userId])
+}
+
+// ─── Alerting ───────────────────────────────────────
+
+model AlertConfig {
+  id           String              @id @default(cuid())
+  orgId        String
+  org          Organization        @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  channel      NotificationChannel
+  enabled      Boolean             @default(true)
+  // For EMAIL: recipient email
+  // For SLACK: webhook URL
+  // For WEBHOOK: endpoint URL
+  destination  String
+  minSeverity  FindingSeverity     @default(HIGH)
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
+
+  notifications Notification[]
+
+  @@index([orgId])
+}
+
+model Notification {
+  id            String       @id @default(cuid())
+  alertConfigId String
+  alertConfig   AlertConfig  @relation(fields: [alertConfigId], references: [id], onDelete: Cascade)
+  subject       String
+  body          String
+  sentAt        DateTime     @default(now())
+  delivered     Boolean      @default(false)
+  error         String?
+}
+
+// ─── API Keys (agent-first) ─────────────────────────
+
+model ApiKey {
+  id          String       @id @default(cuid())
+  orgId       String
+  org         Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  name        String
+  keyHash     String       @unique
+  keyPrefix   String
+  lastUsedAt  DateTime?
+  expiresAt   DateTime?
+  createdAt   DateTime     @default(now())
+
+  @@index([orgId])
+}
+
+// ─── Audit Log ──────────────────────────────────────
+
+model AuditLog {
+  id        String       @id @default(cuid())
+  orgId     String
+  org       Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  userId    String?
+  user      User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action    String
+  resource  String
+  details   String?
+  createdAt DateTime     @default(now())
+
+  @@index([orgId, createdAt])
 }

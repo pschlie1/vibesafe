@@ -1,24 +1,38 @@
 import { subDays } from "date-fns";
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { getSession } from "@/lib/auth";
 
 export async function GET() {
+  const session = await getSession();
+  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
   const sevenDaysAgo = subDays(new Date(), 7);
 
   const [apps, criticalFindings, recentRuns] = await Promise.all([
-    db.monitoredApp.count(),
+    db.monitoredApp.count({ where: { orgId: session.orgId } }),
     db.finding.count({
-      where: { severity: { in: ["CRITICAL", "HIGH"] }, createdAt: { gte: sevenDaysAgo } },
+      where: {
+        severity: { in: ["CRITICAL", "HIGH"] },
+        status: "OPEN",
+        run: { app: { orgId: session.orgId } },
+        createdAt: { gte: sevenDaysAgo },
+      },
     }),
     db.monitorRun.findMany({
-      where: { startedAt: { gte: sevenDaysAgo } },
+      where: {
+        startedAt: { gte: sevenDaysAgo },
+        app: { orgId: session.orgId },
+      },
       include: { app: true, findings: true },
       orderBy: { startedAt: "desc" },
       take: 30,
     }),
   ]);
 
-  const healthyApps = await db.monitoredApp.count({ where: { status: "HEALTHY" } });
+  const healthyApps = await db.monitoredApp.count({
+    where: { orgId: session.orgId, status: "HEALTHY" },
+  });
 
   return NextResponse.json({
     summary: {

@@ -1,6 +1,7 @@
 export const dynamic = "force-dynamic";
 
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { db } from "@/lib/db";
 import { getSession } from "@/lib/auth";
 import { redirect } from "next/navigation";
@@ -12,6 +13,11 @@ import { SummaryCards } from "@/components/summary-cards";
 import { getOrgLimits } from "@/lib/tenant";
 import { OnboardingWrapper } from "@/components/onboarding-wrapper";
 import { MetricsDashboard } from "@/components/metrics-dashboard";
+
+const OnboardingChecklist = dynamic(
+  () => import("@/components/onboarding-checklist").then((m) => m.OnboardingChecklist),
+  { ssr: false },
+);
 
 export default async function DashboardPage() {
   const session = await getSession();
@@ -51,6 +57,8 @@ export default async function DashboardPage() {
           </p>
         </div>
       </div>
+
+      <OnboardingChecklist />
 
       <MetricsDashboard />
 

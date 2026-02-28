@@ -1,58 +1,74 @@
 import Link from "next/link";
 
-const footerLinks = {
-  Product: [
-    { label: "Features", href: "/#features" },
-    { label: "Pricing", href: "/#pricing" },
-    { label: "Security Checklist", href: "/security-checklist" },
-    { label: "Start Free Trial", href: "/signup" },
-  ],
-  Resources: [
-    { label: "Vibe Coding Risks", href: "/vibe-coding-risks" },
-    { label: "Compliance Monitoring", href: "/compliance" },
-    { label: "Documentation", href: "#" },
-    { label: "Blog", href: "#" },
-  ],
-  Company: [
-    { label: "About", href: "#" },
-    { label: "Contact", href: "#" },
-    { label: "Careers", href: "#" },
-  ],
-  Legal: [
-    { label: "Privacy Policy", href: "#" },
-    { label: "Terms of Service", href: "#" },
-    { label: "Security", href: "#" },
-  ],
-};
+const footerColumns = [
+  {
+    header: "Product",
+    links: [
+      { label: "Overview", href: "/#features" },
+      { label: "Pricing", href: "/#pricing" },
+      { label: "Security", href: "/security-checklist" },
+      { label: "API Docs", href: "#" },
+    ],
+  },
+  {
+    header: "Company",
+    links: [
+      { label: "About", href: "#" },
+      { label: "Careers", href: "#" },
+      { label: "Blog", href: "#" },
+      { label: "Press", href: "#" },
+    ],
+  },
+  {
+    header: "Resources",
+    links: [
+      { label: "Documentation", href: "#" },
+      { label: "Help Center", href: "#" },
+      { label: "Security Checklist", href: "/security-checklist" },
+      { label: "Contact", href: "#" },
+    ],
+  },
+  {
+    header: "Legal",
+    links: [
+      { label: "Privacy Policy", href: "#" },
+      { label: "Terms of Service", href: "#" },
+      { label: "Cookie Policy", href: "#" },
+    ],
+  },
+];
 
 export default function Footer() {
   return (
-    <footer className="border-t border-ink-black-900 bg-ink-black-950">
-      <div className="mx-auto max-w-[1200px] px-6 py-16">
-        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-5">
-          {/* Brand */}
-          <div className="lg:col-span-1">
+    <footer className="bg-ink-black-950">
+      {/* Top section */}
+      <div className="mx-auto max-w-[1200px] px-6">
+        <div className="grid grid-cols-1 gap-12 py-20 sm:grid-cols-2 lg:grid-cols-5">
+          {/* Col 1 — Brand (2/5 width on lg) */}
+          <div className="lg:col-span-2">
             <div className="flex items-center gap-2">
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white">
                 <span className="text-sm font-bold text-ink-black-950">V</span>
               </div>
-              <span className="font-bold text-white">VibeSafe</span>
+              <span className="text-xl font-bold text-white">VibeSafe</span>
             </div>
-            <p className="mt-4 text-sm leading-relaxed text-alabaster-grey-200">
-              Continuous security monitoring for AI-generated applications. No SDK required.
+            <p className="mt-3 max-w-xs text-sm leading-relaxed text-alabaster-grey-400">
+              Complete visibility into your AI-built app portfolio.
             </p>
           </div>
 
-          {/* Link columns */}
-          {Object.entries(footerLinks).map(([category, links]) => (
-            <div key={category}>
-              <h4 className="text-sm font-semibold text-alabaster-grey-100">{category}</h4>
-              <ul className="mt-4 space-y-3">
-                {links.map((link) => (
+          {/* Cols 2–5 — Link columns */}
+          {footerColumns.map((col) => (
+            <div key={col.header}>
+              <h4 className="mb-6 text-xs font-bold uppercase tracking-widest text-white">
+                {col.header}
+              </h4>
+              <ul className="space-y-3">
+                {col.links.map((link) => (
                   <li key={link.label}>
                     <Link
                       href={link.href}
-                      className="text-sm text-alabaster-grey-200 transition-colors hover:text-white"
+                      className="text-sm text-alabaster-grey-400 transition-colors hover:text-white"
                     >
                       {link.label}
                     </Link>
@@ -62,13 +78,23 @@ export default function Footer() {
             </div>
           ))}
         </div>
+      </div>
 
-        <div className="mt-16 flex flex-col items-center justify-between gap-4 border-t border-ink-black-900 pt-8 sm:flex-row">
-          <p className="text-xs text-dusty-denim-500">© 2026 VibeSafe. All rights reserved.</p>
-          <div className="flex gap-6">
-            <Link href="#" className="text-xs text-dusty-denim-500 hover:text-white">Twitter</Link>
-            <Link href="#" className="text-xs text-dusty-denim-500 hover:text-white">LinkedIn</Link>
-            <Link href="#" className="text-xs text-dusty-denim-500 hover:text-white">GitHub</Link>
+      {/* Bottom bar */}
+      <div className="border-t border-ink-black-800">
+        <div className="mx-auto max-w-[1200px] px-6">
+          <div className="flex flex-col items-center justify-between gap-4 py-8 sm:flex-row">
+            <p className="text-sm text-alabaster-grey-600">
+              © 2026 VibeSafe Inc. All rights reserved.
+            </p>
+            <div className="flex gap-6">
+              <Link href="#" className="text-sm text-alabaster-grey-400 transition-colors hover:text-white">
+                Status
+              </Link>
+              <Link href="/security-checklist" className="text-sm text-alabaster-grey-400 transition-colors hover:text-white">
+                Security
+              </Link>
+            </div>
           </div>
         </div>
       </div>

@@ -44,18 +44,24 @@ const testimonials = [
   {
     quote: "We had 23 AI-built internal tools with zero security oversight. VibeSafe found exposed API keys in three of them within the first scan. That alone justified the entire annual cost.",
     name: "Sarah Chen",
+    initials: "SC",
+    avatarBg: "bg-prussian-blue-600",
     title: "CISO",
     company: "Meridian Financial Group",
   },
   {
     quote: "My team was spending 20 hours a week manually auditing vibe-coded apps. VibeSafe automated 90% of that work. Now we actually have time for strategic security initiatives.",
     name: "Marcus Rivera",
+    initials: "MR",
+    avatarBg: "bg-ink-black-700",
     title: "VP of Information Security",
     company: "Caliber Health Systems",
   },
   {
     quote: "The board asked me how we govern AI-generated applications. Before VibeSafe, I didn't have an answer. Now I send them a weekly compliance report automatically.",
     name: "Jennifer Okafor",
+    initials: "JO",
+    avatarBg: "bg-dusty-denim-600",
     title: "IT Director",
     company: "Apex Manufacturing",
   },
@@ -154,6 +160,57 @@ export default function LandingPage() {
           </div>
           <p className="mt-5 text-xs text-dusty-denim-600">No credit card required · Setup in 2 minutes · SOC 2 aligned</p>
         </div>
+
+        {/* Dashboard mockup frame */}
+        <div className="max-w-5xl mx-auto mt-16">
+          <div className="bg-white rounded-xl border border-alabaster-grey-200 shadow-2xl p-2">
+            <div className="aspect-video bg-ink-black-50 rounded-lg overflow-hidden relative">
+              {/* Top bar */}
+              <div className="bg-white border-b border-alabaster-grey-200 px-6 py-3 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="h-2 w-2 rounded-full bg-ink-black-200" />
+                  <div className="h-2 w-2 rounded-full bg-ink-black-200" />
+                  <div className="h-2 w-2 rounded-full bg-ink-black-200" />
+                </div>
+                <span className="text-xs font-semibold text-ink-black-400">VibeSafe Dashboard</span>
+                <div className="h-4 w-16 rounded bg-ink-black-100" />
+              </div>
+              {/* Stat cards row */}
+              <div className="grid grid-cols-3 gap-3 p-4">
+                {[
+                  { label: "Apps Monitored", value: "12" },
+                  { label: "Open Findings", value: "4" },
+                  { label: "Last Scan", value: "2m ago" },
+                ].map((card) => (
+                  <div key={card.label} className="bg-white rounded-lg border border-alabaster-grey-200 p-3">
+                    <p className="text-[10px] uppercase tracking-widest text-ink-black-400">{card.label}</p>
+                    <p className="mt-1 text-lg font-bold text-ink-black-800">{card.value}</p>
+                    <div className="mt-2 h-1 w-8 rounded-full bg-prussian-blue-600 opacity-60" />
+                  </div>
+                ))}
+              </div>
+              {/* Table placeholder */}
+              <div className="mx-4 bg-white rounded-lg border border-alabaster-grey-200 overflow-hidden">
+                <div className="bg-ink-black-100 px-4 py-2 grid grid-cols-4 gap-4">
+                  {["App", "Status", "Last Scan", "Findings"].map((h) => (
+                    <div key={h} className="h-2 rounded bg-ink-black-200 w-3/4" />
+                  ))}
+                </div>
+                {[0, 1, 2, 3].map((row) => (
+                  <div key={row} className={`px-4 py-2.5 grid grid-cols-4 gap-4 ${row % 2 === 1 ? "bg-ink-black-50" : "bg-white"}`}>
+                    <div className="h-2 rounded bg-ink-black-100 w-4/5" />
+                    <div className="flex items-center gap-1">
+                      <div className={`h-1.5 w-1.5 rounded-full ${row === 1 ? "bg-red-400" : "bg-emerald-400"}`} />
+                      <div className="h-2 rounded bg-ink-black-100 w-3/4" />
+                    </div>
+                    <div className="h-2 rounded bg-ink-black-100 w-2/3" />
+                    <div className="h-2 rounded bg-ink-black-100 w-1/2" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
 
       {/* Trust logos */}
@@ -179,7 +236,7 @@ export default function LandingPage() {
           ].map((stat, i) => (
             <div key={stat.value} className="flex items-center gap-12">
               <div>
-                <p className="text-3xl font-bold text-ink-black-600">{stat.value}</p>
+                <p className="text-5xl font-bold text-ink-black-600">{stat.value}</p>
                 <p className="mt-1 text-sm uppercase tracking-wide text-dusty-denim-600">{stat.label}</p>
               </div>
               {i < 3 && <div className="hidden h-10 w-px bg-alabaster-grey-200 sm:block" />}
@@ -209,9 +266,60 @@ export default function LandingPage() {
 
       {/* How it works */}
       <section className="border-y border-alabaster-grey-200 bg-white px-6 py-24 sm:py-32">
-        <div className="mx-auto max-w-[800px]">
+        <div className="mx-auto max-w-[1000px]">
           <h2 className="mb-16 text-center text-3xl font-extrabold tracking-[-0.02em] text-ink-black-950 sm:text-4xl">How it works</h2>
-          <div className="space-y-12">
+
+          {/* Zigzag timeline — desktop */}
+          <div className="hidden md:block relative">
+            {/* Center vertical line */}
+            <div className="absolute left-1/2 top-0 bottom-0 w-px bg-alabaster-grey-200" />
+
+            <div className="space-y-16">
+              {[
+                { step: "1", title: "Register your apps", desc: "Enter the URL of any AI-built app. No code changes, no SDK, no developer involvement required." },
+                { step: "2", title: "We scan continuously", desc: "Every 4 hours, VibeSafe runs security and health checks from the outside — exactly like an attacker would." },
+                { step: "3", title: "Get plain-language alerts", desc: "When something breaks or a vulnerability appears, you get an alert with a ready-to-paste AI fix prompt." },
+                { step: "4", title: "Review your governance dashboard", desc: "Weekly compliance reports show every app's status, open findings, and remediation progress." },
+              ].map((item, idx) => {
+                const isOdd = idx % 2 === 0; // 0-indexed: step 1 (idx=0) → left, step 2 (idx=1) → right
+                return (
+                  <div key={item.step} className="relative flex items-center">
+                    {/* Step number circle — centered on the line */}
+                    <div className="absolute left-1/2 -translate-x-1/2 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-prussian-blue-600 text-sm font-bold text-white shadow-md">
+                      {item.step}
+                    </div>
+
+                    {isOdd ? (
+                      /* Odd steps: content on LEFT */
+                      <>
+                        <div className="w-5/12 pr-16 text-right">
+                          <div className="rounded-xl border border-alabaster-grey-200 bg-white p-8 shadow-sm">
+                            <h3 className="text-lg font-bold text-ink-black-950">{item.title}</h3>
+                            <p className="mt-2 text-sm leading-relaxed text-dusty-denim-600">{item.desc}</p>
+                          </div>
+                        </div>
+                        <div className="w-7/12" />
+                      </>
+                    ) : (
+                      /* Even steps: content on RIGHT */
+                      <>
+                        <div className="w-7/12" />
+                        <div className="w-5/12 pl-16 text-left">
+                          <div className="rounded-xl border border-alabaster-grey-200 bg-white p-8 shadow-sm">
+                            <h3 className="text-lg font-bold text-ink-black-950">{item.title}</h3>
+                            <p className="mt-2 text-sm leading-relaxed text-dusty-denim-600">{item.desc}</p>
+                          </div>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Mobile fallback — single column vertical stack */}
+          <div className="md:hidden space-y-12">
             {[
               { step: "1", title: "Register your apps", desc: "Enter the URL of any AI-built app. No code changes, no SDK, no developer involvement required." },
               { step: "2", title: "We scan continuously", desc: "Every 4 hours, VibeSafe runs security and health checks from the outside — exactly like an attacker would." },
@@ -254,11 +362,20 @@ export default function LandingPage() {
           <h2 className="mb-16 text-center text-3xl font-extrabold tracking-[-0.02em] text-ink-black-950 sm:text-4xl">What security leaders say</h2>
           <div className="grid gap-8 md:grid-cols-3">
             {testimonials.map((t) => (
-              <div key={t.name} className="rounded-2xl border border-alabaster-grey-200 bg-white p-8" style={{ boxShadow: "0 1px 3px rgba(12,25,39,0.05)" }}>
-                <p className="text-sm leading-relaxed text-dusty-denim-600">&ldquo;{t.quote}&rdquo;</p>
-                <div className="mt-8">
-                  <p className="text-sm font-bold text-ink-black-900">{t.name}</p>
-                  <p className="text-xs text-dusty-denim-600">{t.title}, {t.company}</p>
+              <div key={t.name} className="relative rounded-2xl border border-alabaster-grey-200 bg-white p-8 overflow-hidden" style={{ boxShadow: "0 1px 3px rgba(12,25,39,0.05)" }}>
+                {/* Decorative quote mark */}
+                <span className="absolute top-4 left-4 text-[80px] leading-none font-serif text-alabaster-grey-200 select-none z-0" aria-hidden="true">&ldquo;</span>
+                <div className="relative z-10">
+                  <p className="text-sm leading-relaxed text-dusty-denim-600 mt-8">&ldquo;{t.quote}&rdquo;</p>
+                  <div className="mt-8 flex items-center gap-3">
+                    <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full font-bold text-white text-sm ${t.avatarBg}`}>
+                      {t.initials}
+                    </div>
+                    <div>
+                      <p className="text-sm font-bold text-ink-black-900">{t.name}</p>
+                      <p className="text-xs text-dusty-denim-600">{t.title}, {t.company}</p>
+                    </div>
+                  </div>
                 </div>
               </div>
             ))}

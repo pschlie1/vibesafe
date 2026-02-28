@@ -209,18 +209,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Trust logos */}
-      <section className="border-y border-alabaster-grey-200 bg-white py-10">
-        <p className="mb-6 text-center text-xs font-semibold uppercase tracking-widest text-dusty-denim-600">
-          Trusted by security-conscious teams at
-        </p>
-        <div className="mx-auto flex max-w-3xl flex-wrap items-center justify-center gap-x-12 gap-y-4 px-4">
-          {["Meridian", "Caliber", "Apex", "NovaTech", "Stackline"].map((name) => (
-            <span key={name} className="text-lg font-semibold text-alabaster-grey-200">{name}</span>
-          ))}
-        </div>
-      </section>
-
       {/* Stats / Metrics bar */}
       <section className="border-b border-alabaster-grey-200 bg-white py-16">
         <div className="mx-auto flex max-w-[1200px] flex-wrap items-center justify-center gap-12 px-6 text-center">

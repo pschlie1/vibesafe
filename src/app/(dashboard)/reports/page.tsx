@@ -37,6 +37,15 @@ export default async function ReportsPage() {
             {format(since, "MMM d")} – {format(new Date(), "MMM d, yyyy")}
           </p>
         </div>
+        <a
+          href="/api/reports/pdf"
+          className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow hover:bg-blue-700 transition-colors"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3M3 17v3a2 2 0 002 2h14a2 2 0 002-2v-3" />
+          </svg>
+          Download PDF Report
+        </a>
       </div>
 
       {/* Executive summary */}

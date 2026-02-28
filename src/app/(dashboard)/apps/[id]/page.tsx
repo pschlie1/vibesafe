@@ -9,6 +9,7 @@ import { ScanButton } from "@/components/scan-button";
 import { DeleteAppButton } from "@/components/delete-app-button";
 import { StatusBadge, SeverityBadge } from "@/components/status-badge";
 import { FindingActions } from "@/components/finding-actions";
+import { TrendCharts } from "@/components/trend-chart";
 
 export default async function AppDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   const session = await getSession();
@@ -55,6 +56,11 @@ export default async function AppDetailsPage({ params }: { params: Promise<{ id:
         <InfoCard label="Criticality" value={app.criticality} />
         <InfoCard label="Last scan" value={relativeTime(app.lastCheckedAt)} />
         <InfoCard label="Next scan" value={relativeTime(app.nextCheckAt)} />
+      </div>
+
+      <div className="mb-8">
+        <h2 className="mb-4 text-lg font-semibold">Trends</h2>
+        <TrendCharts appId={app.id} />
       </div>
 
       <h2 className="mb-4 text-lg font-semibold">Scan history</h2>

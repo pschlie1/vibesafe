@@ -28,6 +28,45 @@ async function sendSlack(webhookUrl: string, text: string) {
   });
 }
 
+async function sendTeams(webhookUrl: string, title: string, text: string, facts: { name: string; value: string }[] = []) {
+  const card = {
+    type: "message",
+    attachments: [
+      {
+        contentType: "application/vnd.microsoft.card.adaptive",
+        contentUrl: null,
+        content: {
+          $schema: "http://adaptivecards.io/schemas/adaptive-card.json",
+          type: "AdaptiveCard",
+          version: "1.4",
+          body: [
+            { type: "TextBlock", size: "Medium", weight: "Bolder", text: title },
+            { type: "TextBlock", text, wrap: true },
+            ...(facts.length
+              ? [
+                  {
+                    type: "FactSet",
+                    facts: facts.map((f) => ({ title: f.name, value: f.value })),
+                  },
+                ]
+              : []),
+          ],
+        },
+      },
+    ],
+  };
+
+  await fetch(webhookUrl, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(card),
+  });
+}
+
+function isTeamsWebhookUrl(url: string): boolean {
+  return url.includes(".webhook.office.com/") || url.includes(".logic.azure.com/");
+}
+
 async function sendWebhook(url: string, payload: Record<string, unknown>) {
   await fetch(url, {
     method: "POST",
@@ -83,12 +122,22 @@ export async function sendCriticalFindingsAlert(appId: string, findings: Securit
           break;
         }
         case "WEBHOOK": {
-          await sendWebhook(config.destination, {
-            event: "findings.detected",
-            app: { id: app.id, name: app.name, url: app.url },
-            findings: relevant,
-            timestamp: new Date().toISOString(),
-          });
+          if (isTeamsWebhookUrl(config.destination)) {
+            const facts = relevant.slice(0, 5).map((f) => ({ name: f.severity, value: f.title }));
+            await sendTeams(
+              config.destination,
+              `⚠️ VibeSafe Alert: ${app.name}`,
+              `${relevant.length} security issue(s) detected on ${app.url}`,
+              facts,
+            );
+          } else {
+            await sendWebhook(config.destination, {
+              event: "findings.detected",
+              app: { id: app.id, name: app.name, url: app.url },
+              findings: relevant,
+              timestamp: new Date().toISOString(),
+            });
+          }
           break;
         }
       }
@@ -112,6 +161,72 @@ export async function sendCriticalFindingsAlert(appId: string, findings: Securit
           error: error instanceof Error ? error.message : "Unknown error",
         },
       });
+    }
+  }
+}
+
+export async function sendTestNotification(configId: string) {
+  const config = await db.alertConfig.findUnique({ where: { id: configId } });
+  if (!config) throw new Error("Alert config not found");
+
+  const subject = "✅ VibeSafe Test Notification";
+  const body = "This is a test notification from VibeSafe. Your alert channel is working correctly!";
+
+  switch (config.channel) {
+    case "EMAIL":
+      await sendEmail(config.destination, subject, `<div style="font-family: -apple-system, sans-serif;"><h2>${subject}</h2><p>${body}</p></div>`);
+      break;
+    case "SLACK":
+      await sendSlack(config.destination, `${subject}\n${body}`);
+      break;
+    case "WEBHOOK":
+      if (isTeamsWebhookUrl(config.destination)) {
+        await sendTeams(config.destination, subject, body);
+      } else {
+        await sendWebhook(config.destination, { event: "test", message: body, timestamp: new Date().toISOString() });
+      }
+      break;
+  }
+
+  await db.notification.create({
+    data: { alertConfigId: config.id, subject, body: "Test notification", delivered: true },
+  });
+}
+
+export async function sendChangeDetectedAlert(appId: string, appName: string, appUrl: string) {
+  const app = await db.monitoredApp.findUnique({
+    where: { id: appId },
+    include: { org: true },
+  });
+  if (!app) return;
+
+  const configs = await db.alertConfig.findMany({
+    where: { orgId: app.orgId, enabled: true },
+  });
+
+  const subject = `🔄 VibeSafe: ${appName} has changed`;
+  const message = `Deployment change detected on ${appName} (${appUrl}). The application content has changed since the last scan.`;
+
+  for (const config of configs) {
+    try {
+      switch (config.channel) {
+        case "EMAIL":
+          await sendEmail(config.destination, subject, `<div style="font-family: -apple-system, sans-serif;"><h2>${subject}</h2><p>${message}</p><p><a href="${appUrl}">${appUrl}</a></p></div>`);
+          break;
+        case "SLACK":
+          await sendSlack(config.destination, `${subject}\n${message}`);
+          break;
+        case "WEBHOOK":
+          if (isTeamsWebhookUrl(config.destination)) {
+            await sendTeams(config.destination, subject, message, [{ name: "App", value: appName }, { name: "URL", value: appUrl }]);
+          } else {
+            await sendWebhook(config.destination, { event: "change.detected", app: { id: appId, name: appName, url: appUrl }, timestamp: new Date().toISOString() });
+          }
+          break;
+      }
+      await db.notification.create({ data: { alertConfigId: config.id, subject, body: "Change detected", delivered: true } });
+    } catch (error) {
+      await db.notification.create({ data: { alertConfigId: config.id, subject, body: "Change detected", delivered: false, error: error instanceof Error ? error.message : "Unknown" } });
     }
   }
 }

@@ -1,0 +1,93 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import {
+  LineChart,
+  Line,
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Legend,
+} from "recharts";
+
+interface TrendPoint {
+  date: string;
+  score: number;
+  critical: number;
+  high: number;
+  medium: number;
+  low: number;
+}
+
+function formatDate(iso: string) {
+  return new Date(iso).toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}
+
+export function TrendCharts({ appId }: { appId: string }) {
+  const [data, setData] = useState<TrendPoint[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch(`/api/apps/${appId}/trends`)
+      .then((r) => r.json())
+      .then((d) => setData(d))
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, [appId]);
+
+  if (loading) return <div className="py-8 text-center text-sm text-gray-400">Loading trends…</div>;
+  if (data.length < 2) return <div className="py-8 text-center text-sm text-gray-400">Not enough scan data for trends yet.</div>;
+
+  const chartData = data.map((d) => ({ ...d, date: formatDate(d.date) }));
+
+  return (
+    <div className="space-y-8">
+      {/* Security Score Over Time */}
+      <div>
+        <h3 className="mb-3 text-sm font-semibold text-gray-700">Security Score Over Time</h3>
+        <div className="rounded-lg border bg-white p-4">
+          <ResponsiveContainer width="100%" height={250}>
+            <LineChart data={chartData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="date" tick={{ fontSize: 12 }} />
+              <YAxis domain={[0, 100]} tick={{ fontSize: 12 }} />
+              <Tooltip />
+              <Line
+                type="monotone"
+                dataKey="score"
+                stroke="#2563eb"
+                strokeWidth={2}
+                dot={{ r: 3 }}
+                name="Score"
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      {/* Findings by Severity Over Time */}
+      <div>
+        <h3 className="mb-3 text-sm font-semibold text-gray-700">Findings by Severity</h3>
+        <div className="rounded-lg border bg-white p-4">
+          <ResponsiveContainer width="100%" height={250}>
+            <AreaChart data={chartData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="date" tick={{ fontSize: 12 }} />
+              <YAxis tick={{ fontSize: 12 }} />
+              <Tooltip />
+              <Legend />
+              <Area type="monotone" dataKey="critical" stackId="1" fill="#dc2626" stroke="#dc2626" name="Critical" />
+              <Area type="monotone" dataKey="high" stackId="1" fill="#f97316" stroke="#f97316" name="High" />
+              <Area type="monotone" dataKey="medium" stackId="1" fill="#eab308" stroke="#eab308" name="Medium" />
+              <Area type="monotone" dataKey="low" stackId="1" fill="#6b7280" stroke="#6b7280" name="Low" />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+    </div>
+  );
+}

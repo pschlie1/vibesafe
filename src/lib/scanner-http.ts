@@ -107,6 +107,20 @@ export async function runHttpScanForApp(appId: string) {
       },
     });
 
+    // Auto-triage new findings & verify resolved ones
+    const updatedRun = await db.monitorRun.findUnique({
+      where: { id: run.id },
+      include: { findings: { select: { id: true } } },
+    });
+    if (updatedRun) {
+      for (const f of updatedRun.findings) {
+        await autoTriageFinding(f.id);
+      }
+    }
+
+    const newFindingCodes = new Set(findings.map((f) => f.code));
+    await verifyResolvedFindings(app.id, newFindingCodes);
+
     await sendCriticalFindingsAlert(app.id, findings);
 
     // Determine scan interval based on org tier

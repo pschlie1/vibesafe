@@ -2,12 +2,12 @@ import Link from "next/link";
 import Footer from "@/components/footer";
 
 const checks = [
-  { icon: "🔑", title: "Exposed API Keys", desc: "Detects OpenAI, Stripe, Supabase, GitHub, and 8 more secret patterns leaked in client-side JavaScript." },
-  { icon: "🛡️", title: "Missing Security Headers", desc: "CSP, HSTS, X-Frame-Options, Permissions-Policy, and CORS misconfiguration." },
-  { icon: "🔓", title: "Auth Bypass Patterns", desc: "Client-side role checks, localStorage auth gates, and cookie-based authorization flaws." },
-  { icon: "📜", title: "Inline Script Risks", desc: "Secrets in script tags, dangerouslySetInnerHTML XSS vectors, and unsafe eval patterns." },
-  { icon: "⚙️", title: "Config & Meta Leaks", desc: "Source maps in production, dev mode indicators, and server technology disclosure." },
-  { icon: "📊", title: "Uptime & Performance", desc: "Response time tracking, regression detection, and availability monitoring every 4 hours." },
+  { icon: "🔑", title: "Exposed API Keys", desc: "Detects OpenAI, Stripe, Supabase, and 8 other secret patterns leaked in client-side JavaScript. VibeSafe finds them before an attacker does." },
+  { icon: "🛡️", title: "Missing Security Headers", desc: "Checks 6 required headers: CSP, HSTS, X-Frame-Options, and more. Missing headers are the leading cause of preventable breaches in AI-built apps." },
+  { icon: "🔓", title: "Auth Bypass Patterns", desc: "Catches client-side auth gates, localStorage role checks, and cookie-based access control. The shortcuts LLMs take put your data at risk." },
+  { icon: "📜", title: "Inline Script Risks", desc: "Scans inline scripts for secrets, XSS vectors, and dangerouslySetInnerHTML usage. Common in LLM-generated React code." },
+  { icon: "⚙️", title: "Config & Meta Leaks", desc: "Exposed source maps reveal your entire codebase. VibeSafe detects dev-mode indicators and server tech disclosure too." },
+  { icon: "📊", title: "Uptime & Performance", desc: "Tracks response time and availability every scan. Know before your users do." },
 ];
 
 const tiers = [
@@ -79,11 +79,11 @@ const integrations = [
 const faqs = [
   {
     q: "How does VibeSafe scan without an SDK?",
-    a: "VibeSafe performs external scans — the same way an attacker would probe your applications. We analyze HTTP responses, JavaScript bundles, security headers, and public-facing configurations. No code changes or developer involvement required.",
+    a: "VibeSafe performs external scans the same way an attacker would probe your applications. We analyze HTTP responses, JavaScript bundles, security headers, and public-facing configurations. No code changes or developer involvement required.",
   },
   {
     q: "What types of AI-generated apps can VibeSafe monitor?",
-    a: "Any web application accessible via URL — whether built with Cursor, Lovable, Bolt, Replit, or any other AI coding tool. If it has a URL, we can scan it.",
+    a: "Any web application accessible via URL: built with Cursor, Lovable, Bolt, Replit, or any other AI coding tool. If the app has a URL, VibeSafe scans the app.",
   },
   {
     q: "How long does setup take?",
@@ -91,7 +91,7 @@ const faqs = [
   },
   {
     q: "Is VibeSafe a replacement for penetration testing?",
-    a: "No. VibeSafe provides continuous, automated surface-level security monitoring — think of it as your always-on first line of defense. We recommend annual penetration testing alongside continuous monitoring.",
+    a: "No. VibeSafe provides continuous, automated external security monitoring: your always-on first line of defense. We recommend annual penetration testing alongside continuous monitoring.",
   },
   {
     q: "What compliance frameworks does VibeSafe support?",
@@ -99,7 +99,7 @@ const faqs = [
   },
   {
     q: "Can I try VibeSafe before committing?",
-    a: "Yes. Every plan starts with a 14-day free trial — no credit card required. Scan your first app in under 2 minutes.",
+    a: "Yes. Every plan starts with a 14-day free trial. No credit card required. Scan your first app in under 2 minutes.",
   },
 ];
 
@@ -138,7 +138,7 @@ export default function LandingPage() {
             <span className="text-prussian-blue-600">You see nothing.</span>
           </h1>
           <p className="mx-auto mt-8 max-w-[600px] text-lg leading-relaxed text-dusty-denim-700">
-            Every department is building with AI. Legal, sales, ops — they&apos;re all shipping apps with Cursor, Lovable, and Bolt. VibeSafe gives IT leaders continuous visibility into the security posture of every AI-generated application. No SDK. No developer involvement.
+            Legal built a client portal. Sales built a data tool. Ops built an onboarding app. None of them asked IT. VibeSafe scans every AI-built app in your portfolio. No code changes. No SDK. No developer involvement required.
           </p>
           <div className="mt-10 flex items-center justify-center gap-4">
             <Link
@@ -213,10 +213,10 @@ export default function LandingPage() {
       <section className="border-b border-alabaster-grey-200 bg-white py-16">
         <div className="mx-auto flex max-w-[1200px] flex-wrap items-center justify-center gap-12 px-6 text-center">
           {[
-            { value: "73%", label: "of vibe-coded apps have vulnerabilities" },
+            { value: "20+", label: "security checks per scan" },
             { value: "170+", label: "Loveable apps breached in one CVE" },
             { value: "$50K–$500K", label: "cost per undetected breach" },
-            { value: "0 SDK", label: "instrumentation required" },
+            { value: "Zero setup", label: "no SDK, no code changes" },
           ].map((stat, i) => (
             <div key={stat.value} className="flex items-center gap-12">
               <div>
@@ -231,9 +231,9 @@ export default function LandingPage() {
 
       {/* Feature cards - Bento Grid */}
       <section id="features" className="mx-auto max-w-[1200px] px-6 py-24 sm:py-32">
-        <h2 className="mb-3 text-center text-3xl font-extrabold tracking-[-0.02em] text-ink-black-950 sm:text-4xl">What we monitor</h2>
+        <h2 className="mb-3 text-center text-3xl font-extrabold tracking-[-0.02em] text-ink-black-950 sm:text-4xl">What we catch</h2>
         <p className="mb-16 text-center text-dusty-denim-600">
-          Continuous external checks that catch what manual reviews miss
+          15 check categories. Every scan. No developer required.
         </p>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {checks.map((check) => (
@@ -251,7 +251,7 @@ export default function LandingPage() {
       {/* How it works */}
       <section className="border-y border-alabaster-grey-200 bg-white px-6 py-24 sm:py-32">
         <div className="mx-auto max-w-[1000px]">
-          <h2 className="mb-16 text-center text-3xl font-extrabold tracking-[-0.02em] text-ink-black-950 sm:text-4xl">How it works</h2>
+          <h2 className="mb-16 text-center text-3xl font-extrabold tracking-[-0.02em] text-ink-black-950 sm:text-4xl">How VibeSafe works</h2>
 
           {/* Zigzag timeline — desktop */}
           <div className="hidden md:block relative">
@@ -261,7 +261,7 @@ export default function LandingPage() {
             <div className="space-y-16">
               {[
                 { step: "1", title: "Register your apps", desc: "Enter the URL of any AI-built app. No code changes, no SDK, no developer involvement required." },
-                { step: "2", title: "We scan continuously", desc: "Every 4 hours, VibeSafe runs security and health checks from the outside — exactly like an attacker would." },
+                { step: "2", title: "We scan continuously", desc: "Every 4 hours, VibeSafe runs 20+ security and health checks from the outside. No access required." },
                 { step: "3", title: "Get plain-language alerts", desc: "When something breaks or a vulnerability appears, you get an alert with a ready-to-paste AI fix prompt." },
                 { step: "4", title: "Review your governance dashboard", desc: "Weekly compliance reports show every app's status, open findings, and remediation progress." },
               ].map((item, idx) => {
@@ -306,7 +306,7 @@ export default function LandingPage() {
           <div className="md:hidden space-y-12">
             {[
               { step: "1", title: "Register your apps", desc: "Enter the URL of any AI-built app. No code changes, no SDK, no developer involvement required." },
-              { step: "2", title: "We scan continuously", desc: "Every 4 hours, VibeSafe runs security and health checks from the outside — exactly like an attacker would." },
+              { step: "2", title: "We scan continuously", desc: "Every 4 hours, VibeSafe runs 20+ security and health checks from the outside. No access required." },
               { step: "3", title: "Get plain-language alerts", desc: "When something breaks or a vulnerability appears, you get an alert with a ready-to-paste AI fix prompt." },
               { step: "4", title: "Review your governance dashboard", desc: "Weekly compliance reports show every app's status, open findings, and remediation progress." },
             ].map((item) => (
@@ -371,7 +371,7 @@ export default function LandingPage() {
       <section id="pricing" className="mx-auto max-w-[1200px] px-6 py-24 sm:py-32">
         <h2 className="mb-3 text-center text-3xl font-extrabold tracking-[-0.02em] text-ink-black-950 sm:text-4xl">Simple, transparent pricing</h2>
         <p className="mb-16 text-center text-dusty-denim-600">
-          One undetected breach costs $50K–$500K. VibeSafe pays for itself on day one.
+          One exposed API key costs $50K–$500K to remediate. VibeSafe catches the exposure in your first scan.
         </p>
         <div className="grid gap-8 md:grid-cols-3">
           {tiers.map((tier) => (
@@ -437,7 +437,7 @@ export default function LandingPage() {
       <section className="bg-ink-black-950 px-6 py-24 text-center sm:py-32">
         <h2 className="text-3xl font-extrabold tracking-[-0.02em] text-white sm:text-4xl">Stop finding out about breaches<br />from your CEO.</h2>
         <p className="mx-auto mt-6 max-w-xl text-alabaster-grey-200">
-          Start monitoring your AI-built app portfolio in 2 minutes. No credit card required.
+          Add your first app URL. We start scanning in 60 seconds.
         </p>
         <Link
           href="/signup"

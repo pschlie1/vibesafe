@@ -1,3 +1,4 @@
+import * as tls from "tls";
 import { buildFixPrompt } from "@/lib/remediation";
 import type { SecurityFinding } from "@/lib/types";
 
@@ -620,6 +621,156 @@ export function checkAPISecurity(html: string, headers: Headers): SecurityFindin
       description: "Swagger/OpenAPI documentation appears publicly accessible, revealing API endpoints and data models.",
       severity: "MEDIUM",
       fixPrompt: buildFixPrompt("API docs exposed", "Protect API documentation with authentication or remove from production."),
+    });
+  }
+
+  return findings;
+}
+
+// ────────────────────────────────────────────
+// 13. SSL Certificate Expiry
+// ────────────────────────────────────────────
+
+export async function checkSSLCertExpiry(url: string): Promise<SecurityFinding[]> {
+  const findings: SecurityFinding[] = [];
+
+  let hostname: string;
+  try {
+    hostname = new URL(url).hostname;
+  } catch {
+    return findings;
+  }
+
+  // Only check HTTPS URLs
+  if (!url.startsWith("https://")) return findings;
+
+  try {
+    const cert = await new Promise<tls.PeerCertificate | null>((resolve) => {
+      const socket = tls.connect(
+        { host: hostname, port: 443, servername: hostname, rejectUnauthorized: false },
+        () => {
+          const peerCert = socket.getPeerCertificate();
+          socket.destroy();
+          resolve(peerCert ?? null);
+        },
+      );
+      socket.on("error", () => resolve(null));
+      socket.setTimeout(10000, () => {
+        socket.destroy();
+        resolve(null);
+      });
+    });
+
+    if (!cert || !cert.valid_to) return findings;
+
+    const expiresAt = new Date(cert.valid_to);
+    const now = new Date();
+    const daysUntilExpiry = Math.floor((expiresAt.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+
+    if (daysUntilExpiry < 0) {
+      findings.push({
+        code: "SSL_CERT_EXPIRED",
+        title: "SSL certificate has expired",
+        description: `The SSL certificate for ${hostname} expired ${Math.abs(daysUntilExpiry)} day(s) ago. Users see security warnings and browsers block access.`,
+        severity: "CRITICAL",
+        fixPrompt: buildFixPrompt(
+          "SSL certificate expired",
+          "1. Renew your TLS certificate immediately.\n2. If using Let's Encrypt, run: certbot renew.\n3. Verify auto-renewal is configured and working.\n4. Check your hosting platform for certificate management tools.",
+        ),
+      });
+    } else if (daysUntilExpiry <= 7) {
+      findings.push({
+        code: "SSL_CERT_EXPIRING_CRITICAL",
+        title: `SSL certificate expires in ${daysUntilExpiry} day(s)`,
+        description: `The SSL certificate for ${hostname} expires in ${daysUntilExpiry} day(s). Renew immediately to prevent outages.`,
+        severity: "CRITICAL",
+        fixPrompt: buildFixPrompt(
+          "SSL certificate expiring soon",
+          "1. Renew your TLS certificate now.\n2. If using Let's Encrypt, run: certbot renew.\n3. Enable auto-renewal to prevent future expiry.",
+        ),
+      });
+    } else if (daysUntilExpiry <= 14) {
+      findings.push({
+        code: "SSL_CERT_EXPIRING_HIGH",
+        title: `SSL certificate expires in ${daysUntilExpiry} days`,
+        description: `The SSL certificate for ${hostname} expires in ${daysUntilExpiry} days. Schedule renewal this week.`,
+        severity: "HIGH",
+        fixPrompt: buildFixPrompt(
+          "SSL certificate expiring soon",
+          "1. Renew your TLS certificate this week.\n2. Verify auto-renewal is configured.\n3. Test renewal with: certbot renew --dry-run.",
+        ),
+      });
+    } else if (daysUntilExpiry <= 30) {
+      findings.push({
+        code: "SSL_CERT_EXPIRING_MEDIUM",
+        title: `SSL certificate expires in ${daysUntilExpiry} days`,
+        description: `The SSL certificate for ${hostname} expires in ${daysUntilExpiry} days. Plan renewal soon.`,
+        severity: "MEDIUM",
+        fixPrompt: buildFixPrompt(
+          "SSL certificate expiring",
+          "1. Schedule certificate renewal before expiry.\n2. Verify auto-renewal is configured and working.",
+        ),
+      });
+    }
+  } catch {
+    // Cannot connect or read cert — skip silently
+  }
+
+  return findings;
+}
+
+// ────────────────────────────────────────────
+// 14. Uptime Status
+// ────────────────────────────────────────────
+
+export function checkUptimeStatus(statusCode: number, responseTimeMs: number): SecurityFinding[] {
+  const findings: SecurityFinding[] = [];
+
+  if (statusCode >= 500) {
+    findings.push({
+      code: "UPTIME_SERVER_ERROR",
+      title: `Site returned server error (HTTP ${statusCode})`,
+      description: `The site responded with HTTP ${statusCode}, indicating a server-side failure. Users are likely seeing an error page.`,
+      severity: "CRITICAL",
+      fixPrompt: buildFixPrompt(
+        `Server error HTTP ${statusCode}`,
+        "1. Check your server logs for the root cause.\n2. Verify your deployment is healthy.\n3. Check database connections and dependent services.\n4. Roll back the last deployment if the error started recently.",
+      ),
+    });
+  } else if (statusCode >= 400 && statusCode !== 401 && statusCode !== 403) {
+    findings.push({
+      code: "UPTIME_CLIENT_ERROR",
+      title: `Site returned client error (HTTP ${statusCode})`,
+      description: `The site responded with HTTP ${statusCode}. This suggests a misconfigured URL, missing resource, or routing issue.`,
+      severity: "HIGH",
+      fixPrompt: buildFixPrompt(
+        `Client error HTTP ${statusCode}`,
+        "1. Verify the monitored URL is correct.\n2. Check for broken routes or missing pages in your deployment.\n3. Review your redirect configuration.",
+      ),
+    });
+  }
+
+  if (responseTimeMs > 10000) {
+    findings.push({
+      code: "UPTIME_VERY_SLOW",
+      title: `Response time exceeds 10s (${responseTimeMs}ms)`,
+      description: `The site took ${responseTimeMs}ms to respond. Users experience severe latency and search rankings drop.`,
+      severity: "HIGH",
+      fixPrompt: buildFixPrompt(
+        "Very slow response time",
+        "1. Profile your server for slow database queries or blocking operations.\n2. Add caching at the edge or application layer.\n3. Check if your hosting region matches your user base.\n4. Review recent deployments for performance regressions.",
+      ),
+    });
+  } else if (responseTimeMs > 5000) {
+    findings.push({
+      code: "UPTIME_SLOW",
+      title: `Slow response time (${responseTimeMs}ms)`,
+      description: `The site took ${responseTimeMs}ms to respond. Google recommends under 200ms for Time to First Byte.`,
+      severity: "MEDIUM",
+      fixPrompt: buildFixPrompt(
+        "Slow response time",
+        "1. Investigate slow database queries or API calls.\n2. Enable caching for static and dynamic content.\n3. Consider a CDN for static assets.\n4. Profile server-side rendering performance.",
+      ),
     });
   }
 

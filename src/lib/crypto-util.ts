@@ -6,16 +6,15 @@ import { createCipheriv, createDecipheriv, randomBytes, createHash } from "crypt
  * Format: base64( iv[12] + authTag[16] + ciphertext )
  */
 
-const ENCRYPTION_KEY = (() => {
+function getEncryptionKey(): Buffer {
   const k = process.env.ENCRYPTION_KEY;
   if (!k) throw new Error("ENCRYPTION_KEY environment variable is required");
-  // Derive a 32-byte key using SHA-256 so any string length works
   return createHash("sha256").update(k).digest();
-})();
+}
 
 export function obfuscate(value: string): string {
   const iv = randomBytes(12);
-  const cipher = createCipheriv("aes-256-gcm", ENCRYPTION_KEY, iv);
+  const cipher = createCipheriv("aes-256-gcm", getEncryptionKey(), iv);
   const encrypted = Buffer.concat([cipher.update(value, "utf8"), cipher.final()]);
   const authTag = cipher.getAuthTag();
   // Concatenate iv + authTag + ciphertext and base64-encode
@@ -27,7 +26,7 @@ export function deobfuscate(encoded: string): string {
   const iv = data.subarray(0, 12);
   const authTag = data.subarray(12, 28);
   const ciphertext = data.subarray(28);
-  const decipher = createDecipheriv("aes-256-gcm", ENCRYPTION_KEY, iv);
+  const decipher = createDecipheriv("aes-256-gcm", getEncryptionKey(), iv);
   decipher.setAuthTag(authTag);
   return Buffer.concat([decipher.update(ciphertext), decipher.final()]).toString("utf8");
 }

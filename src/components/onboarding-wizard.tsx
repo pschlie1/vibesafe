@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 type Step = 1 | 2 | 3 | 4;
 
@@ -23,14 +23,12 @@ export function OnboardingWizard() {
   const [findings, setFindings] = useState<FindingSummary>({ total: 0, critical: 0, high: 0, medium: 0, low: 0, info: 0 });
   const [slackUrl, setSlackUrl] = useState("");
   const [alertEmail, setAlertEmail] = useState("");
-  const [dismissed, setDismissed] = useState(false);
-
-  // Check if already completed
-  useEffect(() => {
-    if (localStorage.getItem("vibesafe-onboarding-done") === "true") {
-      setDismissed(true);
+  const [dismissed, setDismissed] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("vibesafe-onboarding-done") === "true";
     }
-  }, []);
+    return false;
+  });
 
   if (dismissed) return null;
 
@@ -150,7 +148,7 @@ export function OnboardingWizard() {
           <div>
             <h2 className="text-xl font-semibold tracking-tight">Add your first app</h2>
             <p className="mt-1 text-sm text-gray-500">
-              We'll scan it for security issues in seconds.
+              We&apos;ll scan it for security issues in seconds.
             </p>
             <div className="mt-6 space-y-4">
               <div>
@@ -198,7 +196,7 @@ export function OnboardingWizard() {
         {/* Step 3: Results */}
         {step === 3 && (
           <div>
-            <h2 className="text-xl font-semibold tracking-tight">Here's what we found</h2>
+            <h2 className="text-xl font-semibold tracking-tight">Here&apos;s what we found</h2>
             <p className="mt-1 text-sm text-gray-500">
               {findings.total === 0
                 ? "No issues detected — your app looks great!"

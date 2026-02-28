@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { authenticateApiKey } from "@/lib/api-auth";
 import { db } from "@/lib/db";
 import { runHttpScanForApp } from "@/lib/scanner-http";
+import { logApiError } from "@/lib/observability";
 import type { FindingSeverity, FindingStatus } from "@/generated/prisma/client";
 
 // MCP JSON-RPC compatible endpoint
@@ -343,6 +344,13 @@ export async function POST(req: Request) {
       if (result === null) return err(id, -32602, `Unknown tool: ${toolName}`);
       return ok(id, { content: [{ type: "text", text: JSON.stringify(result) }] });
     } catch (e) {
+      logApiError(e, {
+        route: "/api/mcp",
+        method: "POST",
+        orgId,
+        statusCode: 500,
+        details: { method: "tools/call", toolName },
+      });
       const message = e instanceof Error ? e.message : "Internal error";
       return err(id, -32000, message);
     }

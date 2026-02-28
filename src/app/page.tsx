@@ -31,9 +31,11 @@ const tiers = [
       "Security header analysis",
       "SSL certificate expiry alerts",
       "Email alerts",
+      "Security score dashboard",
       "Weekly governance report",
     ],
     cta: "Start free trial",
+    ctaHref: "/signup",
     highlighted: false,
   },
   {
@@ -43,41 +45,62 @@ const tiers = [
     desc: "For IT teams managing a growing AI-built app portfolio",
     features: [
       "15 monitored apps",
-      "5 team members",
+      "10 team members",
       "4-hour scan intervals",
       "All 27 security checks",
       "Endpoint fuzzing (15 attack paths)",
       "Third-party script risk scoring",
       "Performance regression alerts",
       "Content change detection",
-      "Email + Slack alerts",
+      "Slack & webhook alerts",
       "PDF compliance reports",
+      "Compliance evidence packs",
       "API access",
-      "Full audit log",
     ],
     cta: "Start free trial",
-    highlighted: true,
+    ctaHref: "/signup",
+    highlighted: false,
   },
   {
     name: "Enterprise",
-    price: "$799",
+    price: "$1,500",
     period: "/month",
     desc: "For organizations with compliance and governance requirements",
     features: [
-      "50 monitored apps",
-      "Unlimited team members",
+      "100 monitored apps",
+      "50 team members",
       "1-hour scan intervals",
       "All 27 security checks",
+      "SSO / SAML",
+      "Dedicated support & SLA",
+      "Full audit logs",
       "SOC 2, ISO 27001, NIST CSF reports",
-      "Custom compliance report templates",
-      "SSO/SAML",
+      "Executive board reports",
       "All alert channels",
-      "Dependency CVE tracking",
       "API access",
-      "Dedicated support",
-      "Custom checks on request",
     ],
-    cta: "Contact sales",
+    cta: "Start free trial",
+    ctaHref: "/signup",
+    highlighted: true,
+  },
+  {
+    name: "Enterprise Plus",
+    price: "$2,500",
+    period: "/month",
+    desc: "For large organizations requiring unlimited scale and custom integrations",
+    features: [
+      "Unlimited monitored apps",
+      "Unlimited team members",
+      "1-hour scan intervals",
+      "Everything in Enterprise",
+      "Portfolio risk dashboard",
+      "Custom integrations",
+      "White-glove onboarding",
+      "Dedicated customer success",
+      "Custom SLAs",
+    ],
+    cta: "Talk to sales",
+    ctaHref: "mailto:sales@vibesafe.app",
     highlighted: false,
   },
 ];
@@ -423,7 +446,7 @@ export default function LandingPage() {
         <p className="mb-16 text-center text-dusty-denim-600">
           One exposed API key costs $50K–$500K to remediate. VibeSafe catches the exposure in your first scan.
         </p>
-        <div className="grid gap-8 md:grid-cols-3">
+        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
           {tiers.map((tier) => (
             <div
               key={tier.name}
@@ -446,7 +469,7 @@ export default function LandingPage() {
               </div>
               <p className={`mt-3 text-sm ${tier.highlighted ? "text-alabaster-grey-200" : "text-dusty-denim-600"}`}>{tier.desc}</p>
               <Link
-                href="/signup"
+                href={tier.ctaHref}
                 className={`mt-8 block rounded-lg py-3 text-center text-sm font-semibold transition-colors ${
                   tier.highlighted
                     ? "bg-prussian-blue-600 text-white hover:bg-prussian-blue-700"

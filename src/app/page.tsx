@@ -132,10 +132,6 @@ export default function LandingPage() {
       {/* Hero */}
       <section className="relative overflow-hidden px-6 pb-24 pt-24 sm:pb-32 sm:pt-32" style={{ background: "radial-gradient(ellipse at 50% 0%, #ebf2f9 0%, #f3f3f1 70%)" }}>
         <div className="mx-auto max-w-[1200px] text-center">
-          <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-prussian-blue-200 bg-prussian-blue-50 px-4 py-1.5 text-xs font-semibold text-prussian-blue-600">
-            <span className="h-1.5 w-1.5 rounded-full bg-prussian-blue-600" />
-            Trusted by 50+ engineering teams
-          </div>
           <h1 className="mx-auto max-w-4xl text-4xl font-extrabold leading-[1.1] tracking-[-0.02em] text-ink-black-950 sm:text-6xl lg:text-[3.75rem]">
             Your teams ship AI-built apps.
             <br />

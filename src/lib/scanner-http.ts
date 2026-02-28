@@ -2,12 +2,22 @@ import { addHours } from "date-fns";
 import { db } from "@/lib/db";
 import { getOrgLimits } from "@/lib/tenant";
 import {
+  checkAPISecurity,
   checkClientSideAuthBypass,
+  checkCookieSecurity,
+  checkCORSMisconfiguration,
+  checkDependencyExposure,
+  checkInformationDisclosure,
   checkInlineScripts,
   checkMetaAndConfig,
+  checkOpenRedirects,
   checkSecurityHeaders,
+  checkSSLCertExpiry,
+  checkSSLIssues,
+  checkUptimeStatus,
   scanJavaScriptForKeys,
 } from "@/lib/security";
+import { computeContentHash } from "@/lib/content-hash";
 import { sendCriticalFindingsAlert } from "@/lib/alerts";
 import { autoTriageFinding, verifyResolvedFindings } from "@/lib/remediation-lifecycle";
 import type { SecurityFinding } from "@/lib/types";
@@ -82,9 +92,40 @@ export async function runHttpScanForApp(appId: string, context: ScanContext = {}
       signal: AbortSignal.timeout(30000),
     });
 
+    const statusCode = response.status;
     const html = await response.text();
     const headers = new Headers(response.headers);
     const jsPayloads = await fetchJsAssets(app.url, html);
+
+    // Content change detection — compare hash to last recorded value
+    const contentHash = computeContentHash(html);
+    const lastHashLog = await db.auditLog.findFirst({
+      where: { orgId: app.orgId, action: "CONTENT_HASH", resource: app.id },
+      orderBy: { createdAt: "desc" },
+    });
+    const contentHashFindings: SecurityFinding[] = [];
+    if (lastHashLog?.details && lastHashLog.details !== contentHash) {
+      contentHashFindings.push({
+        code: "CONTENT_CHANGED",
+        title: "Page content changed since last scan",
+        description:
+          "The visible text content of this page differs from the previous scan. Verify this change was intentional.",
+        severity: "MEDIUM",
+        fixPrompt:
+          "Review the page content diff. If the change was unintended, check recent deployments or for unauthorised modifications.",
+      });
+    }
+    // Store the current hash for next scan comparison
+    await db.auditLog.create({
+      data: {
+        orgId: app.orgId,
+        action: "CONTENT_HASH",
+        resource: app.id,
+        details: contentHash,
+      },
+    });
+
+    const [sslCertFindings] = await Promise.all([checkSSLCertExpiry(app.url)]);
 
     const rawFindings: SecurityFinding[] = [
       ...checkSecurityHeaders(headers),
@@ -92,6 +133,16 @@ export async function runHttpScanForApp(appId: string, context: ScanContext = {}
       ...checkClientSideAuthBypass(html),
       ...checkInlineScripts(html),
       ...checkMetaAndConfig(html, headers),
+      ...checkCookieSecurity(headers),
+      ...checkCORSMisconfiguration(headers),
+      ...checkInformationDisclosure(html, headers),
+      ...checkSSLIssues(html, headers, app.url),
+      ...checkDependencyExposure(html),
+      ...checkAPISecurity(html, headers),
+      ...checkOpenRedirects(html),
+      ...sslCertFindings,
+      ...checkUptimeStatus(statusCode, Date.now() - start),
+      ...contentHashFindings,
     ];
 
     const findings = dedup(rawFindings);

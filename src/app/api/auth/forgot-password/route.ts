@@ -66,6 +66,17 @@ export async function POST(req: Request) {
   const user = await db.user.findFirst({ where: { email } });
 
   if (user) {
+    // Fix 6: Per-email rate limit to prevent email bombing via proxy rotation
+    const emailLimit = await checkRateLimit(`forgot-password-email:${email.toLowerCase()}`, {
+      maxAttempts: 3,
+      windowMs: 60 * 60 * 1000,
+      fallbackMode: "fail-open",
+    });
+    if (!emailLimit.allowed) {
+      // Return 200 to avoid leaking email existence
+      return NextResponse.json({ ok: true });
+    }
+
     const token = jwt.sign(
       { sub: user.id, purpose: "password-reset" },
       getJwtSecret(),

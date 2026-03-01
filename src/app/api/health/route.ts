@@ -49,9 +49,10 @@ export async function GET() {
     await db.$queryRaw`SELECT 1`;
     checks.database.latencyMs = Date.now() - dbStartedAt;
 
-    appCount = await db.monitoredApp.count();
+    appCount = await db.monitoredApp.count({ where: { orgId: session.orgId } });
 
     const lastRun = await db.monitorRun.findFirst({
+      where: { app: { orgId: session.orgId } },
       orderBy: { startedAt: "desc" },
       select: { startedAt: true, status: true },
     });

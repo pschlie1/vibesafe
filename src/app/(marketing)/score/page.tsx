@@ -298,7 +298,7 @@ function ScorePage() {
               <div>
                 <p className="text-xs font-medium text-gray-700">Share this score</p>
                 <p className="truncate text-xs text-gray-400">
-                  scantient.com/score?url={encodeURIComponent(result.url)}
+                  vibesafe-two.vercel.app/score?url={encodeURIComponent(result.url)}
                 </p>
               </div>
               <button

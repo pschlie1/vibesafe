@@ -3,7 +3,8 @@ import { withSentryConfig } from "@sentry/nextjs";
 
 const ALLOWED_ORIGIN =
   process.env.NODE_ENV === "production"
-    ? "https://vibesafe-two.vercel.app"
+    ? "https://scantient.com"
+
     : "http://localhost:3000";
 
 const nextConfig: NextConfig = {

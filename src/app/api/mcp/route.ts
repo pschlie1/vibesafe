@@ -3,6 +3,8 @@ import { authenticateApiKey } from "@/lib/api-auth";
 import { db } from "@/lib/db";
 import { runHttpScanForApp } from "@/lib/scanner-http";
 import { logApiError } from "@/lib/observability";
+import { checkRateLimit } from "@/lib/rate-limit";
+import { getOrgLimits } from "@/lib/tenant";
 import type { FindingSeverity, FindingStatus } from "@prisma/client";
 
 // MCP JSON-RPC compatible endpoint
@@ -189,6 +191,23 @@ async function executeTool(name: string, args: Record<string, unknown>, orgId: s
       const appId = args.appId as string;
       const app = await verifyAppOwnership(appId, orgId);
       if (!app) return { error: "App not found or access denied" };
+
+      // Enforce per-tier rate limits (same thresholds as /api/scan/[id])
+      const limits = await getOrgLimits(orgId);
+      const scanTier = limits.tier;
+      const maxScans =
+        scanTier === "ENTERPRISE" || scanTier === "ENTERPRISE_PLUS" ? 200
+        : scanTier === "PRO" ? 50
+        : scanTier === "STARTER" ? 10
+        : 3;
+
+      const rl = await checkRateLimit(`mcp-scan:${orgId}`, {
+        maxAttempts: maxScans,
+        windowMs: 86400000,
+      });
+      if (!rl.allowed) {
+        return { error: "Rate limit exceeded. Upgrade for more scans." };
+      }
 
       const result = await runHttpScanForApp(appId);
       return {

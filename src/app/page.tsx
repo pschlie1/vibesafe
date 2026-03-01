@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import Footer from "@/components/footer";
 
@@ -133,12 +134,12 @@ const testimonials = [
 ];
 
 const integrations = [
-  { name: "GitHub", icon: "⬡" },
-  { name: "Vercel", icon: "▲" },
-  { name: "Slack", icon: "◈" },
-  { name: "Netlify", icon: "◆" },
-  { name: "Jira", icon: "◉" },
-  { name: "PagerDuty", icon: "◎" },
+  { name: "GitHub", logo: "/logos/github.svg" },
+  { name: "Vercel", logo: "/logos/vercel.svg" },
+  { name: "Slack", logo: "/logos/slack.svg" },
+  { name: "Netlify", logo: "/logos/netlify.svg" },
+  { name: "Jira", logo: "/logos/jira.svg" },
+  { name: "PagerDuty", logo: "/logos/pagerduty.svg" },
 ];
 
 const faqs = [
@@ -404,8 +405,8 @@ export default function LandingPage() {
         <div className="flex flex-wrap items-center justify-center gap-8">
           {integrations.map((i) => (
             <div key={i.name} className="flex flex-col items-center gap-3">
-              <div className="flex h-16 w-16 items-center justify-center rounded-xl border border-alabaster-grey-200 bg-white text-2xl shadow-sm">
-                {i.icon}
+              <div className="flex h-16 w-16 items-center justify-center rounded-xl border border-alabaster-grey-200 bg-white p-3 shadow-sm">
+                <Image src={i.logo} alt={i.name} width={40} height={40} className="h-full w-full object-contain" />
               </div>
               <span className="text-xs font-medium text-dusty-denim-600">{i.name}</span>
             </div>

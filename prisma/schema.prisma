@@ -157,6 +157,8 @@ model MonitoredApp {
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
 
+  authHeaders     String?   // encrypted JSON: [{name: string, value: string}]
+
   monitorRuns     MonitorRun[]
 
   @@unique([orgId, url])

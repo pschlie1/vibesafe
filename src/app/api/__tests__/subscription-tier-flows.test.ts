@@ -72,6 +72,7 @@ vi.mock("@/lib/db", () => ({
     apiKey: {
       create: apiKeyCreate,
       findMany: apiKeyFindMany,
+      count: vi.fn().mockResolvedValue(0),
     },
     organization: { findUnique: organizationFindUnique },
     sSOConfig: {

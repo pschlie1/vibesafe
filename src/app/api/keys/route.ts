@@ -44,6 +44,24 @@ export async function POST(req: Request) {
     );
   }
 
+  // Fix 5: Enforce per-tier API key caps
+  const KEY_CAPS: Record<string, number> = {
+    PRO: 5,
+    ENTERPRISE: 20,
+    ENTERPRISE_PLUS: 50,
+  };
+
+  const cap = KEY_CAPS[limits.tier] ?? 0;
+  if (cap > 0) {
+    const existingCount = await db.apiKey.count({ where: { orgId: session.orgId } });
+    if (existingCount >= cap) {
+      return NextResponse.json(
+        { error: `Your ${limits.tier} plan allows up to ${cap} API keys. Delete an existing key to create a new one.` },
+        { status: 403 },
+      );
+    }
+  }
+
   const body = await req.json();
   const parsed = createSchema.safeParse(body);
   if (!parsed.success) return NextResponse.json({ error: "Name required" }, { status: 400 });

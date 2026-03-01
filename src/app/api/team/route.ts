@@ -4,6 +4,7 @@ import { addDays } from "date-fns";
 import { db } from "@/lib/db";
 import { getSession } from "@/lib/auth";
 import { canAddUser, logAudit } from "@/lib/tenant";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export async function GET() {
   const session = await getSession();
@@ -90,6 +91,19 @@ async function sendInviteEmail(
 export async function POST(req: Request) {
   const session = await getSession();
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  // Fix 4: Rate limit invitations per org to prevent spam (10 per hour)
+  const inviteLimit = await checkRateLimit(`team-invite:${session.orgId}`, {
+    maxAttempts: 10,
+    windowMs: 60 * 60 * 1000,
+    fallbackMode: "fail-closed",
+  });
+  if (!inviteLimit.allowed) {
+    return NextResponse.json(
+      { error: "Too many invitations sent. Try again later." },
+      { status: 429 },
+    );
+  }
 
   // Only OWNER and ADMIN can invite
   if (!["OWNER", "ADMIN"].includes(session.role)) {

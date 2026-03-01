@@ -1,5 +1,8 @@
 import { db } from "@/lib/db";
 import type { SecurityFinding } from "@/lib/types";
+import { sendTeamsNotification } from "@/lib/teams-notify";
+import { createPagerDutyIncident } from "@/lib/pagerduty-notify";
+import { signWebhookPayload } from "@/lib/webhook-signature";
 
 /**
  * Retry a function with exponential backoff.
@@ -92,10 +95,16 @@ function isTeamsWebhookUrl(url: string): boolean {
 }
 
 async function sendWebhook(url: string, payload: Record<string, unknown>) {
+  const body = JSON.stringify(payload);
+  const signature = signWebhookPayload(body, url);
   await fetch(url, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
+    headers: {
+      "Content-Type": "application/json",
+      "X-Scantient-Signature": signature,
+      "X-Scantient-Timestamp": new Date().toISOString(),
+    },
+    body,
   });
 }
 
@@ -155,12 +164,23 @@ export async function sendCriticalFindingsAlert(appId: string, findings: Securit
               facts,
             ));
           } else {
+            const dashboardUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? "https://scantient.com"}/dashboard`;
+            const topFinding = relevant[0];
             await withRetry(() => sendWebhook(config.destination, {
-              event: "findings.detected",
+              event: topFinding?.severity === "CRITICAL" ? "finding.critical" : "finding.new",
+              org: { id: app.orgId, name: app.org.name },
               app: { id: app.id, name: app.name, url: app.url },
-              findings: relevant,
+              findings: relevant.map((f) => ({
+                code: f.code,
+                title: f.title,
+                severity: f.severity,
+                description: f.description,
+                fixPrompt: f.fixPrompt,
+              })),
+              findingsCount: relevant.length,
+              dashboardUrl,
               timestamp: new Date().toISOString(),
-            }));
+            }), 3, 1000);
           }
           break;
         }
@@ -186,6 +206,85 @@ export async function sendCriticalFindingsAlert(appId: string, findings: Securit
         },
       });
     }
+  }
+
+  // Fire Teams integration (from IntegrationConfig, if configured)
+  await fireTeamsIntegration(app.orgId, app.name, app.url, findings);
+
+  // Fire PagerDuty for CRITICAL findings (ENTERPRISE+ only, from IntegrationConfig)
+  const criticals = findings.filter((f) => f.severity === "CRITICAL");
+  if (criticals.length > 0) {
+    await firePagerDutyIntegration(app.orgId, app.name, app.url, criticals, app.org.name);
+  }
+}
+
+async function firePagerDutyIntegration(
+  orgId: string,
+  appName: string,
+  appUrl: string,
+  criticals: SecurityFinding[],
+  orgName: string,
+) {
+  try {
+    const { deobfuscate } = await import("@/lib/crypto-util");
+    const pdIntegration = await db.integrationConfig.findUnique({
+      where: { orgId_type: { orgId, type: "pagerduty" } },
+    });
+    if (!pdIntegration || !pdIntegration.enabled) return;
+
+    const cfg = pdIntegration.config as Record<string, string>;
+    const routingKey = deobfuscate(cfg.routingKey);
+
+    const summary = `[Scantient] ${criticals.length} CRITICAL finding(s) on ${appName}: ${criticals[0]?.title ?? "Security issue detected"}`;
+    await createPagerDutyIncident(routingKey, {
+      summary,
+      severity: "critical",
+      source: appUrl,
+      component: appName,
+      group: orgName,
+      customDetails: {
+        findings_count: String(criticals.length),
+        top_finding: criticals[0]?.title ?? "",
+        app_url: appUrl,
+        dashboard_url: "https://scantient.com/dashboard",
+      },
+    });
+  } catch {
+    // Non-fatal: PagerDuty integration errors should not block alert delivery
+  }
+}
+
+async function fireTeamsIntegration(
+  orgId: string,
+  appName: string,
+  appUrl: string,
+  findings: SecurityFinding[],
+) {
+  try {
+    const { deobfuscate } = await import("@/lib/crypto-util");
+    const teamsIntegration = await db.integrationConfig.findUnique({
+      where: { orgId_type: { orgId, type: "teams" } },
+    });
+    if (!teamsIntegration || !teamsIntegration.enabled) return;
+
+    const cfg = teamsIntegration.config as Record<string, string>;
+    const webhookUrl = deobfuscate(cfg.webhookUrl);
+
+    const criticals = findings.filter((f) => f.severity === "CRITICAL");
+    const highs = findings.filter((f) => f.severity === "HIGH");
+    const topSeverity = criticals.length > 0 ? "critical" : highs.length > 0 ? "high" : "medium";
+
+    const lines = findings.slice(0, 5).map((f) => `• [${f.severity}] ${f.title}`).join("\n");
+    await sendTeamsNotification(webhookUrl, {
+      title: `⚠️ Scantient Alert: ${appName}`,
+      text: `${findings.length} security issue(s) detected on ${appUrl}\n\n${lines}`,
+      severity: topSeverity,
+      appName,
+      appUrl,
+      dashboardUrl: "https://scantient.com/dashboard",
+    });
+  } catch {
+    // Non-fatal: Teams integration errors should not block alert delivery
   }
 }
 

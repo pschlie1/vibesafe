@@ -33,11 +33,11 @@ export async function POST(req: Request) {
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   if (!["OWNER", "ADMIN"].includes(session.role)) {
-    return NextResponse.json({ error: "Only admins can create API keys" }, { status: 403 });
+    return NextResponse.json({ error: "Admin access required to create API keys" }, { status: 403 });
   }
 
   const limits = await getOrgLimits(session.orgId);
-  if (!["PRO", "ENTERPRISE"].includes(limits.tier)) {
+  if (!["PRO", "ENTERPRISE", "ENTERPRISE_PLUS"].includes(limits.tier)) {
     return NextResponse.json(
       { error: "API key access is available on Pro and Enterprise plans. Please upgrade to continue." },
       { status: 403 },

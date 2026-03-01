@@ -136,7 +136,9 @@ const testimonials = [
 const integrations = {
   live: [
     { name: "Jira", logo: "/logos/jira.svg" },
-    { name: "GitHub Actions", logo: "/logos/github.svg" },
+    { name: "GitHub", logo: "/logos/github.svg" },
+    { name: "Microsoft Teams", logo: "/logos/teams.svg" },
+    { name: "PagerDuty", logo: "/logos/pagerduty.svg" },
     { name: "Okta", logo: "/logos/okta.svg" },
     { name: "Azure AD", logo: "/logos/azure.svg" },
     { name: "Google Workspace", logo: "/logos/google.svg" },
@@ -144,7 +146,6 @@ const integrations = {
   ],
   soon: [
     { name: "Slack", logo: "/logos/slack.svg" },
-    { name: "PagerDuty", logo: "/logos/pagerduty.svg" },
     { name: "Vercel", logo: "/logos/vercel.svg" },
     { name: "Netlify", logo: "/logos/netlify.svg" },
     { name: "Datadog", logo: "/logos/datadog.svg" },

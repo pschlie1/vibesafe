@@ -2,7 +2,10 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { db } from "@/lib/db";
 import { requireRole } from "@/lib/auth";
+import { getOrgLimits } from "@/lib/tenant";
 import { obfuscate } from "@/lib/crypto-util";
+
+const SSO_TIERS = ["ENTERPRISE", "ENTERPRISE_PLUS"];
 
 const ssoSchema = z.object({
   provider: z.enum(["oidc", "saml"]),
@@ -17,6 +20,13 @@ const ssoSchema = z.object({
 export async function GET() {
   try {
     const session = await requireRole(["OWNER"]);
+    const limits = await getOrgLimits(session.orgId);
+    if (!SSO_TIERS.includes(limits.tier)) {
+      return NextResponse.json(
+        { error: "SSO is available on Enterprise plans only. Upgrade to configure single sign-on." },
+        { status: 403 },
+      );
+    }
     const ssoConfig = await db.sSOConfig.findUnique({ where: { orgId: session.orgId } });
     if (!ssoConfig) return NextResponse.json(null);
     return NextResponse.json({ id: ssoConfig.id, provider: ssoConfig.provider, clientId: ssoConfig.clientId, clientSecret: ssoConfig.clientSecret ? "••••••••" : null, tenantId: ssoConfig.tenantId, domain: ssoConfig.domain, discoveryUrl: ssoConfig.discoveryUrl, enabled: ssoConfig.enabled });
@@ -29,6 +39,13 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const session = await requireRole(["OWNER"]);
+    const limits = await getOrgLimits(session.orgId);
+    if (!SSO_TIERS.includes(limits.tier)) {
+      return NextResponse.json(
+        { error: "SSO is available on Enterprise plans only. Upgrade to configure single sign-on." },
+        { status: 403 },
+      );
+    }
     const body = await req.json();
     const parsed = ssoSchema.safeParse(body);
     if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
@@ -50,6 +67,13 @@ export async function POST(req: Request) {
 export async function DELETE() {
   try {
     const session = await requireRole(["OWNER"]);
+    const limits = await getOrgLimits(session.orgId);
+    if (!SSO_TIERS.includes(limits.tier)) {
+      return NextResponse.json(
+        { error: "SSO is available on Enterprise plans only. Upgrade to configure single sign-on." },
+        { status: 403 },
+      );
+    }
     await db.sSOConfig.deleteMany({ where: { orgId: session.orgId } });
     return NextResponse.json({ ok: true });
   } catch (err) {

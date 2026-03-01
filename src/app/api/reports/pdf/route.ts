@@ -10,7 +10,7 @@ export async function GET() {
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const limits = await getOrgLimits(session.orgId);
-  if (!["PRO", "ENTERPRISE"].includes(limits.tier)) {
+  if (!["PRO", "ENTERPRISE", "ENTERPRISE_PLUS"].includes(limits.tier)) {
     return NextResponse.json(
       { error: "PDF reports are available on Pro and Enterprise plans" },
       { status: 403 },

@@ -21,6 +21,7 @@ const TIER_CHANNELS: Record<string, string[]> = {
   STARTER: ["EMAIL"],
   PRO: ["EMAIL", "SLACK"],
   ENTERPRISE: ["EMAIL", "SLACK", "WEBHOOK"],
+  ENTERPRISE_PLUS: ["EMAIL", "SLACK", "WEBHOOK"],
   EXPIRED: [],
 };
 

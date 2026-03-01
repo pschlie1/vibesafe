@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
   }
 
   const limits = await getOrgLimits(session.orgId);
-  if (!["PRO", "ENTERPRISE"].includes(limits.tier)) {
+  if (!["PRO", "ENTERPRISE", "ENTERPRISE_PLUS"].includes(limits.tier)) {
     return NextResponse.json(
       { error: "Evidence packs are available on Pro and Enterprise plans" },
       { status: 403 },

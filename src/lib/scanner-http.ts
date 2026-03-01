@@ -3,6 +3,7 @@ import { lookup } from "dns/promises";
 import { isIP } from "net";
 import { db } from "@/lib/db";
 import { getOrgLimits } from "@/lib/tenant";
+import { decryptAuthHeaders } from "@/lib/auth-headers";
 import {
   checkAPISecurity,
   checkBrokenLinks,
@@ -143,11 +144,20 @@ export async function runHttpScanForApp(appId: string, context: ScanContext = {}
       throw new Error("SSRF: private/internal URLs are not allowed");
     }
 
+    const extraHeaders: Record<string, string> = {};
+    if (app.authHeaders) {
+      const authHdrs = decryptAuthHeaders(app.authHeaders);
+      for (const h of authHdrs) {
+        extraHeaders[h.name] = h.value;
+      }
+    }
+
     const response = await fetch(app.url, {
       method: "GET",
       headers: {
         "User-Agent": "Scantient/1.0 (Security Monitor)",
         Accept: "text/html,application/xhtml+xml",
+        ...extraHeaders,
       },
       redirect: "follow",
       signal: AbortSignal.timeout(30000),

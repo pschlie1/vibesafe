@@ -424,7 +424,7 @@ export default function LandingPage() {
           {integrations.live.map((i) => (
             <div key={i.name} className="flex flex-col items-center gap-2.5">
               <div className="flex h-16 w-16 items-center justify-center rounded-xl border border-alabaster-grey-200 bg-white p-3 shadow-sm">
-                <Image src={i.logo} alt={i.name} width={40} height={40} className="h-full w-full object-contain" />
+                <Image src={i.logo} alt={i.name} width={40} height={40} unoptimized className="h-full w-full object-contain" />
               </div>
               <span className="text-xs font-medium text-dusty-denim-600">{i.name}</span>
             </div>
@@ -441,7 +441,7 @@ export default function LandingPage() {
           {integrations.soon.map((i) => (
             <div key={i.name} className="flex flex-col items-center gap-2.5 opacity-40">
               <div className="flex h-16 w-16 items-center justify-center rounded-xl border border-alabaster-grey-200 bg-white p-3 shadow-sm grayscale">
-                <Image src={i.logo} alt={i.name} width={40} height={40} className="h-full w-full object-contain" />
+                <Image src={i.logo} alt={i.name} width={40} height={40} unoptimized className="h-full w-full object-contain" />
               </div>
               <span className="text-xs font-medium text-dusty-denim-400">{i.name}</span>
             </div>

@@ -105,6 +105,7 @@ export default function BillingPage() {
                 ) : plan.talkToSales ? (
                   <a
                     href="mailto:sales@scantient.com"
+
                     className="mt-3 block w-full rounded border border-black py-1.5 text-center text-sm font-medium text-black hover:bg-gray-50"
                   >
                     Talk to sales

@@ -481,6 +481,7 @@ export default function LandingPage() {
         <h2 className="mb-3 text-center text-3xl font-extrabold tracking-[-0.02em] text-ink-black-950 sm:text-4xl">Simple, transparent pricing</h2>
         <p className="mb-16 text-center text-dusty-denim-600">
           One exposed API key can cost up to $4.88M to remediate (IBM Cost of a Data Breach 2024). Scantient catches the exposure in your first scan.
+
         </p>
         <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
           {tiers.map((tier) => (

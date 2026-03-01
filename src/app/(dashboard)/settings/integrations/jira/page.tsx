@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 interface JiraConfig {
   url: string;
@@ -47,7 +48,7 @@ export default function JiraIntegrationPage() {
         <div className="rounded-lg border border-gray-200 bg-gray-50 p-8 text-center">
           <h3 className="mb-2 text-lg font-semibold text-gray-900">Available on Pro &amp; Enterprise</h3>
           <p className="mb-6 text-sm text-gray-600">Connect Scantient to Jira to automatically create tickets from security findings.</p>
-          <a href="/settings/billing" className="inline-block rounded-lg bg-black px-6 py-2.5 text-sm font-medium text-white hover:bg-gray-800 transition">Upgrade to Pro</a>
+          <Link href="/settings/billing" className="inline-block rounded-lg bg-black px-6 py-2.5 text-sm font-medium text-white hover:bg-gray-800 transition">Upgrade to Pro</Link>
         </div>
       </div>
     );

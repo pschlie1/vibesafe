@@ -9,9 +9,11 @@
  *
  * audit-10: Added because no error boundaries existed, meaning client-side
  * rendering errors showed raw error messages to users.
+ * audit-14: Sentry.captureException is now called so errors reach the DSN.
  */
 
 import { useEffect } from "react";
+import * as Sentry from "@sentry/nextjs";
 
 interface ErrorBoundaryProps {
   error: Error & { digest?: string };
@@ -20,8 +22,8 @@ interface ErrorBoundaryProps {
 
 export default function GlobalError({ error, reset }: ErrorBoundaryProps) {
   useEffect(() => {
-    // Report to Sentry (or any error tracking service)
-    // Sentry.captureException(error);
+    // Report to Sentry — only fires if NEXT_PUBLIC_SENTRY_DSN is set
+    Sentry.captureException(error);
     console.error("[GlobalError]", error.digest ?? error.name);
   }, [error]);
 

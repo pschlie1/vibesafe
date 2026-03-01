@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import MarketingNav from "@/components/marketing-nav";
 import Footer from "@/components/footer";
 
@@ -58,7 +59,7 @@ export default function GitHubActionsPage() {
       <MarketingNav />
       <main className="mx-auto max-w-4xl px-4 py-16 sm:px-6">
         <div className="mb-4">
-          <a href="/docs" className="text-sm text-gray-500 hover:text-gray-900">← Docs</a>
+          <Link href="/docs" className="text-sm text-gray-500 hover:text-gray-900">← Docs</Link>
         </div>
 
         <h1 className="mb-2 text-3xl font-bold">GitHub Actions CI Integration</h1>
@@ -70,7 +71,7 @@ export default function GitHubActionsPage() {
         <section className="mb-12">
           <h2 className="mb-4 text-xl font-semibold">Quick Start</h2>
           <ol className="mb-6 list-decimal space-y-2 pl-5 text-sm text-gray-700">
-            <li>Generate an API key in <a href="/settings/api-keys" className="text-blue-600 underline">Settings → API Keys</a>.</li>
+            <li>Generate an API key in <Link href="/settings/api-keys" className="text-blue-600 underline">Settings → API Keys</Link>.</li>
             <li>Add it as a GitHub secret named <code className="rounded bg-gray-100 px-1.5 py-0.5 text-xs">SCANTIENT_API_KEY</code>.</li>
             <li>Set your app URL as an environment variable or inline in the workflow.</li>
             <li>Add the workflow below to <code className="rounded bg-gray-100 px-1.5 py-0.5 text-xs">.github/workflows/scantient.yml</code>.</li>

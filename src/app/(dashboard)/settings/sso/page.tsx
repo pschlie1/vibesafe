@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 type UiProvider = "okta" | "azure" | "google" | "custom";
 
@@ -60,7 +61,7 @@ export default function SSOPage() {
         <div className="rounded-lg border border-gray-200 bg-gray-50 p-8 text-center">
           <h3 className="mb-2 text-lg font-semibold text-gray-900">SSO is available on the Enterprise plan</h3>
           <p className="mb-6 text-sm text-gray-600">Enable OIDC-based single sign-on with Okta, Azure AD, Google Workspace, or any standards-compliant IdP.</p>
-          <a href="/settings/billing" className="inline-block rounded-lg bg-black px-6 py-2.5 text-sm font-medium text-white hover:bg-gray-800 transition">Upgrade to Enterprise</a>
+          <Link href="/settings/billing" className="inline-block rounded-lg bg-black px-6 py-2.5 text-sm font-medium text-white hover:bg-gray-800 transition">Upgrade to Enterprise</Link>
         </div>
       </div>
     );

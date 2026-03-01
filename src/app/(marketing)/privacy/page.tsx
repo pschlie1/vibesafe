@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import MarketingNav from "@/components/marketing-nav";
 import Footer from "@/components/footer";
 
@@ -63,7 +64,7 @@ export default function PrivacyPage() {
           <h2 className="mt-8 text-lg font-semibold text-gray-900">8. Cookies</h2>
           <p className="mt-3 text-gray-600">
             We use cookies for authentication and basic analytics. See our{" "}
-            <a href="/cookie-policy" className="text-black underline hover:no-underline">Cookie Policy</a> for details.
+            <Link href="/cookie-policy" className="text-black underline hover:no-underline">Cookie Policy</Link> for details.
           </p>
 
           <h2 className="mt-8 text-lg font-semibold text-gray-900">9. Changes to this policy</h2>

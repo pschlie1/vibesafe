@@ -1,4 +1,6 @@
 import { PrismaClient } from "@prisma/client";
+// Validate required env vars at startup (fail-fast before any DB connection attempt)
+import "@/lib/env";
 
 declare global {
   var prisma: PrismaClient | undefined;

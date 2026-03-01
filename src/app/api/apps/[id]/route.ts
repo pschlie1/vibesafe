@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { getSession } from "@/lib/auth";
 import { logAudit } from "@/lib/tenant";
 import { isPrivateUrl } from "@/lib/ssrf-guard";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 const updateAppSchema = z.object({
   name: z.string().min(1).optional(),
@@ -38,6 +39,17 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
 
   if (["VIEWER", "MEMBER"].includes(session.role)) {
     return NextResponse.json({ error: "Viewers have read-only access" }, { status: 403 });
+  }
+
+  const rl = await checkRateLimit(`app-update:${session.orgId}`, {
+    maxAttempts: 30,
+    windowMs: 60 * 60 * 1000,
+  });
+  if (!rl.allowed) {
+    return NextResponse.json({ error: "Too many requests. Please try again later." }, {
+      status: 429,
+      headers: { "Retry-After": String(rl.retryAfterSeconds ?? 60) },
+    });
   }
 
   const { id } = await params;
@@ -75,6 +87,17 @@ export async function DELETE(_req: Request, { params }: { params: Promise<{ id: 
 
   if (["VIEWER", "MEMBER"].includes(session.role)) {
     return NextResponse.json({ error: "Viewers have read-only access" }, { status: 403 });
+  }
+
+  const rl = await checkRateLimit(`app-delete:${session.orgId}`, {
+    maxAttempts: 20,
+    windowMs: 60 * 60 * 1000,
+  });
+  if (!rl.allowed) {
+    return NextResponse.json({ error: "Too many requests. Please try again later." }, {
+      status: 429,
+      headers: { "Retry-After": String(rl.retryAfterSeconds ?? 60) },
+    });
   }
 
   const { id } = await params;

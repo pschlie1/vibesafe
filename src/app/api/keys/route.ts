@@ -4,6 +4,7 @@ import crypto from "node:crypto";
 import { db } from "@/lib/db";
 import { getSession } from "@/lib/auth";
 import { logAudit, getOrgLimits } from "@/lib/tenant";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 function generateApiKey(): { plain: string; hash: string; prefix: string } {
   const raw = crypto.randomBytes(32).toString("base64url");
@@ -35,6 +36,17 @@ export async function POST(req: Request) {
 
   if (!["OWNER", "ADMIN"].includes(session.role)) {
     return NextResponse.json({ error: "Admin access required to create API keys" }, { status: 403 });
+  }
+
+  const rl = await checkRateLimit(`api-key-create:${session.orgId}`, {
+    maxAttempts: 10,
+    windowMs: 60 * 60 * 1000,
+  });
+  if (!rl.allowed) {
+    return NextResponse.json({ error: "Too many requests. Please try again later." }, {
+      status: 429,
+      headers: { "Retry-After": String(rl.retryAfterSeconds ?? 60) },
+    });
   }
 
   const limits = await getOrgLimits(session.orgId);

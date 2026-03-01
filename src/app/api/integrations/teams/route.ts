@@ -5,6 +5,7 @@ import { requireRole } from "@/lib/auth";
 import { getOrgLimits } from "@/lib/tenant";
 import { obfuscate } from "@/lib/crypto-util";
 import { isPrivateUrl } from "@/lib/ssrf-guard";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 const TEAMS_TIERS = ["PRO", "ENTERPRISE", "ENTERPRISE_PLUS"];
 
@@ -64,6 +65,16 @@ export async function POST(req: Request) {
         { status: 403 },
       );
     }
+    const rl = await checkRateLimit(`integration-teams:${session.orgId}`, {
+      maxAttempts: 20,
+      windowMs: 60 * 60 * 1000,
+    });
+    if (!rl.allowed) {
+      return NextResponse.json({ error: "Too many requests. Please try again later." }, {
+        status: 429,
+        headers: { "Retry-After": String(rl.retryAfterSeconds ?? 60) },
+      });
+    }
     const body = await req.json();
     const parsed = teamsConfigSchema.safeParse(body);
     if (!parsed.success) {
@@ -98,6 +109,16 @@ export async function DELETE() {
         { error: "Microsoft Teams alerts are available on Pro and Enterprise plans." },
         { status: 403 },
       );
+    }
+    const rl = await checkRateLimit(`integration-teams:${session.orgId}`, {
+      maxAttempts: 20,
+      windowMs: 60 * 60 * 1000,
+    });
+    if (!rl.allowed) {
+      return NextResponse.json({ error: "Too many requests. Please try again later." }, {
+        status: 429,
+        headers: { "Retry-After": String(rl.retryAfterSeconds ?? 60) },
+      });
     }
     await db.integrationConfig.deleteMany({
       where: { orgId: session.orgId, type: "teams" },

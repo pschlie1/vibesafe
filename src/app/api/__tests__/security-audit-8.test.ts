@@ -120,7 +120,7 @@ vi.mock("@/lib/ssrf-guard", () => ({
 
 // ─── Global beforeEach: reset all mocks ──────────────────────────────────────
 beforeEach(() => {
-  vi.clearAllMocks();
+  vi.resetAllMocks();
   // Safe defaults
   hashPassword.mockResolvedValue("hashed");
   createSession.mockResolvedValue({ id: "u1", email: "user@example.com", orgId: "org1", role: "MEMBER", orgName: "Test", orgSlug: "test" });

@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { requireRole } from "@/lib/auth";
 import { getOrgLimits } from "@/lib/tenant";
 import { obfuscate, deobfuscate } from "@/lib/crypto-util";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 const GITHUB_TIERS = ["PRO", "ENTERPRISE", "ENTERPRISE_PLUS"];
 
@@ -56,6 +57,16 @@ export async function POST(req: Request) {
         { status: 403 },
       );
     }
+    const rl = await checkRateLimit(`integration-github:${session.orgId}`, {
+      maxAttempts: 20,
+      windowMs: 60 * 60 * 1000,
+    });
+    if (!rl.allowed) {
+      return NextResponse.json({ error: "Too many requests. Please try again later." }, {
+        status: 429,
+        headers: { "Retry-After": String(rl.retryAfterSeconds ?? 60) },
+      });
+    }
     const body = await req.json();
     const parsed = githubConfigSchema.safeParse(body);
     if (!parsed.success) {
@@ -84,6 +95,16 @@ export async function DELETE() {
         { error: "GitHub Issues integration is available on Pro and Enterprise plans." },
         { status: 403 },
       );
+    }
+    const rl = await checkRateLimit(`integration-github:${session.orgId}`, {
+      maxAttempts: 20,
+      windowMs: 60 * 60 * 1000,
+    });
+    if (!rl.allowed) {
+      return NextResponse.json({ error: "Too many requests. Please try again later." }, {
+        status: 429,
+        headers: { "Retry-After": String(rl.retryAfterSeconds ?? 60) },
+      });
     }
     await db.integrationConfig.deleteMany({
       where: { orgId: session.orgId, type: "github" },

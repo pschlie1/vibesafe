@@ -110,6 +110,25 @@ export async function POST(req: Request) {
       break;
     }
 
+    case "invoice.payment_failed": {
+      const obj = event.data.object as Stripe.Invoice;
+      // Stripe SDK v20+: subscription ID lives under parent.subscription_details.subscription
+      const rawSub = obj.parent?.subscription_details?.subscription;
+      const subscriptionId: string | null = typeof rawSub === "string" ? rawSub : (rawSub as Stripe.Subscription | null)?.id ?? null;
+      if (!subscriptionId) break;
+
+      const existing = await db.subscription.findFirst({
+        where: { stripeSubscriptionId: subscriptionId },
+      });
+      if (!existing) break;
+
+      await db.subscription.update({
+        where: { id: existing.id },
+        data: { status: "PAST_DUE" },
+      });
+      break;
+    }
+
     case "customer.subscription.deleted": {
       const obj = event.data.object as Stripe.Subscription;
       const existing = await db.subscription.findFirst({

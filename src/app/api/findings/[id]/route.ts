@@ -3,6 +3,7 @@ import { z } from "zod";
 import { db } from "@/lib/db";
 import { getSession } from "@/lib/auth";
 import { trackEvent } from "@/lib/analytics";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 const updateFindingSchema = z.object({
   status: z.enum(["OPEN", "ACKNOWLEDGED", "IN_PROGRESS", "RESOLVED", "IGNORED"]),
@@ -40,6 +41,17 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
 
   if (session.role === "VIEWER") {
     return NextResponse.json({ error: "Viewers have read-only access" }, { status: 403 });
+  }
+
+  const rl = await checkRateLimit(`finding-update:${session.orgId}`, {
+    maxAttempts: 120,
+    windowMs: 60 * 60 * 1000,
+  });
+  if (!rl.allowed) {
+    return NextResponse.json({ error: "Too many requests. Please try again later." }, {
+      status: 429,
+      headers: { "Retry-After": String(rl.retryAfterSeconds ?? 60) },
+    });
   }
 
   const { id } = await params;

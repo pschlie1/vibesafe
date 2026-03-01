@@ -27,7 +27,7 @@ const tiers = [
       "5 monitored apps",
       "2 team members",
       "8-hour scan intervals",
-      "27 security checks per scan",
+      "20 security checks per scan",
       "Exposed API key detection",
       "Security header analysis",
       "SSL certificate expiry alerts",
@@ -48,7 +48,7 @@ const tiers = [
       "15 monitored apps",
       "10 team members",
       "4-hour scan intervals",
-      "All 27 security checks",
+      "All 20 security checks",
       "Endpoint fuzzing (15 attack paths)",
       "Third-party script risk scoring",
       "Performance regression alerts",
@@ -71,7 +71,7 @@ const tiers = [
       "100 monitored apps",
       "50 team members",
       "1-hour scan intervals",
-      "All 27 security checks",
+      "All 20 security checks",
       "SSO / SAML",
       "Dedicated support & SLA",
       "Full audit logs",
@@ -297,9 +297,9 @@ export default function LandingPage() {
       <section className="border-b border-alabaster-grey-200 bg-white py-16">
         <div className="mx-auto flex max-w-[1200px] flex-wrap items-center justify-center gap-12 px-6 text-center">
           {[
-            { value: "27+", label: "security checks per scan" },
+            { value: "20+", label: "security checks per scan" },
             { value: "15", label: "attack paths probed per app" },
-            { value: "$50K–$500K", label: "average cost of one undetected breach" },
+            { value: "$4.88M", label: "avg. cost of one data breach (IBM 2024)" },
             { value: "2 min", label: "from signup to first scan" },
           ].map((stat, i) => (
             <div key={stat.value} className="flex items-center gap-12">
@@ -317,7 +317,7 @@ export default function LandingPage() {
       <section id="features" className="mx-auto max-w-[1200px] px-6 py-24 sm:py-32">
         <h2 className="mb-3 text-center text-3xl font-extrabold tracking-[-0.02em] text-ink-black-950 sm:text-4xl">What we catch</h2>
         <p className="mb-16 text-center text-dusty-denim-600">
-          27 check categories. Every scan. No developer required.
+          20 check categories. Every scan. No developer required.
         </p>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {checks.map((check) => (
@@ -345,7 +345,7 @@ export default function LandingPage() {
             <div className="space-y-16">
               {[
                 { step: "1", title: "Register your apps", desc: "Enter the URL of any AI-built app. No code changes, no SDK, no developer involvement required." },
-                { step: "2", title: "We scan continuously", desc: "Every 4 hours, VibeSafe runs 27+ security and health checks from the outside. No access required." },
+                { step: "2", title: "We scan continuously", desc: "Every 4 hours, VibeSafe runs 20+ security and health checks from the outside. No access required." },
                 { step: "3", title: "Get plain-language alerts", desc: "When something breaks or a vulnerability appears, you get an alert with a ready-to-paste AI fix prompt." },
                 { step: "4", title: "Review your governance dashboard", desc: "Weekly compliance reports show every app's status, open findings, and remediation progress." },
               ].map((item, idx) => {
@@ -390,7 +390,7 @@ export default function LandingPage() {
           <div className="md:hidden space-y-12">
             {[
               { step: "1", title: "Register your apps", desc: "Enter the URL of any AI-built app. No code changes, no SDK, no developer involvement required." },
-              { step: "2", title: "We scan continuously", desc: "Every 4 hours, VibeSafe runs 27+ security and health checks from the outside. No access required." },
+              { step: "2", title: "We scan continuously", desc: "Every 4 hours, VibeSafe runs 20+ security and health checks from the outside. No access required." },
               { step: "3", title: "Get plain-language alerts", desc: "When something breaks or a vulnerability appears, you get an alert with a ready-to-paste AI fix prompt." },
               { step: "4", title: "Review your governance dashboard", desc: "Weekly compliance reports show every app's status, open findings, and remediation progress." },
             ].map((item) => (
@@ -480,7 +480,7 @@ export default function LandingPage() {
       <section id="pricing" className="mx-auto max-w-[1200px] px-6 py-24 sm:py-32">
         <h2 className="mb-3 text-center text-3xl font-extrabold tracking-[-0.02em] text-ink-black-950 sm:text-4xl">Simple, transparent pricing</h2>
         <p className="mb-16 text-center text-dusty-denim-600">
-          One exposed API key costs $50K–$500K to remediate. VibeSafe catches the exposure in your first scan.
+          One exposed API key can cost up to $4.88M to remediate (IBM Cost of a Data Breach 2024). VibeSafe catches the exposure in your first scan.
         </p>
         <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
           {tiers.map((tier) => (

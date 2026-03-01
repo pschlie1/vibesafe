@@ -9,7 +9,7 @@ const JWT_SECRET: string = (() => {
   if (!secret) throw new Error("JWT_SECRET environment variable is required");
   return secret;
 })();
-const SESSION_COOKIE = "vibesafe-session";
+const SESSION_COOKIE = "scantient-session";
 const SESSION_DURATION = 24 * 60 * 60; // 24 hours in seconds
 const REFRESH_THRESHOLD = 12 * 60 * 60; // 12 hours in seconds
 
@@ -35,8 +35,8 @@ function signToken(payload: SessionUser): string {
   return jwt.sign(payload, JWT_SECRET, {
     algorithm: "HS256",
     expiresIn: SESSION_DURATION,
-    issuer: "vibesafe",
-    audience: "vibesafe-app",
+    issuer: "scantient",
+    audience: "scantient-app",
   });
 }
 
@@ -44,8 +44,8 @@ function verifyToken(token: string): SessionUser | null {
   try {
     return jwt.verify(token, JWT_SECRET, {
       algorithms: ["HS256"],
-      issuer: "vibesafe",
-      audience: "vibesafe-app",
+      issuer: "scantient",
+      audience: "scantient-app",
     }) as unknown as SessionUser;
   } catch {
     return null;

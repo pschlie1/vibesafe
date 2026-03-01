@@ -123,7 +123,7 @@ export async function POST(req: Request) {
     const response = await fetch(url, {
       method: "GET",
       headers: {
-        "User-Agent": "VibeSafe-Scanner/1.0 (Security Check)",
+        "User-Agent": "Scantient-Scanner/1.0 (Security Check)",
         Accept: "text/html,application/xhtml+xml",
       },
       redirect: "follow",
@@ -143,9 +143,9 @@ export async function POST(req: Request) {
         highCount: 0,
         findings: [],
         scannedAt: new Date().toISOString(),
-        upgradeUrl: "https://vibesafe-two.vercel.app/signup",
+        upgradeUrl: "https://scantient.com/signup",
         message:
-          "Full scan available with VibeSafe account — monitors 10x more attack vectors",
+          "Full scan available with Scantient account — monitors 10x more attack vectors",
         error: "Could not reach URL",
       },
       { status: 200 },
@@ -206,8 +206,8 @@ export async function POST(req: Request) {
     highCount,
     findings: topFindings,
     scannedAt: new Date().toISOString(),
-    upgradeUrl: "https://vibesafe-two.vercel.app/signup",
+    upgradeUrl: "https://scantient.com/signup",
     message:
-      "Full scan available with VibeSafe account — monitors 10x more attack vectors",
+      "Full scan available with Scantient account — monitors 10x more attack vectors",
   });
 }

@@ -11,7 +11,7 @@ import type { SubscriptionTier } from "@prisma/client";
 function toDbTier(planKey: PlanKey): SubscriptionTier {
   const map: Record<PlanKey, SubscriptionTier> = {
     FREE: "FREE",
-    STARTER: "STARTER",
+    STARTER: "STARTER", 
     PRO: "PRO",
     ENTERPRISE: "ENTERPRISE",
     ENTERPRISE_PLUS: "ENTERPRISE_PLUS",

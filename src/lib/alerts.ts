@@ -1,6 +1,7 @@
 import { db } from "@/lib/db";
 import type { SecurityFinding } from "@/lib/types";
 import { sendTeamsNotification } from "@/lib/teams-notify";
+import { createPagerDutyIncident } from "@/lib/pagerduty-notify";
 
 /**
  * Retry a function with exponential backoff.
@@ -191,6 +192,48 @@ export async function sendCriticalFindingsAlert(appId: string, findings: Securit
 
   // Fire Teams integration (from IntegrationConfig, if configured)
   await fireTeamsIntegration(app.orgId, app.name, app.url, findings);
+
+  // Fire PagerDuty for CRITICAL findings (ENTERPRISE+ only, from IntegrationConfig)
+  const criticals = findings.filter((f) => f.severity === "CRITICAL");
+  if (criticals.length > 0) {
+    await firePagerDutyIntegration(app.orgId, app.name, app.url, criticals, app.org.name);
+  }
+}
+
+async function firePagerDutyIntegration(
+  orgId: string,
+  appName: string,
+  appUrl: string,
+  criticals: SecurityFinding[],
+  orgName: string,
+) {
+  try {
+    const { deobfuscate } = await import("@/lib/crypto-util");
+    const pdIntegration = await db.integrationConfig.findUnique({
+      where: { orgId_type: { orgId, type: "pagerduty" } },
+    });
+    if (!pdIntegration || !pdIntegration.enabled) return;
+
+    const cfg = pdIntegration.config as Record<string, string>;
+    const routingKey = deobfuscate(cfg.routingKey);
+
+    const summary = `[Scantient] ${criticals.length} CRITICAL finding(s) on ${appName}: ${criticals[0]?.title ?? "Security issue detected"}`;
+    await createPagerDutyIncident(routingKey, {
+      summary,
+      severity: "critical",
+      source: appUrl,
+      component: appName,
+      group: orgName,
+      customDetails: {
+        findings_count: String(criticals.length),
+        top_finding: criticals[0]?.title ?? "",
+        app_url: appUrl,
+        dashboard_url: "https://scantient.com/dashboard",
+      },
+    });
+  } catch {
+    // Non-fatal: PagerDuty integration errors should not block alert delivery
+  }
 }
 
 async function fireTeamsIntegration(

@@ -146,7 +146,7 @@ export async function runHttpScanForApp(appId: string, context: ScanContext = {}
     const response = await fetch(app.url, {
       method: "GET",
       headers: {
-        "User-Agent": "VibeSafe/1.0 (Security Monitor)",
+        "User-Agent": "Scantient/1.0 (Security Monitor)",
         Accept: "text/html,application/xhtml+xml",
       },
       redirect: "follow",

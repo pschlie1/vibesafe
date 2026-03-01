@@ -53,7 +53,7 @@ export async function middleware(request: NextRequest) {
   }
 
   // Check for session cookie
-  const session = request.cookies.get("vibesafe-session");
+  const session = request.cookies.get("scantient-session");
   if (!session?.value) {
     // API routes get 401, pages get redirect
     if (pathname.startsWith("/api/")) {
@@ -72,11 +72,11 @@ export async function middleware(request: NextRequest) {
       // Invalid or expired token — clear cookie and redirect/reject
       if (pathname.startsWith("/api/")) {
         const res = NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-        res.cookies.delete("vibesafe-session");
+        res.cookies.delete("scantient-session");
         return res;
       }
       const res = NextResponse.redirect(new URL("/login", request.url));
-      res.cookies.delete("vibesafe-session");
+      res.cookies.delete("scantient-session");
       return res;
     }
   }

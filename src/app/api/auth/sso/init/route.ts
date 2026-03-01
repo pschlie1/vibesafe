@@ -9,7 +9,7 @@ const JWT_SECRET = (() => {
   if (!s) throw new Error("JWT_SECRET environment variable is required");
   return s;
 })();
-const CALLBACK_URL = "https://vibesafe-two.vercel.app/api/auth/sso/callback";
+const CALLBACK_URL = "https://scantient.com/api/auth/sso/callback";
 const STATE_COOKIE = "vs_sso_state";
 
 export async function GET(req: Request) {

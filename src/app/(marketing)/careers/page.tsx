@@ -48,7 +48,7 @@ export default function CareersPage() {
           Build security for<br />the AI era
         </h1>
         <p className="mt-6 text-lg leading-relaxed text-gray-500">
-          Scantient is a small, focused team solving a real problem: organizations are deploying AI-generated applications faster than IT can track or secure them. We&apos;re building the infrastructure to fix that.
+          Scantient is a small, focused team solving a real problem: organizations deploy AI-generated applications faster than IT tracks or secures them. We&apos;re building the infrastructure to fix that.
         </p>
 
         <div className="mt-16">

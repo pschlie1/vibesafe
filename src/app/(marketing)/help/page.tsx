@@ -43,7 +43,7 @@ const faqs = [
       },
       {
         q: "Why does my app have a low security score if nothing looks broken?",
-        a: "Security score reflects missing protections, not just active vulnerabilities. Missing security headers, absent Content-Security-Policy, or cookies without Secure/HttpOnly flags all reduce your score even if no active attack is occurring. These gaps make your app easier to exploit.",
+        a: "Security score reflects missing protections, not only active vulnerabilities. Missing security headers, absent Content-Security-Policy, or cookies without Secure/HttpOnly flags all reduce your score even if no active attack is occurring. These gaps make your app easier to exploit.",
       },
     ],
   },

@@ -6,7 +6,7 @@ import Footer from "@/components/footer";
 export const metadata: Metadata = {
   title: "The Hidden Security Risks of Vibe Coding | Scantient",
   description:
-    "Vibe coding is transforming software development — but it introduces serious security blind spots. Learn the risks CISOs and IT leaders need to understand.",
+    "Vibe coding is transforming software development, but it introduces serious security blind spots. Learn the risks CISOs and IT leaders need to understand.",
 };
 
 const risks = [
@@ -51,7 +51,7 @@ export default function VibeCodingRisksPage() {
           The Hidden Security Risks of Vibe Coding
         </h1>
         <p className="mt-6 text-lg leading-relaxed text-gray-500">
-          Vibe coding — using AI to generate entire applications from natural language prompts — is the fastest-growing trend in software development. Tools like Cursor, Lovable, Bolt, and Replit are enabling non-developers to ship production applications in hours. But with that speed comes a category of security risks that most organizations aren&apos;t prepared for.
+          Vibe coding (using AI to generate entire applications from natural language prompts) is the fastest-growing trend in software development. Tools like Cursor, Lovable, Bolt, and Replit are enabling non-developers to ship production applications in hours. But with that speed comes a category of security risks that most organizations aren&apos;t prepared for.
         </p>
 
         <div className="mt-16 space-y-14">
@@ -67,7 +67,7 @@ export default function VibeCodingRisksPage() {
           <h2 className="text-2xl font-semibold">What IT Leaders Should Do Now</h2>
           <div className="mt-6 space-y-4 text-gray-600">
             <p><strong>1. Acknowledge the reality.</strong> Your organization is already vibe coding. The question isn&apos;t whether to allow it; it&apos;s how to govern it.</p>
-            <p><strong>2. Create an inventory.</strong> You can&apos;t secure what you can&apos;t see. Start by cataloging every AI-generated application deployed in your organization.</p>
+            <p><strong>2. Create an inventory.</strong> Start by cataloging every AI-generated application deployed in your organization. You won&apos;t secure what you won&apos;t see.</p>
             <p><strong>3. Establish a baseline.</strong> Define minimum security requirements for AI-generated apps: security headers, authentication patterns, secrets management, dependency hygiene.</p>
             <p><strong>4. Automate monitoring.</strong> Manual audits don&apos;t scale. Implement continuous automated scanning that checks every app against your security baseline, without requiring developer involvement.</p>
             <p><strong>5. Make security accessible.</strong> When you find a vulnerability, provide plain-language remediation guidance. The builders aren&apos;t security experts; meet them where they are.</p>

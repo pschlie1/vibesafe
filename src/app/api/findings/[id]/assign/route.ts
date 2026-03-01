@@ -3,6 +3,7 @@ import { z } from "zod";
 import { db } from "@/lib/db";
 import { getSession } from "@/lib/auth";
 import { getOrgLimits } from "@/lib/tenant";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 const assignSchema = z.object({
   userId: z.string().nullable(),
@@ -14,6 +15,17 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
   if (session.role === "VIEWER") {
     return NextResponse.json({ error: "Viewers have read-only access" }, { status: 403 });
+  }
+
+  const rl = await checkRateLimit(`finding-assign:${session.orgId}`, {
+    maxAttempts: 60,
+    windowMs: 60 * 60 * 1000,
+  });
+  if (!rl.allowed) {
+    return NextResponse.json({ error: "Too many requests. Please try again later." }, {
+      status: 429,
+      headers: { "Retry-After": String(rl.retryAfterSeconds ?? 60) },
+    });
   }
 
   const limits = await getOrgLimits(session.orgId);

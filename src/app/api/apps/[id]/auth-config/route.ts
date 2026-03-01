@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { getSession } from "@/lib/auth";
 import { encryptAuthHeaders, decryptAuthHeaders, maskAuthHeaders } from "@/lib/auth-headers";
 import { getOrgLimits } from "@/lib/tenant";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 const authHeaderSchema = z.object({
   name: z.string().min(1),
@@ -52,6 +53,17 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
   const limits = await getOrgLimits(session.orgId);
   if (!["PRO", "ENTERPRISE", "ENTERPRISE_PLUS"].includes(limits.tier)) {
     return NextResponse.json({ error: "Authenticated scanning requires a Pro plan or higher." }, { status: 403 });
+  }
+
+  const rl = await checkRateLimit(`auth-config:${session.orgId}`, {
+    maxAttempts: 20,
+    windowMs: 60 * 60 * 1000,
+  });
+  if (!rl.allowed) {
+    return NextResponse.json({ error: "Too many requests. Please try again later." }, {
+      status: 429,
+      headers: { "Retry-After": String(rl.retryAfterSeconds ?? 60) },
+    });
   }
 
   const { id } = await params;

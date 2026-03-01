@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { requireRole } from "@/lib/auth";
 import { getOrgLimits, logAudit } from "@/lib/tenant";
 import { obfuscate } from "@/lib/crypto-util";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 const SSO_TIERS = ["ENTERPRISE", "ENTERPRISE_PLUS"];
 
@@ -46,6 +47,16 @@ export async function POST(req: Request) {
         { status: 403 },
       );
     }
+    const rl = await checkRateLimit(`integration-sso:${session.orgId}`, {
+      maxAttempts: 20,
+      windowMs: 60 * 60 * 1000,
+    });
+    if (!rl.allowed) {
+      return NextResponse.json({ error: "Too many requests. Please try again later." }, {
+        status: 429,
+        headers: { "Retry-After": String(rl.retryAfterSeconds ?? 60) },
+      });
+    }
     const body = await req.json();
     const parsed = ssoSchema.safeParse(body);
     if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
@@ -76,6 +87,16 @@ export async function DELETE() {
         { error: "SSO is available on Enterprise plans only. Upgrade to configure single sign-on." },
         { status: 403 },
       );
+    }
+    const rl = await checkRateLimit(`integration-sso:${session.orgId}`, {
+      maxAttempts: 20,
+      windowMs: 60 * 60 * 1000,
+    });
+    if (!rl.allowed) {
+      return NextResponse.json({ error: "Too many requests. Please try again later." }, {
+        status: 429,
+        headers: { "Retry-After": String(rl.retryAfterSeconds ?? 60) },
+      });
     }
     await db.sSOConfig.deleteMany({ where: { orgId: session.orgId } });
     // Audit log: SSO config removed (fire-and-forget)

@@ -648,7 +648,7 @@ describe("H-6: POST /api/auth/invite/[token]", () => {
   const futureDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
 
   beforeEach(() => {
-    vi.clearAllMocks();
+    vi.resetAllMocks();
     inviteFindUnique.mockResolvedValue({
       token: "valid_token",
       email: "newuser@example.com",
@@ -663,6 +663,7 @@ describe("H-6: POST /api/auth/invite/[token]", () => {
     userCreate.mockResolvedValue({ id: "new_user_1" });
     inviteDelete.mockResolvedValue({});
     createSession.mockResolvedValue({ id: "new_user_1", email: "newuser@example.com" });
+    logAudit.mockResolvedValue(undefined);
   });
 
   it("returns 409 when org has reached user limit at acceptance time", async () => {

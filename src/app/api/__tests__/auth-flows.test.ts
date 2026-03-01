@@ -56,10 +56,14 @@ const logAudit = vi.fn();
 vi.mock("@/lib/tenant", () => ({ canAddUser, logAudit }));
 
 beforeEach(() => {
-  vi.clearAllMocks();
+  vi.resetAllMocks();
+  // Restore defaults cleared by resetAllMocks
+  hashPassword.mockResolvedValue("hashed-password");
+  createSession.mockResolvedValue({ id: "user_1", email: "test@example.com" });
   checkRateLimit.mockResolvedValue({ allowed: true });
   getClientIp.mockReturnValue("1.2.3.4");
   canAddUser.mockResolvedValue({ allowed: true });
+  logAudit.mockResolvedValue(undefined);
 });
 
 // Helper to build a Request

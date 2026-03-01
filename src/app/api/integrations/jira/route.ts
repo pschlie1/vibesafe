@@ -5,6 +5,7 @@ import { requireRole } from "@/lib/auth";
 import { getOrgLimits } from "@/lib/tenant";
 import { obfuscate, deobfuscate } from "@/lib/crypto-util";
 import { isPrivateUrl } from "@/lib/ssrf-guard";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 const JIRA_TIERS = ["PRO", "ENTERPRISE", "ENTERPRISE_PLUS"];
 
@@ -48,6 +49,16 @@ export async function POST(req: Request) {
         { status: 403 },
       );
     }
+    const rl = await checkRateLimit(`integration-jira:${session.orgId}`, {
+      maxAttempts: 20,
+      windowMs: 60 * 60 * 1000,
+    });
+    if (!rl.allowed) {
+      return NextResponse.json({ error: "Too many requests. Please try again later." }, {
+        status: 429,
+        headers: { "Retry-After": String(rl.retryAfterSeconds ?? 60) },
+      });
+    }
     const body = await req.json();
     const parsed = jiraConfigSchema.safeParse(body);
     if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
@@ -77,6 +88,16 @@ export async function DELETE() {
         { error: "Jira integration is available on Pro and Enterprise plans. Upgrade to connect your Jira workspace." },
         { status: 403 },
       );
+    }
+    const rl = await checkRateLimit(`integration-jira:${session.orgId}`, {
+      maxAttempts: 20,
+      windowMs: 60 * 60 * 1000,
+    });
+    if (!rl.allowed) {
+      return NextResponse.json({ error: "Too many requests. Please try again later." }, {
+        status: 429,
+        headers: { "Retry-After": String(rl.retryAfterSeconds ?? 60) },
+      });
     }
     await db.integrationConfig.deleteMany({ where: { orgId: session.orgId, type: "jira" } });
     return NextResponse.json({ ok: true });

@@ -7,6 +7,7 @@ import { isPrivateUrl } from "@/lib/ssrf-guard";
 import { createAppSchema } from "@/lib/types";
 import { logApiError } from "@/lib/observability";
 import { trackEvent } from "@/lib/analytics";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 const appsQuerySchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
@@ -72,6 +73,17 @@ export async function POST(req: Request) {
 
   if (session.role === "VIEWER") {
     return NextResponse.json({ error: "Viewers have read-only access" }, { status: 403 });
+  }
+
+  const rl = await checkRateLimit(`apps-create:${session.orgId}`, {
+    maxAttempts: 30,
+    windowMs: 60 * 60 * 1000,
+  });
+  if (!rl.allowed) {
+    return NextResponse.json({ error: "Too many requests. Please try again later." }, {
+      status: 429,
+      headers: { "Retry-After": String(rl.retryAfterSeconds ?? 60) },
+    });
   }
 
   try {

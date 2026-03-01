@@ -3,6 +3,7 @@ import { z } from "zod";
 import { db } from "@/lib/db";
 import { getSession } from "@/lib/auth";
 import { logAudit } from "@/lib/tenant";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 const patchSchema = z.object({
   role: z.enum(["ADMIN", "MEMBER", "VIEWER"]),
@@ -17,6 +18,17 @@ export async function DELETE(
 
   if (!["OWNER", "ADMIN"].includes(session.role)) {
     return NextResponse.json({ error: "Admin access required" }, { status: 403 });
+  }
+
+  const rl = await checkRateLimit(`team-remove:${session.orgId}`, {
+    maxAttempts: 20,
+    windowMs: 60 * 60 * 1000,
+  });
+  if (!rl.allowed) {
+    return NextResponse.json({ error: "Too many requests. Please try again later." }, {
+      status: 429,
+      headers: { "Retry-After": String(rl.retryAfterSeconds ?? 60) },
+    });
   }
 
   const { id } = await params;
@@ -46,6 +58,17 @@ export async function PATCH(
 
   if (session.role !== "OWNER") {
     return NextResponse.json({ error: "Only the account owner is allowed to change roles" }, { status: 403 });
+  }
+
+  const rl = await checkRateLimit(`team-role-change:${session.orgId}`, {
+    maxAttempts: 30,
+    windowMs: 60 * 60 * 1000,
+  });
+  if (!rl.allowed) {
+    return NextResponse.json({ error: "Too many requests. Please try again later." }, {
+      status: 429,
+      headers: { "Retry-After": String(rl.retryAfterSeconds ?? 60) },
+    });
   }
 
   const { id } = await params;

@@ -37,7 +37,7 @@ export async function POST(req: Request) {
   }
 
   const limits = await getOrgLimits(session.orgId);
-  if (!["PRO", "ENTERPRISE"].includes(limits.tier)) {
+  if (!["PRO", "ENTERPRISE", "ENTERPRISE_PLUS"].includes(limits.tier)) {
     return NextResponse.json(
       { error: "API key access is available on Pro and Enterprise plans. Please upgrade to continue." },
       { status: 403 },

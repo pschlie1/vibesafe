@@ -2,7 +2,10 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { db } from "@/lib/db";
 import { requireRole } from "@/lib/auth";
+import { getOrgLimits } from "@/lib/tenant";
 import { obfuscate, deobfuscate } from "@/lib/crypto-util";
+
+const JIRA_TIERS = ["PRO", "ENTERPRISE", "ENTERPRISE_PLUS"];
 
 const jiraConfigSchema = z.object({
   url: z.string().url(),
@@ -15,6 +18,13 @@ const jiraConfigSchema = z.object({
 export async function GET() {
   try {
     const session = await requireRole(["ADMIN", "OWNER"]);
+    const limits = await getOrgLimits(session.orgId);
+    if (!JIRA_TIERS.includes(limits.tier)) {
+      return NextResponse.json(
+        { error: "Jira integration is available on Pro and Enterprise plans. Upgrade to connect your Jira workspace." },
+        { status: 403 },
+      );
+    }
     const integration = await db.integrationConfig.findUnique({
       where: { orgId_type: { orgId: session.orgId, type: "jira" } },
     });
@@ -30,6 +40,13 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const session = await requireRole(["ADMIN", "OWNER"]);
+    const limits = await getOrgLimits(session.orgId);
+    if (!JIRA_TIERS.includes(limits.tier)) {
+      return NextResponse.json(
+        { error: "Jira integration is available on Pro and Enterprise plans. Upgrade to connect your Jira workspace." },
+        { status: 403 },
+      );
+    }
     const body = await req.json();
     const parsed = jiraConfigSchema.safeParse(body);
     if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
@@ -50,6 +67,13 @@ export async function POST(req: Request) {
 export async function DELETE() {
   try {
     const session = await requireRole(["ADMIN", "OWNER"]);
+    const limits = await getOrgLimits(session.orgId);
+    if (!JIRA_TIERS.includes(limits.tier)) {
+      return NextResponse.json(
+        { error: "Jira integration is available on Pro and Enterprise plans. Upgrade to connect your Jira workspace." },
+        { status: 403 },
+      );
+    }
     await db.integrationConfig.deleteMany({ where: { orgId: session.orgId, type: "jira" } });
     return NextResponse.json({ ok: true });
   } catch (err) {

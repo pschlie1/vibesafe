@@ -4,10 +4,14 @@ import { logApiError } from "@/lib/observability";
 import { db } from "@/lib/db";
 
 export async function GET(req: Request) {
-  const auth = req.headers.get("authorization");
-  const expected = `Bearer ${process.env.CRON_SECRET}`;
+  const cronSecret = process.env.CRON_SECRET;
 
-  if (!process.env.CRON_SECRET || auth !== expected) {
+  if (!cronSecret) {
+    return NextResponse.json({ error: "CRON_SECRET not configured" }, { status: 503 });
+  }
+
+  const auth = req.headers.get("authorization");
+  if (auth !== `Bearer ${cronSecret}`) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

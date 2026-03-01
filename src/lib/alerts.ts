@@ -1,9 +1,33 @@
 import { db } from "@/lib/db";
 import type { SecurityFinding } from "@/lib/types";
 
+/**
+ * Retry a function with exponential backoff.
+ * Throws the last error if all attempts fail.
+ */
+async function withRetry<T>(
+  fn: () => Promise<T>,
+  maxAttempts = 3,
+  baseDelayMs = 500,
+): Promise<T> {
+  let lastError: unknown;
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      return await fn();
+    } catch (err) {
+      lastError = err;
+      if (attempt < maxAttempts) {
+        const delay = baseDelayMs * Math.pow(2, attempt - 1);
+        await new Promise((resolve) => setTimeout(resolve, delay));
+      }
+    }
+  }
+  throw lastError;
+}
+
 async function sendEmail(to: string, subject: string, html: string) {
   const key = process.env.RESEND_API_KEY;
-  const from = process.env.ALERT_FROM_EMAIL ?? "alerts@vibesafe.app";
+  const from = process.env.ALERT_FROM_EMAIL ?? "alerts@scantient.com";
 
   if (!key) {
     console.warn("[alerts] RESEND_API_KEY not set. Skipping email.");
@@ -96,7 +120,7 @@ export async function sendCriticalFindingsAlert(appId: string, findings: Securit
     const high = findings.filter((f) => ["HIGH", "CRITICAL"].includes(f.severity));
     if (high.length > 0) {
       const html = buildAlertHtml(app.name, app.url, high);
-      await sendEmail(app.ownerEmail, `⚠️ VibeSafe Alert: ${app.name}`, html);
+      await withRetry(() => sendEmail(app.ownerEmail, `⚠️ Scantient Alert: ${app.name}`, html));
     }
     return;
   }
@@ -113,30 +137,30 @@ export async function sendCriticalFindingsAlert(appId: string, findings: Securit
       switch (config.channel) {
         case "EMAIL": {
           const html = buildAlertHtml(app.name, app.url, relevant);
-          await sendEmail(config.destination, `⚠️ VibeSafe Alert: ${app.name}`, html);
+          await withRetry(() => sendEmail(config.destination, `⚠️ Scantient Alert: ${app.name}`, html));
           break;
         }
         case "SLACK": {
           const text = buildSlackMessage(app.name, app.url, relevant);
-          await sendSlack(config.destination, text);
+          await withRetry(() => sendSlack(config.destination, text));
           break;
         }
         case "WEBHOOK": {
           if (isTeamsWebhookUrl(config.destination)) {
             const facts = relevant.slice(0, 5).map((f) => ({ name: f.severity, value: f.title }));
-            await sendTeams(
+            await withRetry(() => sendTeams(
               config.destination,
-              `⚠️ VibeSafe Alert: ${app.name}`,
+              `⚠️ Scantient Alert: ${app.name}`,
               `${relevant.length} security issue(s) detected on ${app.url}`,
               facts,
-            );
+            ));
           } else {
-            await sendWebhook(config.destination, {
+            await withRetry(() => sendWebhook(config.destination, {
               event: "findings.detected",
               app: { id: app.id, name: app.name, url: app.url },
               findings: relevant,
               timestamp: new Date().toISOString(),
-            });
+            }));
           }
           break;
         }
@@ -169,28 +193,41 @@ export async function sendTestNotification(configId: string) {
   const config = await db.alertConfig.findUnique({ where: { id: configId } });
   if (!config) throw new Error("Alert config not found");
 
-  const subject = "✅ VibeSafe Test Notification";
-  const body = "This is a test notification from VibeSafe. Your alert channel is working correctly!";
+  const subject = "✅ Scantient Test Notification";
+  const body = "This is a test notification from Scantient. Your alert channel is working correctly!";
 
-  switch (config.channel) {
-    case "EMAIL":
-      await sendEmail(config.destination, subject, `<div style="font-family: -apple-system, sans-serif;"><h2>${subject}</h2><p>${body}</p></div>`);
-      break;
-    case "SLACK":
-      await sendSlack(config.destination, `${subject}\n${body}`);
-      break;
-    case "WEBHOOK":
-      if (isTeamsWebhookUrl(config.destination)) {
-        await sendTeams(config.destination, subject, body);
-      } else {
-        await sendWebhook(config.destination, { event: "test", message: body, timestamp: new Date().toISOString() });
-      }
-      break;
+  try {
+    switch (config.channel) {
+      case "EMAIL":
+        await withRetry(() => sendEmail(config.destination, subject, `<div style="font-family: -apple-system, sans-serif;"><h2>${subject}</h2><p>${body}</p></div>`));
+        break;
+      case "SLACK":
+        await withRetry(() => sendSlack(config.destination, `${subject}\n${body}`));
+        break;
+      case "WEBHOOK":
+        if (isTeamsWebhookUrl(config.destination)) {
+          await withRetry(() => sendTeams(config.destination, subject, body));
+        } else {
+          await withRetry(() => sendWebhook(config.destination, { event: "test", message: body, timestamp: new Date().toISOString() }));
+        }
+        break;
+    }
+
+    await db.notification.create({
+      data: { alertConfigId: config.id, subject, body: "Test notification", delivered: true },
+    });
+  } catch (error) {
+    await db.notification.create({
+      data: {
+        alertConfigId: config.id,
+        subject,
+        body: "Test notification",
+        delivered: false,
+        error: error instanceof Error ? error.message : "Unknown error",
+      },
+    });
+    throw error;
   }
-
-  await db.notification.create({
-    data: { alertConfigId: config.id, subject, body: "Test notification", delivered: true },
-  });
 }
 
 export async function sendChangeDetectedAlert(appId: string, appName: string, appUrl: string) {
@@ -204,7 +241,7 @@ export async function sendChangeDetectedAlert(appId: string, appName: string, ap
     where: { orgId: app.orgId, enabled: true },
   });
 
-  const subject = `🔄 VibeSafe: ${appName} has changed`;
+  const subject = `🔄 Scantient: ${appName} has changed`;
   const message = `Deployment change detected on ${appName} (${appUrl}). The application content has changed since the last scan.`;
 
   for (const config of configs) {
@@ -234,7 +271,7 @@ export async function sendChangeDetectedAlert(appId: string, appName: string, ap
 function buildAlertHtml(appName: string, appUrl: string, findings: SecurityFinding[]): string {
   return `
     <div style="font-family: -apple-system, sans-serif; max-width: 600px;">
-      <h2 style="margin-bottom: 4px;">⚠️ VibeSafe Alert: ${appName}</h2>
+      <h2 style="margin-bottom: 4px;">⚠️ Scantient Alert: ${appName}</h2>
       <p style="color: #666; margin-top: 0;">
         <a href="${appUrl}">${appUrl}</a>
       </p>
@@ -250,7 +287,7 @@ function buildAlertHtml(appName: string, appUrl: string, findings: SecurityFindi
         )
         .join("")}
       <p style="font-size: 13px; color: #888;">
-        View details and fix prompts in your <a href="#">VibeSafe dashboard</a>.
+        View details and fix prompts in your <a href="#">Scantient dashboard</a>.
       </p>
     </div>
   `;
@@ -258,5 +295,5 @@ function buildAlertHtml(appName: string, appUrl: string, findings: SecurityFindi
 
 function buildSlackMessage(appName: string, appUrl: string, findings: SecurityFinding[]): string {
   const lines = findings.map((f) => `• *[${f.severity}]* ${f.title}`);
-  return `⚠️ *VibeSafe Alert: ${appName}*\n<${appUrl}>\n\n${findings.length} issue(s) detected:\n${lines.join("\n")}`;
+  return `⚠️ *Scantient Alert: ${appName}*\n<${appUrl}>\n\n${findings.length} issue(s) detected:\n${lines.join("\n")}`;
 }

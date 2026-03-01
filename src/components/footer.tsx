@@ -6,34 +6,36 @@ const footerColumns = [
     links: [
       { label: "Overview", href: "/#features" },
       { label: "Pricing", href: "/#pricing" },
-      { label: "Security", href: "/security-checklist" },
-      { label: "API Docs", href: "#" },
+      { label: "Compliance", href: "/compliance" },
+      { label: "API Docs", href: "/docs" },
     ],
   },
   {
     header: "Company",
     links: [
-      { label: "About", href: "#" },
-      { label: "Careers", href: "#" },
-      { label: "Blog", href: "#" },
-      { label: "Press", href: "#" },
+      { label: "About", href: "/about" },
+      { label: "Careers", href: "/careers" },
+      { label: "Blog", href: "/blog" },
+      { label: "Press", href: "/press" },
     ],
   },
   {
     header: "Resources",
     links: [
-      { label: "Documentation", href: "#" },
-      { label: "Help Center", href: "#" },
+      { label: "Documentation", href: "/docs" },
+      { label: "Free Security Score", href: "/score" },
       { label: "Security Checklist", href: "/security-checklist" },
-      { label: "Contact", href: "#" },
+      { label: "Vibe Coding Risks", href: "/vibe-coding-risks" },
+      { label: "Help Center", href: "/help" },
     ],
   },
   {
     header: "Legal",
     links: [
-      { label: "Privacy Policy", href: "#" },
-      { label: "Terms of Service", href: "#" },
-      { label: "Cookie Policy", href: "#" },
+      { label: "Privacy Policy", href: "/privacy" },
+      { label: "Terms of Service", href: "/terms" },
+      { label: "Cookie Policy", href: "/cookie-policy" },
+      { label: "Contact", href: "/contact" },
     ],
   },
 ];
@@ -50,7 +52,7 @@ export default function Footer() {
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white">
                 <span className="text-sm font-bold text-ink-black-950">V</span>
               </div>
-              <span className="text-xl font-bold text-white">VibeSafe</span>
+              <span className="text-xl font-bold text-white">Scantient</span>
             </div>
             <p className="mt-3 max-w-xs text-sm leading-relaxed text-alabaster-grey-400">
               Complete visibility into your AI-built app portfolio.
@@ -85,10 +87,10 @@ export default function Footer() {
         <div className="mx-auto max-w-[1200px] px-6">
           <div className="flex flex-col items-center justify-between gap-4 py-8 sm:flex-row">
             <p className="text-sm text-alabaster-grey-600">
-              © 2026 VibeSafe Inc. All rights reserved.
+              © 2026 Scantient Inc. All rights reserved.
             </p>
             <div className="flex gap-6">
-              <Link href="#" className="text-sm text-alabaster-grey-400 transition-colors hover:text-white">
+              <Link href="/status" className="text-sm text-alabaster-grey-400 transition-colors hover:text-white">
                 Status
               </Link>
               <Link href="/security-checklist" className="text-sm text-alabaster-grey-400 transition-colors hover:text-white">

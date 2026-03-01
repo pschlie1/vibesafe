@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import MarketingNav from "@/components/marketing-nav";
 import Footer from "@/components/footer";
 
 export const metadata: Metadata = {
-  title: "The Hidden Security Risks of Vibe Coding | VibeSafe",
+  title: "The Hidden Security Risks of Vibe Coding | Scantient",
   description:
     "Vibe coding is transforming software development — but it introduces serious security blind spots. Learn the risks CISOs and IT leaders need to understand.",
 };
@@ -42,17 +43,7 @@ const risks = [
 export default function VibeCodingRisksPage() {
   return (
     <div className="bg-white">
-      <nav className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
-        <Link href="/" className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-black">
-            <span className="text-sm font-bold text-white">V</span>
-          </div>
-          <span className="font-bold">VibeSafe</span>
-        </Link>
-        <Link href="/signup" className="rounded-lg bg-black px-4 py-2 text-sm font-medium text-white hover:bg-gray-800">
-          Start free trial
-        </Link>
-      </nav>
+      <MarketingNav />
 
       <article className="mx-auto max-w-3xl px-4 py-16">
         <p className="mb-4 text-sm font-medium uppercase tracking-widest text-gray-400">Industry Analysis</p>
@@ -86,7 +77,7 @@ export default function VibeCodingRisksPage() {
         <div className="mt-20 rounded-2xl bg-gray-50 p-8 text-center">
           <h2 className="text-2xl font-bold">Get visibility into your AI app portfolio</h2>
           <p className="mx-auto mt-3 max-w-lg text-sm text-gray-500">
-            VibeSafe continuously monitors every AI-generated application in your organization for security vulnerabilities, misconfigurations, and compliance gaps. No SDK required.
+            Scantient continuously monitors every AI-generated application in your organization for security vulnerabilities, misconfigurations, and compliance gaps. No SDK required.
           </p>
           <Link
             href="/signup"

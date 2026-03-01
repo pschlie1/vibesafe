@@ -1,6 +1,7 @@
 export const dynamic = "force-dynamic";
 
 import Link from "next/link";
+import { OnboardingChecklist } from "@/components/onboarding-checklist";
 import { db } from "@/lib/db";
 import { getSession } from "@/lib/auth";
 import { redirect } from "next/navigation";
@@ -12,6 +13,7 @@ import { SummaryCards } from "@/components/summary-cards";
 import { getOrgLimits } from "@/lib/tenant";
 import { OnboardingWrapper } from "@/components/onboarding-wrapper";
 import { MetricsDashboard } from "@/components/metrics-dashboard";
+
 
 export default async function DashboardPage() {
   const session = await getSession();
@@ -52,6 +54,8 @@ export default async function DashboardPage() {
         </div>
       </div>
 
+      <OnboardingChecklist />
+
       <MetricsDashboard />
 
       <SummaryCards
@@ -64,13 +68,27 @@ export default async function DashboardPage() {
 
       <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_360px]">
         <section className="rounded-lg border bg-white">
-          <div className="border-b px-4 py-3">
+          <div className="flex items-center justify-between border-b px-4 py-3">
             <h2 className="text-sm font-semibold">Monitored apps</h2>
+            <Link
+              href="/apps/bulk-add"
+              className="rounded-md border border-gray-200 px-3 py-1 text-xs font-medium text-gray-600 transition hover:bg-gray-50 hover:text-gray-900"
+            >
+              + Bulk Add
+            </Link>
           </div>
 
           {apps.length === 0 ? (
-            <div className="p-8 text-center text-sm text-gray-500">
-              No apps registered yet. Add your first app to start monitoring →
+            <div className="p-8 text-center">
+              <p className="text-sm text-gray-500">No apps registered yet. Add your first app to start monitoring.</p>
+              <div className="mt-4 flex items-center justify-center gap-3">
+                <Link
+                  href="/apps/bulk-add"
+                  className="rounded-md bg-black px-4 py-2 text-sm font-medium text-white transition hover:bg-gray-800"
+                >
+                  Bulk Add Apps
+                </Link>
+              </div>
             </div>
           ) : (
             <div className="overflow-x-auto">

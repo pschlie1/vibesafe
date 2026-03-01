@@ -137,14 +137,6 @@ function postReq(body: unknown) {
   });
 }
 
-function getReq(url = "http://localhost") {
-  return new Request(url);
-}
-
-function deleteReq() {
-  return new Request("http://localhost", { method: "DELETE" });
-}
-
 // ─────────────────────────────────────────────────────────────────────────────
 // Reset all mocks before each test
 // ─────────────────────────────────────────────────────────────────────────────

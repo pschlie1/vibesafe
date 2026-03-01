@@ -1,21 +1,17 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 const STORAGE_KEY = "scantient_spa_banner_dismissed";
 
 export function SpaBanner() {
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
+  const [visible, setVisible] = useState<boolean>(() => {
     try {
-      if (typeof localStorage !== "undefined" && !localStorage.getItem(STORAGE_KEY)) {
-        setVisible(true);
-      }
+      return typeof localStorage !== "undefined" && !localStorage.getItem(STORAGE_KEY);
     } catch {
-      // ignore SSR / private-browsing errors
+      return false;
     }
-  }, []);
+  });
 
   function dismiss() {
     try {

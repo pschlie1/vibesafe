@@ -55,7 +55,7 @@ export default function CareersPage() {
           <h2 className="text-2xl font-semibold">Why Scantient</h2>
           <div className="mt-6 space-y-4 leading-relaxed text-gray-600">
             <p>
-              We&apos;re at an inflection point in how software gets built. AI coding tools have put production deployments in the hands of every employee — and IT teams are scrambling to maintain visibility and control. We&apos;re building the platform that solves this.
+              We&apos;re at an inflection point in how software gets built. AI coding tools have put production deployments in the hands of every employee, and IT teams are scrambling to maintain visibility and control. We&apos;re building the platform that solves this.
             </p>
             <p>
               We&apos;re early, opinionated, and moving fast. If you want to work on hard problems with real stakes alongside people who&apos;ve shipped production security infrastructure before, this is the place.

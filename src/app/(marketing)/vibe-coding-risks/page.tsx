@@ -12,15 +12,15 @@ export const metadata: Metadata = {
 const risks = [
   {
     title: "Confidently Wrong Security Patterns",
-    body: "AI models generate code that looks professional and well-structured, but frequently implements security anti-patterns. Client-side authentication, permissive CORS, disabled Row Level Security — these appear in polished, well-commented code that passes casual review. The danger isn't that AI writes bad code. It's that the bad code looks indistinguishable from good code.",
+    body: "AI models generate code that looks professional and well-structured, but frequently implements security anti-patterns. Client-side authentication, permissive CORS, disabled Row Level Security: these appear in polished, well-commented code that passes casual review. The danger isn't that AI writes bad code. It's that the bad code looks indistinguishable from good code.",
   },
   {
     title: "The Knowledge Gap Problem",
-    body: "Vibe coding democratizes development — that's the appeal. But the people building these apps often lack the security knowledge to evaluate what the AI generates. A marketing manager building an internal tool doesn't know to check for SQL injection. A sales leader creating a customer portal doesn't understand CORS implications. The builders aren't negligent — they're operating outside their expertise.",
+    body: "Vibe coding democratizes development; that's the appeal. But the people building these apps often lack the security knowledge to evaluate what the AI generates. A marketing manager building an internal tool doesn't know to check for SQL injection. A sales leader creating a customer portal doesn't understand CORS implications. The builders aren't negligent; they're operating outside their expertise.",
   },
   {
     title: "Velocity Without Oversight",
-    body: "Traditional development has natural checkpoints: code review, QA, staging environments, security scans in CI/CD. Vibe coding bypasses all of them. An employee goes from idea to production deployment in an afternoon — without IT ever knowing the app exists. By the time you discover it, it's processing customer data.",
+    body: "Traditional development has natural checkpoints: code review, QA, staging environments, security scans in CI/CD. Vibe coding bypasses all of them. An employee goes from idea to production deployment in an afternoon, without IT ever knowing the app exists. By the time you discover it, it's processing customer data.",
   },
   {
     title: "Dependency Sprawl",
@@ -32,7 +32,7 @@ const risks = [
   },
   {
     title: "The Compliance Blind Spot",
-    body: "SOC 2, HIPAA, GDPR — your compliance obligations don't have a carve-out for AI-generated code. But vibe-coded apps typically lack audit logs, proper data handling, access controls, and encryption at rest. When the auditor asks how you govern AI-generated applications, silence isn't an acceptable answer.",
+    body: "SOC 2, HIPAA, GDPR: your compliance obligations don't have a carve-out for AI-generated code. But vibe-coded apps typically lack audit logs, proper data handling, access controls, and encryption at rest. When the auditor asks how you govern AI-generated applications, silence isn't an acceptable answer.",
   },
   {
     title: "Shadow IT at Scale",
@@ -66,11 +66,11 @@ export default function VibeCodingRisksPage() {
         <div className="mt-20">
           <h2 className="text-2xl font-semibold">What IT Leaders Should Do Now</h2>
           <div className="mt-6 space-y-4 text-gray-600">
-            <p><strong>1. Acknowledge the reality.</strong> Your organization is already vibe coding. The question isn&apos;t whether to allow it — it&apos;s how to govern it.</p>
+            <p><strong>1. Acknowledge the reality.</strong> Your organization is already vibe coding. The question isn&apos;t whether to allow it; it&apos;s how to govern it.</p>
             <p><strong>2. Create an inventory.</strong> You can&apos;t secure what you can&apos;t see. Start by cataloging every AI-generated application deployed in your organization.</p>
             <p><strong>3. Establish a baseline.</strong> Define minimum security requirements for AI-generated apps: security headers, authentication patterns, secrets management, dependency hygiene.</p>
-            <p><strong>4. Automate monitoring.</strong> Manual audits don&apos;t scale. Implement continuous automated scanning that checks every app against your security baseline — without requiring developer involvement.</p>
-            <p><strong>5. Make security accessible.</strong> When you find a vulnerability, provide plain-language remediation guidance. The builders aren&apos;t security experts — meet them where they are.</p>
+            <p><strong>4. Automate monitoring.</strong> Manual audits don&apos;t scale. Implement continuous automated scanning that checks every app against your security baseline, without requiring developer involvement.</p>
+            <p><strong>5. Make security accessible.</strong> When you find a vulnerability, provide plain-language remediation guidance. The builders aren&apos;t security experts; meet them where they are.</p>
           </div>
         </div>
 

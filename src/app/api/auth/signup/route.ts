@@ -5,6 +5,7 @@ import { db } from "@/lib/db";
 import { hashPassword, createSession } from "@/lib/auth";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 import { trackEvent } from "@/lib/analytics";
+import { extractSuggestedDomain } from "@/lib/onboarding";
 
 function getJwtSecret(): string {
   const secret = process.env.JWT_SECRET;
@@ -202,5 +203,6 @@ export async function POST(req: Request) {
     }).catch((err) => console.warn("[auth] Failed to send onboarding email:", err));
   }
 
-  return NextResponse.json({ user: session }, { status: 201 });
+  const suggestedDomain = extractSuggestedDomain(email);
+  return NextResponse.json({ user: session, suggestedDomain }, { status: 201 });
 }

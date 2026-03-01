@@ -37,6 +37,8 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: "User not found" }, { status: 404 });
   }
 
+  const wasAlreadyVerified = user.emailVerified;
+
   if (!user.emailVerified) {
     await db.user.update({
       where: { id: user.id },
@@ -44,5 +46,11 @@ export async function GET(req: Request) {
     });
   }
 
-  return NextResponse.json({ ok: true });
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://scantient.com";
+  // First-time verification → redirect to dashboard with onboarding wizard
+  const redirectUrl = wasAlreadyVerified
+    ? `${appUrl}/dashboard`
+    : `${appUrl}/dashboard?onboarding=true`;
+
+  return NextResponse.json({ ok: true, redirectUrl });
 }

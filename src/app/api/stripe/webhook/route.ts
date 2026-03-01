@@ -76,11 +76,28 @@ export async function POST(req: Request) {
       });
       if (!existing) break;
 
+      // Build reverse price-to-plan map
+      const priceToPlan: Record<string, PlanKey> = {};
+      for (const [key, plan] of Object.entries(PLANS)) {
+        if (plan.priceId) priceToPlan[plan.priceId] = key as PlanKey;
+      }
+
+      const newPriceId = obj.items?.data?.[0]?.price?.id as string | undefined;
+      const newPlanKey = newPriceId ? priceToPlan[newPriceId] : undefined;
+      const newPlan = newPlanKey ? PLANS[newPlanKey] : undefined;
+
       await db.subscription.update({
         where: { id: existing.id },
         data: {
           status: obj.status === "active" ? "ACTIVE" : obj.status === "past_due" ? "PAST_DUE" : "CANCELED",
           cancelAtPeriodEnd: obj.cancel_at_period_end ?? false,
+          // Only update tier/limits if we can identify the new plan
+          ...(newPlan && newPlanKey ? {
+            tier: toDbTier(newPlanKey),
+            maxApps: newPlan.maxApps,
+            maxUsers: newPlan.maxUsers,
+            stripePriceId: newPriceId,
+          } : {}),
         },
       });
       break;

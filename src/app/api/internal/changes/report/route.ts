@@ -1,10 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSession } from "@/lib/auth";
+import { requireRole } from "@/lib/auth";
+import { getOrgLimits } from "@/lib/tenant";
 import { getChangeAuditReport, parseRange } from "@/lib/wave3-reporting";
 
 export async function GET(req: NextRequest) {
-  const session = await getSession();
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  let session;
+  try {
+    session = await requireRole(["ADMIN", "OWNER"]);
+  } catch {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
+  const limits = await getOrgLimits(session.orgId);
+  if (!["PRO", "ENTERPRISE", "ENTERPRISE_PLUS"].includes(limits.tier)) {
+    return NextResponse.json({ error: "Change audit reports require a Pro plan or higher." }, { status: 403 });
+  }
 
   const range = parseRange({
     from: req.nextUrl.searchParams.get("from"),

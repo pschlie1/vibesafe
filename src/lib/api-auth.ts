@@ -14,6 +14,11 @@ export async function authenticateApiKeyHeader(req: Request): Promise<string | n
   if (!key) return null;
   if (key.expiresAt && key.expiresAt < new Date()) return null;
 
+  // Verify org still has an active PRO+ subscription
+  const sub = await db.subscription.findUnique({ where: { orgId: key.orgId } });
+  const tier = sub?.tier ?? "FREE";
+  if (!["PRO", "ENTERPRISE", "ENTERPRISE_PLUS"].includes(tier)) return null;
+
   await db.apiKey.update({ where: { id: key.id }, data: { lastUsedAt: new Date() } });
   await db.auditLog.create({
     data: {

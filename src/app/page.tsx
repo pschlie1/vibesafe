@@ -188,8 +188,45 @@ const faqs = [
   },
 ];
 
+const softwareAppSchema = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: "Scantient",
+  applicationCategory: "SecurityApplication",
+  operatingSystem: "Web",
+  offers: {
+    "@type": "Offer",
+    price: "199",
+    priceCurrency: "USD",
+  },
+  description: "Security monitoring for AI-generated applications",
+  url: "https://scantient.com",
+};
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqs.map((item) => ({
+    "@type": "Question",
+    name: item.q,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: item.a,
+    },
+  })),
+};
+
 export default function LandingPage() {
   return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareAppSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
     <div className="bg-alabaster-grey-50">
       {/* Nav - Frosted glass sticky header */}
       <nav className="sticky top-0 z-50 border-b border-alabaster-grey-200/60" style={{ background: "rgba(243,243,241,0.85)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}>
@@ -560,5 +597,6 @@ export default function LandingPage() {
 
       <Footer />
     </div>
+    </>
   );
 }

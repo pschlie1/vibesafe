@@ -44,6 +44,11 @@ export async function DELETE(
     return NextResponse.json({ error: "Cannot remove the account owner" }, { status: 403 });
   }
 
+  // Revoke all API keys created by this user for this org before deleting the user.
+  // This prevents a removed employee from retaining API access via previously-issued keys.
+  // (FK onDelete:SetNull would null the field on user delete but not delete the key itself.)
+  await db.apiKey.deleteMany({ where: { createdByUserId: id, orgId: session.orgId } });
+
   await db.user.delete({ where: { id } });
   await logAudit(session, "user.removed", id, `Removed ${target.email} from org`);
   return NextResponse.json({ ok: true });

@@ -101,6 +101,7 @@ model User {
 
   assignedFindings  FindingAssignment[]
   auditLogs         AuditLog[]
+  createdApiKeys    ApiKey[]
 
   @@unique([email, orgId])
   @@index([orgId])
@@ -259,17 +260,20 @@ model Notification {
 // ─── API Keys (agent-first) ─────────────────────────
 
 model ApiKey {
-  id          String       @id @default(cuid())
-  orgId       String
-  org         Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
-  name        String
-  keyHash     String       @unique
-  keyPrefix   String
-  lastUsedAt  DateTime?
-  expiresAt   DateTime?
-  createdAt   DateTime     @default(now())
+  id               String       @id @default(cuid())
+  orgId            String
+  org              Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  name             String
+  keyHash          String       @unique
+  keyPrefix        String
+  lastUsedAt       DateTime?
+  expiresAt        DateTime?
+  createdAt        DateTime     @default(now())
+  createdByUserId  String?
+  createdBy        User?        @relation(fields: [createdByUserId], references: [id], onDelete: SetNull)
 
   @@index([orgId])
+  @@index([createdByUserId])
 }
 
 // ─── Audit Log ──────────────────────────────────────

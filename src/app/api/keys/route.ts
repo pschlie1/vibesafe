@@ -87,6 +87,7 @@ export async function POST(req: Request) {
       name: parsed.data.name,
       keyHash: hash,
       keyPrefix: prefix,
+      createdByUserId: session.id,
     },
     select: { id: true, name: true, keyPrefix: true, lastUsedAt: true, createdAt: true },
   });

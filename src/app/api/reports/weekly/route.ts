@@ -31,8 +31,9 @@ function buildReport(apps: Array<{ name: string; ownerEmail: string | null; stat
   });
 }
 
-// audit-24: req parameter kept for Next.js route handler compatibility but
-// the cron path that read Authorization from it has been removed (see comment above).
+// _req is accepted for Next.js route-handler compatibility and test
+// call-sites but is intentionally unused — the cron path that previously
+// read the Authorization header from it has been removed entirely.
 export async function GET(_req?: Request) {
   const since = subDays(new Date(), 7);
 

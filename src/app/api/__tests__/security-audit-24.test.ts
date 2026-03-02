@@ -408,14 +408,24 @@ describe("A24-3: Weekly report — cron path removed", () => {
   });
 
   it("sending Authorization: Bearer <CRON_SECRET> with a valid session does NOT return all-org data", async () => {
-    // This simulates the attack: logged-in user sends CRON_SECRET header
+    // This simulates the attack: a logged-in user who knows the CRON_SECRET value
+    // sends it in the Authorization header hoping to trigger the old cron path that
+    // returned all-org data.  The cron path has been removed entirely — the handler
+    // no longer accepts a request parameter, so the Authorization header cannot
+    // even reach route logic.  We set CRON_SECRET in env to confirm the route
+    // never reads it and always returns per-org scoped data.
+    process.env.CRON_SECRET = "test-cron-secret-value";
     getSession.mockResolvedValue(OWNER_SESSION);
     getOrgLimits.mockResolvedValue({ tier: "PRO" });
     monitoredAppFindMany.mockResolvedValue([]);
 
     const { GET } = await import("@/app/api/reports/weekly/route");
-    // GET no longer accepts a Request parameter (req removed since cron path was deleted)
-    const res = await GET();
+    // Pass the Authorization header to fully simulate the attack vector:
+    // even with the cron secret present, the route must return per-org data only.
+    const attackReq = new Request("http://localhost/api/reports/weekly", {
+      headers: { Authorization: `Bearer ${process.env.CRON_SECRET}` },
+    });
+    const res = await GET(attackReq);
 
     expect(res.status).toBe(200);
     const body = await res.json() as Record<string, unknown>;

@@ -106,7 +106,7 @@ export async function runBrowserScanFindings(
     ...checkInformationDisclosure(html, headers),
     ...checkSSLIssues(html, headers, url),
     ...checkDependencyExposure(html),
-    ...checkAPISecurity(html, headers),
+    ...checkAPISecurity(html, headers, url),
     ...checkOpenRedirects(html),
     ...checkThirdPartyScripts(html, url),
     ...checkFormSecurity(html),

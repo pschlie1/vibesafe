@@ -252,7 +252,7 @@ export async function runHttpScanForApp(appId: string, context: ScanContext = {}
       ...checkInformationDisclosure(html, headers),
       ...checkSSLIssues(html, headers, app.url),
       ...checkDependencyExposure(html),
-      ...checkAPISecurity(html, headers),
+      ...checkAPISecurity(html, headers, app.url),
       ...checkOpenRedirects(html),
       ...checkThirdPartyScripts(html, app.url),
       ...checkFormSecurity(html),

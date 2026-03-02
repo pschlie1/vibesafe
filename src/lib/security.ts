@@ -231,17 +231,29 @@ export function checkInlineScripts(html: string): SecurityFinding[] {
   }
 
   // Check for dangerouslySetInnerHTML patterns (React-specific XSS risk).
-  // Require an assignment context — either JSX attribute syntax
-  // (dangerouslySetInnerHTML={{ ... }}, uses "=") or compiled JS object property
-  // syntax (dangerouslySetInnerHTML: { ... }, uses ":"). This prevents false
-  // positives when the term appears as a plain string in marketing copy, page
-  // descriptions, or JSON blobs embedded in __NEXT_DATA__ / hydration scripts.
-  const INNER_HTML_ASSIGNMENT = /dangerouslySetInnerHTML\s*[:=]\s*\{/i;
+  //
+  // Key insight: Next.js RSC hydration payloads (self.__next_f.push(...)) embed
+  // JSON strings that contain `"dangerouslySetInnerHTML":{"__html":...}` — the key
+  // is always double-quoted in JSON context. Real JSX/JS usage is never quoted:
+  //   JSX:      dangerouslySetInnerHTML={{ __html: ... }}
+  //   Compiled: dangerouslySetInnerHTML:{__html:...}
+  //
+  // Pattern: require a non-quote character immediately before the identifier.
+  // This skips JSON-encoded keys ("dangerouslySetInnerHTML") while catching real usage.
+  const INNER_HTML_ASSIGNMENT = /[^"']dangerouslySetInnerHTML\s*[:=]\s*\{/i;
+
+  // Only check non-RSC inline script bodies. RSC hydration chunks start with
+  // `self.__next_f.push`, `self.__next_s`, or contain `__NEXT_DATA__` — these
+  // are framework-generated JSON payloads, not user-authored JS.
+  const RSC_SCRIPT = /self\.__next_f\s*\.push|self\.__next_s|__NEXT_DATA__|__NEXT_FRAME__/;
   const inlineScriptBodies = Array.from(
     html.matchAll(/<script(?![^>]*src=)[^>]*>([\s\S]*?)<\/script>/gi),
-  ).map((m) => m[1]);
-  // hasJsxUsage: checks full HTML for JSX-style or compiled property assignment.
-  // hasScriptUsage: only checks inline <script> bodies (already scoped).
+  )
+    .map((m) => m[1])
+    .filter((s) => !RSC_SCRIPT.test(s));
+
+  // hasJsxUsage: checks full HTML for unquoted JSX-style or compiled JS assignment.
+  // hasScriptUsage: checks non-RSC inline <script> bodies only.
   const hasJsxUsage = INNER_HTML_ASSIGNMENT.test(html);
   const hasScriptUsage = inlineScriptBodies.some((s) => INNER_HTML_ASSIGNMENT.test(s));
   if (hasJsxUsage || hasScriptUsage) {

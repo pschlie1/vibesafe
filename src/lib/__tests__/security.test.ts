@@ -165,6 +165,21 @@ describe("checkInlineScripts", () => {
     const findings = checkInlineScripts(html);
     expect(findings.some((f) => f.code === "DANGEROUS_INNER_HTML")).toBe(true);
   });
+
+  it("does NOT flag dangerouslySetInnerHTML appearing as plain text in page content (false positive prevention)", () => {
+    // Simulates __NEXT_DATA__ or marketing copy that mentions the term as a string.
+    // Should NOT fire — bare mentions without an assignment context are safe.
+    const html = `<script id="__NEXT_DATA__" type="application/json">{"props":{"pageProps":{"desc":"Scans for dangerouslySetInnerHTML usage in LLM-generated code"}}}</script>`;
+    const findings = checkInlineScripts(html);
+    expect(findings.some((f) => f.code === "DANGEROUS_INNER_HTML")).toBe(false);
+  });
+
+  it("detects dangerouslySetInnerHTML in compiled inline script (object property assignment)", () => {
+    // Simulates compiled React code in an inline chunk with actual usage.
+    const html = `<script>var r=React.createElement("div",{dangerouslySetInnerHTML:{__html:e}})</script>`;
+    const findings = checkInlineScripts(html);
+    expect(findings.some((f) => f.code === "DANGEROUS_INNER_HTML")).toBe(true);
+  });
 });
 
 describe("checkMetaAndConfig", () => {

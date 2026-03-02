@@ -2,6 +2,14 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { jwtVerify } from "jose";
 
+/**
+ * Generate a cryptographically random nonce for CSP.
+ * Uses the Web Crypto API (available in Edge Runtime and Node 18+).
+ */
+function generateNonce(): string {
+  return Buffer.from(crypto.randomUUID()).toString("base64");
+}
+
 const PUBLIC_PATHS = [
   "/",
   "/login",
@@ -36,40 +44,63 @@ const PUBLIC_PATHS = [
   "/api/public",
 ];
 
-// Security headers applied to every non-static response
-const SECURITY_HEADERS: Record<string, string> = {
+// Static security headers (applied to every non-static response)
+const STATIC_SECURITY_HEADERS: Record<string, string> = {
   "X-Frame-Options": "DENY",
   "X-Content-Type-Options": "nosniff",
   "Referrer-Policy": "strict-origin-when-cross-origin",
   "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
   "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-  // Vercel adds Access-Control-Allow-Origin: * by default — restrict to same origin.
-  // Scantient is a web app, not a public API; cross-origin access is not permitted.
-  "Access-Control-Allow-Origin": "https://scantient.com",
-  "Content-Security-Policy": [
-    "default-src 'self'",
-    // unsafe-eval only needed in development for Next.js HMR; strip in production
+};
+
+/**
+ * Build a per-request Content-Security-Policy header using a nonce.
+ *
+ * Strategy: nonce + strict-dynamic
+ * - `nonce-{nonce}`: only scripts with this nonce attribute execute
+ * - `strict-dynamic`: nonce-approved scripts may load further scripts dynamically
+ *   (required for Next.js chunk loading)
+ * - `unsafe-inline`: fallback for older browsers that don't support nonces
+ *   (ignored by modern browsers when a nonce is present)
+ * - `unsafe-eval`: only in development (Next.js HMR requires it)
+ *
+ * This is materially stronger than `'unsafe-inline'` alone because modern
+ * browsers enforce the nonce, blocking any injected inline scripts.
+ */
+function buildCsp(nonce: string): string {
+  const scriptSrc =
     process.env.NODE_ENV === "development"
-      ? "script-src 'self' 'unsafe-inline' 'unsafe-eval'"
-      : "script-src 'self' 'unsafe-inline'",
+      ? `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' 'unsafe-inline' 'unsafe-eval'`
+      : `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' 'unsafe-inline'`;
+
+  return [
+    "default-src 'self'",
+    scriptSrc,
     "style-src 'self' 'unsafe-inline'",
-    // Restrict img-src: own origin + data URIs + Stripe (for hosted payment elements)
+    // img-src: own origin + data URIs + Stripe (hosted payment elements)
     "img-src 'self' data: blob: https://q.stripe.com",
     "font-src 'self' data:",
-    // connect-src: add Sentry ingest so client-side errors are captured
+    // connect-src: Sentry ingest for client-side error capture
     "connect-src 'self' https://api.resend.com https://api.stripe.com https://o*.ingest.sentry.io",
     "frame-ancestors 'none'",
     "base-uri 'self'",
     "form-action 'self'",
     // Report CSP violations to /api/health (cheap endpoint, no auth required)
     "report-uri /api/health",
-  ].join("; "),
-};
+  ].join("; ");
+}
 
-function applySecurityHeaders(response: NextResponse, isApiRoute: boolean): void {
-  for (const [key, value] of Object.entries(SECURITY_HEADERS)) {
+function applySecurityHeaders(
+  response: NextResponse,
+  nonce: string,
+  isApiRoute: boolean,
+): void {
+  // Static headers
+  for (const [key, value] of Object.entries(STATIC_SECURITY_HEADERS)) {
     response.headers.set(key, value);
   }
+  // Dynamic nonce-based CSP
+  response.headers.set("Content-Security-Policy", buildCsp(nonce));
   // Prevent caching of authenticated API responses
   if (isApiRoute) {
     response.headers.set("Cache-Control", "no-store, no-cache, must-revalidate, private");
@@ -87,6 +118,16 @@ export async function middleware(request: NextRequest) {
   // exclude them from the no-store / private Cache-Control header.
   const isPublicApiRoute = pathname.startsWith("/api/public/");
 
+  // Generate a per-request nonce for CSP. Used for all non-static responses.
+  const nonce = generateNonce();
+
+  // Helper: build a NextResponse.next() that forwards the nonce to the app
+  // via a request header so layout.tsx can read it via next/headers.
+  const nextWithNonce = () =>
+    NextResponse.next({
+      request: { headers: new Headers({ ...Object.fromEntries(request.headers), "x-nonce": nonce }) },
+    });
+
   // Public paths (exact or prefix match)
   if (
     PUBLIC_PATHS.some((p) => pathname === p || pathname.startsWith(p + "/")) ||
@@ -97,10 +138,10 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith("/favicon") ||
     pathname.startsWith("/invite/") // invite token pages
   ) {
-    const response = NextResponse.next();
+    const response = nextWithNonce();
     // Do NOT apply no-store to public API routes — they serve cacheable content
     // (SVG badges, public scores) and should not be marked private/no-store.
-    applySecurityHeaders(response, isApiRoute && !isPublicApiRoute);
+    applySecurityHeaders(response, nonce, isApiRoute && !isPublicApiRoute);
     return response;
   }
 
@@ -110,7 +151,7 @@ export async function middleware(request: NextRequest) {
     // API routes get 401, pages get redirect
     if (isApiRoute) {
       const res = NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-      applySecurityHeaders(res, true);
+      applySecurityHeaders(res, nonce, true);
       return res;
     }
     return NextResponse.redirect(new URL("/login", request.url));
@@ -122,7 +163,7 @@ export async function middleware(request: NextRequest) {
     // Config error — fail closed. Never allow unverified access.
     if (isApiRoute) {
       const res = NextResponse.json({ error: "Server configuration error" }, { status: 500 });
-      applySecurityHeaders(res, true);
+      applySecurityHeaders(res, nonce, true);
       return res;
     }
     return NextResponse.redirect(new URL("/login", request.url));
@@ -135,7 +176,7 @@ export async function middleware(request: NextRequest) {
     if (isApiRoute) {
       const res = NextResponse.json({ error: "Unauthorized" }, { status: 401 });
       res.cookies.delete("scantient-session");
-      applySecurityHeaders(res, true);
+      applySecurityHeaders(res, nonce, true);
       return res;
     }
     const res = NextResponse.redirect(new URL("/login", request.url));
@@ -143,8 +184,8 @@ export async function middleware(request: NextRequest) {
     return res;
   }
 
-  const response = NextResponse.next();
-  applySecurityHeaders(response, isApiRoute);
+  const response = nextWithNonce();
+  applySecurityHeaders(response, nonce, isApiRoute);
   return response;
 }
 

@@ -262,6 +262,80 @@ export function checkInlineScripts(html: string): SecurityFinding[] {
 }
 
 // ────────────────────────────────────────────
+// 4b. Inline script count vs CSP strength
+// ────────────────────────────────────────────
+
+/**
+ * Flags pages that ship many inline scripts without a strong Content-Security-Policy.
+ *
+ * Next.js and similar frameworks ship inline script blocks for hydration by default.
+ * This is acceptable ONLY when the CSP policy restricts which scripts can execute:
+ *   - Nonce-based CSP: `script-src 'nonce-{nonce}'` (plus optional `'strict-dynamic'`)
+ *   - Hash-based CSP: `script-src 'sha256-...'`
+ *
+ * If the CSP is absent or uses `unsafe-inline` (without a nonce), every inline
+ * script can run — defeating the purpose of CSP entirely.
+ *
+ * Threshold: > 5 inline scripts. Framework hydration produces several, but > 5
+ * with no meaningful CSP is a signal worth surfacing.
+ */
+export function checkInlineScriptCount(html: string, headers: Headers): SecurityFinding[] {
+  const findings: SecurityFinding[] = [];
+
+  // Count inline <script> blocks (no src attribute, non-empty body)
+  const inlineScripts = Array.from(
+    html.matchAll(/<script(?![^>]*\bsrc\s*=)[^>]*>([\s\S]*?)<\/script>/gi),
+  ).filter((m) => m[1].trim().length > 0);
+
+  const count = inlineScripts.length;
+  if (count <= 5) return findings; // Below threshold — not worth flagging
+
+  const csp = headers.get("content-security-policy") ?? "";
+
+  // Determine CSP strength for inline scripts
+  const hasNonce = /script-src[^;]*'nonce-/i.test(csp);
+  const hasHash = /script-src[^;]*'sha(?:256|384|512)-/i.test(csp);
+  const hasStrictDynamic = /script-src[^;]*'strict-dynamic'/i.test(csp);
+  const hasUnsafeInline = /script-src[^;]*'unsafe-inline'/i.test(csp);
+  const hasCsp = csp.length > 0;
+
+  // CSP is strong if it uses nonce/hash/strict-dynamic (even with unsafe-inline present
+  // — modern browsers ignore unsafe-inline when a nonce or hash is present)
+  const cspIsStrong = hasNonce || hasHash || (hasStrictDynamic && hasCsp);
+
+  if (cspIsStrong) return findings; // Inline scripts are acceptable with a strong CSP
+
+  const severity = hasCsp && hasUnsafeInline ? ("LOW" as const) : ("MEDIUM" as const);
+  const cspNote = !hasCsp
+    ? "No Content-Security-Policy header is set."
+    : "The CSP uses 'unsafe-inline' for scripts, which allows all inline scripts to run and negates CSP protection.";
+
+  findings.push({
+    code: "INLINE_SCRIPTS",
+    title: `${count} inline script blocks detected — CSP protection insufficient`,
+    description:
+      `${count} inline <script> blocks were found. ${cspNote} ` +
+      `Without a nonce- or hash-based CSP, any injected inline script can execute, ` +
+      `increasing XSS risk.`,
+    severity,
+    fixPrompt: buildFixPrompt(
+      "Inline scripts with weak/absent CSP",
+      "1. Add a Content-Security-Policy header that uses nonce-based or strict-dynamic protection.\n" +
+        "   In Next.js middleware:\n" +
+        "   - Generate a per-request nonce: `const nonce = Buffer.from(crypto.randomUUID()).toString('base64')`\n" +
+        "   - Set CSP: `script-src 'nonce-${nonce}' 'strict-dynamic' 'unsafe-inline'`\n" +
+        "     (unsafe-inline is ignored by modern browsers when a nonce is present)\n" +
+        "   - Pass nonce to the app via request header: `x-nonce: <nonce>`\n" +
+        "   - In layout.tsx, read `headers().get('x-nonce')` and apply to inline scripts.\n" +
+        "2. Alternatively, generate SHA-256 hashes of each inline script and list them in the CSP.\n" +
+        "3. Avoid adding new inline scripts; prefer external script files with SRI hashes.",
+    ),
+  });
+
+  return findings;
+}
+
+// ────────────────────────────────────────────
 // 5. Meta and configuration checks
 // ────────────────────────────────────────────
 

@@ -120,6 +120,8 @@ vi.mock("@/lib/remediation-lifecycle", () => ({
   linkPRToFinding: vi.fn().mockResolvedValue({ linkedPRs: [] }),
   addTimelineEvent: vi.fn().mockResolvedValue(undefined),
 }));
+vi.mock("@/lib/endpoint-discovery", () => ({ discoverEndpoints: vi.fn().mockResolvedValue([]) }));
+vi.mock("@/lib/scanner-auth", () => ({ runAuthScan: vi.fn().mockResolvedValue([]) }));
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 function makeRequest(method: string, body?: unknown, headers?: Record<string, string>) {

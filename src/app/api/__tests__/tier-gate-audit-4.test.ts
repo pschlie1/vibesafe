@@ -115,6 +115,8 @@ vi.mock("@/lib/remediation-lifecycle", () => ({
 vi.mock("@/lib/auth-headers", () => ({
   decryptAuthHeaders: vi.fn().mockReturnValue([]),
 }));
+vi.mock("@/lib/endpoint-discovery", () => ({ discoverEndpoints: vi.fn().mockResolvedValue([]) }));
+vi.mock("@/lib/scanner-auth", () => ({ runAuthScan: vi.fn().mockResolvedValue([]) }));
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 function sha256(input: string): string {

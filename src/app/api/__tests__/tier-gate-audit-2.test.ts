@@ -708,7 +708,7 @@ describe("H-6: POST /api/auth/invite/[token]", () => {
       { params: Promise.resolve({ token: "valid_token" }) },
     );
     expect(canAddUser).toHaveBeenCalledWith("org_pro");
-    expect(canAddUser).toHaveBeenCalledBefore ? void 0 : expect(userCreate).toHaveBeenCalled();
+    expect(userCreate).toHaveBeenCalled();
   });
 
   it("returns 404 for invalid token", async () => {

@@ -5,11 +5,13 @@ import jwt from "jsonwebtoken";
 import * as client from "openid-client";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 
-const JWT_SECRET = (() => {
+function getJwtSecret(): string {
   const s = process.env.JWT_SECRET;
+  const isBuildPhase = process.env.NEXT_PHASE === "phase-production-build";
+  if (!s && isBuildPhase) return "build-phase-placeholder-secret";
   if (!s) throw new Error("JWT_SECRET environment variable is required");
   return s;
-})();
+}
 const CALLBACK_URL = "https://scantient.com/api/auth/sso/callback";
 
 const STATE_COOKIE = "scantient_sso_state";
@@ -49,7 +51,7 @@ export async function GET(req: Request) {
       code_challenge_method: "S256",
       state,
     });
-    const stateToken = jwt.sign({ codeVerifier, state, orgId: ssoConfig.orgId, domain }, JWT_SECRET, { expiresIn: 600 });
+    const stateToken = jwt.sign({ codeVerifier, state, orgId: ssoConfig.orgId, domain }, getJwtSecret(), { expiresIn: 600 });
     const cookieStore = await cookies();
     const isSecure = process.env.NODE_ENV === "production" || process.env.VERCEL_ENV === "production";
     cookieStore.set(STATE_COOKIE, stateToken, { httpOnly: true, secure: isSecure, sameSite: "lax", maxAge: 600, path: "/" });

@@ -94,4 +94,23 @@
     <priority>0.4</priority>
   </url>
 
+  <!-- AI Compliance Content (March 2026) -->
+  <url>
+    <loc>https://scantient.com/blog/ai-policy-compliance-engineering</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://scantient.com/ai-policy-compliance</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://scantient.com/for-msps</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
 </urlset>

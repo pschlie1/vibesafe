@@ -12,6 +12,16 @@ export const metadata: Metadata = {
 
 const posts = [
   {
+    slug: "/blog/ai-policy-compliance-engineering",
+    category: "AI Compliance",
+    title: "Your Engineering Team Probably Has No AI Usage Policy (And Why That's a Security Problem)",
+    excerpt:
+      "Most engineering teams use 10+ AI tools with zero formal policy. Shadow AI is a compliance time bomb — here's what your AI usage policy actually needs.",
+    date: "March 2, 2026",
+    readTime: "7 min read",
+    featured: true,
+  },
+  {
     slug: "/vibe-coding-risks",
     category: "Security",
     title: "The Hidden Security Risks of Vibe-Coded Applications",
@@ -19,7 +29,7 @@ const posts = [
       "AI coding tools let anyone ship a production app in an afternoon. Here's what IT needs to know about the security gaps that come with them.",
     date: "February 20, 2026",
     readTime: "8 min read",
-    featured: true,
+    featured: false,
   },
   {
     slug: "/compliance",

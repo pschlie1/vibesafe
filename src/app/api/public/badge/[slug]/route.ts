@@ -8,6 +8,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { calcScore, scoreToGrade, scoreToColor, makeBadgeSvg } from "@/app/api/public/badge/route";
 import { applyCors, corsPreflightResponse, CORS_HEADERS_PUBLIC } from "@/lib/cors";
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 
 export function OPTIONS() {
   return corsPreflightResponse(CORS_HEADERS_PUBLIC);
@@ -17,6 +18,24 @@ async function handler(
   req: Request,
   params: Promise<{ slug: string }>,
 ): Promise<NextResponse> {
+  // Rate limit: 20 requests per minute per IP to prevent slug enumeration
+  const ip = getClientIp(req);
+  const rl = await checkRateLimit(`badge-slug:${ip}`, {
+    maxAttempts: 20,
+    windowMs: 60 * 1000, // 1 minute
+  });
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { error: "Rate limit exceeded. Try again later." },
+      {
+        status: 429,
+        headers: rl.retryAfterSeconds
+          ? { "Retry-After": String(rl.retryAfterSeconds) }
+          : {},
+      },
+    );
+  }
+
   const { slug } = await params;
   const { searchParams } = new URL(req.url);
   const format = searchParams.get("format") ?? "svg";

@@ -39,6 +39,7 @@ const userDelete = vi.fn();
 const userUpdate = vi.fn();
 const auditLogFindFirst = vi.fn();
 const auditLogCreate = vi.fn();
+const apiKeyDeleteMany = vi.fn();
 
 vi.mock("@/lib/db", () => ({
   db: {
@@ -65,6 +66,9 @@ vi.mock("@/lib/db", () => ({
     auditLog: {
       findFirst: auditLogFindFirst,
       create: auditLogCreate,
+    },
+    apiKey: {
+      deleteMany: apiKeyDeleteMany,
     },
     integrationConfig: {
       findUnique: vi.fn().mockResolvedValue(null),
@@ -149,6 +153,7 @@ beforeEach(() => {
   monitoredAppUpdate.mockResolvedValue({});
   auditLogFindFirst.mockResolvedValue(null);
   auditLogCreate.mockResolvedValue({});
+  apiKeyDeleteMany.mockResolvedValue({ count: 0 });
 });
 
 afterEach(() => {

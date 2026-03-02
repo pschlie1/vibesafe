@@ -8,6 +8,12 @@ const ALLOWED_ORIGIN =
     : "http://localhost:3000";
 
 const nextConfig: NextConfig = {
+  // Prevent Next.js / Turbopack from bundling Prisma's native query engine.
+  // The `.so.node` binary must be required by Node.js at runtime — if it gets
+  // bundled into a single JS file the native module loader can't find it and
+  // every API route that imports `@prisma/client` returns HTTP 500.
+  serverExternalPackages: ["@prisma/client", ".prisma/client"],
+
   async headers() {
     return [
       {

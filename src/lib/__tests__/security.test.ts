@@ -396,14 +396,24 @@ describe("checkDependencyExposure", () => {
 // ────────────────────────────────────────────
 
 describe("checkAPISecurity", () => {
-  it("detects missing rate limiting headers", () => {
-    const findings = checkAPISecurity("<html></html>", new Headers());
+  it("detects missing rate limiting headers on /api/ routes", () => {
+    const findings = checkAPISecurity("<html></html>", new Headers(), "https://example.com/api/users");
     expect(findings.some((f) => f.code === "NO_RATE_LIMITING")).toBe(true);
   });
 
-  it("no rate limit finding when header present", () => {
+  it("skips rate limit check for non-API URLs (no false positives on homepage)", () => {
+    const findings = checkAPISecurity("<html></html>", new Headers(), "https://example.com/");
+    expect(findings.some((f) => f.code === "NO_RATE_LIMITING")).toBe(false);
+  });
+
+  it("skips rate limit check when no URL provided", () => {
+    const findings = checkAPISecurity("<html></html>", new Headers());
+    expect(findings.some((f) => f.code === "NO_RATE_LIMITING")).toBe(false);
+  });
+
+  it("no rate limit finding when header present on API route", () => {
     const headers = new Headers({ "x-ratelimit-limit": "100" });
-    const findings = checkAPISecurity("<html></html>", headers);
+    const findings = checkAPISecurity("<html></html>", headers, "https://example.com/api/users");
     expect(findings.some((f) => f.code === "NO_RATE_LIMITING")).toBe(false);
   });
 

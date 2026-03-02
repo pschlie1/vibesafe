@@ -201,7 +201,7 @@ describe("A8-1: Invite /api/auth/invite/[token] — password min 12", () => {
     expect(res.status).toBe(400);
   });
 
-  it("returns 201 when password is exactly 12 characters", async () => {
+  it("returns 201 when password is exactly 12 characters (with required complexity)", async () => {
     inviteFindUnique.mockResolvedValueOnce({
       token: "tok12", email: "a@b.com", role: "MEMBER", orgId: "org1",
       expiresAt: FUTURE, org: { name: "Org", id: "org1" },
@@ -213,7 +213,8 @@ describe("A8-1: Invite /api/auth/invite/[token] — password min 12", () => {
 
     const { POST } = await import("@/app/api/auth/invite/[token]/route");
     const res = await POST(
-      makeReq({ name: "Alice", password: "12charpasswd" }),
+      // 12 chars: uppercase + lowercase + digit + special — meets all complexity requirements
+      makeReq({ name: "Alice", password: "Pass123word!" }),
       { params: Promise.resolve({ token: "tok12" }) },
     );
     expect(res.status).toBe(201);

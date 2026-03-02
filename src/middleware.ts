@@ -77,6 +77,9 @@ function applySecurityHeaders(response: NextResponse, isApiRoute: boolean): void
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const isApiRoute = pathname.startsWith("/api/");
+  // Public API routes (badges, public scores) should remain cacheable —
+  // exclude them from the no-store / private Cache-Control header.
+  const isPublicApiRoute = pathname.startsWith("/api/public/");
 
   // Public paths (exact or prefix match)
   if (
@@ -89,7 +92,9 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith("/invite/") // invite token pages
   ) {
     const response = NextResponse.next();
-    applySecurityHeaders(response, isApiRoute);
+    // Do NOT apply no-store to public API routes — they serve cacheable content
+    // (SVG badges, public scores) and should not be marked private/no-store.
+    applySecurityHeaders(response, isApiRoute && !isPublicApiRoute);
     return response;
   }
 

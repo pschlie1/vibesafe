@@ -7,6 +7,73 @@
 import { z } from "zod";
 
 // ---------------------------------------------------------------------------
+// Password complexity
+// ---------------------------------------------------------------------------
+
+/**
+ * Strong password schema — requires minimum 12 characters plus at least one
+ * uppercase letter, one lowercase letter, one digit, and one special character.
+ */
+export const passwordSchema = z
+  .string()
+  .min(12, "Password must be at least 12 characters")
+  .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+  .regex(/[a-z]/, "Password must contain at least one lowercase letter")
+  .regex(/[0-9]/, "Password must contain at least one number")
+  .regex(/[^A-Za-z0-9]/, "Password must contain at least one special character");
+
+// ---------------------------------------------------------------------------
+// Reserved org slug blocklist
+// ---------------------------------------------------------------------------
+
+/**
+ * Slugs that must not be used as-is for organization identifiers because they
+ * would shadow Next.js API routes, public pages, or infrastructure paths.
+ */
+export const RESERVED_SLUGS = new Set([
+  "api",
+  "v1",
+  "admin",
+  "www",
+  "app",
+  "static",
+  "public",
+  "auth",
+  "dashboard",
+  "settings",
+  "billing",
+  "login",
+  "logout",
+  "signup",
+  "health",
+  "status",
+  "docs",
+  "blog",
+  "support",
+  "help",
+  "mail",
+  "email",
+  "smtp",
+  "ftp",
+  "cdn",
+  "assets",
+  "images",
+  "uploads",
+  "download",
+  "downloads",
+  "files",
+  "media",
+]);
+
+/**
+ * Returns true when `slug` exactly matches a reserved path segment.
+ * The check is case-insensitive (caller should pass a lowercased slug).
+ */
+export function isReservedSlug(slug: string): boolean {
+  return RESERVED_SLUGS.has(slug.toLowerCase());
+}
+
+// ---------------------------------------------------------------------------
 // Primitives
 // ---------------------------------------------------------------------------
 

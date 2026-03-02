@@ -1,11 +1,19 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import crypto from "node:crypto";
 import jwt from "jsonwebtoken";
 import { db } from "@/lib/db";
 import { hashPassword, createSession } from "@/lib/auth";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 import { trackEvent } from "@/lib/analytics";
 import { extractSuggestedDomain } from "@/lib/onboarding";
+import { logAudit } from "@/lib/tenant";
+import { passwordSchema, isReservedSlug } from "@/lib/validation";
+
+/** 4-character alphanumeric suffix to disambiguate reserved org slugs. */
+function slugSuffix(): string {
+  return crypto.randomBytes(3).toString("base64url").slice(0, 4).toLowerCase();
+}
 
 function getJwtSecret(): string {
   const secret = process.env.JWT_SECRET;
@@ -43,9 +51,9 @@ async function sendVerificationEmail(to: string, verifyLink: string) {
 
 const signupSchema = z.object({
   email: z.string().email(),
-  password: z.string().min(12, "Password must be at least 12 characters"),
-  name: z.string().min(2),
-  orgName: z.string().min(2),
+  password: passwordSchema,
+  name: z.string().min(2).max(100),
+  orgName: z.string().min(2).max(64),
 });
 
 export async function POST(req: Request) {
@@ -78,7 +86,12 @@ export async function POST(req: Request) {
   }
 
   // Create org + user + free subscription in a transaction
-  const slug = orgName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  let slug = orgName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  // If the base slug matches a reserved path segment, append a random suffix to
+  // avoid shadowing Next.js API routes or public pages (e.g. "api", "admin").
+  if (isReservedSlug(slug)) {
+    slug = `${slug}-${slugSuffix()}`;
+  }
   const passwordHash = await hashPassword(password);
 
   const trialEnd = new Date();
@@ -112,6 +125,9 @@ export async function POST(req: Request) {
 
   const user = org.users[0];
   const session = await createSession(user.id);
+
+  // Audit log: record org creation for compliance trail
+  await logAudit(session, "org.created", org.id, `Organization created: ${org.name}`);
 
   // Send email verification
   try {

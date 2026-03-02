@@ -81,6 +81,56 @@ describe("scanJavaScriptForKeys", () => {
     const findings = scanJavaScriptForKeys([payload, payload]);
     expect(findings.length).toBe(1);
   });
+
+  // ── audit-14: New key pattern coverage ──────────────────────────────────
+
+  it("detects AWS AKIA access key ID (exactly 20-char AKIA prefix + 16 uppercase alphanums)", () => {
+    // AKIA + 16 uppercase letters/digits = valid AWS access key ID format
+    const fakeAkiaKey = "AKIA" + "A1B2C3D4E5F6G7H8"; // 4 + 16 = 20 chars
+    const findings = scanJavaScriptForKeys([`const awsKey='${fakeAkiaKey}';`]);
+    expect(findings.length).toBeGreaterThanOrEqual(1);
+    expect(findings.some((f) => f.code === "EXPOSED_API_KEY")).toBe(true);
+  });
+
+  it("detects Stripe sk_test_ secret key (should not be in client bundle)", () => {
+    const fakeToken = "sk_test_" + "a".repeat(24); // sk_test_ + 24 chars
+    const findings = scanJavaScriptForKeys([`const stripe='${fakeToken}';`]);
+    expect(findings.length).toBeGreaterThanOrEqual(1);
+    expect(findings.some((f) => f.code === "EXPOSED_API_KEY")).toBe(true);
+  });
+
+  it("detects GitHub fine-grained PAT (github_pat_ prefix)", () => {
+    // github_pat_ + 22+ alphanumeric/underscore chars
+    const fakePat = "github_pat_" + "abcdefghijklmnopqrstuvwx";
+    const findings = scanJavaScriptForKeys([`const token='${fakePat}';`]);
+    expect(findings.length).toBeGreaterThanOrEqual(1);
+    expect(findings.some((f) => f.code === "EXPOSED_API_KEY")).toBe(true);
+  });
+
+  // ── audit-14: False positive tests ──────────────────────────────────────
+
+  it("does NOT flag Stripe publishable key pk_test_ (safe to expose)", () => {
+    const findings = scanJavaScriptForKeys([`const pk='pk_test_${"x".repeat(24)}';`]);
+    expect(findings.length).toBe(0);
+  });
+
+  it("does NOT flag Stripe publishable key pk_live_ (safe to expose)", () => {
+    const findings = scanJavaScriptForKeys([`const pk='pk_live_${"x".repeat(24)}';`]);
+    expect(findings.length).toBe(0);
+  });
+
+  it("does NOT flag a random all-caps string as an AWS AKIA key", () => {
+    // Must match AKIA + exactly 16 uppercase alphanumeric chars — a shorter or
+    // lowercase match should NOT trigger
+    const findings = scanJavaScriptForKeys([`const x='AKIA_SHORT';`]);
+    expect(findings.length).toBe(0);
+  });
+
+  it("does NOT flag a short sk_ string that is under the minimum length", () => {
+    // sk-xxx (too short — minimum is sk- + 20 chars)
+    const findings = scanJavaScriptForKeys([`const x='sk-abc123';`]);
+    expect(findings.length).toBe(0);
+  });
 });
 
 describe("checkClientSideAuthBypass", () => {

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import MarketingNav from "@/components/marketing-nav";
 import Footer from "@/components/footer";
 
@@ -43,7 +44,7 @@ export default function DocsPage() {
         <p className="mb-3 text-sm text-gray-600">
           All API requests require an API key sent in the <code className="rounded bg-gray-100 px-1.5 py-0.5 text-xs">X-API-Key</code> header.
           Keys use the <code className="rounded bg-gray-100 px-1.5 py-0.5 text-xs">vs_</code> prefix and are managed in{" "}
-          <a href="/settings/api-keys" className="text-blue-600 underline">Settings → API Keys</a>.
+          <Link href="/settings/api-keys" className="text-blue-600 underline">Settings → API Keys</Link>.
         </p>
         <Code>{`curl -H "X-API-Key: vs_your_key_here" https://scantient.com/api/v1/apps`}</Code>
       </section>
@@ -137,9 +138,9 @@ export default function DocsPage() {
           Run automated security scans on every push or pull request. Scantient&apos;s CI endpoint
           returns structured JSON and uses HTTP 422 when the scan fails.
         </p>
-        <a href="/docs/github-actions" className="inline-flex items-center gap-2 rounded-lg border border-gray-200 px-4 py-3 text-sm font-medium hover:bg-gray-50">
+        <Link href="/docs/github-actions" className="inline-flex items-center gap-2 rounded-lg border border-gray-200 px-4 py-3 text-sm font-medium hover:bg-gray-50">
           GitHub Actions Integration Guide →
-        </a>
+        </Link>
       </section>
 
             {/* Rate limits */}

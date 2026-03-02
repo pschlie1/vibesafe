@@ -1,7 +1,19 @@
 import { NextResponse } from "next/server";
+import { timingSafeEqual } from "crypto";
 import { runDueHttpScans } from "@/lib/scanner-http";
 import { logApiError } from "@/lib/observability";
 import { db } from "@/lib/db";
+
+/**
+ * Timing-safe string comparison using crypto.timingSafeEqual.
+ * Prevents timing attacks that could leak the CRON_SECRET length or value.
+ */
+function timingSafeStringEqual(a: string, b: string): boolean {
+  // Pad both to the same length to avoid length-based timing leaks
+  const bufA = Buffer.from(a.padEnd(512));
+  const bufB = Buffer.from(b.padEnd(512));
+  return timingSafeEqual(bufA, bufB) && a.length === b.length;
+}
 
 export async function GET(req: Request) {
   const cronSecret = process.env.CRON_SECRET;
@@ -10,8 +22,11 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: "CRON_SECRET not configured" }, { status: 503 });
   }
 
-  const auth = req.headers.get("authorization");
-  if (auth !== `Bearer ${cronSecret}`) {
+  const auth = req.headers.get("authorization") ?? "";
+  const expected = `Bearer ${cronSecret}`;
+
+  // audit-14: Use timing-safe comparison to prevent timing attacks on the secret
+  if (!timingSafeStringEqual(auth, expected)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

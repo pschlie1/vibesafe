@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import MarketingNav from "@/components/marketing-nav";
 import Footer from "@/components/footer";
 
@@ -66,7 +67,7 @@ export default function TermsPage() {
           <section>
             <h2 className="text-lg font-semibold text-gray-900">7. Data and privacy</h2>
             <p className="mt-3">
-              Your use of the Service is subject to our <a href="/privacy" className="text-black underline hover:no-underline">Privacy Policy</a>. Scan results and account data are yours. We do not sell your data or use it to train AI models.
+              Your use of the Service is subject to our <Link href="/privacy" className="text-black underline hover:no-underline">Privacy Policy</Link>. Scan results and account data are yours. We do not sell your data or use it to train AI models.
             </p>
           </section>
 

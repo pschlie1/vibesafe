@@ -5,6 +5,17 @@ import { getSession } from "@/lib/auth";
 import { getOrgLimits } from "@/lib/tenant";
 import { checkRateLimit } from "@/lib/rate-limit";
 
+// audit-24: The previous version of this route contained a "cron path" that
+// returned data from ALL organizations when an Authorization header matching
+// CRON_SECRET was supplied.  Because the middleware requires a valid JWT
+// session cookie before reaching this handler, any logged-in user who also
+// knew the CRON_SECRET could bypass per-org scoping and read every org's
+// weekly report (cross-tenant data leakage).  Additionally the comparison
+// used the non-constant-time `===` operator rather than a timing-safe
+// comparison.  The cron path was dead code for unauthenticated callers
+// (middleware blocks them) so it has been removed entirely.  The route now
+// only returns data for the authenticated user's own organization.
+
 function buildReport(apps: Array<{ name: string; ownerEmail: string | null; status: string; lastCheckedAt: Date | null; monitorRuns: Array<{ findings: Array<{ severity: string }> }> }>) {
   return apps.map((app) => {
     const findings = app.monitorRuns.flatMap((r) => r.findings);
@@ -20,44 +31,13 @@ function buildReport(apps: Array<{ name: string; ownerEmail: string | null; stat
   });
 }
 
-export async function GET(req: Request) {
+// _req is accepted for Next.js route-handler compatibility and test
+// call-sites but is intentionally unused — the cron path that previously
+// read the Authorization header from it has been removed entirely.
+export async function GET(_req?: Request) {
   const since = subDays(new Date(), 7);
 
-  // Cron path: iterate per-org
-  const auth = req.headers.get("authorization");
-  const isCron = process.env.CRON_SECRET && auth === `Bearer ${process.env.CRON_SECRET}`;
-
-  if (isCron) {
-    // Intentionally unbounded: this is a cron batch job that must process all orgs.
-    // Per-org queries below are capped with take: 100 to prevent per-org OOM.
-    const orgs = await db.organization.findMany({ select: { id: true, name: true } });
-    const reports = [];
-
-    for (const org of orgs) {
-      const apps = await db.monitoredApp.findMany({
-        where: { orgId: org.id },
-        take: 100,
-        include: {
-          monitorRuns: {
-            where: { startedAt: { gte: since } },
-            take: 10,
-            orderBy: { startedAt: "desc" },
-            include: {
-              findings: {
-                select: { severity: true },
-                take: 200,
-              },
-            },
-          },
-        },
-      });
-      reports.push({ orgId: org.id, orgName: org.name, report: buildReport(apps) });
-    }
-
-    return NextResponse.json({ generatedAt: new Date(), reports });
-  }
-
-  // Authenticated user path: scope by session orgId
+  // Authenticated user path: always scope by session orgId
   const session = await getSession();
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

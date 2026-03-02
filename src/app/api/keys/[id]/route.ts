@@ -7,6 +7,11 @@ export async function DELETE(_req: Request, { params }: { params: Promise<{ id: 
   const session = await getSession();
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
+  // audit-24: Only OWNER/ADMIN may delete API keys (creation already has this guard)
+  if (!["OWNER", "ADMIN"].includes(session.role)) {
+    return NextResponse.json({ error: "Admin access required to revoke API keys" }, { status: 403 });
+  }
+
   const { id } = await params;
   const key = await db.apiKey.findFirst({ where: { id, orgId: session.orgId } });
   if (!key) return NextResponse.json({ error: "Not found" }, { status: 404 });

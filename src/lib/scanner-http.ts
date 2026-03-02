@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { isPrivateUrl, ssrfSafeFetch } from "@/lib/ssrf-guard";
 import { detectBotChallenge } from "@/lib/bot-challenge-detector";
 import { getOrgLimits } from "@/lib/tenant";
+import { decrypt } from "@/lib/crypto-util";
 import { decryptAuthHeaders } from "@/lib/auth-headers";
 import {
   checkAPISecurity,
@@ -158,7 +159,7 @@ export async function runHttpScanForApp(appId: string, context: ScanContext = {}
       if (app.probeUrl && app.probeToken) {
         try {
           const probeRes = await fetch(app.probeUrl, {
-            headers: { "x-scan-token": app.probeToken },
+            headers: { "x-scan-token": decrypt(app.probeToken) },
             signal: AbortSignal.timeout(20000),
           });
           if (probeRes.ok) {

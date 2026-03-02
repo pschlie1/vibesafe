@@ -7,6 +7,7 @@ import { getOrgLimits } from "@/lib/tenant";
 import { sendCriticalFindingsAlert } from "@/lib/alerts";
 import { VALID_FINDING_CODES } from "@/lib/finding-codes";
 import type { SecurityFinding } from "@/lib/types";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 function sha256(input: string): string {
   return createHash("sha256").update(input).digest("hex");
@@ -55,6 +56,19 @@ async function resolveAppFromBearer(authHeader: string | null) {
 export async function POST(req: Request) {
   const app = await resolveAppFromBearer(req.headers.get("authorization"));
   if (!app) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  // audit-24: Rate-limit scan submissions per app to prevent DB flooding.
+  // 120 per hour = one every 30 seconds; well above real-world agent cadence.
+  const rl = await checkRateLimit(`agent-scan:${app.id}`, {
+    maxAttempts: 120,
+    windowMs: 60 * 60 * 1000,
+  });
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { error: "Scan submission rate limit exceeded. Back off and retry." },
+      { status: 429, headers: { "Retry-After": String(rl.retryAfterSeconds ?? 60) } },
+    );
+  }
 
   let rawBody: unknown;
   try {

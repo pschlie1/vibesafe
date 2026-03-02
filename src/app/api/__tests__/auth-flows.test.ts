@@ -155,7 +155,7 @@ describe("POST /api/auth/reset-password", () => {
     userUpdate.mockResolvedValueOnce({});
 
     const { POST } = await import("@/app/api/auth/reset-password/route");
-    const res = await POST(makeReq({ token, password: "newpassword123" }));
+    const res = await POST(makeReq({ token, password: "Newpassword123!" }));
     expect(res.status).toBe(200);
     // Use objectContaining for data so the updatedAt field added by Audit-19 doesn't break this assertion
     expect(userUpdate).toHaveBeenCalledWith(
@@ -253,7 +253,7 @@ describe("POST /api/auth/invite/[token]", () => {
     createSession.mockResolvedValueOnce({ id: "new_user_1", email: "new@example.com" });
 
     const { POST } = await import("@/app/api/auth/invite/[token]/route");
-    const res = await POST(makeReq({ name: "Alice", password: "password123456" }), {
+    const res = await POST(makeReq({ name: "Alice", password: "Password123456!" }), {
       params: Promise.resolve({ token: "valid-token" }),
     });
     expect(res.status).toBe(201);

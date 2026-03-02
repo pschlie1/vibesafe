@@ -4,10 +4,11 @@ import jwt from "jsonwebtoken";
 import { db } from "@/lib/db";
 import { hashPassword } from "@/lib/auth";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
+import { passwordSchema } from "@/lib/validation";
 
 const schema = z.object({
   token: z.string().min(1),
-  password: z.string().min(12, "Password must be at least 12 characters"),
+  password: passwordSchema,
 });
 
 function getJwtSecret(): string {

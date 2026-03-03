@@ -48,8 +48,8 @@ export default async function DashboardPage() {
     <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
       <div className="mb-6 flex items-end justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Portfolio</h1>
-          <p className="text-sm text-gray-500">
+          <h1 className="text-2xl font-bold tracking-tight text-ink-black-900">Portfolio</h1>
+          <p className="text-sm text-dusty-denim-600">
             {apps.length} of {limits.maxApps} apps monitored · {limits.tier} plan
           </p>
         </div>
@@ -70,12 +70,12 @@ export default async function DashboardPage() {
       <SpaBanner />
 
       <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_360px]">
-        <section className="rounded-lg border bg-white">
-          <div className="flex items-center justify-between border-b px-4 py-3">
+        <section className="rounded-lg border border-alabaster-grey-200 bg-white">
+          <div className="flex items-center justify-between border-b border-alabaster-grey-200 px-4 py-3">
             <h2 className="text-sm font-semibold">Monitored apps</h2>
             <Link
               href="/apps/bulk-add"
-              className="rounded-md border border-gray-200 px-3 py-1 text-xs font-medium text-gray-600 transition hover:bg-gray-50 hover:text-gray-900"
+              className="rounded-md border border-alabaster-grey-200 px-3 py-1 text-xs font-medium text-dusty-denim-700 transition hover:bg-alabaster-grey-50 hover:text-ink-black-900"
             >
               + Bulk Add
             </Link>
@@ -87,7 +87,7 @@ export default async function DashboardPage() {
               <div className="mt-4 flex items-center justify-center gap-3">
                 <Link
                   href="/apps/bulk-add"
-                  className="rounded-md bg-black px-4 py-2 text-sm font-medium text-white transition hover:bg-gray-800"
+                  className="rounded-md bg-prussian-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-prussian-blue-700"
                 >
                   Bulk Add Apps
                 </Link>

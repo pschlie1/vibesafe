@@ -26,7 +26,7 @@ export function ScanButton({ appId }: { appId: string }) {
     <button
       onClick={handleScan}
       disabled={scanning}
-      className="rounded border border-gray-300 px-2.5 py-1 text-xs font-medium transition hover:bg-gray-100 disabled:opacity-50"
+      className="rounded border border-prussian-blue-200 bg-prussian-blue-50 px-2.5 py-1 text-xs font-medium text-prussian-blue-700 transition hover:bg-prussian-blue-100 disabled:opacity-50"
     >
       {scanning ? (
         <span className="flex items-center gap-1">

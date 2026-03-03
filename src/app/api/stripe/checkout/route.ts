@@ -7,7 +7,8 @@ import type { PlanKey } from "@/lib/stripe";
 import { checkRateLimit } from "@/lib/rate-limit";
 
 const checkoutSchema = z.object({
-  plan: z.enum(["FREE", "STARTER", "PRO", "ENTERPRISE"]),
+  // Keep ENTERPRISE_PLUS accepted for backward compatibility, even if not shown in customer-facing pricing UI.
+  plan: z.enum(["FREE", "STARTER", "PRO", "ENTERPRISE", "ENTERPRISE_PLUS"]),
 });
 
 export async function POST(req: Request) {

@@ -131,7 +131,7 @@ export function OnboardingChecklist() {
   const progressPct = (completedCount / steps.length) * 100;
 
   return (
-    <div className="mb-6 rounded-lg border border-alabaster-grey-200 bg-white shadow-sm">
+    <div className="mb-6 min-w-0 overflow-hidden rounded-lg border border-alabaster-grey-200 bg-white shadow-sm">
       {/* Header */}
       <div className="flex items-center justify-between px-5 py-4">
         <div className="flex items-center gap-3">
@@ -198,8 +198,8 @@ export function OnboardingChecklist() {
                 const showInlineHint = !complete && step.key === "hasScanned" && ctaMatchesCurrentPage;
 
                 return (
-                  <li key={step.key} className="flex items-center justify-between gap-4 px-5 py-3">
-                    <div className="flex items-start gap-3">
+                  <li key={step.key} className="flex min-w-0 items-center justify-between gap-4 px-5 py-3">
+                    <div className="flex min-w-0 items-start gap-3">
                       <span
                         className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
                           complete
@@ -209,15 +209,15 @@ export function OnboardingChecklist() {
                       >
                         {complete ? "✓" : "○"}
                       </span>
-                      <div>
-                        <p className={`text-sm font-medium ${complete ? "text-dusty-denim-500 line-through" : "text-ink-black-900"}`}>
+                      <div className="min-w-0">
+                        <p className={`break-words text-sm font-medium ${complete ? "text-dusty-denim-500 line-through" : "text-ink-black-900"}`}>
                           {step.title}
                         </p>
                         {!complete && (
-                          <p className="text-xs text-dusty-denim-600">{step.desc}</p>
+                          <p className="break-words text-xs text-dusty-denim-600">{step.desc}</p>
                         )}
                         {showInlineHint && (
-                          <p className="mt-1 text-xs font-medium text-prussian-blue-700">Use the “Run scan” button in the Monitored apps table below.</p>
+                          <p className="mt-1 break-words text-xs font-medium text-prussian-blue-700">Use the “Run scan” button in the Monitored apps table below.</p>
                         )}
                       </div>
                     </div>

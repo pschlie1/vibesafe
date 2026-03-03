@@ -54,13 +54,13 @@ export function NewAppForm() {
   }
 
   return (
-    <div className="rounded-lg border border-alabaster-grey-200 bg-white">
+    <div className="w-full min-w-0 rounded-lg border border-alabaster-grey-200 bg-white">
       <div className="border-b border-alabaster-grey-200 px-4 py-3">
         <h3 className="text-sm font-semibold">Register app</h3>
         <p className="text-xs text-dusty-denim-600">Add an app to start continuous monitoring</p>
       </div>
 
-      <form onSubmit={onSubmit} className="space-y-3 p-4">
+      <form onSubmit={onSubmit} className="min-w-0 space-y-3 p-4">
         <Input
           label="App name"
           placeholder="Customer Portal"
@@ -94,7 +94,7 @@ export function NewAppForm() {
         <div>
           <label className="mb-1 block text-xs font-medium text-dusty-denim-700">Criticality</label>
           <select
-            className="w-full rounded-md border border-alabaster-grey-200 px-3 py-2 text-sm focus:border-prussian-blue-400 focus:outline-none focus:ring-1 focus:ring-prussian-blue-400"
+            className="min-w-0 w-full rounded-md border border-alabaster-grey-200 px-3 py-2 text-sm focus:border-prussian-blue-400 focus:outline-none focus:ring-1 focus:ring-prussian-blue-400"
             value={data.criticality}
             onChange={(e) => setData({ ...data, criticality: e.target.value as FormState["criticality"] })}
           >
@@ -160,7 +160,7 @@ function Input({
     <div>
       <label className="mb-1 block text-xs font-medium text-dusty-denim-700">{label}</label>
       <input
-        className="w-full rounded-md border border-alabaster-grey-200 px-3 py-2 text-sm focus:border-prussian-blue-400 focus:outline-none focus:ring-1 focus:ring-prussian-blue-400"
+        className="min-w-0 w-full rounded-md border border-alabaster-grey-200 px-3 py-2 text-sm focus:border-prussian-blue-400 focus:outline-none focus:ring-1 focus:ring-prussian-blue-400"
         type={props.type ?? "text"}
         placeholder={props.placeholder}
         value={props.value}

@@ -45,7 +45,7 @@ export default async function DashboardPage() {
   return (
     <>
       <OnboardingWrapper hasApps={apps.length > 0} />
-    <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
+    <main className="mx-auto max-w-7xl overflow-x-hidden px-4 py-8 sm:px-6">
       <div className="mb-6 flex items-end justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-ink-black-900">Portfolio</h1>
@@ -69,8 +69,8 @@ export default async function DashboardPage() {
 
       <SpaBanner />
 
-      <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_360px]">
-        <section className="rounded-lg border border-alabaster-grey-200 bg-white">
+      <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
+        <section className="min-w-0 rounded-lg border border-alabaster-grey-200 bg-white">
           <div className="flex items-center justify-between border-b border-alabaster-grey-200 px-4 py-3">
             <h2 className="text-sm font-semibold">Monitored apps</h2>
             <Link
@@ -163,7 +163,7 @@ export default async function DashboardPage() {
           )}
         </section>
 
-        <div>
+        <div className="min-w-0">
           <NewAppForm />
         </div>
       </div>

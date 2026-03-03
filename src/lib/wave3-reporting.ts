@@ -187,6 +187,9 @@ type FunnelCounts = {
   scan_triggered: number;
   scan_completed: number;
   finding_resolved: number;
+  builder_to_starter: number;
+  starter_to_pro: number;
+  subscription_churned: number;
 };
 
 function getAnalyticsEvent(details: string | null): string | null {
@@ -212,6 +215,9 @@ export async function getGtmBaseline(orgId: string, range: DateRange) {
     scan_triggered: 0,
     scan_completed: 0,
     finding_resolved: 0,
+    builder_to_starter: 0,
+    starter_to_pro: 0,
+    subscription_churned: 0,
   };
   const weekly = new Map<string, FunnelCounts>();
 
@@ -228,6 +234,9 @@ export async function getGtmBaseline(orgId: string, range: DateRange) {
         scan_triggered: 0,
         scan_completed: 0,
         finding_resolved: 0,
+        builder_to_starter: 0,
+        starter_to_pro: 0,
+        subscription_churned: 0,
       });
     }
     const bucket = weekly.get(week)!;
@@ -248,6 +257,13 @@ export async function getGtmBaseline(orgId: string, range: DateRange) {
       signupToAppRatePct: signup > 0 ? Math.round((appCreated / signup) * 100) : 0,
       appToScanTriggerRatePct: appCreated > 0 ? Math.round((scanTriggered / appCreated) * 100) : 0,
       triggerToScanSuccessRatePct: scanTriggered > 0 ? Math.round((scanCompleted / scanTriggered) * 100) : 0,
+      builderToStarterRatePct: signup > 0 ? Math.round((counts.builder_to_starter / signup) * 100) : 0,
+      starterToProRatePct: counts.builder_to_starter > 0
+        ? Math.round((counts.starter_to_pro / counts.builder_to_starter) * 100)
+        : 0,
+      paidChurnRatePct: counts.builder_to_starter + counts.starter_to_pro > 0
+        ? Math.round((counts.subscription_churned / (counts.builder_to_starter + counts.starter_to_pro)) * 100)
+        : 0,
     },
     cohorts: Array.from(weekly.entries())
       .map(([week, data]) => ({ week, ...data }))

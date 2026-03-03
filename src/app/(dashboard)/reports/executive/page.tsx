@@ -7,6 +7,7 @@ import { getSession } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { getOrgLimits } from "@/lib/tenant";
 import { StatusBadge, SeverityBadge } from "@/components/status-badge";
+import { hasFeature } from "@/lib/tier-capabilities";
 import { PrintButton } from "./print-button";
 
 export default async function ExecutiveReportPage() {
@@ -14,9 +15,8 @@ export default async function ExecutiveReportPage() {
   if (!session) redirect("/login");
 
   const limits = await getOrgLimits(session.orgId);
-  const allowedTiers = ["PRO", "ENTERPRISE", "ENTERPRISE_PLUS"];
 
-  if (!allowedTiers.includes(limits.tier)) {
+  if (!hasFeature(limits.tier, "executiveReports")) {
     return (
       <main className="mx-auto max-w-3xl px-4 py-16 text-center">
         <div className="rounded-lg border bg-white p-12 shadow-sm">
@@ -26,7 +26,7 @@ export default async function ExecutiveReportPage() {
           <h1 className="text-2xl font-bold text-gray-900">Executive Reports</h1>
           <p className="mt-3 text-gray-500">
             Executive board reports are available on the{" "}
-            <strong>Pro, Enterprise, or Enterprise Plus</strong> plan.
+            <strong>Pro or Enterprise</strong> plan.
           </p>
           <p className="mt-1 text-sm text-gray-400">
             You&apos;re currently on the{" "}

@@ -50,7 +50,7 @@ export default function SSOPage() {
 
   if (tier === null) return <div className="p-8 text-center text-gray-500">Loading…</div>;
 
-  const isEnterprise = tier === "ENTERPRISE";
+  const isEnterprise = tier === "ENTERPRISE" || tier === "ENTERPRISE_PLUS";
   if (!isEnterprise) {
     return (
       <div>

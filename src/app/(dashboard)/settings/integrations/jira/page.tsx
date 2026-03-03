@@ -37,7 +37,7 @@ export default function JiraIntegrationPage() {
 
   if (tier === null) return <div className="p-8 text-center text-gray-500">Loading…</div>;
 
-  const isPro = tier === "PRO" || tier === "ENTERPRISE";
+  const isPro = tier === "PRO" || tier === "ENTERPRISE" || tier === "ENTERPRISE_PLUS";
   if (!isPro) {
     return (
       <div>

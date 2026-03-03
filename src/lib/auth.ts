@@ -18,6 +18,21 @@ const SESSION_DURATION = 24 * 60 * 60; // 24 hours in seconds
 /** Exported for tests only — frequency at which sessions are re-validated against the DB. */
 export const REFRESH_THRESHOLD = 5 * 60; // 5 minutes in seconds
 
+function getSessionCookieOptions() {
+  const isProduction = process.env.NODE_ENV === "production" || process.env.VERCEL_ENV === "production";
+  // Share session across apex + subdomains (e.g. scantient.com and www.scantient.com)
+  const domain = isProduction ? ".scantient.com" : undefined;
+
+  return {
+    httpOnly: true,
+    secure: isProduction,
+    sameSite: "lax" as const,
+    maxAge: SESSION_DURATION,
+    path: "/",
+    ...(domain ? { domain } : {}),
+  };
+}
+
 export type SessionUser = {
   id: string;
   email: string;
@@ -79,14 +94,7 @@ export async function createSession(userId: string): Promise<SessionUser> {
 
   const token = signToken(session);
   const cookieStore = await cookies();
-  const isSecure = process.env.NODE_ENV === "production" || process.env.VERCEL_ENV === "production";
-  cookieStore.set(SESSION_COOKIE, token, {
-    httpOnly: true,
-    secure: isSecure,
-    sameSite: "strict",
-    maxAge: SESSION_DURATION,
-    path: "/",
-  });
+  cookieStore.set(SESSION_COOKIE, token, getSessionCookieOptions());
 
   await db.user.update({
     where: { id: userId },
@@ -136,15 +144,7 @@ export async function getSession(): Promise<SessionUser | null> {
       orgSlug: user.org.slug,
     };
     const newToken = signToken(refreshed);
-    const isSecureRefresh =
-      process.env.NODE_ENV === "production" || process.env.VERCEL_ENV === "production";
-    cookieStore.set(SESSION_COOKIE, newToken, {
-      httpOnly: true,
-      secure: isSecureRefresh,
-      sameSite: "strict",
-      maxAge: SESSION_DURATION,
-      path: "/",
-    });
+    cookieStore.set(SESSION_COOKIE, newToken, getSessionCookieOptions());
     return refreshed;
   }
 
@@ -165,5 +165,9 @@ export async function requireRole(roles: UserRole[]): Promise<SessionUser> {
 
 export async function destroySession(): Promise<void> {
   const cookieStore = await cookies();
-  cookieStore.delete(SESSION_COOKIE);
+  const opts = getSessionCookieOptions();
+  cookieStore.set(SESSION_COOKIE, "", {
+    ...opts,
+    maxAge: 0,
+  });
 }

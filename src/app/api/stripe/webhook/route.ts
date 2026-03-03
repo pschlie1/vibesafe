@@ -3,6 +3,7 @@ import type Stripe from "stripe";
 import { db } from "@/lib/db";
 import { getStripe, PLANS } from "@/lib/stripe";
 import type { PlanKey } from "@/lib/stripe";
+import { trackEvent } from "@/lib/analytics";
 import type { SubscriptionTier } from "@prisma/client";
 
 /**
@@ -18,6 +19,32 @@ function toDbTier(planKey: PlanKey): SubscriptionTier {
     ENTERPRISE_PLUS: "ENTERPRISE_PLUS",
   };
   return map[planKey] ?? "FREE";
+}
+
+async function trackTierTransitionEvent(input: {
+  orgId: string;
+  fromTier: SubscriptionTier | null;
+  toTier: SubscriptionTier;
+  source: string;
+}) {
+  const { orgId, fromTier, toTier, source } = input;
+
+  if (fromTier === "FREE" && toTier === "STARTER") {
+    await trackEvent({
+      event: "builder_to_starter",
+      orgId,
+      properties: { source, fromTier, toTier },
+    });
+    return;
+  }
+
+  if (fromTier === "STARTER" && toTier === "PRO") {
+    await trackEvent({
+      event: "starter_to_pro",
+      orgId,
+      properties: { source, fromTier, toTier },
+    });
+  }
 }
 
 export async function POST(req: Request) {
@@ -52,11 +79,16 @@ export async function POST(req: Request) {
       if (!orgId || !planKey) break;
 
       const plan = PLANS[planKey];
+      const toTier = toDbTier(planKey);
+      const previous = await db.subscription.findUnique({
+        where: { orgId },
+        select: { tier: true },
+      });
 
       await db.subscription.upsert({
         where: { orgId },
         update: {
-          tier: toDbTier(planKey),
+          tier: toTier,
           status: "ACTIVE",
           stripeSubscriptionId: subscriptionId,
           stripePriceId: plan.priceId,
@@ -66,13 +98,20 @@ export async function POST(req: Request) {
         },
         create: {
           orgId,
-          tier: toDbTier(planKey),
+          tier: toTier,
           status: "ACTIVE",
           stripeSubscriptionId: subscriptionId,
           stripePriceId: plan.priceId,
           maxApps: plan.maxApps,
           maxUsers: plan.maxUsers,
         },
+      });
+
+      await trackTierTransitionEvent({
+        orgId,
+        fromTier: previous?.tier ?? "FREE",
+        toTier,
+        source: "checkout.session.completed",
       });
       break;
     }
@@ -93,6 +132,7 @@ export async function POST(req: Request) {
       const newPriceId = obj.items?.data?.[0]?.price?.id as string | undefined;
       const newPlanKey = newPriceId ? priceToPlan[newPriceId] : undefined;
       const newPlan = newPlanKey ? PLANS[newPlanKey] : undefined;
+      const nextTier = newPlanKey ? toDbTier(newPlanKey) : existing.tier;
 
       await db.subscription.update({
         where: { id: existing.id },
@@ -101,12 +141,19 @@ export async function POST(req: Request) {
           cancelAtPeriodEnd: obj.cancel_at_period_end ?? false,
           // Only update tier/limits if we can identify the new plan
           ...(newPlan && newPlanKey ? {
-            tier: toDbTier(newPlanKey),
+            tier: nextTier,
             maxApps: newPlan.maxApps,
             maxUsers: newPlan.maxUsers,
             stripePriceId: newPriceId,
           } : {}),
         },
+      });
+
+      await trackTierTransitionEvent({
+        orgId: existing.orgId,
+        fromTier: existing.tier,
+        toTier: nextTier,
+        source: "customer.subscription.updated",
       });
       break;
     }
@@ -148,6 +195,18 @@ export async function POST(req: Request) {
           stripePriceId: null,
         },
       });
+
+      if (existing.tier !== "FREE") {
+        await trackEvent({
+          event: "subscription_churned",
+          orgId: existing.orgId,
+          properties: {
+            source: "customer.subscription.deleted",
+            fromTier: existing.tier,
+            toTier: "FREE",
+          },
+        });
+      }
       break;
     }
   }

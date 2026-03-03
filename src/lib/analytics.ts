@@ -5,7 +5,10 @@ export type AnalyticsEventName =
   | "app_created"
   | "scan_triggered"
   | "scan_completed"
-  | "finding_resolved";
+  | "finding_resolved"
+  | "builder_to_starter"
+  | "starter_to_pro"
+  | "subscription_churned";
 
 interface AnalyticsEventInput {
   event: AnalyticsEventName;

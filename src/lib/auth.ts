@@ -18,8 +18,8 @@ const SESSION_DURATION = 24 * 60 * 60; // 24 hours in seconds
 /** Exported for tests only — frequency at which sessions are re-validated against the DB. */
 export const REFRESH_THRESHOLD = 5 * 60; // 5 minutes in seconds
 
-function getSessionCookieOptions() {
-  const isProduction = process.env.NODE_ENV === "production" || process.env.VERCEL_ENV === "production";
+function getSessionCookieOptions(isProductionOverride?: boolean) {
+  const isProduction = isProductionOverride ?? (process.env.NODE_ENV === "production" || process.env.VERCEL_ENV === "production");
   // Share session across apex + subdomains (e.g. scantient.com and www.scantient.com)
   const domain = isProduction ? ".scantient.com" : undefined;
 
@@ -144,7 +144,8 @@ export async function getSession(): Promise<SessionUser | null> {
       orgSlug: user.org.slug,
     };
     const newToken = signToken(refreshed);
-    cookieStore.set(SESSION_COOKIE, newToken, getSessionCookieOptions());
+    const isSecureRefresh = process.env.NODE_ENV === "production" || process.env.VERCEL_ENV === "production";
+    cookieStore.set(SESSION_COOKIE, newToken, getSessionCookieOptions(isSecureRefresh));
     return refreshed;
   }
 

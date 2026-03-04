@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 
 type AppData = {
   id: string;
@@ -17,7 +17,6 @@ type AppData = {
 
 export default function AppEditPage() {
   const { id } = useParams<{ id: string }>();
-  const router = useRouter();
 
   const [app, setApp] = useState<AppData | null>(null);
   const [loading, setLoading] = useState(true);

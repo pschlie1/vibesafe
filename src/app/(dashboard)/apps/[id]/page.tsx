@@ -79,8 +79,8 @@ export default async function AppDetailsPage({ params }: { params: Promise<{ id:
   // TODO: connectorResults field not yet added to MonitorRun schema (incomplete merge)
   // const latestConnectorResults = app.monitorRuns
   //   .find((r) => r.connectorResults != null)
-  //   ?.connectorResults as Record<string, any> | null | undefined;
-  const latestConnectorResults: Record<string, any> | null = null;
+  //   ?.connectorResults as Record<string, ConnectorResult> | null | undefined;
+  const latestConnectorResults: Record<string, ConnectorResult> | null = null;
 
   return (
     <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
@@ -354,6 +354,12 @@ function SubsystemRow({
 
 // ─── Infrastructure Health Card ───────────────────────────────────────────────
 
+interface ConnectorResult {
+  ok: boolean;
+  findings: Array<{ id: string }>;
+  checkedAt: string;
+}
+
 const CONNECTOR_LABELS: Record<string, string> = {
   vercel: "Vercel",
   github: "GitHub",
@@ -363,7 +369,7 @@ const CONNECTOR_LABELS: Record<string, string> = {
 function InfrastructureHealthCard({
   connectorResults,
 }: {
-  connectorResults: Record<string, any>;
+  connectorResults: Record<string, ConnectorResult>;
 }) {
   const entries = Object.entries(connectorResults);
 

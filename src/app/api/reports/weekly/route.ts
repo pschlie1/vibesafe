@@ -20,7 +20,8 @@ function buildReport(apps: Array<{ name: string; ownerEmail: string | null; stat
   });
 }
 
-export async function GET(req: Request) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export async function GET(_req: Request) {
   const since = subDays(new Date(), 7);
 
   // Authenticated user path: always scope by session orgId (no cross-tenant leakage)

@@ -231,15 +231,19 @@ export function checkInlineScripts(html: string): SecurityFinding[] {
   }
 
   // Check for dangerouslySetInnerHTML patterns (React-specific XSS risk).
-  // Match only actual JSX attribute usage (dangerouslySetInnerHTML={{ ... }}) or
-  // occurrences inside <script> blocks — not body text that merely mentions the term
-  // (e.g. marketing copy or documentation). This prevents false positives on pages
-  // that describe the check itself.
+  // Require an assignment context — either JSX attribute syntax
+  // (dangerouslySetInnerHTML={{ ... }}, uses "=") or compiled JS object property
+  // syntax (dangerouslySetInnerHTML: { ... }, uses ":"). This prevents false
+  // positives when the term appears as a plain string in marketing copy, page
+  // descriptions, or JSON blobs embedded in __NEXT_DATA__ / hydration scripts.
+  const INNER_HTML_ASSIGNMENT = /dangerouslySetInnerHTML\s*[:=]\s*\{/i;
   const inlineScriptBodies = Array.from(
     html.matchAll(/<script(?![^>]*src=)[^>]*>([\s\S]*?)<\/script>/gi),
   ).map((m) => m[1]);
-  const hasJsxUsage = /dangerouslySetInnerHTML\s*=\s*\{/i.test(html);
-  const hasScriptUsage = inlineScriptBodies.some((s) => /dangerouslySetInnerHTML/i.test(s));
+  // hasJsxUsage: checks full HTML for JSX-style or compiled property assignment.
+  // hasScriptUsage: only checks inline <script> bodies (already scoped).
+  const hasJsxUsage = INNER_HTML_ASSIGNMENT.test(html);
+  const hasScriptUsage = inlineScriptBodies.some((s) => INNER_HTML_ASSIGNMENT.test(s));
   if (hasJsxUsage || hasScriptUsage) {
     findings.push({
       code: "DANGEROUS_INNER_HTML",

@@ -231,31 +231,15 @@ export function checkInlineScripts(html: string): SecurityFinding[] {
   }
 
   // Check for dangerouslySetInnerHTML patterns (React-specific XSS risk).
-  //
-  // Key insight: Next.js RSC hydration payloads (self.__next_f.push(...)) embed
-  // JSON strings that contain `"dangerouslySetInnerHTML":{"__html":...}` — the key
-  // is always double-quoted in JSON context. Real JSX/JS usage is never quoted:
-  //   JSX:      dangerouslySetInnerHTML={{ __html: ... }}
-  //   Compiled: dangerouslySetInnerHTML:{__html:...}
-  //
-  // Pattern: require a non-quote character immediately before the identifier.
-  // This skips JSON-encoded keys ("dangerouslySetInnerHTML") while catching real usage.
-  const INNER_HTML_ASSIGNMENT = /[^"']dangerouslySetInnerHTML\s*[:=]\s*\{/i;
-
-  // Only check non-RSC inline script bodies. RSC hydration chunks start with
-  // `self.__next_f.push`, `self.__next_s`, or contain `__NEXT_DATA__` — these
-  // are framework-generated JSON payloads, not user-authored JS.
-  const RSC_SCRIPT = /self\.__next_f\s*\.push|self\.__next_s|__NEXT_DATA__|__NEXT_FRAME__/;
+  // Match only actual JSX attribute usage (dangerouslySetInnerHTML={{ ... }}) or
+  // occurrences inside <script> blocks — not body text that merely mentions the term
+  // (e.g. marketing copy or documentation). This prevents false positives on pages
+  // that describe the check itself.
   const inlineScriptBodies = Array.from(
     html.matchAll(/<script(?![^>]*src=)[^>]*>([\s\S]*?)<\/script>/gi),
-  )
-    .map((m) => m[1])
-    .filter((s) => !RSC_SCRIPT.test(s));
-
-  // hasJsxUsage: checks full HTML for unquoted JSX-style or compiled JS assignment.
-  // hasScriptUsage: checks non-RSC inline <script> bodies only.
-  const hasJsxUsage = INNER_HTML_ASSIGNMENT.test(html);
-  const hasScriptUsage = inlineScriptBodies.some((s) => INNER_HTML_ASSIGNMENT.test(s));
+  ).map((m) => m[1]);
+  const hasJsxUsage = /dangerouslySetInnerHTML\s*=\s*\{/i.test(html);
+  const hasScriptUsage = inlineScriptBodies.some((s) => /dangerouslySetInnerHTML/i.test(s));
   if (hasJsxUsage || hasScriptUsage) {
     findings.push({
       code: "DANGEROUS_INNER_HTML",
@@ -269,80 +253,6 @@ export function checkInlineScripts(html: string): SecurityFinding[] {
       ),
     });
   }
-
-  return findings;
-}
-
-// ────────────────────────────────────────────
-// 4b. Inline script count vs CSP strength
-// ────────────────────────────────────────────
-
-/**
- * Flags pages that ship many inline scripts without a strong Content-Security-Policy.
- *
- * Next.js and similar frameworks ship inline script blocks for hydration by default.
- * This is acceptable ONLY when the CSP policy restricts which scripts can execute:
- *   - Nonce-based CSP: `script-src 'nonce-{nonce}'` (plus optional `'strict-dynamic'`)
- *   - Hash-based CSP: `script-src 'sha256-...'`
- *
- * If the CSP is absent or uses `unsafe-inline` (without a nonce), every inline
- * script can run — defeating the purpose of CSP entirely.
- *
- * Threshold: > 5 inline scripts. Framework hydration produces several, but > 5
- * with no meaningful CSP is a signal worth surfacing.
- */
-export function checkInlineScriptCount(html: string, headers: Headers): SecurityFinding[] {
-  const findings: SecurityFinding[] = [];
-
-  // Count inline <script> blocks (no src attribute, non-empty body)
-  const inlineScripts = Array.from(
-    html.matchAll(/<script(?![^>]*\bsrc\s*=)[^>]*>([\s\S]*?)<\/script>/gi),
-  ).filter((m) => m[1].trim().length > 0);
-
-  const count = inlineScripts.length;
-  if (count <= 5) return findings; // Below threshold — not worth flagging
-
-  const csp = headers.get("content-security-policy") ?? "";
-
-  // Determine CSP strength for inline scripts
-  const hasNonce = /script-src[^;]*'nonce-/i.test(csp);
-  const hasHash = /script-src[^;]*'sha(?:256|384|512)-/i.test(csp);
-  const hasStrictDynamic = /script-src[^;]*'strict-dynamic'/i.test(csp);
-  const hasUnsafeInline = /script-src[^;]*'unsafe-inline'/i.test(csp);
-  const hasCsp = csp.length > 0;
-
-  // CSP is strong if it uses nonce/hash/strict-dynamic (even with unsafe-inline present
-  // — modern browsers ignore unsafe-inline when a nonce or hash is present)
-  const cspIsStrong = hasNonce || hasHash || (hasStrictDynamic && hasCsp);
-
-  if (cspIsStrong) return findings; // Inline scripts are acceptable with a strong CSP
-
-  const severity = hasCsp && hasUnsafeInline ? ("LOW" as const) : ("MEDIUM" as const);
-  const cspNote = !hasCsp
-    ? "No Content-Security-Policy header is set."
-    : "The CSP uses 'unsafe-inline' for scripts, which allows all inline scripts to run and negates CSP protection.";
-
-  findings.push({
-    code: "INLINE_SCRIPTS",
-    title: `${count} inline script blocks detected — CSP protection insufficient`,
-    description:
-      `${count} inline <script> blocks were found. ${cspNote} ` +
-      `Without a nonce- or hash-based CSP, any injected inline script can execute, ` +
-      `increasing XSS risk.`,
-    severity,
-    fixPrompt: buildFixPrompt(
-      "Inline scripts with weak/absent CSP",
-      "1. Add a Content-Security-Policy header that uses nonce-based or strict-dynamic protection.\n" +
-        "   In Next.js middleware:\n" +
-        "   - Generate a per-request nonce: `const nonce = Buffer.from(crypto.randomUUID()).toString('base64')`\n" +
-        "   - Set CSP: `script-src 'nonce-${nonce}' 'strict-dynamic' 'unsafe-inline'`\n" +
-        "     (unsafe-inline is ignored by modern browsers when a nonce is present)\n" +
-        "   - Pass nonce to the app via request header: `x-nonce: <nonce>`\n" +
-        "   - In layout.tsx, read `headers().get('x-nonce')` and apply to inline scripts.\n" +
-        "2. Alternatively, generate SHA-256 hashes of each inline script and list them in the CSP.\n" +
-        "3. Avoid adding new inline scripts; prefer external script files with SRI hashes.",
-    ),
-  });
 
   return findings;
 }
@@ -709,16 +619,12 @@ export function checkDependencyExposure(html: string): SecurityFinding[] {
 // 12. API Security
 // ────────────────────────────────────────────
 
-export function checkAPISecurity(html: string, headers: Headers, url?: string): SecurityFinding[] {
+export function checkAPISecurity(html: string, headers: Headers): SecurityFinding[] {
   const findings: SecurityFinding[] = [];
 
-  // Rate-limit headers only make sense on /api/* routes.
-  // Skip this check for non-API URLs to avoid false positives on homepages/marketing pages.
-  const pathname = url ? new URL(url).pathname : "";
-  const isApiPath = pathname.startsWith("/api/");
   const rateLimitHeaders = ["x-ratelimit-limit", "x-rate-limit-limit", "ratelimit-limit", "retry-after"];
   const hasRateLimit = rateLimitHeaders.some((h) => headers.get(h));
-  if (isApiPath && !hasRateLimit) {
+  if (!hasRateLimit) {
     findings.push({
       code: "NO_RATE_LIMITING",
       title: "No rate limiting headers detected",
@@ -1026,7 +932,7 @@ const CSRF_TOKEN_NAMES = [
 
 const API_ENDPOINT_PATTERN = /^\/?api[/\\]/i;
 
-export function checkFormSecurity(html: string, baseUrl?: string): SecurityFinding[] {
+export function checkFormSecurity(html: string): SecurityFinding[] {
   const findings: SecurityFinding[] = [];
 
   const formMatches = Array.from(html.matchAll(/<form([^>]*)>([\s\S]*?)<\/form>/gi));
@@ -1085,17 +991,6 @@ export function checkFormSecurity(html: string, baseUrl?: string): SecurityFindi
         actionDomain = new URL(action).hostname;
       } catch {
         continue;
-      }
-
-      // If the action URL is on the same host as the scanned page, it is NOT external.
-      // Absolute URLs on the same domain are common in CMSes and SPAs.
-      if (baseUrl) {
-        try {
-          const baseHostname = new URL(baseUrl).hostname;
-          if (actionDomain === baseHostname) continue;
-        } catch {
-          // baseUrl parse failed — fall through to flag as external
-        }
       }
 
       findings.push({
@@ -1323,7 +1218,7 @@ const PROBE_PATHS = [
   "/graphql",
   "/.git/HEAD",
   "/robots.txt",
-]; // probe all paths (18 total — each with 5s timeout, run in parallel)
+].slice(0, 15);
 
 function looksLikeJson(body: string): boolean {
   const trimmed = body.trim();
@@ -1353,27 +1248,19 @@ export async function checkExposedEndpoints(baseUrl: string): Promise<SecurityFi
         method: "GET",
         signal: AbortSignal.timeout(5000),
       });
-      const contentType = res.headers.get("content-type") ?? "";
       const body = res.status === 200 ? await res.text() : "";
-      return { path, url, status: res.status, body, contentType };
+      return { path, url, status: res.status, body };
     }),
   );
 
   for (const settled of results) {
     if (settled.status !== "fulfilled") continue;
-    const { path, url, status, body, contentType } = settled.value;
+    const { path, url, status, body } = settled.value;
 
     if (status !== 200) continue;
 
-    // Skip HTML responses for sensitive file checks — SPAs return 200 HTML for
-    // all paths (catch-all routing), which would produce mass false positives.
-    const isHtmlResponse = contentType.includes("text/html") || body.trimStart().startsWith("<!") || body.trimStart().startsWith("<html");
-
     // Sensitive file publicly accessible
     if (SENSITIVE_FILE_PATHS.includes(path)) {
-      // Only flag if the response looks like the actual file, not an HTML page.
-      // A real .env file starts with KEY=value lines; .git/HEAD starts with "ref: ".
-      if (isHtmlResponse) continue;
       findings.push({
         code: "SENSITIVE_FILE_EXPOSED",
         title: `Sensitive file publicly accessible: ${path}`,
@@ -1426,9 +1313,7 @@ export async function checkExposedEndpoints(baseUrl: string): Promise<SecurityFi
     }
 
     // Sensitive data in response body
-    // Skip HTML pages — words like "secret" or "api_key" appear in marketing
-    // copy, documentation, and navigation menus on many legitimate sites.
-    if (!isHtmlResponse && containsSensitiveData(body)) {
+    if (containsSensitiveData(body)) {
       findings.push({
         code: "SENSITIVE_DATA_EXPOSED",
         title: `Sensitive data exposed at ${path}`,

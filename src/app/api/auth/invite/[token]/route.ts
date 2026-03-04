@@ -4,7 +4,6 @@ import { db } from "@/lib/db";
 import { hashPassword, createSession } from "@/lib/auth";
 import { canAddUser, logAudit } from "@/lib/tenant";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
-import { passwordSchema } from "@/lib/validation";
 
 // GET /api/auth/invite/[token] — return invite details
 export async function GET(
@@ -43,8 +42,8 @@ export async function GET(
 }
 
 const acceptSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters").max(100),
-  password: passwordSchema,
+  name: z.string().min(2, "Name must be at least 2 characters"),
+  password: z.string().min(12, "Password must be at least 12 characters"),
 });
 
 // POST /api/auth/invite/[token] — accept invite and create account

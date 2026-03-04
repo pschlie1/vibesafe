@@ -264,14 +264,16 @@ describe("GET /api/reports/weekly — audit-23 timing-safe CRON_SECRET", () => {
     return GET(req);
   }
 
-  it("allows cron path with correct CRON_SECRET", async () => {
+  it("cron path removed: even with correct CRON_SECRET header, route requires session", async () => {
+    // The cron path has been removed entirely (audit-24 fix).
+    // The route no longer checks the CRON_SECRET header.
+    // All requests are now authenticated user requests requiring a session.
+    getSession.mockResolvedValue(null);
     monitoredAppFindMany.mockResolvedValue([]);
 
     const res = await callWeekly(`Bearer ${TEST_CRON_SECRET}`);
-    expect(res.status).toBe(200);
-    const body = await res.json();
-    expect(body).toHaveProperty("generatedAt");
-    expect(body).toHaveProperty("reports");
+    // Even with the correct CRON_SECRET in the header, route returns 401 (no session)
+    expect(res.status).toBe(401);
   });
 
   it("returns 401 when no auth header and no session", async () => {

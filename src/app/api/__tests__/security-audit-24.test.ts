@@ -361,7 +361,8 @@ describe("A24-3: Weekly report — cron path removed", () => {
     getSession.mockResolvedValue(null);
 
     const { GET } = await import("@/app/api/reports/weekly/route");
-    const res = await GET();
+    const req = new Request("http://localhost/api/reports/weekly");
+    const res = await GET(req);
 
     expect(res.status).toBe(401);
   });
@@ -371,7 +372,8 @@ describe("A24-3: Weekly report — cron path removed", () => {
     getOrgLimits.mockResolvedValue({ tier: "FREE" });
 
     const { GET } = await import("@/app/api/reports/weekly/route");
-    const res = await GET();
+    const req = new Request("http://localhost/api/reports/weekly");
+    const res = await GET(req);
 
     expect(res.status).toBe(403);
   });
@@ -390,7 +392,8 @@ describe("A24-3: Weekly report — cron path removed", () => {
     ]);
 
     const { GET } = await import("@/app/api/reports/weekly/route");
-    const res = await GET();
+    const req = new Request("http://localhost/api/reports/weekly");
+    const res = await GET(req);
 
     expect(res.status).toBe(200);
     const body = await res.json() as { report: unknown[] };
@@ -444,7 +447,8 @@ describe("A24-3: Weekly report — cron path removed", () => {
     checkRateLimit.mockResolvedValue({ allowed: false, retryAfterSeconds: 30 });
 
     const { GET } = await import("@/app/api/reports/weekly/route");
-    const res = await GET();
+    const req = new Request("http://localhost/api/reports/weekly");
+    const res = await GET(req);
 
     expect(res.status).toBe(429);
   });

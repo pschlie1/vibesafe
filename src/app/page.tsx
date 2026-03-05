@@ -18,47 +18,38 @@ type Tier = {
 };
 
 const checks = [
-  { icon: "🔑", title: "Exposed API Keys", desc: "Detects leaked credentials from OpenAI, Stripe, Supabase, and 10+ other services in your JavaScript. Real example: Found $50K in stolen API tokens before they were used." },
-  { icon: "🛡️", title: "Missing Security Headers", desc: "Checks for CSP, HSTS, X-Frame-Options, and more. One missing header is the difference between 'safe from clickjacking' and 'data stolen from your users.'" },
-  { icon: "🔓", title: "Auth Bypass Patterns", desc: "Catches fake client-side auth gates and hardcoded admin checks. Prevents the 'just check if role == admin on the frontend' trap that costs companies hundreds of thousands in breaches." },
-  { icon: "📜", title: "Malicious Inline Scripts", desc: "Finds secrets hardcoded in <script> tags and dangerouslySetInnerHTML usage. Stops the issue that crashes when Cursor generates code without careful review." },
-  { icon: "⚙️", title: "Exposed Source Maps & Config", desc: "Source maps reveal your entire codebase to attackers. We find .env leaks, git directories, and version disclosure that makes you an easy target." },
-  { icon: "📊", title: "Uptime & Availability Tracking", desc: "Monitors response time and 500 errors across scans. Know your app is down in 4 hours, not when your CEO tells you on Monday." },
-  { icon: "🔗", title: "Malicious External Scripts", desc: "Every script tag on your page is a liability. We detect compromised CDNs, HTTP (unencrypted) script loads, and data URIs that could execute attack code." },
-  { icon: "📋", title: "Form & API Submission Flaws", desc: "Catches forms submitting to the wrong domain, missing CSRF tokens, and GET-method API calls. Stops the data leakage that compliance auditors love to find." },
-  { icon: "🔍", title: "Broken Links & Dead Redirects", desc: "Finds 404 errors and redirect chains that degrade user trust and SEO. 404 pages aren't just annoying—they cost conversions." },
-  { icon: "⚡", title: "Performance Regression Detection", desc: "Compares each scan to your baseline. If your app suddenly takes 8 seconds to load, we alert you before users abandon it." },
-  { icon: "🚪", title: "Exposed Admin & Debug Endpoints", desc: "Probes for .env, .git/HEAD, /api/admin, phpinfo, and 10+ other paths attackers check first. We find them before they do." },
-  { icon: "📦", title: "Outdated Dependency Warnings", desc: "Old libraries = known CVEs = easy targets. We detect jQuery, React, and npm packages shipping security bugs so you can patch them." },
-  { icon: "🔐", title: "SSL Certificate Expiry Alerts", desc: "A lapsed certificate takes your site offline instantly. We remind you at 30, 14, and 7 days before expiry." },
-  { icon: "🌐", title: "CORS Misconfiguration", desc: "Detects CORS headers that expose your API to anyone. Real example: One misconfigured header leaked customer PII to competitors' analytics." },
-  { icon: "🎯", title: "Endpoint Enumeration", desc: "Maps every public endpoint your app exposes. You can't defend what you don't know exists." },
-  { icon: "🚨", title: "Security Header Strength Scoring", desc: "Not just 'header present'—we score the strength of each header. Strong CSP blocks inline scripts. Weak CSP doesn't." },
-  { icon: "🔄", title: "Content Change Detection", desc: "Alerts when homepage copy, pricing, or critical UI changes unexpectedly. Catches compromised assets before customers see malware." },
-  { icon: "⏱️", title: "Response Time Tracking", desc: "Baseline your app's normal response time. Slow responses indicate DDoS, database issues, or compromised infrastructure." },
-  { icon: "📡", title: "DNS & Domain Configuration", desc: "Checks for DNS misconfigurations, subdomain takeovers, and domain expiry. One forgotten DNS record is a free subdomain for attackers." },
-  { icon: "🛡️", title: "Cookie & Session Security", desc: "Verifies HttpOnly, Secure, and SameSite flags on all cookies. Missing flags = XSS or CSRF attacks." },
+  { icon: "🔑", title: "Exposed API Keys", desc: "Find leaked credentials before hackers do. Scantient detected $50K in stolen Stripe keys in 30 seconds. We check OpenAI, Stripe, Supabase, and 10+ other services." },
+  { icon: "🛡️", title: "Missing Security Headers", desc: "One missing security header = your users' data exposed to clickjacking and injection attacks. We verify CSP, HSTS, X-Frame-Options, and more." },
+  { icon: "🔓", title: "Auth Bypass Vulnerabilities", desc: "Catch the 'check role on the frontend' trap before it becomes a $500K breach. We find hardcoded admin checks and fake auth gates." },
+  { icon: "📦", title: "Exposed Secrets in Code", desc: "Scantient finds secrets hardcoded in your JavaScript, config files, and git history. Curse you, Cursor auto-generation." },
+  { icon: "⚙️", title: "Exposed Debug Endpoints", desc: "Attackers check for .env, .git/HEAD, /api/admin, and phpinfo within 2 minutes of finding your site. We find them first." },
+  { icon: "🚀", title: "Performance & Uptime Alerts", desc: "Know your app crashed in 4 hours, not when your CEO texts 'is our site down?' We monitor response time and 500 errors on every scan." },
+  { icon: "🔗", title: "Malicious External Scripts", desc: "Every third-party script tag is a backdoor. We detect compromised CDNs, unencrypted loads, and suspicious data URIs." },
+  { icon: "📋", title: "Form & API Security Flaws", desc: "Catch forms submitting to wrong domains, missing CSRF tokens, and unencrypted API calls. These are the leaks compliance auditors find." },
+  { icon: "🌐", title: "CORS & API Exposure Issues", desc: "One misconfigured CORS header = competitor reads your customer data. We detect overpermissive API access." },
+  { icon: "🔐", title: "SSL Certificate Expiry", desc: "A lapsed SSL cert takes your site offline for 100% of your users. We alert you 30, 14, and 7 days before expiry." },
+  { icon: "📡", title: "Subdomain Takeover Risks", desc: "Forgotten DNS records are free subdomains for attackers. We check for DNS misconfigurations and dangling aliases." },
+  { icon: "⏱️", title: "Load Time Regression Detection", desc: "Baseline your app's speed. If it suddenly takes 8 seconds to load, you know before your users start bouncing." },
 ];
 
 const tiers = [
   {
     name: "Builder",
-    price: "$49",
-    period: "/month",
-    annualPrice: "$490",
-    annualSavings: "save $98",
-    desc: "For first-time builders and startups shipping their first app",
+    price: "Free",
+    period: "",
+    annualPrice: "Free",
+    annualSavings: "",
+    desc: "Start monitoring, first 60 seconds are free",
     features: [
       "1 monitored app",
       "1 team member",
-      "Daily scan intervals",
-      "20 security checks",
-      "Exposed API key detection",
-      "Security header analysis",
+      "Daily scans",
+      "12 essential security checks",
       "Email alerts",
       "Security score dashboard",
+      "API key leak detection",
     ],
-    cta: "Get started",
+    cta: "Start free scan",
     ctaHref: "/signup",
     highlighted: false,
   },
@@ -66,49 +57,47 @@ const tiers = [
     name: "Pro",
     price: "$399",
     period: "/month",
-    annualPrice: "$4,188",
-    annualSavings: "save $588",
-    desc: "For IT teams managing a growing AI-built app portfolio",
+    annualPrice: "$3,990",
+    annualSavings: "save $390/year",
+    desc: "For teams monitoring multiple apps in production",
     features: [
       "15 monitored apps",
-      "10 team members",
-      "4-hour scan intervals",
-      "All 20 security checks",
+      "5 team members",
+      "Hourly scans",
+      "All 12 security checks",
       "Jira integration",
-      "Third-party script risk scoring",
-      "Performance regression alerts",
+      "Slack & email alerts",
+      "Performance alerts",
       "Content change detection",
-      "Slack & webhook alerts",
       "PDF compliance reports",
-      "Compliance evidence packs",
       "API access",
+      "Slack bot for quick checks",
     ],
-    cta: "Get started",
+    cta: "Start free trial",
     ctaHref: "/signup",
     highlighted: true,
   },
   {
     name: "Enterprise",
-    price: "$2,500",
-    period: "/month",
+    price: "Custom",
+    period: "",
     annualPrice: "Custom",
-    annualSavings: "20% annual discount",
-    desc: "For organizations with compliance and governance requirements",
+    annualSavings: "",
+    desc: "For security and compliance teams",
     features: [
       "Unlimited apps",
       "Unlimited team members",
-      "1-hour scan intervals",
-      "All 20 security checks",
+      "Hourly scans + custom schedules",
+      "All 12 security checks + custom rules",
       "SSO / SAML / LDAP",
-      "Dedicated support & 99.9% SLA",
+      "Dedicated support & SLA",
       "Full audit logs",
-      "SOC 2, ISO 27001, NIST CSF reports",
+      "SOC 2 / ISO 27001 reports",
       "Executive board reports",
-      "All alert channels",
-      "API access",
-      "Custom integrations",
+      "API access & webhooks",
+      "White-label option (coming soon)",
     ],
-    cta: "Talk to sales",
+    cta: "Contact sales",
     ctaHref: "mailto:sales@scantient.com",
     highlighted: false,
   },
@@ -117,23 +106,23 @@ const tiers = [
 const socialProof = [
   {
     icon: "🛡️",
-    stat: "96 / A",
-    label: "Scantient's own security score",
-    detail: "We scan ourselves on every deploy. Zero critical findings. See our live score →",
-    href: "/score/scantient.com",
+    stat: "$50K+",
+    label: "In leaked credentials found",
+    detail: "Real founding story: We found $50K in stolen API keys before the attacker could use them.",
+    href: "#features",
   },
   {
     icon: "⚡",
-    stat: "2 min",
-    label: "From signup to first scan",
-    detail: "Paste a URL. We scan it. No SDK, no code changes, no developer ticket required.",
+    stat: "<60 sec",
+    label: "From URL to security audit",
+    detail: "Paste your site URL and get results faster than you can make coffee. No waiting, no setup.",
     href: "/score",
   },
   {
-    icon: "🔍",
-    stat: "20+",
+    icon: "🔐",
+    stat: "12",
     label: "Security checks every scan",
-    detail: "API key leaks, missing headers, auth bypass patterns, exposed endpoints and more — automatically.",
+    detail: "API keys, exposed admin panels, broken auth, SSL certs, and more. Every single time. Automated.",
     href: "#features",
   },
 ];
@@ -226,9 +215,9 @@ function PricingSection({ tiers }: { tiers: Tier[] }) {
 
   return (
     <section id="pricing" className="mx-auto max-w-[1200px] px-6 py-24 sm:py-32">
-      <h2 className="mb-3 text-center text-3xl font-extrabold tracking-[-0.02em] text-ink-black-950 sm:text-4xl">Simple, transparent pricing</h2>
+      <h2 className="mb-3 text-center text-3xl font-extrabold tracking-[-0.02em] text-ink-black-950 sm:text-4xl">Simple pricing for any size</h2>
       <p className="mb-8 text-center text-dusty-denim-600">
-        One exposed API key costs up to $4.88M to remediate (IBM Cost of a Data Breach 2024). Scantient catches the exposure in your first scan.
+        Find security leaks in 60 seconds. Most teams prevent their first $1M+ breach in the first month.
       </p>
 
       {/* Monthly/Annual Toggle */}
@@ -343,28 +332,27 @@ export default function LandingPage() {
       <section className="relative overflow-hidden px-6 pb-24 pt-24 sm:pb-32 sm:pt-32" style={{ background: "radial-gradient(ellipse at 50% 0%, #ebf2f9 0%, #f3f3f1 70%)" }}>
         <div className="mx-auto max-w-[1200px] text-center">
           <h1 className="mx-auto max-w-4xl text-4xl font-extrabold leading-[1.1] tracking-[-0.02em] text-ink-black-950 sm:text-6xl lg:text-[3.75rem]">
-            Find security holes before
-            <br />
-            <span className="text-prussian-blue-600">your CEO finds out from the news.</span>
+            Sleep tonight knowing your <br />
+            <span className="text-prussian-blue-600">API keys aren't leaked.</span>
           </h1>
           <p className="mx-auto mt-8 max-w-[600px] text-lg leading-relaxed text-dusty-denim-700">
-            Built your app with Cursor or Bolt? Scantient finds leaked API keys, missing security headers, and exposed endpoints in minutes. No code changes. No SDK. Works on any web app.
+            Scantient finds your leaked API keys, exposed admin panels, and broken auth in under 60 seconds. No code changes, no SDK, no developers needed.
           </p>
-          <div className="mt-10 flex items-center justify-center gap-4">
+          <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link
               href="/signup"
               className="rounded-lg bg-prussian-blue-600 px-8 py-3.5 text-sm font-semibold text-white shadow-lg shadow-prussian-blue-600/25 transition-all hover:bg-prussian-blue-700 hover:shadow-xl hover:shadow-prussian-blue-700/25"
             >
-              Get started
+              Start free scan
             </Link>
             <Link
               href="#pricing"
               className="rounded-lg border border-alabaster-grey-200 bg-white px-8 py-3.5 text-sm font-semibold text-dusty-denim-700 transition-colors hover:border-alabaster-grey-200 hover:bg-alabaster-grey-50"
             >
-              View pricing
+              See pricing plans
             </Link>
           </div>
-          <p className="mt-5 text-xs text-dusty-denim-600">Setup in 2 minutes · SOC 2 aligned</p>
+          <p className="mt-5 text-xs text-dusty-denim-600">60-second security audit · No credit card · No setup required</p>
         </div>
 
         {/* Dashboard mockup frame */}
@@ -423,10 +411,10 @@ export default function LandingPage() {
       <section className="border-b border-alabaster-grey-200 bg-white py-16">
         <div className="mx-auto flex max-w-[1200px] flex-wrap items-center justify-center gap-12 px-6 text-center">
           {[
-            { value: "20+", label: "security checks per scan" },
-            { value: "15", label: "attack paths probed per app" },
+            { value: "12", label: "essential security checks per scan" },
+            { value: "<1 min", label: "from paste URL to first results" },
             { value: "$4.88M", label: "avg. cost of one data breach (IBM 2024)" },
-            { value: "2 min", label: "from signup to first scan" },
+            { value: "0", label: "developers or SDK required" },
           ].map((stat, i) => (
             <div key={stat.value} className="flex items-center gap-12">
               <div>
@@ -443,7 +431,7 @@ export default function LandingPage() {
       <section id="features" className="mx-auto max-w-[1200px] px-6 py-24 sm:py-32">
         <h2 className="mb-3 text-center text-3xl font-extrabold tracking-[-0.02em] text-ink-black-950 sm:text-4xl">What we catch</h2>
         <p className="mb-16 text-center text-dusty-denim-600">
-          20 security checks. Every scan. Automated. No developer required.
+          12 essential security checks. Every scan. Zero setup. No developer required.
         </p>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {checks.map((check) => (
@@ -470,10 +458,10 @@ export default function LandingPage() {
 
             <div className="space-y-16">
               {[
-                { step: "1", title: "Register your apps", desc: "Enter the URL of any AI-built app. No code changes, no SDK, no developer involvement required." },
-                { step: "2", title: "We scan continuously", desc: "Every 4 hours, Scantient runs 20+ security and health checks from the outside. No access required." },
-                { step: "3", title: "Get plain-language alerts", desc: "When something breaks or a vulnerability appears, you get an alert with a ready-to-paste AI fix prompt." },
-                { step: "4", title: "Review your governance dashboard", desc: "Weekly compliance reports show every app's status, open findings, and remediation progress." },
+                { step: "1", title: "Register your apps", desc: "Paste your app URL. No code changes, no SDK, no developer involvement required. Setup takes 30 seconds." },
+                { step: "2", title: "We scan continuously", desc: "Scantient runs 12 essential security checks every hour. API leaks, broken auth, missing headers, and more. Automatically." },
+                { step: "3", title: "Get alerts when issues appear", desc: "When we find a problem, you get an instant alert via email or Slack. No noise, no false positives." },
+                { step: "4", title: "Review and remediate in minutes", desc: "See your security score, open findings, and ready-to-use fix suggestions on your dashboard." },
               ].map((item, idx) => {
                 const isOdd = idx % 2 === 0; // 0-indexed: step 1 (idx=0) → left, step 2 (idx=1) → right
                 return (
@@ -515,10 +503,10 @@ export default function LandingPage() {
           {/* Mobile fallback — single column vertical stack */}
           <div className="md:hidden space-y-12">
             {[
-              { step: "1", title: "Register your apps", desc: "Enter the URL of any AI-built app. No code changes, no SDK, no developer involvement required." },
-              { step: "2", title: "We scan continuously", desc: "Every 4 hours, Scantient runs 20+ security and health checks from the outside. No access required." },
-              { step: "3", title: "Get plain-language alerts", desc: "When something breaks or a vulnerability appears, you get an alert with a ready-to-paste AI fix prompt." },
-              { step: "4", title: "Review your governance dashboard", desc: "Weekly compliance reports show every app's status, open findings, and remediation progress." },
+              { step: "1", title: "Register your apps", desc: "Paste your app URL. No code changes, no SDK, no developer involvement required. Setup takes 30 seconds." },
+              { step: "2", title: "We scan continuously", desc: "Scantient runs 12 essential security checks every hour. API leaks, broken auth, missing headers, and more. Automatically." },
+              { step: "3", title: "Get alerts when issues appear", desc: "When we find a problem, you get an instant alert via email or Slack. No noise, no false positives." },
+              { step: "4", title: "Review and remediate in minutes", desc: "See your security score, open findings, and ready-to-use fix suggestions on your dashboard." },
             ].map((item) => (
               <div key={item.step} className="flex gap-6">
                 <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-prussian-blue-600 text-sm font-bold text-white">
@@ -578,8 +566,8 @@ export default function LandingPage() {
       {/* Social Proof — radical transparency */}
       <section className="border-y border-alabaster-grey-200 bg-white px-6 py-24 sm:py-32">
         <div className="mx-auto max-w-[1200px]">
-          <h2 className="mb-4 text-center text-3xl font-extrabold tracking-[-0.02em] text-ink-black-950 sm:text-4xl">Built by people who ship fast</h2>
-          <p className="mb-16 text-center text-dusty-denim-600">We run Scantient on Scantient. Here&apos;s what the data actually says.</p>
+          <h2 className="mb-4 text-center text-3xl font-extrabold tracking-[-0.02em] text-ink-black-950 sm:text-4xl">Results that speak for themselves</h2>
+          <p className="mb-16 text-center text-dusty-denim-600">We walk the walk. Scantient scans itself on every deploy. Here's what we actually find.</p>
           <div className="grid gap-8 md:grid-cols-3">
             {socialProof.map((item) => (
               <a

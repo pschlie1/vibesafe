@@ -243,7 +243,7 @@ function PricingSection({ tiers }: { tiers: Tier[] }) {
         {tiers.map((tier) => (
           <div
             key={tier.name}
-            className={`rounded-2xl p-8 transition-transform duration-200 hover:-translate-y-1 ${
+            className={`rounded-2xl p-6 sm:p-8 transition-transform duration-200 hover:-translate-y-1 ${
               tier.highlighted
                 ? "bg-ink-black-950 text-white shadow-2xl"
                 : "border border-alabaster-grey-200 bg-white"
@@ -370,7 +370,7 @@ export default function LandingPage() {
                 <div className="h-4 w-16 rounded bg-ink-black-100" />
               </div>
               {/* Stat cards row */}
-              <div className="grid grid-cols-3 gap-3 p-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-4">
                 {[
                   { label: "Apps Monitored", value: "12" },
                   { label: "Open Findings", value: "4" },
@@ -409,7 +409,7 @@ export default function LandingPage() {
 
       {/* Stats / Metrics bar */}
       <section className="border-b border-alabaster-grey-200 bg-white py-16">
-        <div className="mx-auto flex max-w-[1200px] flex-wrap items-center justify-center gap-12 px-6 text-center">
+        <div className="mx-auto flex max-w-[1200px] flex-wrap items-center justify-center gap-6 sm:gap-12 px-6 text-center">
           {[
             { value: "12", label: "essential security checks per scan" },
             { value: "<1 min", label: "from paste URL to first results" },

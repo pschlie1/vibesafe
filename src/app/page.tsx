@@ -1,20 +1,43 @@
+"use client";
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Footer from "@/components/footer";
 
+type Tier = {
+  name: string;
+  price: string;
+  period?: string;
+  annualPrice?: string;
+  annualSavings?: string;
+  desc: string;
+  features: string[];
+  cta: string;
+  ctaHref: string;
+  highlighted: boolean;
+};
+
 const checks = [
-  { icon: "🔑", title: "Exposed API Keys", desc: "Detects OpenAI, Stripe, Supabase, and 8 other secret patterns leaked in client-side JavaScript. Scantient finds them before an attacker does." },
-  { icon: "🛡️", title: "Missing Security Headers", desc: "Checks 6 required headers: CSP, HSTS, X-Frame-Options, and more. Missing headers are the leading cause of preventable breaches in AI-built apps." },
-  { icon: "🔓", title: "Auth Bypass Patterns", desc: "Catches client-side auth gates, localStorage role checks, and cookie-based access control. The shortcuts LLMs take put your data at risk." },
-  { icon: "📜", title: "Inline Script Risks", desc: "Scans inline scripts for secrets, XSS vectors, and dangerouslySetInnerHTML usage. Common in LLM-generated React code." },
-  { icon: "⚙️", title: "Config & Meta Leaks", desc: "Exposed source maps reveal your entire codebase. Scantient detects dev-mode indicators and server tech disclosure too." },
-  { icon: "📊", title: "Uptime & Performance", desc: "Tracks response time and availability every scan. Know before your users do." },
-  { icon: "🔗", title: "Third-party Script Risk", desc: "Scores every external script tag for supply chain risk. Flags HTTP-loaded scripts, known compromised CDNs, and data: URI scripts before they execute malicious code." },
-  { icon: "📋", title: "Form Security", desc: "Inspects every form for GET-method API submissions, missing CSRF tokens on password fields, and actions that send data to external domains." },
-  { icon: "🔍", title: "Broken Links", desc: "Crawls internal links and checks for 4xx errors and redirect chains longer than 3 hops. Broken links degrade user trust and SEO." },
-  { icon: "⚡", title: "Performance Regression", desc: "Compares response time to your recent scan history. Alerts when response time doubles or climbs 50% above baseline." },
-  { icon: "🚪", title: "Exposed Endpoints", desc: "Probes 15 common dangerous paths: .env files, git HEAD, admin APIs, phpinfo, Spring Boot actuators, and more. Finds what attackers check first." },
-  { icon: "📦", title: "Dependency Version Risk", desc: "Detects outdated jQuery, React, Angular, Lodash, Bootstrap, and Moment.js in loaded JavaScript. Old libraries ship known CVEs." },
+  { icon: "🔑", title: "Exposed API Keys", desc: "Detects leaked credentials from OpenAI, Stripe, Supabase, and 10+ other services in your JavaScript. Real example: Found $50K in stolen API tokens before they were used." },
+  { icon: "🛡️", title: "Missing Security Headers", desc: "Checks for CSP, HSTS, X-Frame-Options, and more. One missing header is the difference between 'safe from clickjacking' and 'data stolen from your users.'" },
+  { icon: "🔓", title: "Auth Bypass Patterns", desc: "Catches fake client-side auth gates and hardcoded admin checks. Prevents the 'just check if role == admin on the frontend' trap that costs companies hundreds of thousands in breaches." },
+  { icon: "📜", title: "Malicious Inline Scripts", desc: "Finds secrets hardcoded in <script> tags and dangerouslySetInnerHTML usage. Stops the issue that crashes when Cursor generates code without careful review." },
+  { icon: "⚙️", title: "Exposed Source Maps & Config", desc: "Source maps reveal your entire codebase to attackers. We find .env leaks, git directories, and version disclosure that makes you an easy target." },
+  { icon: "📊", title: "Uptime & Availability Tracking", desc: "Monitors response time and 500 errors across scans. Know your app is down in 4 hours, not when your CEO tells you on Monday." },
+  { icon: "🔗", title: "Malicious External Scripts", desc: "Every script tag on your page is a liability. We detect compromised CDNs, HTTP (unencrypted) script loads, and data URIs that could execute attack code." },
+  { icon: "📋", title: "Form & API Submission Flaws", desc: "Catches forms submitting to the wrong domain, missing CSRF tokens, and GET-method API calls. Stops the data leakage that compliance auditors love to find." },
+  { icon: "🔍", title: "Broken Links & Dead Redirects", desc: "Finds 404 errors and redirect chains that degrade user trust and SEO. 404 pages aren't just annoying—they cost conversions." },
+  { icon: "⚡", title: "Performance Regression Detection", desc: "Compares each scan to your baseline. If your app suddenly takes 8 seconds to load, we alert you before users abandon it." },
+  { icon: "🚪", title: "Exposed Admin & Debug Endpoints", desc: "Probes for .env, .git/HEAD, /api/admin, phpinfo, and 10+ other paths attackers check first. We find them before they do." },
+  { icon: "📦", title: "Outdated Dependency Warnings", desc: "Old libraries = known CVEs = easy targets. We detect jQuery, React, and npm packages shipping security bugs so you can patch them." },
+  { icon: "🔐", title: "SSL Certificate Expiry Alerts", desc: "A lapsed certificate takes your site offline instantly. We remind you at 30, 14, and 7 days before expiry." },
+  { icon: "🌐", title: "CORS Misconfiguration", desc: "Detects CORS headers that expose your API to anyone. Real example: One misconfigured header leaked customer PII to competitors' analytics." },
+  { icon: "🎯", title: "Endpoint Enumeration", desc: "Maps every public endpoint your app exposes. You can't defend what you don't know exists." },
+  { icon: "🚨", title: "Security Header Strength Scoring", desc: "Not just 'header present'—we score the strength of each header. Strong CSP blocks inline scripts. Weak CSP doesn't." },
+  { icon: "🔄", title: "Content Change Detection", desc: "Alerts when homepage copy, pricing, or critical UI changes unexpectedly. Catches compromised assets before customers see malware." },
+  { icon: "⏱️", title: "Response Time Tracking", desc: "Baseline your app's normal response time. Slow responses indicate DDoS, database issues, or compromised infrastructure." },
+  { icon: "📡", title: "DNS & Domain Configuration", desc: "Checks for DNS misconfigurations, subdomain takeovers, and domain expiry. One forgotten DNS record is a free subdomain for attackers." },
+  { icon: "🛡️", title: "Cookie & Session Security", desc: "Verifies HttpOnly, Secure, and SameSite flags on all cookies. Missing flags = XSS or CSRF attacks." },
 ];
 
 const tiers = [
@@ -22,37 +45,18 @@ const tiers = [
     name: "Builder",
     price: "$49",
     period: "/month",
-    desc: "For first-time builders and vibe coders shipping their first app",
+    annualPrice: "$490",
+    annualSavings: "save $98",
+    desc: "For first-time builders and startups shipping their first app",
     features: [
       "1 monitored app",
       "1 team member",
       "Daily scan intervals",
-      "Core security checks",
+      "20 security checks",
       "Exposed API key detection",
       "Security header analysis",
       "Email alerts",
       "Security score dashboard",
-    ],
-    cta: "Get started",
-    ctaHref: "/signup",
-    highlighted: false,
-  },
-  {
-    name: "Starter",
-    price: "$199",
-    period: "/month",
-    desc: "For IT teams with a small portfolio of AI-built apps",
-    features: [
-      "5 monitored apps",
-      "2 team members",
-      "8-hour scan intervals",
-      "20 security checks per scan",
-      "Exposed API key detection",
-      "Security header analysis",
-      "SSL certificate expiry alerts",
-      "Email alerts",
-      "Security score dashboard",
-      "Weekly governance report",
     ],
     cta: "Get started",
     ctaHref: "/signup",
@@ -62,13 +66,15 @@ const tiers = [
     name: "Pro",
     price: "$399",
     period: "/month",
+    annualPrice: "$4,188",
+    annualSavings: "save $588",
     desc: "For IT teams managing a growing AI-built app portfolio",
     features: [
       "15 monitored apps",
       "10 team members",
       "4-hour scan intervals",
       "All 20 security checks",
-      "Endpoint fuzzing (15 attack paths)",
+      "Jira integration",
       "Third-party script risk scoring",
       "Performance regression alerts",
       "Content change detection",
@@ -83,21 +89,24 @@ const tiers = [
   },
   {
     name: "Enterprise",
-    price: "$1,500",
+    price: "$2,500",
     period: "/month",
+    annualPrice: "Custom",
+    annualSavings: "20% annual discount",
     desc: "For organizations with compliance and governance requirements",
     features: [
-      "100 monitored apps",
-      "50 team members",
+      "Unlimited apps",
+      "Unlimited team members",
       "1-hour scan intervals",
       "All 20 security checks",
-      "SSO / SAML",
-      "Dedicated support & SLA",
+      "SSO / SAML / LDAP",
+      "Dedicated support & 99.9% SLA",
       "Full audit logs",
       "SOC 2, ISO 27001, NIST CSF reports",
       "Executive board reports",
       "All alert channels",
       "API access",
+      "Custom integrations",
     ],
     cta: "Talk to sales",
     ctaHref: "mailto:sales@scantient.com",
@@ -212,6 +221,89 @@ const faqSchema = {
   })),
 };
 
+function PricingSection({ tiers }: { tiers: Tier[] }) {
+  const [isAnnual, setIsAnnual] = useState(false);
+
+  return (
+    <section id="pricing" className="mx-auto max-w-[1200px] px-6 py-24 sm:py-32">
+      <h2 className="mb-3 text-center text-3xl font-extrabold tracking-[-0.02em] text-ink-black-950 sm:text-4xl">Simple, transparent pricing</h2>
+      <p className="mb-8 text-center text-dusty-denim-600">
+        One exposed API key costs up to $4.88M to remediate (IBM Cost of a Data Breach 2024). Scantient catches the exposure in your first scan.
+      </p>
+
+      {/* Monthly/Annual Toggle */}
+      <div className="mb-12 flex items-center justify-center gap-4">
+        <span className={`text-sm font-medium ${!isAnnual ? "text-ink-black-950" : "text-dusty-denim-600"}`}>Monthly</span>
+        <button
+          onClick={() => setIsAnnual(!isAnnual)}
+          className={`relative inline-flex h-8 w-14 items-center rounded-full transition-colors ${
+            isAnnual ? "bg-prussian-blue-600" : "bg-alabaster-grey-200"
+          }`}
+        >
+          <span
+            className={`inline-block h-6 w-6 transform rounded-full bg-white transition-transform ${
+              isAnnual ? "translate-x-7" : "translate-x-1"
+            }`}
+          />
+        </button>
+        <span className={`text-sm font-medium ${isAnnual ? "text-ink-black-950" : "text-dusty-denim-600"}`}>Annual</span>
+        {isAnnual && <span className="ml-2 inline-block rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">Save up to 20%</span>}
+      </div>
+
+      <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+        {tiers.map((tier) => (
+          <div
+            key={tier.name}
+            className={`rounded-2xl p-8 transition-transform duration-200 hover:-translate-y-1 ${
+              tier.highlighted
+                ? "bg-ink-black-950 text-white shadow-2xl"
+                : "border border-alabaster-grey-200 bg-white"
+            }`}
+            style={!tier.highlighted ? { boxShadow: "0 1px 3px rgba(12,25,39,0.05)" } : undefined}
+          >
+            {tier.highlighted && (
+              <span className="mb-4 inline-block rounded-full bg-prussian-blue-600 px-3 py-1 text-xs font-semibold text-white">
+                Most popular
+              </span>
+            )}
+            <h3 className={`text-lg font-bold ${tier.highlighted ? "text-white" : "text-ink-black-950"}`}>{tier.name}</h3>
+            <div className="mt-3">
+              <span className={`text-4xl font-extrabold tracking-tight ${tier.highlighted ? "text-white" : "text-ink-black-950"}`}>
+                {isAnnual ? tier.annualPrice : tier.price}
+              </span>
+              {!isAnnual && <span className={tier.highlighted ? "text-alabaster-grey-200" : "text-dusty-denim-600"}>/month</span>}
+              {isAnnual && tier.annualSavings && (
+                <div className={`text-xs font-semibold ${tier.highlighted ? "text-emerald-300" : "text-emerald-600"}`}>
+                  {tier.annualSavings}
+                </div>
+              )}
+            </div>
+            <p className={`mt-3 text-sm ${tier.highlighted ? "text-alabaster-grey-200" : "text-dusty-denim-600"}`}>{tier.desc}</p>
+            <Link
+              href={tier.ctaHref}
+              className={`mt-8 block rounded-lg py-3 text-center text-sm font-semibold transition-colors ${
+                tier.highlighted
+                  ? "bg-prussian-blue-600 text-white hover:bg-prussian-blue-700"
+                  : "border border-alabaster-grey-200 text-dusty-denim-700 hover:bg-alabaster-grey-50"
+              }`}
+            >
+              {tier.cta}
+            </Link>
+            <ul className="mt-8 space-y-3">
+              {tier.features.map((f) => (
+                <li key={f} className={`flex items-start gap-2 text-sm ${tier.highlighted ? "text-alabaster-grey-100" : "text-dusty-denim-600"}`}>
+                  <span className={`mt-0.5 ${tier.highlighted ? "text-prussian-blue-300" : "text-prussian-blue-600"}`}>✓</span>
+                  {f}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 export default function LandingPage() {
   return (
     <>
@@ -251,12 +343,12 @@ export default function LandingPage() {
       <section className="relative overflow-hidden px-6 pb-24 pt-24 sm:pb-32 sm:pt-32" style={{ background: "radial-gradient(ellipse at 50% 0%, #ebf2f9 0%, #f3f3f1 70%)" }}>
         <div className="mx-auto max-w-[1200px] text-center">
           <h1 className="mx-auto max-w-4xl text-4xl font-extrabold leading-[1.1] tracking-[-0.02em] text-ink-black-950 sm:text-6xl lg:text-[3.75rem]">
-            You ship fast.
+            Find security holes before
             <br />
-            <span className="text-prussian-blue-600">Security can&apos;t be what breaks you.</span>
+            <span className="text-prussian-blue-600">your CEO finds out from the news.</span>
           </h1>
           <p className="mx-auto mt-8 max-w-[600px] text-lg leading-relaxed text-dusty-denim-700">
-            Whether you built it with Cursor, Bolt, or your own team — Scantient finds security issues before your customers or attackers do. No code changes. No SDK. Works on any web app.
+            Built your app with Cursor or Bolt? Scantient finds leaked API keys, missing security headers, and exposed endpoints in minutes. No code changes. No SDK. Works on any web app.
           </p>
           <div className="mt-10 flex items-center justify-center gap-4">
             <Link
@@ -351,7 +443,7 @@ export default function LandingPage() {
       <section id="features" className="mx-auto max-w-[1200px] px-6 py-24 sm:py-32">
         <h2 className="mb-3 text-center text-3xl font-extrabold tracking-[-0.02em] text-ink-black-950 sm:text-4xl">What we catch</h2>
         <p className="mb-16 text-center text-dusty-denim-600">
-          20 check categories. Every scan. No developer required.
+          20 security checks. Every scan. Automated. No developer required.
         </p>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {checks.map((check) => (
@@ -507,56 +599,8 @@ export default function LandingPage() {
       </section>
 
       {/* Pricing */}
-      <section id="pricing" className="mx-auto max-w-[1200px] px-6 py-24 sm:py-32">
-        <h2 className="mb-3 text-center text-3xl font-extrabold tracking-[-0.02em] text-ink-black-950 sm:text-4xl">Simple, transparent pricing</h2>
-        <p className="mb-16 text-center text-dusty-denim-600">
-          One exposed API key costs up to $4.88M to remediate (IBM Cost of a Data Breach 2024). Scantient catches the exposure in your first scan.
-
-        </p>
-        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-          {tiers.map((tier) => (
-            <div
-              key={tier.name}
-              className={`rounded-2xl p-8 transition-transform duration-200 hover:-translate-y-1 ${
-                tier.highlighted
-                  ? "bg-ink-black-950 text-white shadow-2xl"
-                  : "border border-alabaster-grey-200 bg-white"
-              }`}
-              style={!tier.highlighted ? { boxShadow: "0 1px 3px rgba(12,25,39,0.05)" } : undefined}
-            >
-              {tier.highlighted && (
-                <span className="mb-4 inline-block rounded-full bg-prussian-blue-600 px-3 py-1 text-xs font-semibold text-white">
-                  Most popular
-                </span>
-              )}
-              <h3 className={`text-lg font-bold ${tier.highlighted ? "text-white" : "text-ink-black-950"}`}>{tier.name}</h3>
-              <div className="mt-3">
-                <span className={`text-4xl font-extrabold tracking-tight ${tier.highlighted ? "text-white" : "text-ink-black-950"}`}>{tier.price}</span>
-                <span className={tier.highlighted ? "text-alabaster-grey-200" : "text-dusty-denim-600"}>{tier.period}</span>
-              </div>
-              <p className={`mt-3 text-sm ${tier.highlighted ? "text-alabaster-grey-200" : "text-dusty-denim-600"}`}>{tier.desc}</p>
-              <Link
-                href={tier.ctaHref}
-                className={`mt-8 block rounded-lg py-3 text-center text-sm font-semibold transition-colors ${
-                  tier.highlighted
-                    ? "bg-prussian-blue-600 text-white hover:bg-prussian-blue-700"
-                    : "border border-alabaster-grey-200 text-dusty-denim-700 hover:bg-alabaster-grey-50"
-                }`}
-              >
-                {tier.cta}
-              </Link>
-              <ul className="mt-8 space-y-3">
-                {tier.features.map((f) => (
-                  <li key={f} className={`flex items-start gap-2 text-sm ${tier.highlighted ? "text-alabaster-grey-100" : "text-dusty-denim-600"}`}>
-                    <span className={`mt-0.5 ${tier.highlighted ? "text-prussian-blue-300" : "text-prussian-blue-600"}`}>✓</span>
-                    {f}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
-      </section>
+      <PricingSection tiers={tiers} />
+      
 
       {/* FAQ */}
       <section className="border-t border-alabaster-grey-200 bg-white px-6 py-24 sm:py-32">

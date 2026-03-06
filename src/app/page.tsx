@@ -4,6 +4,13 @@ import Image from "next/image";
 import Link from "next/link";
 import Footer from "@/components/footer";
 
+type Check = {
+  icon: string;
+  title: string;
+  outcome?: string;
+  desc: string;
+};
+
 type Tier = {
   name: string;
   price: string;
@@ -11,70 +18,83 @@ type Tier = {
   annualPrice?: string;
   annualSavings?: string;
   desc: string;
+  outcomeHeading?: string;
+  outcomeSubheading?: string;
   features: string[];
   cta: string;
   ctaHref: string;
   highlighted: boolean;
 };
 
-const checks = [
-  { icon: "🔑", title: "Exposed API Keys", desc: "Find leaked credentials before hackers do. Scantient detected $50K in stolen Stripe keys in 30 seconds. We check OpenAI, Stripe, Supabase, and 10+ other services." },
-  { icon: "🛡️", title: "Missing Security Headers", desc: "One missing security header = your users' data exposed to clickjacking and injection attacks. We verify CSP, HSTS, X-Frame-Options, and more." },
-  { icon: "🔓", title: "Auth Bypass Vulnerabilities", desc: "Catch the 'check role on the frontend' trap before it becomes a $500K breach. We find hardcoded admin checks and fake auth gates." },
-  { icon: "📦", title: "Exposed Secrets in Code", desc: "Scantient finds secrets hardcoded in your JavaScript, config files, and git history. Curse you, Cursor auto-generation." },
-  { icon: "⚙️", title: "Exposed Debug Endpoints", desc: "Attackers check for .env, .git/HEAD, /api/admin, and phpinfo within 2 minutes of finding your site. We find them first." },
-  { icon: "🚀", title: "Performance & Uptime Alerts", desc: "Know your app crashed in 4 hours, not when your CEO texts 'is our site down?' We monitor response time and 500 errors on every scan." },
-  { icon: "🔗", title: "Malicious External Scripts", desc: "Every third-party script tag is a backdoor. We detect compromised CDNs, unencrypted loads, and suspicious data URIs." },
-  { icon: "📋", title: "Form & API Security Flaws", desc: "Catch forms submitting to wrong domains, missing CSRF tokens, and unencrypted API calls. These are the leaks compliance auditors find." },
-  { icon: "🌐", title: "CORS & API Exposure Issues", desc: "One misconfigured CORS header = competitor reads your customer data. We detect overpermissive API access." },
-  { icon: "🔐", title: "SSL Certificate Expiry", desc: "A lapsed SSL cert takes your site offline for 100% of your users. We alert you 30, 14, and 7 days before expiry." },
-  { icon: "📡", title: "Subdomain Takeover Risks", desc: "Forgotten DNS records are free subdomains for attackers. We check for DNS misconfigurations and dangling aliases." },
-  { icon: "⏱️", title: "Load Time Regression Detection", desc: "Baseline your app's speed. If it suddenly takes 8 seconds to load, you know before your users start bouncing." },
+const checks: Check[] = [
+  { icon: "🔑", title: "Exposed API Keys", outcome: "Your outcome: No stolen credentials in the wild.", desc: "Scantient detected $50K in stolen Stripe keys in 30 seconds. We check OpenAI, Stripe, Supabase, Twilio, SendGrid, AWS keys, and 20+ other services." },
+  { icon: "🛡️", title: "Missing Security Headers", outcome: "Your outcome: Users protected from XSS, clickjacking, injection attacks.", desc: "One missing header = your data exposed. We verify CSP, HSTS, X-Frame-Options, X-Content-Type, Referrer-Policy." },
+  { icon: "🔓", title: "Auth Bypass Vulnerabilities", outcome: "Your outcome: No $500K breach from a 'check role on frontend' mistake.", desc: "We detect hardcoded admin checks, fake auth gates, and role checks visible in client code." },
+  { icon: "📦", title: "Hardcoded Secrets in JavaScript", outcome: "Your outcome: Database passwords not in your JavaScript bundle.", desc: "Scantient finds secrets hardcoded in JS chunks, config files, git history, and comments. (Curse you, Cursor auto-generation.)" },
+  { icon: "⚙️", title: "Exposed Debug Endpoints", outcome: "Your outcome: Attackers don't find .env, .git/HEAD, /api/admin, phpinfo.", desc: "Attackers check for debug endpoints within 2 minutes of finding your site. We check first." },
+  { icon: "🚀", title: "Performance & Uptime Alerts", outcome: "Your outcome: Know about outages before your CEO calls.", desc: "We baseline your response time and alert if it suddenly takes 8 seconds to load. Get notified of 500 errors within hours, not after customers complain." },
+  { icon: "🔗", title: "Malicious External Scripts", outcome: "Your outcome: No backdoors from compromised CDNs.", desc: "Every third-party script is a potential breach. We detect unencrypted loads, suspicious data URIs, and supply chain compromises." },
+  { icon: "📋", title: "Form & API Security Flaws", outcome: "Your outcome: Forms submit to YOUR domain, not attacker's.", desc: "We catch forms submitting to wrong domains, missing CSRF tokens, unencrypted API calls — the stuff compliance auditors find." },
+  { icon: "🌐", title: "CORS & API Exposure Issues", outcome: "Your outcome: Competitors can't read your customer data via API.", desc: "One misconfigured CORS header = your API exposed. We detect overpermissive access." },
+  { icon: "🔐", title: "SSL Certificate Expiry", outcome: "Your outcome: Your site never goes dark due to expired SSL.", desc: "A lapsed certificate = 100% downtime. We alert 30, 14, and 7 days before expiry." },
+  { icon: "📡", title: "Subdomain Takeover Risks", outcome: "Your outcome: Forgotten DNS records aren't free subdomains for attackers.", desc: "We detect DNS misconfigurations, dangling CNAME records, and abandoned subdomains." },
+  { icon: "⏱️", title: "Load Time Regression Detection", outcome: "Your outcome: Catch performance degradation before users bounce.", desc: "Baseline your app's speed. If it suddenly takes 8 seconds to load, you know before your users do." },
+  { icon: "🍪", title: "Cookie Security Issues", outcome: "Your outcome: Session cookies protected from theft and XSS.", desc: "We verify HttpOnly, Secure, SameSite flags on all cookies." },
+  { icon: "🔄", title: "Content Change Detection", outcome: "Your outcome: Know when your site's HTML changed unexpectedly.", desc: "Baseline your app. If an attacker injects content or modifiers change things, we alert you." },
+  { icon: "🛡️", title: "Dependency Vulnerability Scanning", outcome: "Your outcome: No known vulnerable libraries in your app.", desc: "We scan package.json, npm/yarn lock files for outdated / vulnerable dependencies." },
+  { icon: "📊", title: "Unencrypted Data Transmission", outcome: "Your outcome: All data in transit is encrypted (HTTPS).", desc: "We verify no HTTP resources are mixed with HTTPS." },
+  { icon: "🤖", title: "Bot Detection & Abuse Protection", outcome: "Your outcome: Know if your APIs are being scraped or abused.", desc: "We detect unusual request patterns that indicate bot activity." },
+  { icon: "🎯", title: "Pixel Tracking & Privacy Violations", outcome: "Your outcome: Track all third-party pixels and analytics tools.", desc: "Know which tracking tools are on your site, ensure GDPR/privacy compliance." },
+  { icon: "🔧", title: "Infrastructure Misconfiguration", outcome: "Your outcome: S3 buckets, databases, storage not open to the internet.", desc: "We detect public S3 buckets, exposed database ports, and cloud storage misconfigurations." },
+  { icon: "📱", title: "Mobile & Responsive Security", outcome: "Your outcome: Your app is secure on mobile, tablet, and desktop.", desc: "We scan security across all device breakpoints." },
 ];
 
-const tiers = [
+const tiers: Tier[] = [
   {
-    name: "Builder",
-    price: "Free",
+    name: "Lifetime Deal",
+    price: "$79",
     period: "",
-    annualPrice: "Free",
-    annualSavings: "",
-    desc: "Start monitoring, first 60 seconds are free",
+    annualPrice: "$79",
+    annualSavings: "one-time",
+    desc: "Ship before your users find your security holes",
+    outcomeHeading: "Ship Before Your Users Find Your Security Holes",
+    outcomeSubheading: "One scan. 30 seconds. 'Safe to deploy' or 'fix these 3 things.'",
     features: [
-      "1 monitored app",
-      "1 team member",
-      "Daily scans",
-      "12 essential security checks",
-      "Email alerts",
-      "Security score dashboard",
-      "API key leak detection",
+      "Unlimited apps (lifetime)",
+      "Unlimited team members",
+      "Unlimited scans",
+      "All 20 security checks",
+      "Pre-deploy scanning (CLI / GitHub Action)",
+      "Slack/email alerts",
+      "Perfect for indie hackers & founders",
     ],
-    cta: "Start free scan",
-    ctaHref: "/signup",
+    cta: "Claim your $79 deal",
+    ctaHref: "/signup?plan=ltd",
     highlighted: false,
   },
   {
     name: "Pro",
     price: "$399",
     period: "/month",
-    annualPrice: "$3,990",
-    annualSavings: "save $390/year",
-    desc: "For teams monitoring multiple apps in production",
+    annualPrice: "$4,188",
+    annualSavings: "save $588/year",
+    desc: "Compliance on autopilot",
+    outcomeHeading: "Compliance On Autopilot",
+    outcomeSubheading: "Continuous verification + monthly audit reports. Your auditors will love you.",
     features: [
       "15 monitored apps",
       "5 team members",
-      "Hourly scans",
-      "All 12 security checks",
-      "Jira integration",
+      "Hourly automated scans",
+      "All 20 security checks",
+      "Jira integration (auto-creates tickets)",
       "Slack & email alerts",
-      "Performance alerts",
-      "Content change detection",
-      "PDF compliance reports",
-      "API access",
-      "Slack bot for quick checks",
+      "Monthly PDF compliance reports",
+      "Auto-suppress known-safe items",
+      "Team collaboration & visibility",
+      "Audit log of every scan",
     ],
-    cta: "Start free trial",
-    ctaHref: "/signup",
+    cta: "Start Pro subscription",
+    ctaHref: "/signup?plan=pro",
     highlighted: true,
   },
   {
@@ -83,19 +103,22 @@ const tiers = [
     period: "",
     annualPrice: "Custom",
     annualSavings: "",
-    desc: "For security and compliance teams",
+    desc: "Security compliance that scales",
+    outcomeHeading: "Security Compliance That Scales",
+    outcomeSubheading: "Custom rules. Board-ready dashboards. Prove security to auditors, board, and customers.",
     features: [
       "Unlimited apps",
       "Unlimited team members",
       "Hourly scans + custom schedules",
-      "All 12 security checks + custom rules",
+      "All 20 security checks + custom rules",
+      "Custom rule engine for compliance",
+      "Automated incident escalation",
+      "Board-ready quarterly reports",
+      "Full audit logs & decision tracking",
+      "Guaranteed response SLA",
+      "White-glove support & strategy reviews",
+      "Custom integrations (Splunk, Datadog, Okta)",
       "SSO / SAML / LDAP",
-      "Dedicated support & SLA",
-      "Full audit logs",
-      "SOC 2 / ISO 27001 reports",
-      "Executive board reports",
-      "API access & webhooks",
-      "White-label option (coming soon)",
     ],
     cta: "Contact sales",
     ctaHref: "mailto:sales@scantient.com",
@@ -120,9 +143,9 @@ const socialProof = [
   },
   {
     icon: "🔐",
-    stat: "12",
+    stat: "20",
     label: "Security checks every scan",
-    detail: "API keys, exposed admin panels, broken auth, SSL certs, and more. Every single time. Automated.",
+    detail: "API keys, exposed admin panels, broken auth, SSL certs, performance, bot detection, and more. Every single time. Automated.",
     href: "#features",
   },
 ];
@@ -215,9 +238,9 @@ function PricingSection({ tiers }: { tiers: Tier[] }) {
 
   return (
     <section id="pricing" className="mx-auto max-w-[1200px] px-6 py-24 sm:py-32">
-      <h2 className="mb-3 text-center text-3xl font-extrabold tracking-[-0.02em] text-ink-black-950 sm:text-4xl">Simple pricing for any size</h2>
+      <h2 className="mb-3 text-center text-3xl font-extrabold tracking-[-0.02em] text-ink-black-950 sm:text-4xl">Choose your security outcome</h2>
       <p className="mb-8 text-center text-dusty-denim-600">
-        Find security leaks in 60 seconds. Most teams prevent their first $1M+ breach in the first month.
+        Every plan includes all 20 security checks. Choose based on your scale, compliance needs, and team size.
       </p>
 
       {/* Monthly/Annual Toggle */}
@@ -254,6 +277,16 @@ function PricingSection({ tiers }: { tiers: Tier[] }) {
               <span className="mb-4 inline-block rounded-full bg-prussian-blue-600 px-3 py-1 text-xs font-semibold text-white">
                 Most popular
               </span>
+            )}
+            {tier.outcomeHeading && (
+              <h2 className={`mb-3 text-base font-bold ${tier.highlighted ? "text-white" : "text-ink-black-950"}`}>
+                {tier.outcomeHeading}
+              </h2>
+            )}
+            {tier.outcomeSubheading && (
+              <p className={`mb-4 text-xs ${tier.highlighted ? "text-alabaster-grey-200" : "text-dusty-denim-600"}`}>
+                {tier.outcomeSubheading}
+              </p>
             )}
             <h3 className={`text-lg font-bold ${tier.highlighted ? "text-white" : "text-ink-black-950"}`}>{tier.name}</h3>
             <div className="mt-3">
@@ -332,11 +365,11 @@ export default function LandingPage() {
       <section className="relative overflow-hidden px-6 pb-24 pt-24 sm:pb-32 sm:pt-32" style={{ background: "radial-gradient(ellipse at 50% 0%, #ebf2f9 0%, #f3f3f1 70%)" }}>
         <div className="mx-auto max-w-[1200px] text-center">
           <h1 className="mx-auto max-w-4xl text-4xl font-extrabold leading-[1.1] tracking-[-0.02em] text-ink-black-950 sm:text-6xl lg:text-[3.75rem]">
-            Sleep tonight knowing your <br />
-            <span className="text-prussian-blue-600">API keys aren't leaked.</span>
+            Ship with confidence. <br />
+            <span className="text-prussian-blue-600">Find security holes before your users do.</span>
           </h1>
           <p className="mx-auto mt-8 max-w-[600px] text-lg leading-relaxed text-dusty-denim-700">
-            Scantient finds your leaked API keys, exposed admin panels, and broken auth in under 60 seconds. No code changes, no SDK, no developers needed.
+            One-click audit. 60 seconds. Zero doubt. $79 lifetime.
           </p>
           <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link
@@ -411,7 +444,7 @@ export default function LandingPage() {
       <section className="border-b border-alabaster-grey-200 bg-white py-16">
         <div className="mx-auto flex max-w-[1200px] flex-wrap items-center justify-center gap-6 sm:gap-12 px-6 text-center">
           {[
-            { value: "12", label: "essential security checks per scan" },
+            { value: "20", label: "essential security checks per scan" },
             { value: "<1 min", label: "from paste URL to first results" },
             { value: "$4.88M", label: "avg. cost of one data breach (IBM 2024)" },
             { value: "0", label: "developers or SDK required" },
@@ -429,9 +462,9 @@ export default function LandingPage() {
 
       {/* Feature cards - Bento Grid */}
       <section id="features" className="mx-auto max-w-[1200px] px-6 py-24 sm:py-32">
-        <h2 className="mb-3 text-center text-3xl font-extrabold tracking-[-0.02em] text-ink-black-950 sm:text-4xl">What we catch</h2>
+        <h2 className="mb-3 text-center text-3xl font-extrabold tracking-[-0.02em] text-ink-black-950 sm:text-4xl">20 Security Checks That Keep Your Users Safe</h2>
         <p className="mb-16 text-center text-dusty-denim-600">
-          12 essential security checks. Every scan. Zero setup. No developer required.
+          20 essential security checks. Every scan. Zero setup. No developer required.
         </p>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {checks.map((check) => (
@@ -439,7 +472,10 @@ export default function LandingPage() {
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-ink-black-50">
                 <span className="text-xl">{check.icon}</span>
               </div>
-              <h3 className="mt-5 text-lg font-bold text-ink-black-900">{check.title}</h3>
+              <h3 className="mt-5 text-lg font-bold text-ink-black-900">{check.icon} {check.title}</h3>
+              {check.outcome && (
+                <p className="mt-2 text-xs font-semibold text-prussian-blue-600">{check.outcome}</p>
+              )}
               <p className="mt-2 text-sm leading-relaxed text-dusty-denim-600">{check.desc}</p>
             </div>
           ))}

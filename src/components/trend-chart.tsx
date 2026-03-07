@@ -39,8 +39,8 @@ export function TrendCharts({ appId }: { appId: string }) {
       .finally(() => setLoading(false));
   }, [appId]);
 
-  if (loading) return <div className="py-8 text-center text-sm text-gray-400">Loading trends…</div>;
-  if (data.length < 2) return <div className="py-8 text-center text-sm text-gray-400">Not enough scan data for trends yet.</div>;
+  if (loading) return <div className="py-8 text-center text-sm text-muted">Loading trends…</div>;
+  if (data.length < 2) return <div className="py-8 text-center text-sm text-muted">Not enough scan data for trends yet.</div>;
 
   const chartData = data.map((d) => ({ ...d, date: formatDate(d.date) }));
 
@@ -48,8 +48,8 @@ export function TrendCharts({ appId }: { appId: string }) {
     <div className="space-y-8">
       {/* Security Score Over Time */}
       <div>
-        <h3 className="mb-3 text-sm font-semibold text-gray-700">Security Score Over Time</h3>
-        <div className="rounded-lg border bg-white p-4">
+        <h3 className="mb-3 text-sm font-semibold text-heading">Security Score Over Time</h3>
+        <div className="rounded-lg border bg-surface p-4">
           <ResponsiveContainer width="100%" height={250}>
             <LineChart data={chartData}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -71,8 +71,8 @@ export function TrendCharts({ appId }: { appId: string }) {
 
       {/* Findings by Severity Over Time */}
       <div>
-        <h3 className="mb-3 text-sm font-semibold text-gray-700">Findings by Severity</h3>
-        <div className="rounded-lg border bg-white p-4">
+        <h3 className="mb-3 text-sm font-semibold text-heading">Findings by Severity</h3>
+        <div className="rounded-lg border bg-surface p-4">
           <ResponsiveContainer width="100%" height={250}>
             <AreaChart data={chartData}>
               <CartesianGrid strokeDasharray="3 3" />

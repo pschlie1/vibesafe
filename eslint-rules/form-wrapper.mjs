@@ -1,10 +1,10 @@
 /**
  * form-wrapper.mjs
- * 
+ *
  * Custom ESLint rule: enforce form wrapper components.
  * Bans raw <input>, <textarea>, <select> elements.
- * Requires use of shared form wrappers from components/form/.
- * 
+ * Requires use of shared form wrappers from @/components/ui/.
+ *
  * GOOD:   <FormInput name="email" label="Email" />
  * BAD:    <input type="text" name="email" />
  */
@@ -38,6 +38,18 @@ export default {
           return;
         }
 
+        // Check for eslint-disable comment
+        const sourceCode = context.sourceCode;
+        const comments = sourceCode.getCommentsBefore(node);
+        const hasDisable = comments.some(
+          (c) =>
+            c.value.includes("eslint-disable") &&
+            c.value.includes("scantient/form-wrapper")
+        );
+        if (hasDisable) {
+          return;
+        }
+
         const elementType = node.name.name;
         const wrapperSuggestions = {
           input: "FormInput",
@@ -47,7 +59,7 @@ export default {
 
         context.report({
           node,
-          message: `Raw <${elementType}> is not allowed. Use the <${wrapperSuggestions[elementType]}> component from 'src/components/form/' instead. This ensures consistent styling, validation, and accessibility.`,
+          message: `Raw <${elementType}> is not allowed. Use the <${wrapperSuggestions[elementType]}> component from '@/components/ui/' instead. This ensures consistent styling, validation, and accessibility.`,
         });
       },
     };

@@ -67,7 +67,7 @@ export default async function ReportsPage() {
         <StatCard label="Scans run" value={totalRuns} />
         <StatCard label="Open findings" value={allFindings.length} accent={allFindings.length > 0 ? "text-error" : undefined} />
         <StatCard label="Critical" value={criticalCount} accent={criticalCount > 0 ? "text-error" : undefined} />
-        <StatCard label="High" value={highCount} accent={highCount > 0 ? "text-orange-600" : undefined} />
+        <StatCard label="High" value={highCount} accent={highCount > 0 ? "text-warning" : undefined} />
       </div>
 
       {/* Per-app breakdown */}
@@ -75,7 +75,7 @@ export default async function ReportsPage() {
         {apps.map((app) => {
           const appFindings = app.monitorRuns.flatMap((r) => r.findings);
           return (
-            <div key={app.id} className="rounded-lg border bg-surface p-4">
+            <div key={app.id} className="rounded-lg border border-border bg-surface p-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <h3 className="font-semibold">{app.name}</h3>
@@ -112,7 +112,7 @@ export default async function ReportsPage() {
 
 function StatCard({ label, value, accent }: { label: string; value: number; accent?: string }) {
   return (
-    <div className="rounded-lg border bg-surface p-4">
+    <div className="rounded-lg border border-border bg-surface p-4">
       <p className="text-xs font-medium uppercase tracking-wider text-muted">{label}</p>
       <p className={`mt-1 text-2xl font-bold ${accent ?? "text-heading"}`}>{value}</p>
     </div>

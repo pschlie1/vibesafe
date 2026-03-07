@@ -126,7 +126,7 @@ export function OnboardingWizard() {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-primary/40 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-primary/40 backdrop-blur-sm" role="dialog" aria-modal="true" aria-label="Onboarding wizard">
       <div className="w-full max-w-lg rounded-2xl bg-surface p-8 shadow-2xl">
         {/* Progress */}
         <div className="mb-8 flex items-center justify-center gap-2">

@@ -348,7 +348,7 @@ export default function BulkAddPage() {
                     <tbody className="divide-y">
                       {csvRows.slice(0, 10).map((row, i) => (
                         <tr key={i} className="hover:bg-surface-raised">
-                          <td className="max-w-[160px] truncate px-3 py-2 font-mono text-heading">
+                          <td className="max-w-40 truncate px-3 py-2 font-mono text-heading">
                             {row.url}
                           </td>
                           <td className="px-3 py-2 text-body">{row.name || "—"}</td>

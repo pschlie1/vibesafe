@@ -38,17 +38,7 @@ export default {
           return;
         }
 
-        // Check for eslint-disable comment
-        const sourceCode = context.sourceCode;
-        const comments = sourceCode.getCommentsBefore(node);
-        const hasDisable = comments.some(
-          (c) =>
-            c.value.includes("eslint-disable") &&
-            c.value.includes("design-system/form-wrapper")
-        );
-        if (hasDisable) {
-          return;
-        }
+
 
         const elementType = node.name.name;
         const wrapperSuggestions = {

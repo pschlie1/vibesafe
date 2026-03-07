@@ -79,7 +79,7 @@ export default function AlertsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="rounded-lg border bg-surface p-6">
+      <div className="rounded-lg border border-border bg-surface p-6">
         <h2 className="mb-4 text-lg font-semibold">Alert channels</h2>
         {configs.length === 0 ? (
           <p className="text-sm text-muted">No alert channels configured. Add one below.</p>
@@ -129,7 +129,7 @@ export default function AlertsPage() {
         )}
       </div>
 
-      <div className="rounded-lg border bg-surface p-6">
+      <div className="rounded-lg border border-border bg-surface p-6">
         <h2 className="mb-4 text-lg font-semibold">Add alert channel</h2>
         <form onSubmit={handleAdd} className="flex flex-wrap gap-3">
           <select

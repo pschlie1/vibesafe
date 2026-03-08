@@ -1,15 +1,51 @@
 import { NextResponse } from "next/server";
-import { timingSafeEqual } from "crypto";
+import { createHash, timingSafeEqual } from "crypto";
+import { SubscriptionTier } from "@prisma/client";
 import { db } from "@/lib/db";
 
+// ── Tier partition ───────────────────────────────────────────────────────────
+// Single source of truth for which tiers each cron handles.
+// If a new SubscriptionTier is added, the exhaustiveness check below will
+// throw at startup until the tier is assigned to one of the two arrays.
+
+export const PREMIUM_TIERS: SubscriptionTier[] = [
+  SubscriptionTier.ENTERPRISE,
+  SubscriptionTier.ENTERPRISE_PLUS,
+];
+
+export const NON_PREMIUM_TIERS: SubscriptionTier[] = [
+  SubscriptionTier.FREE,
+  SubscriptionTier.STARTER,
+  SubscriptionTier.PRO,
+  SubscriptionTier.EXPIRED,
+];
+
+// Exhaustiveness check: every SubscriptionTier must appear in exactly one list.
+const allPartitioned = new Set([...PREMIUM_TIERS, ...NON_PREMIUM_TIERS]);
+const allEnum = Object.values(SubscriptionTier) as SubscriptionTier[];
+for (const tier of allEnum) {
+  if (!allPartitioned.has(tier)) {
+    throw new Error(
+      `SubscriptionTier "${tier}" is not assigned to PREMIUM_TIERS or NON_PREMIUM_TIERS in cron-auth.ts`,
+    );
+  }
+}
+if (allPartitioned.size !== allEnum.length) {
+  throw new Error(
+    "PREMIUM_TIERS and NON_PREMIUM_TIERS contain duplicates or overlap — each tier must appear exactly once",
+  );
+}
+
+// ── Auth helpers ─────────────────────────────────────────────────────────────
+
 /**
- * Timing-safe string comparison using crypto.timingSafeEqual.
- * Prevents timing attacks that could leak the CRON_SECRET length or value.
+ * Timing-safe string comparison using HMAC-style digest.
+ * Hashing normalizes both inputs to 32-byte buffers, avoiding the length
+ * mismatch throw from crypto.timingSafeEqual.
  */
 function timingSafeStringEqual(a: string, b: string): boolean {
-  const bufA = Buffer.from(a.padEnd(512));
-  const bufB = Buffer.from(b.padEnd(512));
-  return timingSafeEqual(bufA, bufB) && a.length === b.length;
+  const digest = (value: string) => createHash("sha256").update(value).digest();
+  return timingSafeEqual(digest(a), digest(b));
 }
 
 export function validateCronAuth(req: Request): { authorized: boolean; errorResponse?: NextResponse } {

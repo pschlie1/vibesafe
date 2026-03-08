@@ -1,4 +1,4 @@
-import { addHours } from "date-fns";
+import { addHours, startOfHour, addMinutes } from "date-fns";
 import type { SubscriptionTier } from "@prisma/client";
 import { db } from "@/lib/db";
 import { isPrivateUrl, ssrfSafeFetch } from "@/lib/ssrf-guard";
@@ -405,6 +405,10 @@ export async function runHttpScanForApp(appId: string, context: ScanContext = {}
       EXPIRED: 24,
     };
     const intervalHours = scanIntervalHours[orgLimits.tier] ?? 24;
+    // For 1-hour tiers, snap nextCheckAt to the top of the next hour so
+    // the hourly cron (0 * * * *) always picks them up on time.
+    // e.g. scan finishes at 12:05 → nextCheckAt = 13:00, not 13:05.
+    const snapToHourBoundary = intervalHours === 1;
 
     // Atomically write the completed run and the updated app status/timing.
     // If either write fails the entire scan completion rolls back — preventing
@@ -458,7 +462,9 @@ export async function runHttpScanForApp(appId: string, context: ScanContext = {}
         data: {
           status,
           lastCheckedAt: completedAt,
-          nextCheckAt: addHours(completedAt, intervalHours),
+          nextCheckAt: snapToHourBoundary
+            ? startOfHour(addHours(completedAt, 1))
+            : addHours(completedAt, intervalHours),
           ...(uptimePercent !== undefined ? { uptimePercent } : {}),
           ...(avgResponseMs !== undefined ? { avgResponseMs } : {}),
         },

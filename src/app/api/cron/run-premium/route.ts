@@ -1,13 +1,7 @@
 import { NextResponse } from "next/server";
-import { SubscriptionTier } from "@prisma/client";
 import { runDueHttpScans } from "@/lib/scanner-http";
 import { logApiError } from "@/lib/observability";
-import { validateCronAuth, logCronHeartbeat } from "@/lib/cron-auth";
-
-const PREMIUM_TIERS: SubscriptionTier[] = [
-  SubscriptionTier.ENTERPRISE,
-  SubscriptionTier.ENTERPRISE_PLUS,
-];
+import { validateCronAuth, logCronHeartbeat, PREMIUM_TIERS } from "@/lib/cron-auth";
 
 export async function GET(req: Request) {
   const authResult = validateCronAuth(req);

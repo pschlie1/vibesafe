@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { SubscriptionTier } from "@prisma/client";
 
 const auditLogCreateMany = vi.fn();
 
@@ -23,6 +24,18 @@ describe("validateCronAuth", () => {
     expect(result.errorResponse).toBeDefined();
   });
 
+  it("returns unauthorized for overlong bearer token without crashing", async () => {
+    process.env.CRON_SECRET = "test-secret-123";
+    const { validateCronAuth } = await import("@/lib/cron-auth");
+    const longToken = "Bearer " + "x".repeat(2000);
+    const req = new Request("https://example.com", {
+      headers: { authorization: longToken },
+    });
+    const result = validateCronAuth(req);
+    expect(result.authorized).toBe(false);
+    expect(result.errorResponse).toBeDefined();
+  });
+
   it("returns unauthorized for incorrect bearer token", async () => {
     process.env.CRON_SECRET = "test-secret-123";
     const { validateCronAuth } = await import("@/lib/cron-auth");
@@ -42,6 +55,18 @@ describe("validateCronAuth", () => {
     const result = validateCronAuth(req);
     expect(result.authorized).toBe(true);
     expect(result.errorResponse).toBeUndefined();
+  });
+});
+
+describe("tier partition exhaustiveness", () => {
+  it("covers every SubscriptionTier exactly once across PREMIUM and NON_PREMIUM", async () => {
+    const { PREMIUM_TIERS, NON_PREMIUM_TIERS } = await import("@/lib/cron-auth");
+    const allEnum = Object.values(SubscriptionTier) as SubscriptionTier[];
+    const combined = [...PREMIUM_TIERS, ...NON_PREMIUM_TIERS];
+
+    expect(combined.sort()).toEqual([...allEnum].sort());
+    // No duplicates
+    expect(new Set(combined).size).toBe(combined.length);
   });
 });
 

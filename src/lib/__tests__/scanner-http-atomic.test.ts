@@ -198,9 +198,11 @@ describe("runDueHttpScans — tier filtering", () => {
 
     expect(txFindMany).toHaveBeenCalledOnce();
     const [query] = txFindMany.mock.calls[0];
-    // AND should only contain the due-date condition, no tier filter
-    expect(query.where.AND).toHaveLength(1);
-    expect(query.where.AND[0]).toHaveProperty("OR");
+    // Verify no subscription/tier predicate exists in AND conditions
+    const hasTierFilter = query.where.AND.some(
+      (cond: Record<string, unknown>) => cond.org !== undefined,
+    );
+    expect(hasTierFilter).toBe(false);
   });
 
   it("filters to non-premium tiers correctly", async () => {

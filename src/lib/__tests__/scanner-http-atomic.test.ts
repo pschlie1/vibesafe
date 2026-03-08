@@ -123,7 +123,7 @@ describe("runDueHttpScans — atomic claim via $transaction (Audit 18)", () => {
     expect(txFindMany).toHaveBeenCalledOnce();
     const [query] = txFindMany.mock.calls[0];
     expect(query).toMatchObject({
-      where: { OR: expect.any(Array) },
+      where: { AND: expect.any(Array) },
       take: 10,
     });
   });
@@ -171,5 +171,52 @@ describe("runDueHttpScans — atomic claim via $transaction (Audit 18)", () => {
 
     expect(dbFindMany).not.toHaveBeenCalled();
     expect(txFindMany).toHaveBeenCalledOnce();
+  });
+});
+
+describe("runDueHttpScans — tier filtering", () => {
+  it("includes tier filter in findMany query when tiers option is provided", async () => {
+    txFindMany.mockResolvedValueOnce([]);
+    const { runDueHttpScans } = await import("@/lib/scanner-http");
+    await runDueHttpScans(10, { tiers: ["ENTERPRISE", "ENTERPRISE_PLUS"] });
+
+    expect(txFindMany).toHaveBeenCalledOnce();
+    const [query] = txFindMany.mock.calls[0];
+    expect(query.where.AND).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          org: { subscription: { tier: { in: ["ENTERPRISE", "ENTERPRISE_PLUS"] } } },
+        }),
+      ]),
+    );
+  });
+
+  it("does not include tier filter when tiers option is omitted", async () => {
+    txFindMany.mockResolvedValueOnce([]);
+    const { runDueHttpScans } = await import("@/lib/scanner-http");
+    await runDueHttpScans(10);
+
+    expect(txFindMany).toHaveBeenCalledOnce();
+    const [query] = txFindMany.mock.calls[0];
+    // Verify no subscription/tier predicate exists in AND conditions
+    const hasTierFilter = query.where.AND.some(
+      (cond: Record<string, unknown>) => cond.org !== undefined,
+    );
+    expect(hasTierFilter).toBe(false);
+  });
+
+  it("filters to non-premium tiers correctly", async () => {
+    txFindMany.mockResolvedValueOnce([]);
+    const { runDueHttpScans } = await import("@/lib/scanner-http");
+    await runDueHttpScans(50, { tiers: ["FREE", "STARTER", "PRO", "EXPIRED"] });
+
+    const [query] = txFindMany.mock.calls[0];
+    expect(query.where.AND).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          org: { subscription: { tier: { in: ["FREE", "STARTER", "PRO", "EXPIRED"] } } },
+        }),
+      ]),
+    );
   });
 });

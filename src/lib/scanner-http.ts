@@ -1,4 +1,5 @@
-import { addHours } from "date-fns";
+import { addHours, startOfHour } from "date-fns";
+import type { SubscriptionTier } from "@prisma/client";
 import { db } from "@/lib/db";
 import { isPrivateUrl, ssrfSafeFetch } from "@/lib/ssrf-guard";
 import { detectBotChallenge } from "@/lib/bot-challenge-detector";
@@ -404,6 +405,10 @@ export async function runHttpScanForApp(appId: string, context: ScanContext = {}
       EXPIRED: 24,
     };
     const intervalHours = scanIntervalHours[orgLimits.tier] ?? 24;
+    // For 1-hour tiers, snap nextCheckAt to the top of the next hour so
+    // the hourly cron (0 * * * *) always picks them up on time.
+    // e.g. scan finishes at 12:05 → nextCheckAt = 13:00, not 13:05.
+    const snapToHourBoundary = intervalHours === 1;
 
     // Atomically write the completed run and the updated app status/timing.
     // If either write fails the entire scan completion rolls back — preventing
@@ -457,7 +462,9 @@ export async function runHttpScanForApp(appId: string, context: ScanContext = {}
         data: {
           status,
           lastCheckedAt: completedAt,
-          nextCheckAt: addHours(completedAt, intervalHours),
+          nextCheckAt: snapToHourBoundary
+            ? startOfHour(addHours(completedAt, 1))
+            : addHours(completedAt, intervalHours),
           ...(uptimePercent !== undefined ? { uptimePercent } : {}),
           ...(avgResponseMs !== undefined ? { avgResponseMs } : {}),
         },
@@ -563,7 +570,7 @@ export async function runHttpScanForApp(appId: string, context: ScanContext = {}
   }
 }
 
-export async function runDueHttpScans(limit = 20) {
+export async function runDueHttpScans(limit = 20, options?: { tiers?: SubscriptionTier[] }) {
   const deadline = Date.now() + 55_000; // 55s total timeout (5s buffer for Vercel 60s limit)
 
   // Atomic claim: findMany + updateMany inside a single serializable transaction
@@ -572,7 +579,12 @@ export async function runDueHttpScans(limit = 20) {
   const dueApps = await db.$transaction(async (tx) => {
     const apps = await tx.monitoredApp.findMany({
       where: {
-        OR: [{ nextCheckAt: null }, { nextCheckAt: { lte: new Date() } }],
+        AND: [
+          { OR: [{ nextCheckAt: null }, { nextCheckAt: { lte: new Date() } }] },
+          ...(options?.tiers
+            ? [{ org: { subscription: { tier: { in: options.tiers } } } }]
+            : []),
+        ],
       },
       take: limit,
       orderBy: [{ nextCheckAt: "asc" }],

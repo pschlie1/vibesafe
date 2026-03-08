@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { runDueHttpScans } from "@/lib/scanner-http";
 import { logApiError } from "@/lib/observability";
-import { validateCronAuth, logCronHeartbeat, NON_PREMIUM_TIERS } from "@/lib/cron-auth";
+import { validateCronAuth, logCronHeartbeat, PREMIUM_TIERS } from "@/lib/cron-auth";
 
 export async function GET(req: Request) {
   const authResult = validateCronAuth(req);
@@ -10,14 +10,14 @@ export async function GET(req: Request) {
   }
 
   try {
-    const results = await runDueHttpScans(50, { tiers: NON_PREMIUM_TIERS });
+    const results = await runDueHttpScans(50, { tiers: PREMIUM_TIERS });
 
     await logCronHeartbeat(results);
 
     return NextResponse.json({ ok: true, processed: results.length, results });
   } catch (error) {
     logApiError(error, {
-      route: "/api/cron/run",
+      route: "/api/cron/run-premium",
       method: "GET",
       statusCode: 500,
       details: { requestedLimit: 50 },

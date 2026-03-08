@@ -21,8 +21,15 @@ export const NON_PREMIUM_TIERS: SubscriptionTier[] = [
 ];
 
 // Exhaustiveness check: every SubscriptionTier must appear in exactly one list.
-const allPartitioned = new Set([...PREMIUM_TIERS, ...NON_PREMIUM_TIERS]);
+const combinedTiers = [...PREMIUM_TIERS, ...NON_PREMIUM_TIERS];
+const allPartitioned = new Set(combinedTiers);
 const allEnum = Object.values(SubscriptionTier) as SubscriptionTier[];
+
+if (combinedTiers.length !== allPartitioned.size) {
+  throw new Error(
+    "PREMIUM_TIERS and NON_PREMIUM_TIERS contain duplicates or overlap — each tier must appear exactly once",
+  );
+}
 for (const tier of allEnum) {
   if (!allPartitioned.has(tier)) {
     throw new Error(
@@ -32,7 +39,7 @@ for (const tier of allEnum) {
 }
 if (allPartitioned.size !== allEnum.length) {
   throw new Error(
-    "PREMIUM_TIERS and NON_PREMIUM_TIERS contain duplicates or overlap — each tier must appear exactly once",
+    "PREMIUM_TIERS and NON_PREMIUM_TIERS contain extra values not in SubscriptionTier enum",
   );
 }
 

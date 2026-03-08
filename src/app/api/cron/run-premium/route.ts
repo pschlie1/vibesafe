@@ -4,11 +4,9 @@ import { runDueHttpScans } from "@/lib/scanner-http";
 import { logApiError } from "@/lib/observability";
 import { validateCronAuth, logCronHeartbeat } from "@/lib/cron-auth";
 
-const NON_PREMIUM_TIERS: SubscriptionTier[] = [
-  SubscriptionTier.FREE,
-  SubscriptionTier.STARTER,
-  SubscriptionTier.PRO,
-  SubscriptionTier.EXPIRED,
+const PREMIUM_TIERS: SubscriptionTier[] = [
+  SubscriptionTier.ENTERPRISE,
+  SubscriptionTier.ENTERPRISE_PLUS,
 ];
 
 export async function GET(req: Request) {
@@ -18,14 +16,14 @@ export async function GET(req: Request) {
   }
 
   try {
-    const results = await runDueHttpScans(50, { tiers: NON_PREMIUM_TIERS });
+    const results = await runDueHttpScans(50, { tiers: PREMIUM_TIERS });
 
     await logCronHeartbeat(results);
 
     return NextResponse.json({ ok: true, processed: results.length, results });
   } catch (error) {
     logApiError(error, {
-      route: "/api/cron/run",
+      route: "/api/cron/run-premium",
       method: "GET",
       statusCode: 500,
       details: { requestedLimit: 50 },

@@ -1,4 +1,5 @@
 import { addHours } from "date-fns";
+import type { SubscriptionTier } from "@prisma/client";
 import { db } from "@/lib/db";
 import { isPrivateUrl, ssrfSafeFetch } from "@/lib/ssrf-guard";
 import { detectBotChallenge } from "@/lib/bot-challenge-detector";
@@ -563,7 +564,7 @@ export async function runHttpScanForApp(appId: string, context: ScanContext = {}
   }
 }
 
-export async function runDueHttpScans(limit = 20) {
+export async function runDueHttpScans(limit = 20, options?: { tiers?: SubscriptionTier[] }) {
   const deadline = Date.now() + 55_000; // 55s total timeout (5s buffer for Vercel 60s limit)
 
   // Atomic claim: findMany + updateMany inside a single serializable transaction
@@ -572,7 +573,12 @@ export async function runDueHttpScans(limit = 20) {
   const dueApps = await db.$transaction(async (tx) => {
     const apps = await tx.monitoredApp.findMany({
       where: {
-        OR: [{ nextCheckAt: null }, { nextCheckAt: { lte: new Date() } }],
+        AND: [
+          { OR: [{ nextCheckAt: null }, { nextCheckAt: { lte: new Date() } }] },
+          ...(options?.tiers
+            ? [{ org: { subscription: { tier: { in: options.tiers } } } }]
+            : []),
+        ],
       },
       take: limit,
       orderBy: [{ nextCheckAt: "asc" }],

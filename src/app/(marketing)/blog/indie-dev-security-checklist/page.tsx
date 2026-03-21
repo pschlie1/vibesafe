@@ -248,7 +248,7 @@ export default function IndieDevSecurityChecklistPage() {
         </div>
 
         <p>
-          If you want to read more about the specific mistakes that cause the worst breaches, check the <Link href="/blog/7-api-security-mistakes" className="text-prussian-blue-600 hover:underline">7 API security mistakes killing startups</Link> post — each mistake maps to one of these checklist items with real-world examples.
+          If you want to read more about the specific mistakes that cause the worst breaches, check the <Link href="/blog/7-api-security-mistakes" className="text-prussian-blue-600 hover:underline">7 API security mistakes killing startups</Link> post — each mistake maps to one of these checklist items with real-world examples. And once you&apos;ve shipped, don&apos;t forget your <Link href="/blog/post-deploy-security-checklist" className="text-prussian-blue-600 hover:underline">post-deployment security checks</Link> — the risks change once real traffic hits your app.
         </p>
 
       </div>

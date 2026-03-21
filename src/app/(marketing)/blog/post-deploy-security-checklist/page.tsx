@@ -225,6 +225,10 @@ export default function PostDeploySecurityChecklistPage() {
         <p>
           For AI apps specifically, add the items from our guide on <Link href="/blog/securing-ai-app-api" className="text-prussian-blue-600 hover:underline">securing your AI app&apos;s API</Link> to this checklist — LLM endpoints have additional risks (rate limiting, CORS, prompt injection) that go beyond what standard security scanners check.
         </p>
+        <p>
+          If you haven&apos;t already run through pre-launch security, the <Link href="/blog/indie-dev-security-checklist" className="text-prussian-blue-600 hover:underline">full indie dev security checklist</Link> covers everything from environment variable hygiene to database access controls. And the fastest way to verify your post-deploy posture right now:{" "}
+          <Link href="/score" className="text-prussian-blue-600 hover:underline">Run a live external scan post-deploy</Link> — it checks all seven categories above in 60 seconds, no signup required.
+        </p>
       </div>
 
       {/* CTA */}

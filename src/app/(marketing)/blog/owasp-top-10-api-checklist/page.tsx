@@ -87,7 +87,7 @@ export default function OwaspTop10ApiChecklistPage() {
             OWASP&apos;s API Security Top 10 (updated for 2023, still the operative standard heading into 2026) is the closest thing to a universal API security checklist. Security auditors use it. Enterprise procurement teams ask about it. Compliance frameworks reference it. If your API is internet-facing, you should know where you stand on all 10.
           </p>
           <p>
-            The challenge: most OWASP guides describe <em>what</em> the vulnerability is without telling you <em>what to do about it</em>. This checklist does both.
+            The challenge: most OWASP guides describe <em>what</em> the vulnerability is without telling you <em>what to do about it</em>. This checklist does both. If you want to see these risks in action, the <Link href="/blog/7-api-security-mistakes" className="text-prussian-blue-600 hover:underline">most common API security mistakes</Link> we find in real startups map directly to the OWASP categories below.
           </p>
           <p>
             We&apos;ve also marked which ones Scantient checks automatically in a 60-second external scan — no code access, no SDK, just your URL.
@@ -147,7 +147,7 @@ export default function OwaspTop10ApiChecklistPage() {
             <strong>What it is:</strong> No limits on how many requests a client can make, how large requests can be, or how much server resource a single request can consume. This enables DoS attacks, bill fraud (especially on AI apps), and resource exhaustion.
           </p>
           <p>
-            <strong>Why AI apps are especially vulnerable:</strong> Every LLM inference call costs money. An API endpoint without rate limiting is a direct path to a $10,000 bill.
+            <strong>Why AI apps are especially vulnerable:</strong> Every LLM inference call costs money. An API endpoint without rate limiting is a direct path to a $10,000 bill. See our deep dive on <Link href="/blog/securing-ai-app-api" className="text-prussian-blue-600 hover:underline">AI-specific API vulnerabilities</Link> for the full picture of how LLM endpoints raise the stakes.
           </p>
           <p>
             <strong>Fix:</strong> Implement rate limiting on all endpoints (per-IP and per-user). Set maximum request body sizes. Implement query complexity limits on GraphQL. Set provider-level spending caps on all AI API accounts. Use <code>X-RateLimit-*</code> headers to communicate limits to clients.

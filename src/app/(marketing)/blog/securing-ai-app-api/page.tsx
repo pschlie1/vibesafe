@@ -201,7 +201,7 @@ export default function SecuringAiAppApiPage() {
 
         <h2>The AI App Security Pre-Launch Checklist</h2>
         <p>
-          Before you tweet your launch or post to Product Hunt:
+          Before you tweet your launch or post to Product Hunt. Note: if your organization uses AI tools in development, you&apos;ll also want to review your <Link href="/blog/ai-policy-compliance-engineering" className="text-prussian-blue-600 hover:underline">AI compliance requirements</Link> — governance of how AI tools are used is a separate (and increasingly audited) concern from securing the AI apps you ship. For ongoing external monitoring after launch, the <Link href="/ai-security" className="text-prussian-blue-600 hover:underline">AI security scanner for your app</Link> checks these categories automatically on a schedule.
         </p>
         <ul>
           <li>✅ LLM provider keys (OpenAI, Anthropic, Gemini) are server-side only — not in JavaScript bundles</li>

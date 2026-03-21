@@ -196,7 +196,7 @@ export default function WhyCTOsChooseExternalScanningPage() {
           For most startups, the missing piece is layer 3 — continuous external monitoring. Code-level scanning is often in place (GitHub has it free). Manual review happens at launch. But ongoing, automated external monitoring of the running production app? Most startups don&apos;t have this until something goes wrong.
         </p>
         <p>
-          That&apos;s the gap Scantient fills. <Link href="/pricing" className="text-prussian-blue-600 hover:underline">The lifetime deal is $79</Link> — one payment, no subscription, continuous monitoring of your production app with alerts when your security posture changes.
+          That&apos;s the gap Scantient fills. <Link href="/pricing" className="text-prussian-blue-600 hover:underline">The lifetime deal is $79</Link> — one payment, no subscription, continuous monitoring of your production app with alerts when your security posture changes. Not ready to commit yet? You can <Link href="/score" className="text-prussian-blue-600 hover:underline">try a free external scan now</Link> — no signup, no SDK, just paste your URL.
         </p>
         <p>
           If you&apos;re evaluating your current security stack, check the <Link href="/compliance" className="text-prussian-blue-600 hover:underline">compliance documentation</Link> to see how Scantient maps to SOC 2, ISO 27001, and PCI-DSS requirements — the frameworks you&apos;ll eventually need to satisfy as you grow.

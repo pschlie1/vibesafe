@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     url: "https://scantient.com/blog/ai-policy-compliance-engineering",
     siteName: "Scantient",
     type: "article",
-    publishedTime: "2026-03-02T00:00:00Z",
+    publishedTime: "2025-11-28T00:00:00Z",
   },
   twitter: {
     card: "summary_large_image",

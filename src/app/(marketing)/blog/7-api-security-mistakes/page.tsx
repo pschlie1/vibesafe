@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     url: "https://scantient.com/blog/7-api-security-mistakes",
     siteName: "Scantient",
     type: "article",
-    publishedTime: "2026-03-21T00:00:00Z",
+    publishedTime: "2025-10-15T00:00:00Z",
   },
   twitter: {
     card: "summary_large_image",
@@ -56,7 +56,7 @@ export default function SevenApiSecurityMistakesPage() {
           You shipped fast. That&apos;s the point. But these seven mistakes are sitting in your production API right now — and any one of them is enough to lose a customer, fail a compliance audit, or end up on HackerNews for the wrong reason.
         </p>
         <div className="mt-6 flex items-center gap-4 text-sm text-dusty-denim-500">
-          <time dateTime="2026-03-21">March 21, 2026</time>
+          <time dateTime="2025-10-15">October 15, 2025</time>
           <span>·</span>
           <span>9 min read</span>
         </div>

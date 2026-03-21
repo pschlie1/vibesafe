@@ -15,39 +15,9 @@ const posts = [
     title: "API Security: The Complete Guide for Developers (2026)",
     excerpt:
       "The definitive guide to API security for indie devs and startup CTOs. Covers injection, broken auth, excessive data exposure, rate limiting, CORS, JWT best practices, testing tools, and a practical launch checklist.",
-    date: "March 21, 2026",
+    date: "March 14, 2026",
     readTime: "18 min read",
     featured: true,
-  },
-  {
-    slug: "/blog/what-is-external-security-scanning",
-    category: "Security",
-    title: "What Is External Security Scanning? (And Why Every Production API Needs It)",
-    excerpt:
-      "Code review finds bugs. Dependency scanners find CVEs. Neither can see what your live API looks like from the internet. External scanning can — and it reveals a completely different class of security problems.",
-    date: "March 21, 2026",
-    readTime: "9 min read",
-    featured: false,
-  },
-  {
-    slug: "/blog/jwt-security-best-practices",
-    category: "Authentication",
-    title: "JWT Security Best Practices: 8 Mistakes That Expose Your API",
-    excerpt:
-      "The eight most common JWT security mistakes — the none algorithm bypass, weak secrets, no expiry, secrets in payloads, localStorage storage — with practical fixes for each one.",
-    date: "March 21, 2026",
-    readTime: "9 min read",
-    featured: false,
-  },
-  {
-    slug: "/blog/prompt-injection-api-security",
-    category: "AI Security",
-    title: "Prompt Injection Attacks: How to Protect Your AI API (Developer Guide)",
-    excerpt:
-      "Prompt injection is the SQL injection of AI APIs. Direct injection, indirect injection, real attack consequences, and concrete defenses for every LLM-powered application.",
-    date: "March 21, 2026",
-    readTime: "10 min read",
-    featured: false,
   },
   {
     slug: "/blog/saas-launch-security-checklist",
@@ -60,72 +30,42 @@ const posts = [
     featured: false,
   },
   {
-    slug: "/blog/securing-ai-app-api",
+    slug: "/blog/prompt-injection-api-security",
     category: "AI Security",
-    title: "Securing Your AI App's API: What to Check Before Launch",
+    title: "Prompt Injection Attacks: How to Protect Your AI API (Developer Guide)",
     excerpt:
-      "API key exposure, rate limiting, input validation for LLM endpoints, prompt injection defense, data leakage, CORS — everything to audit on your AI app before launch day. Position Scantient as the tool that checks all of this in 60 seconds.",
-    date: "March 21, 2026",
+      "Prompt injection is the SQL injection of AI APIs. Direct injection, indirect injection, real attack consequences, and concrete defenses for every LLM-powered application.",
+    date: "March 19, 2026",
     readTime: "10 min read",
     featured: false,
   },
   {
-    slug: "/blog/post-deploy-security-checklist",
-    category: "Checklist",
-    title: "Your Deploy Just Went Live. Now Run This Security Checklist.",
+    slug: "/blog/jwt-security-best-practices",
+    category: "Authentication",
+    title: "JWT Security Best Practices: 8 Mistakes That Expose Your API",
     excerpt:
-      "SSL, security headers, exposed endpoints, API keys, CORS, CSP, rate limits — the production security checklist every indie dev should run before tweeting their launch. Check all of it in 60 seconds.",
-    date: "March 21, 2026",
-    readTime: "8 min read",
+      "The eight most common JWT security mistakes — the none algorithm bypass, weak secrets, no expiry, secrets in payloads, localStorage storage — with practical fixes for each one.",
+    date: "March 18, 2026",
+    readTime: "9 min read",
     featured: false,
   },
   {
-    slug: "/blog/why-ctos-choose-external-security-scanning",
-    category: "Strategy",
-    title: "Why CTOs Choose External Security Scanning Over Code-Level Tools",
-    excerpt:
-      "Shift-left is necessary but not sufficient. External scanning catches what code analysis misses — here's the gap every startup CTO needs to close before launch.",
-    date: "March 21, 2026",
-    readTime: "8 min read",
-    featured: false,
-  },
-  {
-    slug: "/blog/snyk-vs-scantient-what-your-startup-needs",
-    category: "Comparisons",
-    title: "Snyk vs Scantient: What Your Startup Actually Needs",
-    excerpt:
-      "An honest comparison — not marketing fluff. Snyk is enterprise shift-left dependency scanning. Scantient is post-deploy external API security monitoring. Here's when to use each, including a pricing table.",
-    date: "March 21, 2026",
-    readTime: "10 min read",
-    featured: false,
-  },
-  {
-    slug: "/blog/gitguardian-vs-scantient",
-    category: "Comparisons",
-    title: "GitGuardian vs Scantient: Secrets Detection vs Full Security Posture",
-    excerpt:
-      "GitGuardian is the secrets scanning specialist. Scantient monitors your deployed app's full security posture. Honest comparison with pricing table — when to use each.",
-    date: "March 21, 2026",
-    readTime: "7 min read",
-    featured: false,
-  },
-  {
-    slug: "/blog/indie-dev-security-checklist",
-    category: "Checklist",
-    title: "The Indie Dev Security Checklist: Ship Fast Without Getting Hacked",
-    excerpt:
-      "12 security items to check before launch. Each one: what to do, why attackers care, how to verify. Covers secrets, headers, CORS, auth, SSL, and more.",
-    date: "March 21, 2026",
-    readTime: "10 min read",
-    featured: false,
-  },
-  {
-    slug: "/blog/7-api-security-mistakes",
+    slug: "/blog/what-is-external-security-scanning",
     category: "Security",
-    title: "7 API Security Mistakes Killing Your Startup",
+    title: "What Is External Security Scanning? (And Why Every Production API Needs It)",
     excerpt:
-      "Exposed API keys, missing security headers, overpermissive CORS — these seven mistakes are sitting in production apps right now. Real examples, what to do instead, and a startup security checklist.",
-    date: "March 21, 2026",
+      "Code review finds bugs. Dependency scanners find CVEs. Neither can see what your live API looks like from the internet. External scanning can — and it reveals a completely different class of security problems.",
+    date: "March 16, 2026",
+    readTime: "9 min read",
+    featured: false,
+  },
+  {
+    slug: "/blog/oauth-security-vulnerabilities",
+    category: "Authentication",
+    title: "OAuth 2.0 Security Vulnerabilities Every Developer Should Know (And How to Fix Them)",
+    excerpt:
+      "CSRF on OAuth flows, open redirect_uri validation, missing PKCE, token leakage, scope bypass — the OAuth 2.0 vulnerabilities that appear in production implementations and how to fix each one.",
+    date: "March 12, 2026",
     readTime: "9 min read",
     featured: false,
   },
@@ -135,7 +75,17 @@ const posts = [
     title: "OWASP Top 10 for APIs: A Practical Checklist for 2026",
     excerpt:
       "All 10 OWASP API Security risks with practical fixes — not just definitions. Which ones require code review, which ones you can check in 60 seconds, and how Scantient covers 7 of the 10 automatically.",
-    date: "March 21, 2026",
+    date: "March 10, 2026",
+    readTime: "12 min read",
+    featured: false,
+  },
+  {
+    slug: "/blog/owasp-llm-top-10-api-builders",
+    category: "AI Security",
+    title: "OWASP LLM Top 10: What API Builders Need to Know in 2026",
+    excerpt:
+      "OWASP's LLM Top 10 explained for API developers. Prompt injection, insecure output handling, training data poisoning, excessive agency — what each means for APIs that integrate language models.",
+    date: "March 7, 2026",
     readTime: "12 min read",
     featured: false,
   },
@@ -145,8 +95,88 @@ const posts = [
     title: "5 Security Headers Every Indie Dev Should Set (And How to Check Them)",
     excerpt:
       "CSP, X-Frame-Options, HSTS, X-Content-Type-Options, Referrer-Policy — what each does, the one-liner to add it, and what attackers do when it's missing. Check all 5 in 60 seconds.",
-    date: "March 21, 2026",
+    date: "March 5, 2026",
     readTime: "8 min read",
+    featured: false,
+  },
+  {
+    slug: "/blog/internal-vs-external-security-scanning",
+    category: "Tools",
+    title: "Internal vs External Security Scanning: What's the Difference and Do You Need Both?",
+    excerpt:
+      "SAST catches code-level bugs. DAST finds what attackers see at runtime. Honest comparison of what each type of scanning catches, what it misses, and why you should start with external for free.",
+    date: "February 26, 2026",
+    readTime: "8 min read",
+    featured: false,
+  },
+  {
+    slug: "/blog/securing-ai-app-api",
+    category: "AI Security",
+    title: "Securing Your AI App's API: What to Check Before Launch",
+    excerpt:
+      "API key exposure, rate limiting, input validation for LLM endpoints, prompt injection defense, data leakage, CORS — everything to audit on your AI app before launch day.",
+    date: "February 19, 2026",
+    readTime: "10 min read",
+    featured: false,
+  },
+  {
+    slug: "/blog/api-key-management-best-practices",
+    category: "Security",
+    title: "API Key Management: How to Store, Rotate, and Protect Your Keys",
+    excerpt:
+      "API keys end up in GitHub, Slack, and log files constantly. Environment variables, vault services, rotation policies, exposure detection — a practical guide to API key management that actually sticks.",
+    date: "February 12, 2026",
+    readTime: "8 min read",
+    featured: false,
+  },
+  {
+    slug: "/blog/post-deploy-security-checklist",
+    category: "Checklist",
+    title: "Your Deploy Just Went Live. Now Run This Security Checklist.",
+    excerpt:
+      "SSL, security headers, exposed endpoints, API keys, CORS, CSP, rate limits — the production security checklist every indie dev should run before tweeting their launch. Check all of it in 60 seconds.",
+    date: "February 5, 2026",
+    readTime: "8 min read",
+    featured: false,
+  },
+  {
+    slug: "/blog/gitguardian-vs-scantient",
+    category: "Comparisons",
+    title: "GitGuardian vs Scantient: Secrets Detection vs Full Security Posture",
+    excerpt:
+      "GitGuardian is the secrets scanning specialist. Scantient monitors your deployed app's full security posture. Honest comparison with pricing table — when to use each.",
+    date: "January 22, 2026",
+    readTime: "7 min read",
+    featured: false,
+  },
+  {
+    slug: "/blog/soc2-api-security-requirements",
+    category: "Compliance",
+    title: "SOC 2 and API Security: What Startup Founders Need to Know Before Certification",
+    excerpt:
+      "What SOC 2 actually requires for API security, the authentication and logging controls auditors test, common gaps in startup implementations, and a preparation checklist.",
+    date: "January 15, 2026",
+    readTime: "10 min read",
+    featured: false,
+  },
+  {
+    slug: "/blog/snyk-vs-scantient-what-your-startup-needs",
+    category: "Comparisons",
+    title: "Snyk vs Scantient: What Your Startup Actually Needs",
+    excerpt:
+      "An honest comparison — not marketing fluff. Snyk is enterprise shift-left dependency scanning. Scantient is post-deploy external API security monitoring. Here's when to use each, including a pricing table.",
+    date: "January 8, 2026",
+    readTime: "10 min read",
+    featured: false,
+  },
+  {
+    slug: "/blog/indie-dev-security-checklist",
+    category: "Checklist",
+    title: "The Indie Dev Security Checklist: Ship Fast Without Getting Hacked",
+    excerpt:
+      "12 security items to check before launch. Each one: what to do, why attackers care, how to verify. Covers secrets, headers, CORS, auth, SSL, and more.",
+    date: "December 10, 2025",
+    readTime: "10 min read",
     featured: false,
   },
   {
@@ -155,8 +185,28 @@ const posts = [
     title: "Your Engineering Team Probably Has No AI Usage Policy (And Why That's a Security Problem)",
     excerpt:
       "Most engineering teams use 10+ AI tools with zero formal policy. Shadow AI is a compliance time bomb — here's what your AI usage policy actually needs.",
-    date: "March 2, 2026",
+    date: "November 28, 2025",
     readTime: "7 min read",
+    featured: false,
+  },
+  {
+    slug: "/blog/why-ctos-choose-external-security-scanning",
+    category: "Strategy",
+    title: "Why CTOs Choose External Security Scanning Over Code-Level Tools",
+    excerpt:
+      "Shift-left is necessary but not sufficient. External scanning catches what code analysis misses — here's the gap every startup CTO needs to close before launch.",
+    date: "November 5, 2025",
+    readTime: "8 min read",
+    featured: false,
+  },
+  {
+    slug: "/blog/7-api-security-mistakes",
+    category: "Security",
+    title: "7 API Security Mistakes Killing Your Startup",
+    excerpt:
+      "Exposed API keys, missing security headers, overpermissive CORS — these seven mistakes are sitting in production apps right now. Real examples, what to do instead, and a startup security checklist.",
+    date: "October 15, 2025",
+    readTime: "9 min read",
     featured: false,
   },
   {

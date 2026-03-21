@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     url: "https://scantient.com/blog/why-ctos-choose-external-security-scanning",
     siteName: "Scantient",
     type: "article",
-    publishedTime: "2026-03-21T00:00:00Z",
+    publishedTime: "2025-11-05T00:00:00Z",
   },
   twitter: {
     card: "summary_large_image",
@@ -56,7 +56,7 @@ export default function WhyCTOsChooseExternalScanningPage() {
           Shift-left is the right philosophy. But it&apos;s only half the picture. The security vulnerabilities that make the news — the ones that cost companies millions — are almost never caught by static analysis. They&apos;re caught by attackers probing running, deployed applications.
         </p>
         <div className="mt-6 flex items-center gap-4 text-sm text-dusty-denim-500">
-          <time dateTime="2026-03-21">March 21, 2026</time>
+          <time dateTime="2025-11-05">November 5, 2025</time>
           <span>·</span>
           <span>8 min read</span>
         </div>

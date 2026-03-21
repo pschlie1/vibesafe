@@ -35,6 +35,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "jwt-security-best-practices",
     "prompt-injection-api-security",
     "saas-launch-security-checklist",
+    // Wave 2 pillar content
+    "api-key-management-best-practices",
+    "internal-vs-external-security-scanning",
+    "soc2-api-security-requirements",
+    "owasp-llm-top-10-api-builders",
+    "oauth-security-vulnerabilities",
     // Existing posts
     "ai-policy-compliance-engineering",
     "7-api-security-mistakes",

@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     url: "https://scantient.com/blog/post-deploy-security-checklist",
     siteName: "Scantient",
     type: "article",
-    publishedTime: "2026-03-21T00:00:00Z",
+    publishedTime: "2026-02-05T00:00:00Z",
   },
   twitter: {
     card: "summary_large_image",
@@ -38,7 +38,7 @@ const articleSchema = {
   "@type": "Article",
   headline: "Your Deploy Just Went Live. Now Run This Security Checklist.",
   description: "A practical post-deploy security checklist covering SSL, security headers, exposed endpoints, API keys, CORS, CSP, and rate limits.",
-  datePublished: "2026-03-21T00:00:00Z",
+  datePublished: "2026-02-05T00:00:00Z",
   publisher: { "@type": "Organization", name: "Scantient", url: "https://scantient.com" },
   mainEntityOfPage: "https://scantient.com/blog/post-deploy-security-checklist",
 };
@@ -154,7 +154,7 @@ export default function PostDeploySecurityChecklistPage() {
           Shipping is the goal. But in the five minutes between &quot;deployed to Vercel&quot; and &quot;posted the link on Twitter,&quot; automated scanners are already probing your new domain. Here&apos;s what to check — and how to check it in under 60 seconds.
         </p>
         <div className="mt-6 flex items-center gap-4 text-sm text-dusty-denim-500">
-          <time dateTime="2026-03-21">March 21, 2026</time>
+          <time dateTime="2026-02-05">February 5, 2026</time>
           <span>·</span>
           <span>8 min read</span>
         </div>

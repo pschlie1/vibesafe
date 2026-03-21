@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     url: "https://scantient.com/blog/indie-dev-security-checklist",
     siteName: "Scantient",
     type: "article",
-    publishedTime: "2026-03-21T00:00:00Z",
+    publishedTime: "2025-12-10T00:00:00Z",
   },
   twitter: {
     card: "summary_large_image",
@@ -56,7 +56,7 @@ export default function IndieDevSecurityChecklistPage() {
           Security doesn&apos;t have to slow you down. But ignoring it will. Here&apos;s a practical pre-launch checklist for indie developers and startup teams — every item is actionable, fast, and specific about what to check and how.
         </p>
         <div className="mt-6 flex items-center gap-4 text-sm text-dusty-denim-500">
-          <time dateTime="2026-03-21">March 21, 2026</time>
+          <time dateTime="2025-12-10">December 10, 2025</time>
           <span>·</span>
           <span>10 min read</span>
         </div>

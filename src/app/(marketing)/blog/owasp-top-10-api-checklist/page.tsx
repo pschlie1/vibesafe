@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     url: "https://scantient.com/blog/owasp-top-10-api-checklist",
     siteName: "Scantient",
     type: "article",
-    publishedTime: "2026-03-21T00:00:00Z",
+    publishedTime: "2026-03-10T00:00:00Z",
   },
   twitter: {
     card: "summary_large_image",
@@ -44,7 +44,7 @@ const articleSchema = {
   headline: "OWASP Top 10 for APIs: A Practical Checklist for 2026",
   description:
     "The OWASP API Security Top 10 — practical fixes for each, not just descriptions. Scantient covers 7 of the 10 automatically.",
-  datePublished: "2026-03-21T00:00:00Z",
+  datePublished: "2026-03-10T00:00:00Z",
   publisher: { "@type": "Organization", name: "Scantient", url: "https://scantient.com" },
   mainEntityOfPage: "https://scantient.com/blog/owasp-top-10-api-checklist",
 };
@@ -74,7 +74,7 @@ export default function OwaspTop10ApiChecklistPage() {
             list definitions. This one gives you actual fixes — and tells you which ones you can check in 60 seconds without touching code.
           </p>
           <div className="mt-6 flex items-center gap-4 text-sm text-dusty-denim-500">
-            <time dateTime="2026-03-21">March 21, 2026</time>
+            <time dateTime="2026-03-10">March 10, 2026</time>
             <span>·</span>
             <span>12 min read</span>
           </div>

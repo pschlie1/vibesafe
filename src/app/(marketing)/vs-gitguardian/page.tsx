@@ -154,6 +154,28 @@ export default function VsGitGuardianPage() {
         </p>
       </section>
 
+      {/* From the Blog */}
+      <section className="mx-auto max-w-[1200px] px-6 py-16 sm:py-24">
+        <h2 className="text-2xl font-bold text-ink-black-950 dark:text-alabaster-grey-50 mb-8">From the Blog</h2>
+        <div className="grid gap-6 sm:grid-cols-3">
+          <Link href="/blog/gitguardian-vs-scantient" className="group block rounded-xl border border-border p-6 transition hover:bg-surface-raised">
+            <span className="text-xs font-semibold uppercase tracking-widest text-muted">Comparison</span>
+            <p className="mt-2 text-sm font-semibold text-heading group-hover:text-heading leading-snug">GitGuardian vs Scantient: Deep Dive</p>
+            <p className="mt-1 text-xs text-muted">Secrets detection vs full security posture →</p>
+          </Link>
+          <Link href="/blog/indie-dev-security-checklist" className="group block rounded-xl border border-border p-6 transition hover:bg-surface-raised">
+            <span className="text-xs font-semibold uppercase tracking-widest text-muted">Checklist</span>
+            <p className="mt-2 text-sm font-semibold text-heading group-hover:text-heading leading-snug">The Indie Dev Security Checklist</p>
+            <p className="mt-1 text-xs text-muted">12 items to check before you ship →</p>
+          </Link>
+          <Link href="/blog/7-api-security-mistakes" className="group block rounded-xl border border-border p-6 transition hover:bg-surface-raised">
+            <span className="text-xs font-semibold uppercase tracking-widest text-muted">Security</span>
+            <p className="mt-2 text-sm font-semibold text-heading group-hover:text-heading leading-snug">7 API Security Mistakes Killing Your Startup</p>
+            <p className="mt-1 text-xs text-muted">What external scanning catches →</p>
+          </Link>
+        </div>
+      </section>
+
       {/* CTA */}
       <section className="bg-ink-black-950 dark:bg-ink-black-900 px-6 py-24 text-center sm:py-32">
         <h2 className="text-3xl font-extrabold tracking-[-0.02em] text-white sm:text-4xl">Ready to scan like a maker?</h2>

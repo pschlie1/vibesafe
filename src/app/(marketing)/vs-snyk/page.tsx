@@ -175,6 +175,28 @@ export default function VsSnyKPage() {
         </div>
       </section>
 
+      {/* From the Blog */}
+      <section className="mx-auto max-w-[1200px] px-6 py-16 sm:py-24">
+        <h2 className="text-2xl font-bold text-ink-black-950 dark:text-alabaster-grey-50 mb-8">From the Blog</h2>
+        <div className="grid gap-6 sm:grid-cols-3">
+          <Link href="/blog/snyk-vs-scantient-what-your-startup-needs" className="group block rounded-xl border border-border p-6 transition hover:bg-surface-raised">
+            <span className="text-xs font-semibold uppercase tracking-widest text-muted">Comparison</span>
+            <p className="mt-2 text-sm font-semibold text-heading group-hover:text-heading leading-snug">Snyk vs Scantient: What Your Startup Actually Needs</p>
+            <p className="mt-1 text-xs text-muted">Deep dive into when to use each tool →</p>
+          </Link>
+          <Link href="/blog/why-ctos-choose-external-security-scanning" className="group block rounded-xl border border-border p-6 transition hover:bg-surface-raised">
+            <span className="text-xs font-semibold uppercase tracking-widest text-muted">Strategy</span>
+            <p className="mt-2 text-sm font-semibold text-heading group-hover:text-heading leading-snug">Why CTOs Choose External Security Scanning</p>
+            <p className="mt-1 text-xs text-muted">The gap shift-left tools don't cover →</p>
+          </Link>
+          <Link href="/blog/7-api-security-mistakes" className="group block rounded-xl border border-border p-6 transition hover:bg-surface-raised">
+            <span className="text-xs font-semibold uppercase tracking-widest text-muted">Security</span>
+            <p className="mt-2 text-sm font-semibold text-heading group-hover:text-heading leading-snug">7 API Security Mistakes Killing Your Startup</p>
+            <p className="mt-1 text-xs text-muted">The mistakes external scanning catches →</p>
+          </Link>
+        </div>
+      </section>
+
       {/* CTA */}
       <section className="bg-ink-black-950 dark:bg-ink-black-900 px-6 py-24 text-center sm:py-32">
         <h2 className="text-3xl font-extrabold tracking-[-0.02em] text-white sm:text-4xl">Close the post-deploy security gap</h2>

@@ -65,7 +65,7 @@ export default function VibeCodingRisksPage() {
             <p><strong>1. Acknowledge the reality.</strong> Your organization is already vibe coding. The question isn&apos;t whether to allow it; it&apos;s how to govern it.</p>
             <p><strong>2. Create an inventory.</strong> Start by cataloging every AI-generated application deployed in your organization. You won&apos;t secure what you won&apos;t see.</p>
             <p><strong>3. Establish a baseline.</strong> Define minimum security requirements for AI-generated apps: security headers, authentication patterns, secrets management, dependency hygiene.</p>
-            <p><strong>4. Automate monitoring.</strong> Manual audits don&apos;t scale. Implement continuous automated scanning that checks every app against your security baseline, without requiring developer involvement.</p>
+            <p><strong>4. Automate monitoring.</strong> Manual audits don&apos;t scale. Implement continuous automated scanning that checks every app against your security baseline, without requiring developer involvement. For AI-powered apps specifically, see our guide on{" "}<Link href="/blog/securing-ai-app-api" className="underline hover:text-heading transition-colors">securing your AI app API</Link> before launch.</p>
             <p><strong>5. Make security accessible.</strong> When you find a vulnerability, provide plain-language remediation guidance. The builders aren&apos;t security experts; meet them where they are.</p>
           </div>
         </div>

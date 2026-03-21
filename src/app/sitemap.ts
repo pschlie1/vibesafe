@@ -41,6 +41,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "soc2-api-security-requirements",
     "owasp-llm-top-10-api-builders",
     "oauth-security-vulnerabilities",
+    // Wave 3 pillar content
+    "security-tools-indie-hackers",
+    "how-to-scan-production-api",
+    "securing-openai-api-integration",
+    "api-rate-limiting-guide",
+    "devsecops-for-startups",
     // Existing posts
     "ai-policy-compliance-engineering",
     "7-api-security-mistakes",

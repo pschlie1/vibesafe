@@ -8,7 +8,8 @@ import { checkRateLimit } from "@/lib/rate-limit";
 
 const checkoutSchema = z.object({
   // Keep ENTERPRISE_PLUS accepted for backward compatibility, even if not shown in customer-facing pricing UI.
-  plan: z.enum(["FREE", "STARTER", "PRO", "ENTERPRISE", "ENTERPRISE_PLUS"]),
+  // LTD is a one-time payment — handled with mode: "payment" instead of "subscription".
+  plan: z.enum(["LTD", "FREE", "STARTER", "PRO", "ENTERPRISE", "ENTERPRISE_PLUS"]),
 });
 
 export async function POST(req: Request) {
@@ -66,13 +67,17 @@ export async function POST(req: Request) {
     }
   }
 
+  // LTD uses one-time payment mode; all other plans are subscriptions
+  const isOneTime = "isOneTime" in plan && plan.isOneTime === true;
   const checkoutSession = await getStripe().checkout.sessions.create({
     customer: customerId,
-    mode: "subscription",
+    mode: isOneTime ? "payment" : "subscription",
     line_items: [{ price: plan.priceId, quantity: 1 }],
-    success_url: `${process.env.NEXT_PUBLIC_URL ?? "http://localhost:3000"}/settings/billing?success=true`,
-    cancel_url: `${process.env.NEXT_PUBLIC_URL ?? "http://localhost:3000"}/settings/billing`,
+    success_url: `${process.env.NEXT_PUBLIC_URL ?? "http://localhost:3000"}/settings/billing?success=true&plan=${parsed.data.plan}`,
+    cancel_url: `${process.env.NEXT_PUBLIC_URL ?? "http://localhost:3000"}/pricing`,
     metadata: { orgId: session.orgId, plan: parsed.data.plan },
+    // For LTD: allow promotion codes so we can run campaigns later
+    allow_promotion_codes: isOneTime,
   });
 
   return NextResponse.json({ url: checkoutSession.url });

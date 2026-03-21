@@ -10,6 +10,56 @@ export const metadata: Metadata = {
 
 const posts = [
   {
+    slug: "/blog/vibe-coding-security-risks",
+    category: "AI Security",
+    title: "Vibe Coding Security Risks: What AI-Generated Code Gets Wrong About APIs",
+    excerpt:
+      "Vibe coding ships product fast — and with predictable security gaps. CORS wildcards, missing rate limits, verbose errors, IDOR vulnerabilities: the systematic issues AI-generated APIs share and how to fix them.",
+    date: "March 15, 2026",
+    readTime: "9 min read",
+    featured: false,
+  },
+  {
+    slug: "/blog/api-security-scanner-comparison",
+    category: "Comparisons",
+    title: "Best API Security Scanners in 2026: Compared for Indie Devs and Startups",
+    excerpt:
+      "Six API security scanners compared honestly: Scantient, Snyk, GitGuardian, Aikido, HostedScan, and Checkmarx. What each scans, what it misses, and which one fits your startup stage and budget.",
+    date: "March 9, 2026",
+    readTime: "12 min read",
+    featured: false,
+  },
+  {
+    slug: "/blog/security-audit-no-security-team",
+    category: "Security",
+    title: "How to Run a Security Audit When You Don't Have a Security Team",
+    excerpt:
+      "A practical six-step DIY security audit for solo founders and small startups. External surface scan, secrets audit, auth review, dependency scan — find and fix your most critical vulnerabilities without a security team.",
+    date: "February 15, 2026",
+    readTime: "10 min read",
+    featured: false,
+  },
+  {
+    slug: "/blog/gdpr-api-security-guide",
+    category: "Compliance",
+    title: "GDPR and API Security: What European Founders Must Implement Before Launch",
+    excerpt:
+      "GDPR imposes concrete technical requirements on your APIs — encryption, access controls, audit logging, data minimization, and 72-hour breach notification. Here's what European founders must implement before processing EU resident data.",
+    date: "January 6, 2026",
+    readTime: "10 min read",
+    featured: false,
+  },
+  {
+    slug: "/blog/graphql-security-guide",
+    category: "API Security",
+    title: "GraphQL Security: The Unique Vulnerabilities API Builders Miss",
+    excerpt:
+      "GraphQL's flexibility creates attack surfaces REST never had. Introspection attacks, batching abuse, depth limiting, query complexity — the GraphQL-specific vulnerabilities developers miss when switching from REST.",
+    date: "November 20, 2025",
+    readTime: "10 min read",
+    featured: false,
+  },
+  {
     slug: "/blog/api-security-complete-guide",
     category: "API Security",
     title: "API Security: The Complete Guide for Developers (2026)",

@@ -47,6 +47,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "securing-openai-api-integration",
     "api-rate-limiting-guide",
     "devsecops-for-startups",
+    // Wave 4 pillar content
+    "gdpr-api-security-guide",
+    "graphql-security-guide",
+    "security-audit-no-security-team",
+    "api-security-scanner-comparison",
+    "vibe-coding-security-risks",
     // Existing posts
     "ai-policy-compliance-engineering",
     "7-api-security-mistakes",

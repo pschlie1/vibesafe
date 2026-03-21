@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     url: "https://scantient.com/blog/jwt-security-best-practices",
     siteName: "Scantient",
     type: "article",
-    publishedTime: "2026-03-21T00:00:00Z",
+    publishedTime: "2026-03-18T00:00:00Z",
   },
   twitter: {
     card: "summary_large_image",
@@ -29,7 +29,7 @@ const articleSchema = {
   headline: "JWT Security Best Practices: 8 Mistakes That Expose Your API",
   description:
     "JSON Web Token vulnerabilities that developers miss. Eight JWT security mistakes with practical fixes for each.",
-  datePublished: "2026-03-21T00:00:00Z",
+  datePublished: "2026-03-18T00:00:00Z",
   dateModified: "2026-03-21T00:00:00Z",
   author: { "@type": "Organization", name: "Scantient" },
   publisher: {
@@ -91,7 +91,7 @@ export default function JwtSecurityBestPracticesPage() {
             what to do instead.
           </p>
           <div className="mt-6 flex items-center gap-4 text-sm text-dusty-denim-500">
-            <time dateTime="2026-03-21">March 21, 2026</time>
+            <time dateTime="2026-03-18">March 18, 2026</time>
             <span>·</span>
             <span>9 min read</span>
           </div>

@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     url: "https://scantient.com/blog/api-security-complete-guide",
     siteName: "Scantient",
     type: "article",
-    publishedTime: "2026-03-21T00:00:00Z",
+    publishedTime: "2026-03-14T00:00:00Z",
   },
   twitter: {
     card: "summary_large_image",
@@ -29,7 +29,7 @@ const articleSchema = {
   headline: "API Security: The Complete Guide for Developers (2026)",
   description:
     "The definitive guide to API security for indie devs and startup CTOs. Covers common threats, authentication best practices, testing tools, and a practical checklist.",
-  datePublished: "2026-03-21T00:00:00Z",
+  datePublished: "2026-03-14T00:00:00Z",
   dateModified: "2026-03-21T00:00:00Z",
   author: { "@type": "Organization", name: "Scantient" },
   publisher: {
@@ -91,7 +91,7 @@ export default function ApiSecurityCompleteGuidePage() {
             leaving the door open.
           </p>
           <div className="mt-6 flex items-center gap-4 text-sm text-dusty-denim-500">
-            <time dateTime="2026-03-21">March 21, 2026</time>
+            <time dateTime="2026-03-14">March 14, 2026</time>
             <span>·</span>
             <span>18 min read</span>
           </div>

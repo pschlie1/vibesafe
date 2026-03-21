@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     url: "https://scantient.com/blog/security-headers-indie-devs",
     siteName: "Scantient",
     type: "article",
-    publishedTime: "2026-03-21T00:00:00Z",
+    publishedTime: "2026-03-05T00:00:00Z",
   },
   twitter: {
     card: "summary_large_image",
@@ -44,7 +44,7 @@ const articleSchema = {
   headline: "5 Security Headers Every Indie Dev Should Set (And How to Check Them)",
   description:
     "A practical guide to the 5 HTTP security headers every web app needs — what each does, the one-liner to add it, and what happens without it.",
-  datePublished: "2026-03-21T00:00:00Z",
+  datePublished: "2026-03-05T00:00:00Z",
   publisher: { "@type": "Organization", name: "Scantient", url: "https://scantient.com" },
   mainEntityOfPage: "https://scantient.com/blog/security-headers-indie-devs",
 };
@@ -73,7 +73,7 @@ export default function SecurityHeadersIndieDevsPage() {
             Security headers are free. They take 5 minutes to add. And most indie dev projects ship without a single one. Here are the 5 that matter, what each one does, and how to verify they&apos;re actually working.
           </p>
           <div className="mt-6 flex items-center gap-4 text-sm text-dusty-denim-500">
-            <time dateTime="2026-03-21">March 21, 2026</time>
+            <time dateTime="2026-03-05">March 5, 2026</time>
             <span>·</span>
             <span>8 min read</span>
           </div>

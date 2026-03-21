@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     url: "https://scantient.com/blog/what-is-external-security-scanning",
     siteName: "Scantient",
     type: "article",
-    publishedTime: "2026-03-21T00:00:00Z",
+    publishedTime: "2026-03-16T00:00:00Z",
   },
   twitter: {
     card: "summary_large_image",
@@ -29,7 +29,7 @@ const articleSchema = {
   headline: "What Is External Security Scanning? (And Why Every Production API Needs It)",
   description:
     "External security scanning tests your live API the way an attacker would — from the outside. Learn what it covers, why code-level tools miss it, and why every production API needs it.",
-  datePublished: "2026-03-21T00:00:00Z",
+  datePublished: "2026-03-16T00:00:00Z",
   dateModified: "2026-03-21T00:00:00Z",
   author: { "@type": "Organization", name: "Scantient" },
   publisher: {
@@ -91,7 +91,7 @@ export default function WhatIsExternalSecurityScanningPage() {
             reveals a completely different class of security problems.
           </p>
           <div className="mt-6 flex items-center gap-4 text-sm text-dusty-denim-500">
-            <time dateTime="2026-03-21">March 21, 2026</time>
+            <time dateTime="2026-03-16">March 16, 2026</time>
             <span>·</span>
             <span>9 min read</span>
           </div>

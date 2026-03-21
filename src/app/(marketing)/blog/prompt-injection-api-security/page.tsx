@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     url: "https://scantient.com/blog/prompt-injection-api-security",
     siteName: "Scantient",
     type: "article",
-    publishedTime: "2026-03-21T00:00:00Z",
+    publishedTime: "2026-03-19T00:00:00Z",
   },
   twitter: {
     card: "summary_large_image",
@@ -29,7 +29,7 @@ const articleSchema = {
   headline: "Prompt Injection Attacks: How to Protect Your AI API (Developer Guide)",
   description:
     "Prompt injection is the SQL injection of AI APIs. Learn how attacks work and concrete defenses for your LLM-powered application.",
-  datePublished: "2026-03-21T00:00:00Z",
+  datePublished: "2026-03-19T00:00:00Z",
   dateModified: "2026-03-21T00:00:00Z",
   author: { "@type": "Organization", name: "Scantient" },
   publisher: {
@@ -91,7 +91,7 @@ export default function PromptInjectionApiSecurityPage() {
             building AI apps have no defenses against it.
           </p>
           <div className="mt-6 flex items-center gap-4 text-sm text-dusty-denim-500">
-            <time dateTime="2026-03-21">March 21, 2026</time>
+            <time dateTime="2026-03-19">March 19, 2026</time>
             <span>·</span>
             <span>10 min read</span>
           </div>

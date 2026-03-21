@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     url: "https://scantient.com/blog/snyk-vs-scantient-what-your-startup-needs",
     siteName: "Scantient",
     type: "article",
-    publishedTime: "2026-03-21T00:00:00Z",
+    publishedTime: "2026-01-08T00:00:00Z",
   },
   twitter: {
     card: "summary_large_image",
@@ -56,7 +56,7 @@ export default function SnykVsScantientPage() {
           Snyk is a great tool. This is not a hit piece. But if you&apos;re an indie developer or early-stage startup, choosing your API security tools based on what enterprises use is how you end up paying for features you won&apos;t touch for two years.
         </p>
         <div className="mt-6 flex items-center gap-4 text-sm text-dusty-denim-500">
-          <time dateTime="2026-03-21">March 21, 2026</time>
+          <time dateTime="2026-01-08">January 8, 2026</time>
           <span>·</span>
           <span>10 min read</span>
         </div>

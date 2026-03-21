@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     url: "https://scantient.com/blog/securing-ai-app-api",
     siteName: "Scantient",
     type: "article",
-    publishedTime: "2026-03-21T00:00:00Z",
+    publishedTime: "2026-02-19T00:00:00Z",
   },
   twitter: {
     card: "summary_large_image",
@@ -38,7 +38,7 @@ const articleSchema = {
   "@type": "Article",
   headline: "Securing Your AI App's API: What to Check Before Launch",
   description: "A practical guide to AI API security before you go live.",
-  datePublished: "2026-03-21T00:00:00Z",
+  datePublished: "2026-02-19T00:00:00Z",
   publisher: { "@type": "Organization", name: "Scantient", url: "https://scantient.com" },
   mainEntityOfPage: "https://scantient.com/blog/securing-ai-app-api",
 };
@@ -67,7 +67,7 @@ export default function SecuringAiAppApiPage() {
           You built something with GPT-4, Claude, or Gemini. You connected a vector database, wired up an API, and you&apos;re about to launch. Here&apos;s what&apos;s probably sitting in your security blind spot — and how to close it in 60 seconds.
         </p>
         <div className="mt-6 flex items-center gap-4 text-sm text-dusty-denim-500">
-          <time dateTime="2026-03-21">March 21, 2026</time>
+          <time dateTime="2026-02-19">February 19, 2026</time>
           <span>·</span>
           <span>10 min read</span>
         </div>

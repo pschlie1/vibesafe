@@ -211,11 +211,11 @@ export default function SevenApiSecurityMistakesPage() {
           <Link href="/vs-snyk" className="text-sm text-prussian-blue-600 hover:underline">
             Scantient vs Snyk: Post-Deploy Security Without Enterprise Pricing →
           </Link>
-          <Link href="/blog/vs-snyk-beyond-dependencies" className="text-sm text-prussian-blue-600 hover:underline">
-            Scantient vs Snyk: Beyond Dependency Scanning →
+          <Link href="/blog/snyk-vs-scantient-what-your-startup-needs" className="text-sm text-prussian-blue-600 hover:underline">
+            Snyk vs Scantient: What Your Startup Actually Needs →
           </Link>
-          <Link href="/blog/vs-gitguardian-makers-choice" className="text-sm text-prussian-blue-600 hover:underline">
-            Scantient vs GitGuardian: The Maker&apos;s Choice →
+          <Link href="/vs-gitguardian" className="text-sm text-prussian-blue-600 hover:underline">
+            Scantient vs GitGuardian: Secrets Detection vs Full Security Posture →
           </Link>
         </div>
       </div>

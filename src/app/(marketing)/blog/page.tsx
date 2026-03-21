@@ -10,6 +10,16 @@ export const metadata: Metadata = {
 
 const posts = [
   {
+    slug: "/blog/why-ctos-choose-external-security-scanning",
+    category: "Strategy",
+    title: "Why CTOs Choose External Security Scanning Over Code-Level Tools",
+    excerpt:
+      "Shift-left is necessary but not sufficient. External scanning catches what code analysis misses — here's the gap every startup CTO needs to close before launch.",
+    date: "March 21, 2026",
+    readTime: "8 min read",
+    featured: true,
+  },
+  {
     slug: "/blog/snyk-vs-scantient-what-your-startup-needs",
     category: "Comparisons",
     title: "Snyk vs Scantient: What Your Startup Actually Needs",
@@ -17,7 +27,27 @@ const posts = [
       "An honest comparison — not marketing fluff. Snyk is enterprise shift-left dependency scanning. Scantient is post-deploy external API security monitoring. Here's when to use each, including a pricing table.",
     date: "March 21, 2026",
     readTime: "10 min read",
-    featured: true,
+    featured: false,
+  },
+  {
+    slug: "/blog/gitguardian-vs-scantient",
+    category: "Comparisons",
+    title: "GitGuardian vs Scantient: Secrets Detection vs Full Security Posture",
+    excerpt:
+      "GitGuardian is the secrets scanning specialist. Scantient monitors your deployed app's full security posture. Honest comparison with pricing table — when to use each.",
+    date: "March 21, 2026",
+    readTime: "7 min read",
+    featured: false,
+  },
+  {
+    slug: "/blog/indie-dev-security-checklist",
+    category: "Checklist",
+    title: "The Indie Dev Security Checklist: Ship Fast Without Getting Hacked",
+    excerpt:
+      "12 security items to check before launch. Each one: what to do, why attackers care, how to verify. Covers secrets, headers, CORS, auth, SSL, and more.",
+    date: "March 21, 2026",
+    readTime: "10 min read",
+    featured: false,
   },
   {
     slug: "/blog/7-api-security-mistakes",

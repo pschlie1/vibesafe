@@ -26,6 +26,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
   // Blog posts
   const blogPosts = [
     "ai-policy-compliance-engineering",
+    "7-api-security-mistakes",
+    "snyk-vs-scantient-what-your-startup-needs",
+    "why-ctos-choose-external-security-scanning",
+    "indie-dev-security-checklist",
+    "gitguardian-vs-scantient",
   ].map((slug) => ({
     url: `${baseUrl}/blog/${slug}`,
     changeFrequency: "monthly" as const,

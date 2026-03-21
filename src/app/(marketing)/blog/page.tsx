@@ -90,6 +90,56 @@ const posts = [
     featured: false,
   },
   {
+    slug: "/blog/devsecops-for-startups",
+    category: "DevSecOps",
+    title: "DevSecOps for Startups: How to Bake Security Into Your CI/CD Without Slowing Down",
+    excerpt:
+      "You don't need a security team to ship securely. SAST, SCA, secrets scanning, container scanning, and external API monitoring — the lean startup security stack that actually catches real vulnerabilities.",
+    date: "February 22, 2026",
+    readTime: "11 min read",
+    featured: false,
+  },
+  {
+    slug: "/blog/securing-openai-api-integration",
+    category: "AI Security",
+    title: "How to Secure Your OpenAI API Integration (And Not Get Charged $10,000 by Bots)",
+    excerpt:
+      "Leaked OpenAI API keys can burn $10,000+ in hours before you notice. Key management, rate limiting, input validation, spending limits, and monitoring — how to close every path to that outcome.",
+    date: "March 3, 2026",
+    readTime: "8 min read",
+    featured: false,
+  },
+  {
+    slug: "/blog/how-to-scan-production-api",
+    category: "API Security",
+    title: "How to Scan Your Production API for Vulnerabilities (Step-by-Step Guide)",
+    excerpt:
+      "Code review and unit tests can't see what your live API exposes. Step-by-step walkthrough: external scanning, security headers, CORS auditing, exposed endpoints, TLS configuration, and how to prioritize findings.",
+    date: "February 8, 2026",
+    readTime: "7 min read",
+    featured: false,
+  },
+  {
+    slug: "/blog/api-rate-limiting-guide",
+    category: "API Security",
+    title: "API Rate Limiting: How to Implement It and Why Skipping It Costs You",
+    excerpt:
+      "No rate limiting = open season for brute force, credential stuffing, and expensive scraping. Sliding window vs token bucket, implementation examples for Next.js and Express, and common mistakes to avoid.",
+    date: "December 18, 2025",
+    readTime: "8 min read",
+    featured: false,
+  },
+  {
+    slug: "/blog/security-tools-indie-hackers",
+    category: "Security",
+    title: "The Best Security Tools for Indie Hackers in 2026 (Budget Under $100/Year)",
+    excerpt:
+      "Enterprise security stacks cost $50K+/year. Indie hackers don't need that. The exact stack — mostly free, one $79 lifetime deal — that covers your most likely attack surface without eating your MRR.",
+    date: "January 29, 2026",
+    readTime: "8 min read",
+    featured: false,
+  },
+  {
     slug: "/blog/security-headers-indie-devs",
     category: "Security",
     title: "5 Security Headers Every Indie Dev Should Set (And How to Check Them)",

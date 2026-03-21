@@ -5,6 +5,15 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: "https://scantient.com" },
+    { "@type": "ListItem", position: 2, name: "Free Security Scan", item: "https://scantient.com/score" },
+  ],
+};
+
 type ScoreFinding = {
   severity: "CRITICAL" | "HIGH" | "MEDIUM" | "LOW";
   title: string;
@@ -115,6 +124,7 @@ function ScorePage() {
 
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
       <main className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
         {/* Hero */}
         <div className="mb-10 text-center">

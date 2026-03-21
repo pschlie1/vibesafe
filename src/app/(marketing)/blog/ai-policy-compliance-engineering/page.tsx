@@ -101,9 +101,23 @@ const checklist = [
   },
 ];
 
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: "https://scantient.com" },
+    { "@type": "ListItem", position: 2, name: "Blog", item: "https://scantient.com/blog" },
+    { "@type": "ListItem", position: 3, name: "Your Engineering Team Probably Has No AI Usage Policy (And Why That's a Security Problem)", item: "https://scantient.com/blog/ai-policy-compliance-engineering" },
+  ],
+};
+
 export default function AIPolicyComplianceBlogPage() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}

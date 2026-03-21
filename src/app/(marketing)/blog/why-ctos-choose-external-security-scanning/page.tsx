@@ -23,9 +23,21 @@ export const metadata: Metadata = {
   },
 };
 
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: "https://scantient.com" },
+    { "@type": "ListItem", position: 2, name: "Blog", item: "https://scantient.com/blog" },
+    { "@type": "ListItem", position: 3, name: "Why CTOs Choose External Security Scanning Over Code-Level Tools", item: "https://scantient.com/blog/why-ctos-choose-external-security-scanning" },
+  ],
+};
+
 export default function WhyCTOsChooseExternalScanningPage() {
   return (
-    <article className="mx-auto max-w-3xl px-6 py-16 sm:py-24">
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+      <article className="mx-auto max-w-3xl px-6 py-16 sm:py-24">
       {/* Header */}
       <div className="mb-10">
         <div className="mb-4 flex items-center gap-2">
@@ -232,5 +244,6 @@ export default function WhyCTOsChooseExternalScanningPage() {
         </div>
       </div>
     </article>
+    </>
   );
 }

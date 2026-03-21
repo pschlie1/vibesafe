@@ -23,9 +23,21 @@ export const metadata: Metadata = {
   },
 };
 
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: "https://scantient.com" },
+    { "@type": "ListItem", position: 2, name: "Blog", item: "https://scantient.com/blog" },
+    { "@type": "ListItem", position: 3, name: "7 API Security Mistakes Killing Your Startup", item: "https://scantient.com/blog/7-api-security-mistakes" },
+  ],
+};
+
 export default function SevenApiSecurityMistakesPage() {
   return (
-    <article className="mx-auto max-w-3xl px-6 py-16 sm:py-24">
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+      <article className="mx-auto max-w-3xl px-6 py-16 sm:py-24">
       {/* Header */}
       <div className="mb-10">
         <div className="mb-4 flex items-center gap-2">
@@ -220,5 +232,6 @@ export default function SevenApiSecurityMistakesPage() {
         </div>
       </div>
     </article>
+    </>
   );
 }

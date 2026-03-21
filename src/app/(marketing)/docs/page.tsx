@@ -28,9 +28,19 @@ function Endpoint({ method, path, desc, curl, response }: { method: string; path
   );
 }
 
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: "https://scantient.com" },
+    { "@type": "ListItem", position: 2, name: "Documentation", item: "https://scantient.com/docs" },
+  ],
+};
+
 export default function DocsPage() {
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
     <main className="mx-auto max-w-4xl px-4 py-16 sm:px-6">
       <h1 className="mb-2 text-3xl font-bold">Scantient API Documentation</h1>
       <p className="mb-10 text-body">Integrate Scantient into your workflow with our REST API.</p>

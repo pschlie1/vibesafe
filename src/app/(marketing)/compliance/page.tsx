@@ -35,9 +35,19 @@ const frameworks = [
   },
 ];
 
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: "https://scantient.com" },
+    { "@type": "ListItem", position: 2, name: "Compliance", item: "https://scantient.com/compliance" },
+  ],
+};
+
 export default function CompliancePage() {
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
       <article className="mx-auto max-w-3xl px-4 py-16">
         <p className="mb-4 text-sm font-medium uppercase tracking-widest text-muted">Compliance</p>
         <h1 className="text-4xl font-bold leading-tight tracking-tight sm:text-5xl">

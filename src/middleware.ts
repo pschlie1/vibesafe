@@ -40,6 +40,8 @@ const PUBLIC_PATHS = [
   "/vs-gitguardian",
   "/vs-snyk",
   "/vs-checkmarx",
+  "/vs-hostedscan",
+  "/vs-aikido",
   "/api/auth/login",
   "/api/auth/signup",
   "/api/auth/forgot-password",

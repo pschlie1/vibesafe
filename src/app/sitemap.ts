@@ -21,6 +21,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${baseUrl}/vs-gitguardian`, changeFrequency: "monthly" as const, priority: 0.8 },
     { url: `${baseUrl}/vs-snyk`, changeFrequency: "monthly" as const, priority: 0.8 },
     { url: `${baseUrl}/vs-checkmarx`, changeFrequency: "monthly" as const, priority: 0.8 },
+    { url: `${baseUrl}/vs-hostedscan`, changeFrequency: "monthly" as const, priority: 0.8 },
+    { url: `${baseUrl}/vs-aikido`, changeFrequency: "monthly" as const, priority: 0.8 },
   ];
 
   // Blog posts
@@ -31,6 +33,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "why-ctos-choose-external-security-scanning",
     "indie-dev-security-checklist",
     "gitguardian-vs-scantient",
+    "securing-ai-app-api",
+    "post-deploy-security-checklist",
   ].map((slug) => ({
     url: `${baseUrl}/blog/${slug}`,
     changeFrequency: "monthly" as const,

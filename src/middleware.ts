@@ -155,6 +155,29 @@ export async function middleware(request: NextRequest) {
     return response;
   }
 
+  // Protected paths that REQUIRE authentication (everything else falls through to Next.js)
+  const PROTECTED_PREFIXES = [
+    "/dashboard",
+    "/settings",
+    "/onboarding",
+    "/apps",
+    "/portfolio",
+    "/readiness",
+    "/reports",
+    "/ops",
+  ];
+
+  const isProtectedRoute = PROTECTED_PREFIXES.some(
+    (p) => pathname === p || pathname.startsWith(p + "/")
+  );
+
+  // Non-protected, non-public routes: let Next.js handle (allows not-found.tsx to render 404)
+  if (!isProtectedRoute && !isApiRoute) {
+    const response = nextWithNonce();
+    applySecurityHeaders(response, nonce, false);
+    return response;
+  }
+
   // Check for session cookie
   const session = request.cookies.get("scantient-session");
   if (!session?.value) {

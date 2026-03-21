@@ -287,6 +287,9 @@ export default function AiSecurityPage() {
           <Link href="/blog/securing-ai-app-api" className="text-sm text-prussian-blue-600 hover:underline">
             Securing Your AI App&apos;s API: What to Check Before Launch →
           </Link>
+          <Link href="/blog/ai-policy-compliance-engineering" className="text-sm text-prussian-blue-600 hover:underline">
+            AI policy compliance: what your engineering team needs before your next audit →
+          </Link>
           <Link href="/blog/7-api-security-mistakes" className="text-sm text-prussian-blue-600 hover:underline">
             7 API Security Mistakes Killing Your Startup →
           </Link>

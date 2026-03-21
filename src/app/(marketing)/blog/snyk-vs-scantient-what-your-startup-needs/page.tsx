@@ -73,7 +73,7 @@ export default function SnykVsScantientPage() {
           <strong>Scantient</strong> is an external API security scanner designed for indie developers and startup teams. Rather than analyzing your source code or dependencies, it scans your <em>deployed application</em> — the live URL — checking for runtime security misconfigurations, exposed API keys, CORS issues, missing security headers, and 15 other categories of real-world vulnerability. No SDK, no CI integration, no developer setup required.
         </p>
         <p>
-          They solve different problems. The confusion happens because they both have &quot;security&quot; in their pitch.
+          They solve different problems. The confusion happens because they both have &quot;security&quot; in their pitch. For a detailed feature comparison, see our <Link href="/vs-snyk" className="text-prussian-blue-600 hover:underline">Snyk vs Scantient comparison</Link>.
         </p>
 
         <h2>What Snyk does well</h2>

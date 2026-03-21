@@ -129,6 +129,9 @@ function ScorePage() {
           <p className="mt-4 text-lg text-muted">
             Get an instant security assessment of any web app: headers, SSL, scripts, CORS &amp; more.
           </p>
+          <p className="mt-2 text-sm text-muted">
+            Scan free · then upgrade for <strong>continuous protection</strong>
+          </p>
         </div>
 
         {/* URL Input */}
@@ -265,51 +268,122 @@ function ScorePage() {
               </div>
             )}
 
-            {/* LTD Upgrade CTA */}
-            <div className="rounded-xl border-2 border-prussian-blue-200 dark:border-prussian-blue-800 bg-prussian-blue-50 dark:bg-prussian-blue-950/30 overflow-hidden">
-              {/* Value comparison */}
-              <div className="grid sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-prussian-blue-200 dark:divide-prussian-blue-800">
-                <div className="px-5 py-4">
-                  <p className="text-xs font-bold uppercase tracking-wider text-dusty-denim-500">This free scan</p>
-                  <ul className="mt-2 space-y-1.5 text-sm text-dusty-denim-700 dark:text-dusty-denim-400">
-                    <li className="flex items-center gap-2"><span className="text-success">✓</span> One-time snapshot</li>
-                    <li className="flex items-center gap-2"><span className="text-success">✓</span> 20+ security checks right now</li>
-                    <li className="flex items-center gap-2"><span className="text-dusty-denim-400">✗</span> No monitoring between scans</li>
-                    <li className="flex items-center gap-2"><span className="text-dusty-denim-400">✗</span> No alerts when things change</li>
-                    <li className="flex items-center gap-2"><span className="text-dusty-denim-400">✗</span> No compliance reports</li>
-                  </ul>
+            {/* ── Conversion Funnel: Free → LTD ── */}
+            <div className="space-y-4">
+              {/* Dynamic "what happens next" headline */}
+              <div className="rounded-xl border-2 border-warning/20 bg-warning/10 px-5 py-4">
+                <h2 className="text-base font-bold text-heading">
+                  {result.findingsCount > 0
+                    ? `⚠️ You just found ${result.findingsCount} issue${result.findingsCount !== 1 ? "s" : ""}. What happens next?`
+                    : "✅ Clean scan! But what about next week?"}
+                </h2>
+                <p className="mt-1 text-sm text-heading">
+                  {result.findingsCount > 0
+                    ? "This is a one-time snapshot. These issues could worsen, new ones could appear — and you won't know unless you scan again manually."
+                    : "Security posture changes constantly: new deploys, cert expirations, header regressions. Without monitoring, you'll find out too late."}
+                </p>
+              </div>
+
+              {/* Full comparison table */}
+              <div className="overflow-hidden rounded-xl border border-border bg-surface">
+                <div className="border-b border-border px-4 py-3">
+                  <h3 className="text-sm font-semibold text-heading">What you get vs. what you&apos;re missing</h3>
                 </div>
-                <div className="px-5 py-4 bg-prussian-blue-100/50 dark:bg-prussian-blue-900/20">
-                  <p className="text-xs font-bold uppercase tracking-wider text-prussian-blue-600 dark:text-prussian-blue-400">Lifetime Deal — $79 once</p>
-                  <ul className="mt-2 space-y-1.5 text-sm text-ink-black-900 dark:text-alabaster-grey-100">
-                    <li className="flex items-center gap-2"><span className="text-success">✓</span> Continuous monitoring, every day</li>
-                    <li className="flex items-center gap-2"><span className="text-success">✓</span> Alerts when security posture changes</li>
-                    <li className="flex items-center gap-2"><span className="text-success">✓</span> SSL expiry alerts 30/14/7 days out</li>
-                    <li className="flex items-center gap-2"><span className="text-success">✓</span> Monthly compliance reports (PDF)</li>
-                    <li className="flex items-center gap-2"><span className="text-success">✓</span> No recurring fees. Ever.</li>
-                  </ul>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b border-border bg-surface-raised">
+                        <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted">Feature</th>
+                        <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-muted">Free Scan</th>
+                        <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-prussian-blue-600 dark:text-prussian-blue-400 bg-prussian-blue-50 dark:bg-prussian-blue-950/20">
+                          LTD — $79
+                          <span className="ml-1 text-[10px] font-bold text-prussian-blue-500">once</span>
+                        </th>
+                        <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-muted">Pro $399/mo</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-border">
+                      {[
+                        { feature: "One-time scan", free: true, ltd: true, pro: true },
+                        { feature: "Continuous daily monitoring", free: false, ltd: true, pro: true },
+                        { feature: "Email alerts on new issues", free: false, ltd: true, pro: true },
+                        { feature: "SSL expiry warnings", free: false, ltd: true, pro: true },
+                        { feature: "Monthly compliance reports (PDF)", free: false, ltd: true, pro: true },
+                        { feature: "Unlimited re-scans", free: false, ltd: true, pro: true },
+                        { feature: "Team access", free: false, ltd: false, pro: true },
+                        { feature: "Custom scan rules", free: false, ltd: false, pro: true },
+                        { feature: "SLA guarantee", free: false, ltd: false, pro: true },
+                      ].map((row) => (
+                        <tr key={row.feature} className="hover:bg-surface-raised/50">
+                          <td className="px-4 py-2.5 text-sm text-heading">{row.feature}</td>
+                          <td className="px-4 py-2.5 text-center text-base">
+                            {row.free ? "✅" : <span className="text-muted text-sm">✗</span>}
+                          </td>
+                          <td className="px-4 py-2.5 text-center text-base bg-prussian-blue-50/50 dark:bg-prussian-blue-950/10">
+                            {row.ltd ? "✅" : <span className="text-muted text-sm">✗</span>}
+                          </td>
+                          <td className="px-4 py-2.5 text-center text-base">
+                            {row.pro ? "✅" : <span className="text-muted text-sm">✗</span>}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               </div>
-              {/* CTA row */}
-              <div className="px-5 py-4 text-center border-t border-prussian-blue-200 dark:border-prussian-blue-800">
-                <p className="text-sm font-semibold text-ink-black-950 dark:text-alabaster-grey-50">
-                  Want continuous monitoring? Get lifetime access for <span className="text-prussian-blue-600 dark:text-prussian-blue-400">$79</span>
+
+              {/* Main CTA */}
+              <div className="rounded-xl border-2 border-prussian-blue-200 dark:border-prussian-blue-700 bg-gradient-to-br from-prussian-blue-50 to-white dark:from-prussian-blue-950/40 dark:to-surface px-6 py-6 text-center">
+                {/* Social proof */}
+                <p className="text-xs font-medium text-prussian-blue-600 dark:text-prussian-blue-400 mb-3">
+                  🔒 Join indie devs and startup teams shipping securely with Scantient
                 </p>
-                <p className="mt-0.5 text-xs text-dusty-denim-500">One payment. Monitors your app every day. Alerts you before attackers find issues.</p>
-                <div className="mt-4 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+
+                <h3 className="text-lg font-bold text-heading">
+                  Lock in lifetime monitoring for{" "}
+                  <span className="text-prussian-blue-600 dark:text-prussian-blue-400">$79</span>
+                </h3>
+                <p className="mt-1 text-sm text-muted">
+                  One payment. Monitors your app every day. Alerts you before attackers find issues.
+                </p>
+
+                {/* Urgency */}
+                <p className="mt-2 text-xs font-medium text-warning">
+                  ⏳ LTD pricing won&apos;t last forever — lock in $79 before it goes monthly-only
+                </p>
+
+                <div className="mt-5 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
                   <Link
                     href="/pricing"
-                    className="rounded-lg bg-prussian-blue-600 px-6 py-2.5 text-sm font-semibold text-white shadow-md transition hover:bg-prussian-blue-700"
+                    className="inline-flex items-center gap-2 rounded-lg bg-prussian-blue-600 px-7 py-3 text-sm font-bold text-white shadow-lg transition hover:bg-prussian-blue-700 hover:shadow-xl"
                   >
-                    Get lifetime access for $79 →
+                    Get Lifetime Access — $79 →
                   </Link>
                   <Link
                     href="/pricing"
-                    className="text-sm text-dusty-denim-600 dark:text-dusty-denim-400 hover:text-prussian-blue-600"
+                    className="text-sm text-muted hover:text-heading transition"
                   >
                     Compare all plans
                   </Link>
                 </div>
+
+                <p className="mt-3 text-xs text-muted">No subscription. No surprises. Cancel-free forever.</p>
+              </div>
+
+              {/* Feature pills */}
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                {[
+                  { icon: "📡", title: "Daily scans", desc: "Runs automatically, every day" },
+                  { icon: "🔔", title: "Instant alerts", desc: "Email when issues appear" },
+                  { icon: "📄", title: "PDF reports", desc: "Compliance-ready, monthly" },
+                  { icon: "♾️", title: "Lifetime deal", desc: "Pay once, monitor forever" },
+                ].map((item) => (
+                  <div key={item.title} className="rounded-lg border border-border bg-surface p-3 text-center">
+                    <div className="text-xl">{item.icon}</div>
+                    <p className="mt-1 text-xs font-semibold text-heading">{item.title}</p>
+                    <p className="text-xs text-muted">{item.desc}</p>
+                  </div>
+                ))}
               </div>
             </div>
 

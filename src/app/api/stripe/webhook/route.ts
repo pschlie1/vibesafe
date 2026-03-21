@@ -12,6 +12,9 @@ import type { SubscriptionTier } from "@prisma/client";
  */
 function toDbTier(planKey: PlanKey): SubscriptionTier {
   const map: Record<PlanKey, SubscriptionTier> = {
+    // LTD is a one-time purchase; maps to PRO tier in DB until a dedicated LTD tier is added to the schema.
+    // TODO(peter): Add LTD to SubscriptionTier enum in prisma/schema.prisma + run prisma migrate dev.
+    LTD: "PRO",
     FREE: "FREE",
     STARTER: "STARTER",
     PRO: "PRO",

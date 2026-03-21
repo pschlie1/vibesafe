@@ -265,26 +265,66 @@ function ScorePage() {
               </div>
             )}
 
-            {/* CTA */}
-            <div className="rounded-xl border border-border bg-surface-raised p-6 text-center">
-              <h3 className="text-base font-bold text-heading">
-                Get the full picture
-              </h3>
-              <p className="mt-1 text-sm text-muted">
-                {result.message}
-              </p>
-              <div className="mt-4 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
-                <Link
-                  href="/signup"
-                  className="rounded-lg bg-primary px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-primary-hover"
-                >
-                  Get started →
+            {/* LTD Upgrade CTA */}
+            <div className="rounded-xl border-2 border-prussian-blue-200 dark:border-prussian-blue-800 bg-prussian-blue-50 dark:bg-prussian-blue-950/30 overflow-hidden">
+              {/* Value comparison */}
+              <div className="grid sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-prussian-blue-200 dark:divide-prussian-blue-800">
+                <div className="px-5 py-4">
+                  <p className="text-xs font-bold uppercase tracking-wider text-dusty-denim-500">This free scan</p>
+                  <ul className="mt-2 space-y-1.5 text-sm text-dusty-denim-700 dark:text-dusty-denim-400">
+                    <li className="flex items-center gap-2"><span className="text-success">✓</span> One-time snapshot</li>
+                    <li className="flex items-center gap-2"><span className="text-success">✓</span> 20+ security checks right now</li>
+                    <li className="flex items-center gap-2"><span className="text-dusty-denim-400">✗</span> No monitoring between scans</li>
+                    <li className="flex items-center gap-2"><span className="text-dusty-denim-400">✗</span> No alerts when things change</li>
+                    <li className="flex items-center gap-2"><span className="text-dusty-denim-400">✗</span> No compliance reports</li>
+                  </ul>
+                </div>
+                <div className="px-5 py-4 bg-prussian-blue-100/50 dark:bg-prussian-blue-900/20">
+                  <p className="text-xs font-bold uppercase tracking-wider text-prussian-blue-600 dark:text-prussian-blue-400">Lifetime Deal — $79 once</p>
+                  <ul className="mt-2 space-y-1.5 text-sm text-ink-black-900 dark:text-alabaster-grey-100">
+                    <li className="flex items-center gap-2"><span className="text-success">✓</span> Continuous monitoring, every day</li>
+                    <li className="flex items-center gap-2"><span className="text-success">✓</span> Alerts when security posture changes</li>
+                    <li className="flex items-center gap-2"><span className="text-success">✓</span> SSL expiry alerts 30/14/7 days out</li>
+                    <li className="flex items-center gap-2"><span className="text-success">✓</span> Monthly compliance reports (PDF)</li>
+                    <li className="flex items-center gap-2"><span className="text-success">✓</span> No recurring fees. Ever.</li>
+                  </ul>
+                </div>
+              </div>
+              {/* CTA row */}
+              <div className="px-5 py-4 text-center border-t border-prussian-blue-200 dark:border-prussian-blue-800">
+                <p className="text-sm font-semibold text-ink-black-950 dark:text-alabaster-grey-50">
+                  Want continuous monitoring? Get lifetime access for <span className="text-prussian-blue-600 dark:text-prussian-blue-400">$79</span>
+                </p>
+                <p className="mt-0.5 text-xs text-dusty-denim-500">One payment. Monitors your app every day. Alerts you before attackers find issues.</p>
+                <div className="mt-4 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+                  <Link
+                    href="/pricing"
+                    className="rounded-lg bg-prussian-blue-600 px-6 py-2.5 text-sm font-semibold text-white shadow-md transition hover:bg-prussian-blue-700"
+                  >
+                    Get lifetime access for $79 →
+                  </Link>
+                  <Link
+                    href="/pricing"
+                    className="text-sm text-dusty-denim-600 dark:text-dusty-denim-400 hover:text-prussian-blue-600"
+                  >
+                    Compare all plans
+                  </Link>
+                </div>
+              </div>
+            </div>
+
+            {/* Blog education links */}
+            <div className="rounded-lg border border-border bg-surface p-4">
+              <p className="text-xs font-semibold uppercase tracking-wider text-muted mb-3">Learn more about what we found</p>
+              <div className="flex flex-wrap gap-2">
+                <Link href="/blog/7-api-security-mistakes" className="rounded-md bg-surface-raised px-3 py-1.5 text-xs font-medium text-heading hover:bg-border transition">
+                  7 API security mistakes →
                 </Link>
-                <Link
-                  href="/#features"
-                  className="text-sm text-muted hover:text-heading"
-                >
-                  See all features
+                <Link href="/blog/indie-dev-security-checklist" className="rounded-md bg-surface-raised px-3 py-1.5 text-xs font-medium text-heading hover:bg-border transition">
+                  Security checklist →
+                </Link>
+                <Link href="/blog/why-ctos-choose-external-security-scanning" className="rounded-md bg-surface-raised px-3 py-1.5 text-xs font-medium text-heading hover:bg-border transition">
+                  Why external scanning matters →
                 </Link>
               </div>
             </div>

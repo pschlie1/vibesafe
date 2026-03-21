@@ -125,6 +125,18 @@ export default function CompliancePage() {
           </Link>
         </div>
 
+        <div className="mt-12 rounded-xl border border-border p-6">
+          <h3 className="text-sm font-semibold uppercase tracking-wide text-muted mb-4">Related Reading</h3>
+          <div className="flex flex-col gap-3">
+            <Link href="/blog/owasp-top-10-api-checklist" className="text-sm text-prussian-blue-600 hover:underline">
+              OWASP Top 10 for APIs: a practical checklist your auditors will reference →
+            </Link>
+            <Link href="/blog/ai-policy-compliance-engineering" className="text-sm text-prussian-blue-600 hover:underline">
+              AI policy compliance engineering: governing AI tool usage before the audit →
+            </Link>
+          </div>
+        </div>
+
         <div className="mt-12 flex gap-4 text-sm">
           <Link href="/vibe-coding-risks" className="text-muted hover:text-heading transition-colors">← Vibe Coding Risks</Link>
           <span className="text-muted">|</span>

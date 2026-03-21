@@ -88,7 +88,7 @@ export default function SevenApiSecurityMistakesPage() {
 
         <h2>2. Missing Security Headers (Your App Is Basically Open)</h2>
         <p>
-          <strong>What it looks like:</strong> Your app works perfectly. Users love it. But there&apos;s no <code>Content-Security-Policy</code>, no <code>X-Frame-Options</code>, no <code>Strict-Transport-Security</code>. These headers aren&apos;t visible to users — they&apos;re invisible until something goes wrong.
+          <strong>What it looks like:</strong> Your app works perfectly. Users love it. But there&apos;s no <code>Content-Security-Policy</code>, no <code>X-Frame-Options</code>, no <code>Strict-Transport-Security</code>. These headers aren&apos;t visible to users — they&apos;re invisible until something goes wrong. (For a complete walkthrough, see our guide to <Link href="/blog/security-headers-indie-devs" className="text-prussian-blue-600 hover:underline">security headers for your API</Link>.)
         </p>
         <p>
           <strong>What actually happened:</strong> Without CSP, an attacker who finds an XSS vector can run any script they want in your users&apos; browsers — steal session cookies, redirect to phishing pages, exfiltrate data. Without <code>X-Frame-Options</code>, your app can be embedded in an iframe on any site for clickjacking attacks. Without HSTS, users connecting over HTTP aren&apos;t automatically upgraded to HTTPS.
@@ -172,7 +172,7 @@ export default function SevenApiSecurityMistakesPage() {
 
         <h2>The Startup Security Checklist</h2>
         <p>
-          Before you launch (or right now, for apps already live):
+          Before you launch (or right now, for apps already live). For a deeper dive on each category, the <Link href="/blog/owasp-top-10-api-checklist" className="text-prussian-blue-600 hover:underline">OWASP API Top 10 checklist</Link> maps these mistakes to the industry standard vulnerability framework:
         </p>
         <ul>
           <li>✅ No secret keys in client-side JavaScript or environment variables prefixed <code>NEXT_PUBLIC_</code></li>

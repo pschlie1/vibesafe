@@ -122,6 +122,18 @@ export default function SecurityChecklistPage() {
           </Link>
         </div>
 
+        <div className="mt-12 rounded-xl border border-border p-6">
+          <h3 className="text-sm font-semibold uppercase tracking-wide text-muted mb-4">Related Reading</h3>
+          <div className="flex flex-col gap-3">
+            <Link href="/blog/indie-dev-security-checklist" className="text-sm text-prussian-blue-600 hover:underline">
+              Full indie dev security checklist: 12 items to check before and after launch →
+            </Link>
+            <Link href="/blog/post-deploy-security-checklist" className="text-sm text-prussian-blue-600 hover:underline">
+              Post-deploy security checklist: run this every time you ship →
+            </Link>
+          </div>
+        </div>
+
         <div className="mt-12 flex gap-4 text-sm">
           <Link href="/vibe-coding-risks" className="text-muted hover:text-heading transition-colors">← The Hidden Risks of Vibe Coding</Link>
           <span className="text-muted">|</span>

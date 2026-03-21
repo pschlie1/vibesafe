@@ -10,6 +10,26 @@ export const metadata: Metadata = {
 
 const posts = [
   {
+    slug: "/blog/snyk-vs-scantient-what-your-startup-needs",
+    category: "Comparisons",
+    title: "Snyk vs Scantient: What Your Startup Actually Needs",
+    excerpt:
+      "An honest comparison — not marketing fluff. Snyk is enterprise shift-left dependency scanning. Scantient is post-deploy external API security monitoring. Here's when to use each, including a pricing table.",
+    date: "March 21, 2026",
+    readTime: "10 min read",
+    featured: true,
+  },
+  {
+    slug: "/blog/7-api-security-mistakes",
+    category: "Security",
+    title: "7 API Security Mistakes Killing Your Startup",
+    excerpt:
+      "Exposed API keys, missing security headers, overpermissive CORS — these seven mistakes are sitting in production apps right now. Real examples, what to do instead, and a startup security checklist.",
+    date: "March 21, 2026",
+    readTime: "9 min read",
+    featured: false,
+  },
+  {
     slug: "/blog/ai-policy-compliance-engineering",
     category: "AI Compliance",
     title: "Your Engineering Team Probably Has No AI Usage Policy (And Why That's a Security Problem)",
@@ -17,7 +37,7 @@ const posts = [
       "Most engineering teams use 10+ AI tools with zero formal policy. Shadow AI is a compliance time bomb — here's what your AI usage policy actually needs.",
     date: "March 2, 2026",
     readTime: "7 min read",
-    featured: true,
+    featured: false,
   },
   {
     slug: "/vibe-coding-risks",

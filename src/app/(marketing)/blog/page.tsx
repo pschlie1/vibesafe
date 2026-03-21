@@ -10,6 +10,56 @@ export const metadata: Metadata = {
 
 const posts = [
   {
+    slug: "/blog/api-security-complete-guide",
+    category: "API Security",
+    title: "API Security: The Complete Guide for Developers (2026)",
+    excerpt:
+      "The definitive guide to API security for indie devs and startup CTOs. Covers injection, broken auth, excessive data exposure, rate limiting, CORS, JWT best practices, testing tools, and a practical launch checklist.",
+    date: "March 21, 2026",
+    readTime: "18 min read",
+    featured: true,
+  },
+  {
+    slug: "/blog/what-is-external-security-scanning",
+    category: "Security",
+    title: "What Is External Security Scanning? (And Why Every Production API Needs It)",
+    excerpt:
+      "Code review finds bugs. Dependency scanners find CVEs. Neither can see what your live API looks like from the internet. External scanning can — and it reveals a completely different class of security problems.",
+    date: "March 21, 2026",
+    readTime: "9 min read",
+    featured: false,
+  },
+  {
+    slug: "/blog/jwt-security-best-practices",
+    category: "Authentication",
+    title: "JWT Security Best Practices: 8 Mistakes That Expose Your API",
+    excerpt:
+      "The eight most common JWT security mistakes — the none algorithm bypass, weak secrets, no expiry, secrets in payloads, localStorage storage — with practical fixes for each one.",
+    date: "March 21, 2026",
+    readTime: "9 min read",
+    featured: false,
+  },
+  {
+    slug: "/blog/prompt-injection-api-security",
+    category: "AI Security",
+    title: "Prompt Injection Attacks: How to Protect Your AI API (Developer Guide)",
+    excerpt:
+      "Prompt injection is the SQL injection of AI APIs. Direct injection, indirect injection, real attack consequences, and concrete defenses for every LLM-powered application.",
+    date: "March 21, 2026",
+    readTime: "10 min read",
+    featured: false,
+  },
+  {
+    slug: "/blog/saas-launch-security-checklist",
+    category: "Checklist",
+    title: "SaaS Launch Security Checklist: 15 Things to Check Before Going Live",
+    excerpt:
+      "15 security items to verify before your SaaS launches — SSL, security headers, CORS, auth, rate limiting, exposed endpoints, secrets, and more. With a 60-second shortcut for the most common items.",
+    date: "March 21, 2026",
+    readTime: "11 min read",
+    featured: false,
+  },
+  {
     slug: "/blog/securing-ai-app-api",
     category: "AI Security",
     title: "Securing Your AI App's API: What to Check Before Launch",
@@ -17,7 +67,7 @@ const posts = [
       "API key exposure, rate limiting, input validation for LLM endpoints, prompt injection defense, data leakage, CORS — everything to audit on your AI app before launch day. Position Scantient as the tool that checks all of this in 60 seconds.",
     date: "March 21, 2026",
     readTime: "10 min read",
-    featured: true,
+    featured: false,
   },
   {
     slug: "/blog/post-deploy-security-checklist",

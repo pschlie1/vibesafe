@@ -296,8 +296,8 @@ export default function GraphqlSecurityGuidePage() {
             This is where many GraphQL APIs have critical vulnerabilities: a developer adds
             authentication to the GraphQL endpoint but forgets that individual resolvers need
             their own authorization checks. An authenticated user who can query{" "}
-            <code>me { id email }</code> shouldn&apos;t be able to query{" "}
-            <code>user(id: "admin") { id email role }</code>.
+            <code>{"me { id email }"}</code> shouldn&apos;t be able to query{" "}
+            <code>{"user(id: \"admin\") { id email role }"}</code>.
           </p>
           <p><strong>Defense:</strong></p>
           <ul>

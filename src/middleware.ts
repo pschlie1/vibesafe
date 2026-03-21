@@ -36,6 +36,10 @@ const PUBLIC_PATHS = [
   "/status",
   "/terms",
   "/vibe-coding-risks",
+  // Competitor comparison pages (public SEO content)
+  "/vs-gitguardian",
+  "/vs-snyk",
+  "/vs-checkmarx",
   "/api/auth/login",
   "/api/auth/signup",
   "/api/auth/forgot-password",
@@ -194,5 +198,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|logos/|icons/|images/|.*\\.svg$|.*\\.png$|.*\\.jpg$|.*\\.jpeg$|.*\\.webp$|.*\\.ico$|.*\\.gif$).*)"],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|robots\\.txt|sitemap\\.xml|logos/|icons/|images/|.*\\.svg$|.*\\.png$|.*\\.jpg$|.*\\.jpeg$|.*\\.webp$|.*\\.ico$|.*\\.gif$).*)"],
 };

@@ -1,6 +1,15 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: "https://scantient.com" },
+    { "@type": "ListItem", position: 2, name: "Pricing", item: "https://scantient.com/pricing" },
+  ],
+};
 type Tier = {
   name: string;
   price: string;
@@ -226,6 +235,7 @@ export default function PricingPage() {
 
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
       <div>
         {/* Hero */}
         <section className="relative overflow-hidden px-6 pb-24 pt-24 sm:pb-32 sm:pt-32" style={{ background: "radial-gradient(ellipse at 50% 0%, #1b263b 0%, #0d1b2a 70%)" }}>

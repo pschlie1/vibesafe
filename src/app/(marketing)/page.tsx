@@ -117,13 +117,21 @@ const softwareAppSchema = {
   name: "Scantient",
   applicationCategory: "SecurityApplication",
   operatingSystem: "Web",
-  offers: {
-    "@type": "Offer",
-    price: "199",
-    priceCurrency: "USD",
-  },
+  offers: [
+    { "@type": "Offer", price: "79", priceCurrency: "USD", name: "Maker LTD", description: "Lifetime access" },
+    { "@type": "Offer", price: "399", priceCurrency: "USD", name: "Pro", description: "Monthly" },
+  ],
   description: "Security monitoring for AI-generated applications",
   url: "https://scantient.com",
+};
+
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "Scantient",
+  url: "https://scantient.com",
+  logo: "https://scantient.com/logo.png",
+  description: "Scantient provides automated security scanning and monitoring for AI-generated and indie developer applications — catching vulnerabilities, misconfigurations, and compliance gaps before attackers do.",
 };
 
 const faqSchema = {
@@ -149,6 +157,10 @@ export default function LandingPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
       />
     <div>
       {/* Hero */}

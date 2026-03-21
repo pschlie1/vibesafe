@@ -1,9 +1,21 @@
 "use client";
 import Link from "next/link";
 
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: "https://scantient.com" },
+    { "@type": "ListItem", position: 2, name: "Compare", item: "https://scantient.com" },
+    { "@type": "ListItem", position: 3, name: "Checkmarx", item: "https://scantient.com/vs-checkmarx" },
+  ],
+};
+
 export default function VsCheckmarxPage() {
   return (
-    <div className="bg-alabaster-grey-50 dark:bg-ink-black-950 transition-colors">
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+      <div className="bg-alabaster-grey-50 dark:bg-ink-black-950 transition-colors">
       {/* Hero */}
       <section className="relative overflow-hidden px-6 pb-24 pt-24 sm:pb-32 sm:pt-32" style={{ background: "radial-gradient(ellipse at 50% 0%, #ebf2f9 0%, #f3f3f1 70%)" }}>
         <div className="mx-auto max-w-[1200px] text-center">
@@ -208,5 +220,6 @@ export default function VsCheckmarxPage() {
       </section>
 
     </div>
+    </>
   );
 }

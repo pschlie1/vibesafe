@@ -29,6 +29,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   // Blog posts
   const blogPosts = [
+    // Wave 1 pillar content
+    "api-security-complete-guide",
+    "what-is-external-security-scanning",
+    "jwt-security-best-practices",
+    "prompt-injection-api-security",
+    "saas-launch-security-checklist",
+    // Existing posts
     "ai-policy-compliance-engineering",
     "7-api-security-mistakes",
     "snyk-vs-scantient-what-your-startup-needs",

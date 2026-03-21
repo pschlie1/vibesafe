@@ -80,6 +80,26 @@ const posts = [
     featured: false,
   },
   {
+    slug: "/blog/owasp-top-10-api-checklist",
+    category: "API Security",
+    title: "OWASP Top 10 for APIs: A Practical Checklist for 2026",
+    excerpt:
+      "All 10 OWASP API Security risks with practical fixes — not just definitions. Which ones require code review, which ones you can check in 60 seconds, and how Scantient covers 7 of the 10 automatically.",
+    date: "March 21, 2026",
+    readTime: "12 min read",
+    featured: false,
+  },
+  {
+    slug: "/blog/security-headers-indie-devs",
+    category: "Security",
+    title: "5 Security Headers Every Indie Dev Should Set (And How to Check Them)",
+    excerpt:
+      "CSP, X-Frame-Options, HSTS, X-Content-Type-Options, Referrer-Policy — what each does, the one-liner to add it, and what attackers do when it's missing. Check all 5 in 60 seconds.",
+    date: "March 21, 2026",
+    readTime: "8 min read",
+    featured: false,
+  },
+  {
     slug: "/blog/ai-policy-compliance-engineering",
     category: "AI Compliance",
     title: "Your Engineering Team Probably Has No AI Usage Policy (And Why That's a Security Problem)",

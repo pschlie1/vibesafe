@@ -36,6 +36,8 @@ const PUBLIC_PATHS = [
   "/status",
   "/terms",
   "/vibe-coding-risks",
+  // AI Security landing page
+  "/ai-security",
   // Competitor comparison pages (public SEO content)
   "/vs-gitguardian",
   "/vs-snyk",

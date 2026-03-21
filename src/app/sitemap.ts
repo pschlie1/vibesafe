@@ -23,6 +23,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${baseUrl}/vs-checkmarx`, changeFrequency: "monthly" as const, priority: 0.8 },
     { url: `${baseUrl}/vs-hostedscan`, changeFrequency: "monthly" as const, priority: 0.8 },
     { url: `${baseUrl}/vs-aikido`, changeFrequency: "monthly" as const, priority: 0.8 },
+    // AI Security landing page (greenfield SEO keyword)
+    { url: `${baseUrl}/ai-security`, changeFrequency: "monthly" as const, priority: 0.9 },
   ];
 
   // Blog posts
@@ -35,6 +37,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "gitguardian-vs-scantient",
     "securing-ai-app-api",
     "post-deploy-security-checklist",
+    "security-headers-indie-devs",
+    "owasp-top-10-api-checklist",
   ].map((slug) => ({
     url: `${baseUrl}/blog/${slug}`,
     changeFrequency: "monthly" as const,

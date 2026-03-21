@@ -10,6 +10,26 @@ export const metadata: Metadata = {
 
 const posts = [
   {
+    slug: "/blog/securing-ai-app-api",
+    category: "AI Security",
+    title: "Securing Your AI App's API: What to Check Before Launch",
+    excerpt:
+      "API key exposure, rate limiting, input validation for LLM endpoints, prompt injection defense, data leakage, CORS — everything to audit on your AI app before launch day. Position Scantient as the tool that checks all of this in 60 seconds.",
+    date: "March 21, 2026",
+    readTime: "10 min read",
+    featured: true,
+  },
+  {
+    slug: "/blog/post-deploy-security-checklist",
+    category: "Checklist",
+    title: "Your Deploy Just Went Live. Now Run This Security Checklist.",
+    excerpt:
+      "SSL, security headers, exposed endpoints, API keys, CORS, CSP, rate limits — the production security checklist every indie dev should run before tweeting their launch. Check all of it in 60 seconds.",
+    date: "March 21, 2026",
+    readTime: "8 min read",
+    featured: false,
+  },
+  {
     slug: "/blog/why-ctos-choose-external-security-scanning",
     category: "Strategy",
     title: "Why CTOs Choose External Security Scanning Over Code-Level Tools",
@@ -17,7 +37,7 @@ const posts = [
       "Shift-left is necessary but not sufficient. External scanning catches what code analysis misses — here's the gap every startup CTO needs to close before launch.",
     date: "March 21, 2026",
     readTime: "8 min read",
-    featured: true,
+    featured: false,
   },
   {
     slug: "/blog/snyk-vs-scantient-what-your-startup-needs",

@@ -1,0 +1,21 @@
+{
+  "name": "@scantient/mcp-server",
+  "version": "1.0.0",
+  "description": "Scantient MCP server — use Scantient from Claude, Cursor, or any MCP client",
+  "bin": { "scantient-mcp": "./dist/index.js" },
+  "main": "./dist/index.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/index.ts"
+  },
+  "keywords": ["mcp", "security", "api", "scanner", "claude", "ai"],
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0",
+    "tsx": "^4.0.0"
+  }
+}

@@ -37,6 +37,7 @@
     "**/*.mts"
   ],
   "exclude": [
+    "packages",
     "node_modules",
     "src/app/api/__tests__/security-audit-5.test.ts",
     "src/app/api/__tests__/security-audit-6.test.ts",

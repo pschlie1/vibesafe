@@ -32,9 +32,9 @@ const tiers: Tier[] = [
     period: "",
     annualPrice: "$79",
     annualSavings: "one-time",
-    desc: "Ship before your users find your security holes",
-    outcomeHeading: "Ship Before Your Users Find Your Security Holes",
-    outcomeSubheading: "One scan. 30 seconds. 'Safe to deploy' or 'fix these 3 things.'",
+    desc: "Scan your app before each deploy. Get security issues in 30 seconds. No SDK required.",
+    outcomeHeading: "Scan your app before each deploy",
+    outcomeSubheading: "Security issues in 30 seconds. No SDK required.",
     features: [
       "Unlimited apps (lifetime)",
       "Unlimited team members",
@@ -44,7 +44,7 @@ const tiers: Tier[] = [
       "Slack/email alerts",
       "Perfect for indie hackers & founders",
     ],
-    cta: "Claim your $79 deal",
+    cta: "Claim $79 lifetime deal",
     ctaHref: "/signup?plan=ltd",
     highlighted: false,
   },
@@ -54,9 +54,9 @@ const tiers: Tier[] = [
     period: "/month",
     annualPrice: "$4,188",
     annualSavings: "save $588/year",
-    desc: "Compliance on autopilot",
-    outcomeHeading: "Compliance On Autopilot",
-    outcomeSubheading: "Continuous verification + monthly audit reports. Your auditors will love you.",
+    desc: "Continuous monitoring for compliance audits. Monthly reports included.",
+    outcomeHeading: "Continuous monitoring for compliance audits",
+    outcomeSubheading: "Monthly reports included.",
     features: [
       "15 monitored apps",
       "5 team members",
@@ -79,9 +79,9 @@ const tiers: Tier[] = [
     period: "",
     annualPrice: "Custom",
     annualSavings: "",
-    desc: "Security compliance that scales",
-    outcomeHeading: "Security Compliance That Scales",
-    outcomeSubheading: "Custom rules. Board-ready dashboards. Prove security to auditors, board, and customers.",
+    desc: "Custom scanning for enterprise teams. Board-ready reports.",
+    outcomeHeading: "Custom scanning for enterprise teams",
+    outcomeSubheading: "Board-ready reports.",
     features: [
       "Unlimited apps",
       "Unlimited team members",
@@ -133,7 +133,7 @@ const faqs = [
   },
   {
     q: "Who should choose which plan?",
-    a: "Lifetime Deal: Indie hackers & solo devs. Pro: CTOs at SMBs (50-500 people). Enterprise: Mid-market with auditor/compliance needs.",
+    a: "Lifetime Deal: For developers shipping fast without compliance requirements. Pro: For growing teams (CTOs, security leads) tracking compliance. Enterprise: For teams needing custom rules and board reporting.",
   },
 ];
 

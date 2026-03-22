@@ -26,11 +26,11 @@ export default function VsSnyKPage() {
             </span>
           </div>
           <h1 className="mx-auto max-w-4xl text-4xl font-extrabold leading-[1.1] tracking-[-0.02em] text-ink-black-950 dark:text-alabaster-grey-50 sm:text-6xl lg:text-[3.75rem] transition-colors">
-            Beyond Dependency Scanning: <br />
-            <span className="text-prussian-blue-600 dark:text-prussian-blue-400 transition-colors">The post-deploy security check you're missing</span>
+            Find runtime security issues <br />
+            <span className="text-prussian-blue-600 dark:text-prussian-blue-400 transition-colors">Snyk misses. No enterprise costs.</span>
           </h1>
           <p className="mx-auto mt-8 max-w-[600px] text-lg leading-relaxed text-dusty-denim-700 dark:text-dusty-denim-500 transition-colors">
-            Snyk checks your dependencies. Scantient checks your deployed app. Both matter. Here's how they complement each other.
+            Snyk catches vulnerable code before deployment. Scantient catches security mistakes after deployment. Use both for complete coverage.
           </p>
           <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link
@@ -136,14 +136,14 @@ export default function VsSnyKPage() {
             <h3 className="text-lg font-bold text-ink-black-950 dark:text-alabaster-grey-50 mb-4">Snyk says:</h3>
             <ul className="space-y-2">
               {[
-                "✓ React 16.14.0 — No vulnerabilities",
-                "✓ All dependencies clean",
+                "✓ React 16.14.0 has no known vulnerabilities",
+                "✓ All dependencies updated",
                 "Status: CLEAN",
               ].map((item) => (
                 <li key={item} className="text-sm text-dusty-denim-700 dark:text-dusty-denim-500">{item}</li>
               ))}
             </ul>
-            <p className="mt-6 text-xs text-dusty-denim-500 dark:text-dusty-denim-600">Snyk is happy. Your dependencies are safe.</p>
+            <p className="mt-6 text-xs text-dusty-denim-500 dark:text-dusty-denim-600">Your code dependencies are secure.</p>
           </div>
 
           <div className="rounded-2xl border-2 border-prussian-blue-600 dark:border-prussian-blue-400 bg-white dark:bg-ink-black-900 p-8">
@@ -163,7 +163,7 @@ export default function VsSnyKPage() {
         </div>
 
         <p className="mt-8 text-center text-dusty-denim-700 dark:text-dusty-denim-500 max-w-2xl mx-auto">
-          Both are checking security, just at different layers. Snyk checks your code before it ships. Scantient checks what's actually running.
+          Both are checking security, just at different layers. Snyk checks code before deployment. Scantient checks deployed apps for runtime vulnerabilities.
         </p>
       </section>
 

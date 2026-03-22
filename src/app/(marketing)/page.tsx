@@ -10,17 +10,17 @@ type Check = {
 };
 
 const checks: Check[] = [
-  { icon: "🔑", title: "Exposed API Keys", outcome: "Your outcome: No stolen credentials in the wild.", desc: "Scantient detected $50K in stolen Stripe keys in 30 seconds. We check OpenAI, Stripe, Supabase, Twilio, SendGrid, AWS keys, and 20+ other services." },
-  { icon: "🛡️", title: "Missing Security Headers", outcome: "Your outcome: Users protected from XSS, clickjacking, injection attacks.", desc: "One missing header = your data exposed. We verify CSP, HSTS, X-Frame-Options, X-Content-Type, Referrer-Policy." },
+  { icon: "🔑", title: "Exposed API Keys", outcome: "Your outcome: Stop stolen credentials.", desc: "We found $50K in exposed Stripe keys in 30 seconds. Scans OpenAI, Stripe, Supabase, Twilio, SendGrid, AWS keys, and 20+ other services." },
+  { icon: "🛡️", title: "Missing Security Headers", outcome: "Your outcome: Protect users from XSS, clickjacking, injection attacks.", desc: "One missing header exposes your data to attackers. We verify CSP, HSTS, X-Frame-Options, X-Content-Type, Referrer-Policy." },
   { icon: "🔓", title: "Auth Bypass Vulnerabilities", outcome: "Your outcome: No $500K breach from a 'check role on frontend' mistake.", desc: "We detect hardcoded admin checks, fake auth gates, and role checks visible in client code." },
-  { icon: "📦", title: "Hardcoded Secrets in JavaScript", outcome: "Your outcome: Database passwords not in your JavaScript bundle.", desc: "Scantient finds secrets hardcoded in JS chunks, config files, git history, and comments. (Curse you, Cursor auto-generation.)" },
+  { icon: "📦", title: "Hardcoded Secrets in JavaScript", outcome: "Your outcome: Database passwords not in your JavaScript bundle.", desc: "Scantient finds secrets hardcoded in JS chunks, config files, git history, and comments. A common mistake when using AI coding tools." },
   { icon: "⚙️", title: "Exposed Debug Endpoints", outcome: "Your outcome: Attackers don't find .env, .git/HEAD, /api/admin, phpinfo.", desc: "Attackers check for debug endpoints within 2 minutes of finding your site. We check first." },
-  { icon: "🚀", title: "Performance & Uptime Alerts", outcome: "Your outcome: Know about outages before your CEO calls.", desc: "We baseline your response time and alert if it suddenly takes 8 seconds to load. Get notified of 500 errors within hours, not after customers complain." },
+  { icon: "🚀", title: "Performance & Uptime Alerts", outcome: "Your outcome: Know about outages before your CEO calls.", desc: "We baseline your response time and alert if load time jumps to 8 seconds. Get notified of 500 errors within hours, before customers report them." },
   { icon: "🔗", title: "Malicious External Scripts", outcome: "Your outcome: No backdoors from compromised CDNs.", desc: "Every third-party script is a potential breach. We detect unencrypted loads, suspicious data URIs, and supply chain compromises." },
   { icon: "📋", title: "Form & API Security Flaws", outcome: "Your outcome: Forms submit to YOUR domain, not attacker's.", desc: "We catch forms submitting to wrong domains, missing CSRF tokens, unencrypted API calls — the stuff compliance auditors find." },
   { icon: "🌐", title: "CORS & API Exposure Issues", outcome: "Your outcome: Competitors can't read your customer data via API.", desc: "One misconfigured CORS header = your API exposed. We detect overpermissive access." },
   { icon: "🔐", title: "SSL Certificate Expiry", outcome: "Your outcome: Your site never goes dark due to expired SSL.", desc: "A lapsed certificate = 100% downtime. We alert 30, 14, and 7 days before expiry." },
-  { icon: "📡", title: "Subdomain Takeover Risks", outcome: "Your outcome: Forgotten DNS records aren't free subdomains for attackers.", desc: "We detect DNS misconfigurations, dangling CNAME records, and abandoned subdomains." },
+  { icon: "📡", title: "Subdomain Takeover Risks", outcome: "Your outcome: Forgotten DNS records aren't free subdomains for attackers.", desc: "We detect DNS misconfigurations, orphaned CNAME records, and unused subdomains." },
   { icon: "⏱️", title: "Load Time Regression Detection", outcome: "Your outcome: Catch performance degradation before users bounce.", desc: "Baseline your app's speed. If it suddenly takes 8 seconds to load, you know before your users do." },
   { icon: "🍪", title: "Cookie Security Issues", outcome: "Your outcome: Session cookies protected from theft and XSS.", desc: "We verify HttpOnly, Secure, SameSite flags on all cookies." },
   { icon: "🔄", title: "Content Change Detection", outcome: "Your outcome: Know when your site's HTML changed unexpectedly.", desc: "Baseline your app. If an attacker injects content or modifiers change things, we alert you." },
@@ -79,7 +79,7 @@ const integrations = {
 const faqs = [
   {
     q: "How does Scantient scan without an SDK?",
-    a: "Scantient performs external scans the same way an attacker would probe your applications. We analyze HTTP responses, JavaScript bundles, security headers, and public-facing configurations. No code changes or developer involvement required.",
+    a: "Scantient performs external scans using the same techniques attackers use. We analyze HTTP responses, JavaScript bundles, security headers, and public-facing configurations. No code changes or developer involvement required.",
   },
   {
     q: "What types of AI-generated apps does Scantient monitor?",
@@ -95,15 +95,15 @@ const faqs = [
   },
   {
     q: "What compliance frameworks does Scantient support?",
-    a: "Our reports map to SOC 2, ISO 27001, and NIST CSF controls. Enterprise plans include customizable compliance report templates for auditor-ready documentation.",
+    a: "Reports align with SOC 2, ISO 27001, and NIST CSF controls. Enterprise plans include customizable templates for auditor submission.",
   },
   {
     q: "Does Scantient test for exposed admin and debug endpoints?",
-    a: "Yes. Every scan probes 15 common dangerous paths: .env files, .git/HEAD, /api/admin, /api/debug, phpinfo.php, Spring Boot actuators, and more. These are the first paths attackers check. Scantient checks them first.",
+    a: "Yes. Every scan probes 15 common dangerous paths: .env files, .git/HEAD, /api/admin, /api/debug, phpinfo.php, Spring Boot actuators, and more. These are the first paths attackers check. We detect exposed admin and debug endpoints.",
   },
   {
     q: "Does Scantient monitor SSL certificate expiry?",
-    a: "Yes. Scantient checks your SSL certificate on every scan and alerts you at 30, 14, and 7 days before expiry. A lapsed certificate takes your site offline for every user.",
+    a: "Yes. We verify your SSL certificate status on every scan and alerts you at 30, 14, and 7 days before expiry. A lapsed certificate takes your site offline for every user.",
   },
   {
     q: "How quickly can I get started?",
@@ -171,7 +171,7 @@ export default function LandingPage() {
             <span className="text-primary-hover">Find security holes before your users do.</span>
           </h1>
           <p className="mx-auto mt-8 max-w-[600px] text-lg leading-relaxed text-muted">
-            One-click audit. 60 seconds. Zero doubt. $79 lifetime.
+            Find exposed API keys and security holes in your app. 60 seconds.
           </p>
           <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link

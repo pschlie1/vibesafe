@@ -26,11 +26,11 @@ export default function VsCheckmarxPage() {
             </span>
           </div>
           <h1 className="mx-auto max-w-4xl text-4xl font-extrabold leading-[1.1] tracking-[-0.02em] text-ink-black-950 dark:text-alabaster-grey-50 sm:text-6xl lg:text-[3.75rem] transition-colors">
-            External Security Checks: <br />
-            <span className="text-prussian-blue-600 dark:text-prussian-blue-400 transition-colors">No code analysis. No SDK. 60 seconds.</span>
+            Get security results in 60 seconds. <br />
+            <span className="text-prussian-blue-600 dark:text-prussian-blue-400 transition-colors">No complex setup required.</span>
           </h1>
           <p className="mx-auto mt-8 max-w-[600px] text-lg leading-relaxed text-dusty-denim-700 dark:text-dusty-denim-500 transition-colors">
-            Checkmarx does SAST (code analysis). Scantient checks your deployed app. Different tools for different jobs.
+            Checkmarx analyzes source code for vulnerabilities. Scantient monitors deployed apps for runtime security gaps. Both are valuable for complete security.
           </p>
           <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link
@@ -69,7 +69,7 @@ export default function VsCheckmarxPage() {
                 { feature: "What it checks", checkmarx: "Vulnerabilities in source code", scantient: "20+ runtime security checks" },
                 { feature: "Setup complexity", checkmarx: "High (IDE, CI/CD integration)", scantient: "Low (2 minutes, paste URL)" },
                 { feature: "Time to results", checkmarx: "Minutes to hours", scantient: "60 seconds" },
-                { feature: "False positives", checkmarx: "High (many code patterns flagged)", scantient: "Low (only real findings)" },
+                { feature: "False positives", checkmarx: "High (many code patterns flagged)", scantient: "Low (verified security issues only)" },
                 { feature: "Requires SDK?", checkmarx: "Yes", scantient: "No" },
                 { feature: "Pricing model", checkmarx: "Enterprise (seat-based)", scantient: "$399/mo team plan" },
                 { feature: "Developer overhead", checkmarx: "High (needs code integration)", scantient: "Zero (external scan)" },
@@ -166,7 +166,7 @@ export default function VsCheckmarxPage() {
         </div>
 
         <p className="mt-8 text-center text-dusty-denim-700 dark:text-dusty-denim-500 max-w-2xl mx-auto">
-          Checkmarx finds potential issues in code. Scantient checks what's actually vulnerable in your live app. Both are valuable — they're checking different things.
+          Checkmarx finds code vulnerabilities before deployment. Scantient finds runtime security gaps in live apps. Both are valuable for complete security.
         </p>
       </section>
 

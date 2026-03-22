@@ -52,7 +52,7 @@ export default function TeamPage() {
           <tbody className="divide-y">
             {members.map((m) => (
               <tr key={m.id}>
-                <td className="py-2 font-medium">{m.name ?? "—"}</td>
+                <td className="py-2 font-medium">{m.name ?? "."}</td>
                 <td className="py-2 text-body">{m.email}</td>
                 <td className="py-2">
                   <span className="rounded bg-surface-raised px-2 py-0.5 text-xs font-medium">{m.role}</span>

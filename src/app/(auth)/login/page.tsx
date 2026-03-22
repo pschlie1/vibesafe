@@ -86,7 +86,7 @@ export default function LoginPage() {
 
         <div className="my-6 flex items-center gap-3">
           <div className="flex-1 border-t border-border" />
-          <span className="text-xs text-muted">— OR —</span>
+          <span className="text-xs text-muted">. OR .</span>
           <div className="flex-1 border-t border-border" />
         </div>
 

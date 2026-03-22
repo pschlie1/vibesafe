@@ -2,11 +2,11 @@
  * security-audit-23.test.ts
  *
  * Tests for Audit-23 security fixes:
- *  1. Bulk app add: SSRF guard — each URL is checked with isPrivateUrl() before DB write
- *  2. Bulk app add: rate limit — 429 when org exceeds 5 bulk-add requests per hour
- *  3. Bulk app add: audit log — logAudit called when apps are created
- *  4. Weekly report: timing-safe CRON_SECRET — invalid secret returns 401, not data
- *  5. Evidence PDF: safe Content-Disposition filename — derived from parsed Date, not raw query string
+ *  1. Bulk app add: SSRF guard . each URL is checked with isPrivateUrl() before DB write
+ *  2. Bulk app add: rate limit . 429 when org exceeds 5 bulk-add requests per hour
+ *  3. Bulk app add: audit log . logAudit called when apps are created
+ *  4. Weekly report: timing-safe CRON_SECRET . invalid secret returns 401, not data
+ *  5. Evidence PDF: safe Content-Disposition filename . derived from parsed Date, not raw query string
  */
 
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -94,12 +94,12 @@ beforeEach(() => {
 });
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// Fix 1 & 2 & 3: POST /api/apps/bulk — SSRF guard + rate limit + audit log
+// Fix 1 & 2 & 3: POST /api/apps/bulk . SSRF guard + rate limit + audit log
 // ═══════════════════════════════════════════════════════════════════════════════
 
 const bulkRoutePath = resolve(__dir, "../apps/bulk/route.ts");
 
-describe("POST /api/apps/bulk — audit-23 fixes", () => {
+describe("POST /api/apps/bulk . audit-23 fixes", () => {
   async function callBulk(apps: Array<{ url: string; name?: string }>) {
     const { POST } = await import(bulkRoutePath);
     const req = new Request("http://localhost/api/apps/bulk", {
@@ -250,12 +250,12 @@ describe("POST /api/apps/bulk — audit-23 fixes", () => {
 });
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// Fix 4: GET /api/reports/weekly — timing-safe CRON_SECRET comparison
+// Fix 4: GET /api/reports/weekly . timing-safe CRON_SECRET comparison
 // ═══════════════════════════════════════════════════════════════════════════════
 
 const weeklyRoutePath = resolve(__dir, "../reports/weekly/route.ts");
 
-describe("GET /api/reports/weekly — audit-23 timing-safe CRON_SECRET", () => {
+describe("GET /api/reports/weekly . audit-23 timing-safe CRON_SECRET", () => {
   async function callWeekly(authHeader?: string) {
     const { GET } = await import(weeklyRoutePath);
     const headers: Record<string, string> = {};
@@ -329,12 +329,12 @@ describe("GET /api/reports/weekly — audit-23 timing-safe CRON_SECRET", () => {
 });
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// Fix 5: GET /api/reports/evidence — safe Content-Disposition filename
+// Fix 5: GET /api/reports/evidence . safe Content-Disposition filename
 // ═══════════════════════════════════════════════════════════════════════════════
 
 const evidenceRoutePath = resolve(__dir, "../reports/evidence/route.ts");
 
-describe("GET /api/reports/evidence — audit-23 Content-Disposition filename safety", () => {
+describe("GET /api/reports/evidence . audit-23 Content-Disposition filename safety", () => {
   /**
    * Create a NextRequest with the given query parameters.
    * The evidence route uses `req.nextUrl`, which is a property of NextRequest
@@ -366,7 +366,7 @@ describe("GET /api/reports/evidence — audit-23 Content-Disposition filename sa
   });
 
   it("filename is derived from parsed dates (not raw query string)", async () => {
-    // Supply full ISO timestamp — the filename should only use the date portion
+    // Supply full ISO timestamp . the filename should only use the date portion
     const res = await callEvidence({
       from: "2024-01-01T00:00:00.000Z",
       to: "2024-06-30T23:59:59.000Z",

@@ -123,9 +123,9 @@ function adminSession(orgId = "org-pro") {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// NC-1: authenticateApiKeyHeader — tier check
+// NC-1: authenticateApiKeyHeader . tier check
 // ─────────────────────────────────────────────────────────────────────────────
-describe("NC-1: authenticateApiKeyHeader — tier check", () => {
+describe("NC-1: authenticateApiKeyHeader . tier check", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     apiKeyFindFirst.mockResolvedValue(makeApiKey("org-free"));
@@ -215,9 +215,9 @@ describe("NC-1: authenticateApiKeyHeader — tier check", () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// NC-2: customer.subscription.updated — tier sync
+// NC-2: customer.subscription.updated . tier sync
 // ─────────────────────────────────────────────────────────────────────────────
-describe("NC-2: customer.subscription.updated — tier sync", () => {
+describe("NC-2: customer.subscription.updated . tier sync", () => {
   const WEBHOOK_SECRET = "whsec_test";
 
   beforeEach(() => {
@@ -385,9 +385,9 @@ describe("NC-2: customer.subscription.updated — tier sync", () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// NH-1: MCP trigger_scan — rate limit
+// NH-1: MCP trigger_scan . rate limit
 // ─────────────────────────────────────────────────────────────────────────────
-describe("NH-1: MCP trigger_scan — rate limit", () => {
+describe("NH-1: MCP trigger_scan . rate limit", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     apiKeyFindFirst.mockResolvedValue(makeApiKey("org-pro"));
@@ -497,7 +497,7 @@ describe("NH-1: MCP trigger_scan — rate limit", () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// NH-2: internal/changes/report — PRO+ tier, ADMIN/OWNER only
+// NH-2: internal/changes/report . PRO+ tier, ADMIN/OWNER only
 // ─────────────────────────────────────────────────────────────────────────────
 describe("NH-2: GET /api/internal/changes/report", () => {
   beforeEach(() => {
@@ -674,9 +674,9 @@ describe("NH-2: GET /api/internal/incidents/export", () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// NM-1: GET /api/ops/kpis — tier gate
+// NM-1: GET /api/ops/kpis . tier gate
 // ─────────────────────────────────────────────────────────────────────────────
-describe("NM-1: GET /api/ops/kpis — tier gate", () => {
+describe("NM-1: GET /api/ops/kpis . tier gate", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     getSession.mockResolvedValue({ id: "user-1", orgId: "org-starter", role: "ADMIN" });

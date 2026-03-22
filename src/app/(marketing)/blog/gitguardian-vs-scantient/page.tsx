@@ -4,12 +4,12 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "Why We Built Scantient After Evaluating GitGuardian | Scantient Blog",
   description:
-    "When we evaluated GitGuardian for post-deploy security monitoring, we realized it solves a different problem entirely. Here's the story of what we found missing — and why Scantient exists.",
+    "When we evaluated GitGuardian for post-deploy security monitoring, we realized it solves a different problem entirely. Here's the story of what we found missing . and why Scantient exists.",
   keywords: "gitguardian alternative, gitguardian vs scantient, secrets detection, api security tools, post-deploy security monitoring, security scanner",
   openGraph: {
     title: "Why We Built Scantient After Evaluating GitGuardian",
     description:
-      "GitGuardian is excellent at secrets in git. But it can't see what attackers see in your deployed app. Here's the gap we found — and why it led us to build Scantient.",
+      "GitGuardian is excellent at secrets in git. But it can't see what attackers see in your deployed app. Here's the gap we found . and why it led us to build Scantient.",
     url: "https://scantient.com/blog/gitguardian-vs-scantient",
     siteName: "Scantient",
     type: "article",
@@ -53,7 +53,7 @@ export default function GitGuardianVsScantientPage() {
           Why We Built Scantient After Evaluating GitGuardian
         </h1>
         <p className="mt-4 text-lg text-dusty-denim-700 dark:text-dusty-denim-400">
-          When we set out to secure AI-generated apps, GitGuardian was one of the first tools we evaluated. It&apos;s excellent — and it became clear almost immediately that it solves a completely different problem than the one we needed to fix. Here&apos;s what we found, and why that gap led directly to Scantient.
+          When we set out to secure AI-generated apps, GitGuardian was one of the first tools we evaluated. It&apos;s excellent . and it became clear almost immediately that it solves a completely different problem than the one we needed to fix. Here&apos;s what we found, and why that gap led directly to Scantient.
         </p>
         <div className="mt-6 flex items-center gap-4 text-sm text-dusty-denim-500">
           <time dateTime="2026-01-22">January 22, 2026</time>
@@ -71,7 +71,7 @@ export default function GitGuardianVsScantientPage() {
 
         <h2>What GitGuardian Does</h2>
         <p>
-          GitGuardian is a secrets detection platform. Its core capability: scanning your git repositories — commits, branches, pull requests, and full history — to find credentials, API keys, passwords, and tokens that should never have been committed.
+          GitGuardian is a secrets detection platform. Its core capability: scanning your git repositories . commits, branches, pull requests, and full history . to find credentials, API keys, passwords, and tokens that should never have been committed.
         </p>
         <p>
           It integrates into your CI/CD pipeline and blocks commits that contain secrets before they reach your repo (or alerts you when they do). It covers 350+ specific secret types, including most major API providers, cloud credentials, database connection strings, and certificates.
@@ -80,10 +80,10 @@ export default function GitGuardianVsScantientPage() {
           GitGuardian is particularly strong at:
         </p>
         <ul>
-          <li><strong>Historical secret scanning</strong> — finding secrets that were committed years ago and are still sitting in git history</li>
-          <li><strong>Pre-commit hooks</strong> — blocking developers from accidentally committing secrets</li>
-          <li><strong>Monitoring public GitHub</strong> — alerting if secrets from your organization appear in public repositories</li>
-          <li><strong>Developer workflow integration</strong> — Slack alerts, Jira tickets, VS Code extension</li>
+          <li><strong>Historical secret scanning</strong> . finding secrets that were committed years ago and are still sitting in git history</li>
+          <li><strong>Pre-commit hooks</strong> . blocking developers from accidentally committing secrets</li>
+          <li><strong>Monitoring public GitHub</strong> . alerting if secrets from your organization appear in public repositories</li>
+          <li><strong>Developer workflow integration</strong> . Slack alerts, Jira tickets, VS Code extension</li>
         </ul>
         <p>
           If your threat model is &quot;my developers might accidentally commit secrets to git,&quot; GitGuardian is one of the best tools for that specific problem.
@@ -91,19 +91,19 @@ export default function GitGuardianVsScantientPage() {
 
         <h2>What Scantient Does</h2>
         <p>
-          Scantient is a deployed application security monitor. Its core capability: continuously scanning your running production app from the outside — the same perspective an attacker has — to identify security vulnerabilities and misconfigurations that affect what users and attackers actually see.
+          Scantient is a deployed application security monitor. Its core capability: continuously scanning your running production app from the outside . the same perspective an attacker has . to identify security vulnerabilities and misconfigurations that affect what users and attackers actually see.
         </p>
         <p>
           Scantient checks things that have nothing to do with your source code:
         </p>
         <ul>
-          <li><strong>Secrets in deployed JavaScript bundles</strong> — API keys that made it into your production JavaScript, visible to any browser</li>
-          <li><strong>Security header configuration</strong> — whether your app is actually serving the headers that protect against XSS, clickjacking, and MIME sniffing</li>
-          <li><strong>CORS policy enforcement</strong> — what your server actually returns for cross-origin requests</li>
-          <li><strong>SSL certificate health</strong> — validity, expiry alerts, configuration quality</li>
-          <li><strong>Exposed debug endpoints</strong> — whether <code>/.env</code>, <code>/.git</code>, <code>/api/admin</code> return data</li>
-          <li><strong>Third-party script integrity</strong> — detecting compromised or unexpected external scripts</li>
-          <li><strong>Authentication patterns</strong> — detecting frontend-only auth guards</li>
+          <li><strong>Secrets in deployed JavaScript bundles</strong> . API keys that made it into your production JavaScript, visible to any browser</li>
+          <li><strong>Security header configuration</strong> . whether your app is actually serving the headers that protect against XSS, clickjacking, and MIME sniffing</li>
+          <li><strong>CORS policy enforcement</strong> . what your server actually returns for cross-origin requests</li>
+          <li><strong>SSL certificate health</strong> . validity, expiry alerts, configuration quality</li>
+          <li><strong>Exposed debug endpoints</strong> . whether <code>/.env</code>, <code>/.git</code>, <code>/api/admin</code> return data</li>
+          <li><strong>Third-party script integrity</strong> . detecting compromised or unexpected external scripts</li>
+          <li><strong>Authentication patterns</strong> . detecting frontend-only auth guards</li>
         </ul>
         <p>
           If your threat model is &quot;my deployed app has security issues that attackers will find before I do,&quot; Scantient is built for that problem.
@@ -114,21 +114,21 @@ export default function GitGuardianVsScantientPage() {
           This is the distinction that matters most:
         </p>
         <p>
-          <strong>GitGuardian protects your source code and git repository.</strong> It operates at the code layer — before deployment. Its threat model is: secrets in code = secrets attackers can find if they get repo access.
+          <strong>GitGuardian protects your source code and git repository.</strong> It operates at the code layer . before deployment. Its threat model is: secrets in code = secrets attackers can find if they get repo access.
         </p>
         <p>
-          <strong>Scantient protects your running application.</strong> It operates at the production layer — after deployment. Its threat model is: secrets/misconfigurations in your deployed app = things attackers can find right now, no repo access required.
+          <strong>Scantient protects your running application.</strong> It operates at the production layer . after deployment. Its threat model is: secrets/misconfigurations in your deployed app = things attackers can find right now, no repo access required.
         </p>
         <p>
           These are not redundant. A secret can leak in production without ever being in git:
         </p>
         <ul>
           <li>A developer sets an env var in Vercel without using Doppler/Vault, and the key appears in a debug log that&apos;s publicly accessible</li>
-          <li>A build process generates JavaScript that includes a key from an env var — the key was never in git but is now in the bundled JS</li>
+          <li>A build process generates JavaScript that includes a key from an env var . the key was never in git but is now in the bundled JS</li>
           <li>A CDN configuration exposes internal API responses</li>
         </ul>
         <p>
-          Similarly, GitGuardian wouldn&apos;t catch a misconfigured CORS policy, a missing security header, or an expiring SSL certificate — because none of those are in your git history.
+          Similarly, GitGuardian wouldn&apos;t catch a misconfigured CORS policy, a missing security header, or an expiring SSL certificate . because none of those are in your git history.
         </p>
 
         <h2>Pricing Comparison</h2>
@@ -178,7 +178,7 @@ export default function GitGuardianVsScantientPage() {
         </div>
 
         <p>
-          The pricing difference is significant. GitGuardian&apos;s business model scales with team size — it&apos;s priced for enterprises. Scantient&apos;s LTD at $79 is designed for indie devs and small startup teams who want comprehensive external monitoring without a recurring bill.
+          The pricing difference is significant. GitGuardian&apos;s business model scales with team size . it&apos;s priced for enterprises. Scantient&apos;s LTD at $79 is designed for indie devs and small startup teams who want comprehensive external monitoring without a recurring bill.
         </p>
 
         <h2>What Each Tool Misses</h2>
@@ -230,18 +230,18 @@ export default function GitGuardianVsScantientPage() {
         <ul>
           <li>You want to know what an attacker sees when they probe your production app</li>
           <li>You need ongoing monitoring of your deployed application&apos;s security posture</li>
-          <li>You want to catch configuration drift — security settings that change between deployments</li>
+          <li>You want to catch configuration drift . security settings that change between deployments</li>
           <li>You need SSL certificate expiry alerts before they cause downtime</li>
           <li>You want to verify that your security headers are actually serving correctly in production</li>
           <li>You&apos;re a solo dev or small team who needs comprehensive monitoring without per-seat pricing</li>
         </ul>
         <p>
-          <Link href="/score" className="text-prussian-blue-600 hover:underline">Run a free scan</Link> right now to see what&apos;s visible in your deployed app — no signup, no SDK, just paste your URL. For continuous monitoring with alerts, <Link href="/pricing" className="text-prussian-blue-600 hover:underline">the $79 LTD</Link> covers everything in this post without any recurring fees.
+          <Link href="/score" className="text-prussian-blue-600 hover:underline">Run a free scan</Link> right now to see what&apos;s visible in your deployed app . no signup, no SDK, just paste your URL. For continuous monitoring with alerts, <Link href="/pricing" className="text-prussian-blue-600 hover:underline">the $79 LTD</Link> covers everything in this post without any recurring fees.
         </p>
 
         <h2>The Bottom Line</h2>
         <p>
-          GitGuardian and Scantient are not competitors in any meaningful sense — they&apos;re tools for adjacent problems. If you have a team and git security is a concern, GitGuardian is the right tool. If you&apos;re an indie dev or startup who wants to know what attackers see when they probe your running application, Scantient is the right tool.
+          GitGuardian and Scantient are not competitors in any meaningful sense . they&apos;re tools for adjacent problems. If you have a team and git security is a concern, GitGuardian is the right tool. If you&apos;re an indie dev or startup who wants to know what attackers see when they probe your running application, Scantient is the right tool.
         </p>
         <p>
           For most indie devs, Scantient makes more sense as a starting point: lower cost, broader external coverage, no per-seat pricing. You can always add a git-focused tool later as your team scales.

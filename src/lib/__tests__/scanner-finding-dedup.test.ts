@@ -38,7 +38,7 @@ vi.mock("@/lib/db", () => ({
   },
 }));
 
-// ── Security mocks — one finding returned by default ─────────────────────────
+// ── Security mocks . one finding returned by default ─────────────────────────
 const checkSecurityHeaders = vi.fn().mockReturnValue([
   {
     code: "MISSING_HSTS",
@@ -198,7 +198,7 @@ describe("Scanner Finding Deduplication (Audit 22)", () => {
 
   it("deduplicates findings with the same code before upserting", async () => {
     // Security checks return the same code twice (shouldn't happen in practice
-    // but the dedup() function handles it — verify upsert is only called once per code)
+    // but the dedup() function handles it . verify upsert is only called once per code)
     checkSecurityHeaders.mockReturnValueOnce([
       { code: "MISSING_HSTS", title: "HSTS v1", description: "d", severity: "HIGH", fixPrompt: "f" },
       { code: "MISSING_HSTS", title: "HSTS v2", description: "d2", severity: "HIGH", fixPrompt: "f" },
@@ -207,7 +207,7 @@ describe("Scanner Finding Deduplication (Audit 22)", () => {
     const { runHttpScanForApp } = await import("@/lib/scanner-http");
     await runHttpScanForApp("app_dedup");
 
-    // dedup() strips duplicates by code+title — here both have same code but different
+    // dedup() strips duplicates by code+title . here both have same code but different
     // title so dedup keeps both. However, we still want only ONE upsert per code since
     // DB unique constraint is on (appId, code). In the current implementation, dedup()
     // filters by "code::title" so two distinct titles produce two upserts. This test

@@ -102,7 +102,7 @@ export default function ApiKeyManagementBestPracticesPage() {
 
           <p>
             Every week, thousands of API keys are accidentally committed to public repositories.
-            GitHub&apos;s secret scanning catches millions of exposed credentials per year — and that&apos;s
+            GitHub&apos;s secret scanning catches millions of exposed credentials per year . and that&apos;s
             only the public repos. The private repo leaks, Slack paste jobs, and screenshot
             accidents never get counted. API key management isn&apos;t glamorous, but it&apos;s one of the
             highest-ROI security practices a small team can adopt.
@@ -110,7 +110,7 @@ export default function ApiKeyManagementBestPracticesPage() {
 
           <h2>Why API Keys Are So Frequently Exposed</h2>
           <p>
-            The problem isn&apos;t that developers are careless — it&apos;s that the path of least
+            The problem isn&apos;t that developers are careless . it&apos;s that the path of least
             resistance leads to insecurity. You need a Stripe key to test locally. You paste it
             into <code>.env</code>. You forget <code>.env</code> isn&apos;t in <code>.gitignore</code>.
             You commit. The key is now in git history forever, even after you delete the file.
@@ -124,7 +124,7 @@ export default function ApiKeyManagementBestPracticesPage() {
 
           <h2>The .env File Problem</h2>
           <p>
-            <code>.env</code> files are the standard solution for keeping secrets out of code —
+            <code>.env</code> files are the standard solution for keeping secrets out of code .
             and they work, when you remember to exclude them. The issue is human error at the
             worst possible time: when you&apos;re setting up a new project, moving fast, and not
             thinking about gitignore configuration.
@@ -139,7 +139,7 @@ export default function ApiKeyManagementBestPracticesPage() {
               commit
             </li>
             <li>
-              Commit a <code>.env.example</code> file with placeholder values — this documents
+              Commit a <code>.env.example</code> file with placeholder values . this documents
               required variables without exposing secrets
             </li>
             <li>
@@ -181,20 +181,20 @@ export default function ApiKeyManagementBestPracticesPage() {
           </p>
           <ul>
             <li>
-              <strong>AWS Secrets Manager / Parameter Store</strong> — IAM-controlled, rotation
+              <strong>AWS Secrets Manager / Parameter Store</strong> . IAM-controlled, rotation
               built in, audit trail. Standard choice for AWS deployments.
             </li>
             <li>
-              <strong>HashiCorp Vault</strong> — Self-hosted or HCP Vault. Extremely flexible,
+              <strong>HashiCorp Vault</strong> . Self-hosted or HCP Vault. Extremely flexible,
               supports dynamic secrets. Higher operational complexity.
             </li>
             <li>
-              <strong>Doppler</strong> — Developer-friendly SaaS secrets manager. Simple sync to
+              <strong>Doppler</strong> . Developer-friendly SaaS secrets manager. Simple sync to
               multiple environments. Good for small teams that want structure without Vault&apos;s
               complexity.
             </li>
             <li>
-              <strong>1Password Secrets Automation</strong> — Good if your team already uses
+              <strong>1Password Secrets Automation</strong> . Good if your team already uses
               1Password. Integrates with CI/CD and local dev.
             </li>
           </ul>
@@ -205,7 +205,7 @@ export default function ApiKeyManagementBestPracticesPage() {
               Check if your API is leaking keys or sensitive data
             </p>
             <p className="mt-1 text-sm text-dusty-denim-700 dark:text-dusty-denim-400">
-              Scantient scans your live API from the outside — catching exposed secrets, open
+              Scantient scans your live API from the outside . catching exposed secrets, open
               endpoints, and misconfigured headers. Free, no signup.
             </p>
             <Link
@@ -219,7 +219,7 @@ export default function ApiKeyManagementBestPracticesPage() {
           <h2>API Key Rotation Policies</h2>
           <p>
             Rotation is the practice of replacing an existing API key with a new one on a
-            defined schedule — or immediately after a suspected exposure. The goal is to limit
+            defined schedule . or immediately after a suspected exposure. The goal is to limit
             the useful lifetime of any key that might be compromised without your knowledge.
           </p>
           <p>
@@ -236,7 +236,7 @@ export default function ApiKeyManagementBestPracticesPage() {
             </li>
             <li>
               <strong>Third-party SaaS integrations:</strong> Every 180 days. Maintain an
-              inventory — rotate what you actually use, audit what you&apos;ve forgotten about.
+              inventory . rotate what you actually use, audit what you&apos;ve forgotten about.
             </li>
             <li>
               <strong>After any team member leaves:</strong> Rotate all keys that person had
@@ -245,7 +245,7 @@ export default function ApiKeyManagementBestPracticesPage() {
           </ul>
           <p>
             Rotation is only practical if your deployment supports it without downtime. This means
-            keeping secrets in environment variables or a secrets manager — not hardcoded in
+            keeping secrets in environment variables or a secrets manager . not hardcoded in
             application config that requires a rebuild to update.
           </p>
 
@@ -262,7 +262,7 @@ export default function ApiKeyManagementBestPracticesPage() {
             <li>Create one key per integration, not one key for everything</li>
             <li>Grant only the permissions each integration actually needs</li>
             <li>Use IP allowlists where the API provider supports it</li>
-            <li>Use separate keys for development and production — never share them</li>
+            <li>Use separate keys for development and production . never share them</li>
             <li>Document what each key is for; undocumented keys get forgotten</li>
           </ul>
           <p>
@@ -307,7 +307,7 @@ export default function ApiKeyManagementBestPracticesPage() {
           <ol>
             <li>
               <strong>Revoke the key immediately.</strong> Don&apos;t wait to understand the full
-              scope — revoke first, investigate second.
+              scope . revoke first, investigate second.
             </li>
             <li>
               <strong>Issue a replacement key</strong> and update all systems that depend on it.
@@ -357,7 +357,7 @@ export default function ApiKeyManagementBestPracticesPage() {
         {/* CTA */}
         <div className="mt-12 rounded-2xl border border-prussian-blue-200 dark:border-prussian-blue-800 bg-prussian-blue-50 dark:bg-prussian-blue-950/30 p-8 text-center">
           <h3 className="text-xl font-bold text-ink-black-950 dark:text-alabaster-grey-50">
-            Scan Your API Free — 60 Seconds
+            Scan Your API Free . 60 Seconds
           </h3>
           <p className="mt-2 text-sm text-dusty-denim-700 dark:text-dusty-denim-400">
             External security scan catches exposed endpoints, misconfigured headers, and API key

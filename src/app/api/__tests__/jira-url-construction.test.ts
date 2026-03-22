@@ -1,7 +1,7 @@
 /**
  * jira-url-construction.test.ts
  *
- * Tests that Jira API URLs are constructed correctly — no double-protocol (CB-3).
+ * Tests that Jira API URLs are constructed correctly . no double-protocol (CB-3).
  * The stored URL already includes the protocol (https://myorg.atlassian.net).
  * Routes must NOT prepend another https://.
  */
@@ -13,7 +13,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const requireRole = vi.fn();
 vi.mock("@/lib/auth", () => ({ requireRole, getSession: vi.fn() }));
 
-// Tenant mock — jira/test requires PRO+
+// Tenant mock . jira/test requires PRO+
 const getOrgLimits = vi.fn();
 vi.mock("@/lib/tenant", () => ({ getOrgLimits }));
 
@@ -89,7 +89,7 @@ beforeEach(() => {
   });
 });
 
-describe("Jira test route — URL construction (CB-3)", () => {
+describe("Jira test route . URL construction (CB-3)", () => {
   it("calls Jira /rest/api/3/myself without double-protocol", async () => {
     const { POST } = await import("@/app/api/integrations/jira/test/route");
     await POST(postReq());

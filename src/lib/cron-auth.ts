@@ -27,7 +27,7 @@ const allEnum = Object.values(SubscriptionTier) as SubscriptionTier[];
 
 if (combinedTiers.length !== allPartitioned.size) {
   throw new Error(
-    "PREMIUM_TIERS and NON_PREMIUM_TIERS contain duplicates or overlap — each tier must appear exactly once",
+    "PREMIUM_TIERS and NON_PREMIUM_TIERS contain duplicates or overlap . each tier must appear exactly once",
   );
 }
 for (const tier of allEnum) {

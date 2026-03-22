@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Help Center — Scantient",
+  title: "Help Center . Scantient",
   description: "Answers to common questions about Scantient, security scanning, and account management.",
 };
 

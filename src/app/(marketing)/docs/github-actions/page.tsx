@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
-export const metadata: Metadata = { title: "GitHub Actions CI Integration — Scantient" };
+export const metadata: Metadata = { title: "GitHub Actions CI Integration . Scantient" };
 
 function Code({ children }: { children: string }) {
   return (
@@ -27,7 +27,7 @@ jobs:
           echo "$RESULT" | jq .
           PASSED=$(echo "$RESULT" | jq -r '.passed')
           if [ "$PASSED" != "true" ]; then
-            echo "Scantient scan failed — security issues detected"
+            echo "Scantient scan failed . security issues detected"
             exit 1
           fi`;
 

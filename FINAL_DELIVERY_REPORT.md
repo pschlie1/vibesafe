@@ -87,8 +87,8 @@ Completely rewritten 4-step process with:
 | **Tier 1** | Builder ($49) | Builder (Free) |
 | **Tier 2** | Starter ($199) | Pro ($399) |
 | **Tier 3** | Pro ($399) | Enterprise (Custom) |
-| **Tier 4** | Enterprise ($2,500) | — |
-| **Tier 5** | Enterprise+ (Custom) | — |
+| **Tier 4** | Enterprise ($2,500) |  |
+| **Tier 5** | Enterprise+ (Custom) |  |
 | **Result** | 5 tiers (confusing) | 3 tiers (clear) |
 
 #### Builder (Free) Tier
@@ -131,7 +131,7 @@ Completely rewritten 4-step process with:
 |--------|--------|-------|
 | **Icon** | None | 🚀 emoji |
 | **Headline** | Generic | "Ready to secure your apps?" |
-| **Copy** | "Add your first app" | "You'll get your first security scan in under 60 seconds — no setup required" |
+| **Copy** | "Add your first app" | "You'll get your first security scan in under 60 seconds . no setup required" |
 | **Primary CTA** | "Bulk Add Apps" | "Add apps" |
 | **Secondary CTA** | None | "See what we check" (links to features) |
 | **Mobile Layout** | Single column | Stacked on mobile, side-by-side on sm+ |

@@ -2,7 +2,7 @@ import { createCipheriv, createDecipheriv, randomBytes, createHash } from "crypt
 
 /**
  * AES-256-GCM encryption for sensitive config values (e.g. API tokens, SSO secrets).
- * Requires ENCRYPTION_KEY env var — throws if missing.
+ * Requires ENCRYPTION_KEY env var . throws if missing.
  * Format: base64( iv[12] + authTag[16] + ciphertext )
  */
 

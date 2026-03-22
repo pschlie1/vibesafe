@@ -127,7 +127,7 @@ export async function autoTriageFinding(findingId: string): Promise<void> {
     timestamp: new Date().toISOString(),
     actor: "system",
     action: "triaged",
-    details: `Auto-triaged as ${priority}${pastAssignment ? ` — suggested assignee: ${pastAssignment.user.name ?? pastAssignment.user.email}` : ""}`,
+    details: `Auto-triaged as ${priority}${pastAssignment ? ` . suggested assignee: ${pastAssignment.user.name ?? pastAssignment.user.email}` : ""}`,
   });
 
   await db.finding.update({
@@ -188,7 +188,7 @@ export async function linkPRToFinding(
     timestamp: new Date().toISOString(),
     actor: pr.linkedBy,
     action: "pr_linked",
-    details: `Linked PR: ${pr.url}${pr.title ? ` — ${pr.title}` : ""}`,
+    details: `Linked PR: ${pr.url}${pr.title ? ` . ${pr.title}` : ""}`,
   });
 
   await db.finding.update({
@@ -207,7 +207,7 @@ export async function linkPRToFinding(
  * 1. RESOLVED findings still in newFindingCodes → reopen (regression).
  * 2. RESOLVED findings not in newFindingCodes → close with evidence (verified fixed).
  * 3. OPEN/ACKNOWLEDGED/IN_PROGRESS findings NOT in newFindingCodes → auto-resolve
- *    (the issue went away — most likely fixed or no longer applicable).
+ *    (the issue went away . most likely fixed or no longer applicable).
  *
  * Previously only case 1 & 2 were handled, so OPEN findings would stay OPEN
  * forever even after the underlying issue was remediated.
@@ -238,14 +238,14 @@ export async function verifyResolvedFindings(appId: string, newFindingCodes: Set
       const { userNotes, meta } = parseRemediationMeta(finding.notes);
 
       if (newFindingCodes.has(finding.code)) {
-        // Still present — reopen
+        // Still present . reopen
         meta.lifecycleStage = "TRIAGED";
         meta.verificationPending = false;
         meta.timeline.push({
           timestamp: now,
           actor: "system",
           action: "verification_failed",
-          details: "Automated verification failed — issue still present in latest scan",
+          details: "Automated verification failed . issue still present in latest scan",
         });
 
         await db.finding.update({
@@ -257,14 +257,14 @@ export async function verifyResolvedFindings(appId: string, newFindingCodes: Set
           },
         });
       } else {
-        // Gone — close with evidence
+        // Gone . close with evidence
         meta.lifecycleStage = "CLOSED";
         meta.verificationPending = false;
         meta.timeline.push({
           timestamp: now,
           actor: "system",
           action: "verified_closed",
-          details: "Verified fixed by automated re-scan — issue no longer detected",
+          details: "Verified fixed by automated re-scan . issue no longer detected",
         });
 
         await db.finding.update({

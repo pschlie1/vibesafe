@@ -231,7 +231,7 @@ const program = new Command();
 
 program
   .name('scantient')
-  .description('Scantient CLI — scan any URL for API security vulnerabilities')
+  .description('Scantient CLI . scan any URL for API security vulnerabilities')
   .version('1.0.0')
   .addHelpText('after', `
 Examples:
@@ -289,7 +289,7 @@ Examples:
 
 program
   .command('ci <url>')
-  .description('CI/CD scan — exits 1 if score below threshold')
+  .description('CI/CD scan . exits 1 if score below threshold')
   .option('-k, --key <apiKey>', 'Scantient API key (or set SCANTIENT_API_KEY)')
   .option('-m, --min-score <score>', 'Minimum passing score (0-100)', '80')
   .option('-j, --json', 'Output raw JSON')

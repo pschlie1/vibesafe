@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Terms of Service — Scantient",
+  title: "Terms of Service . Scantient",
   description: "Scantient Terms of Service governing your use of the platform.",
 };
 

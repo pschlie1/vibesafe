@@ -1,7 +1,7 @@
 # Stripe Integration Status
 
 **Date:** 2026-03-21  
-**Status:** ❌ NOT CONNECTED — Stripe is not configured in production
+**Status:** ❌ NOT CONNECTED . Stripe is not configured in production
 
 ## Current State
 
@@ -73,7 +73,7 @@ Current flow:
 
 ## Summary for Peter
 
-- Stripe is completely disconnected — no one can buy anything right now
+- Stripe is completely disconnected . no one can buy anything right now
 - Fixed the LTD checkout bug (was missing from the API entirely)  
 - Need to: create products in Stripe, add 4-5 env vars to Vercel, configure webhook
 - This is ~30 minutes of setup in the Stripe Dashboard + Vercel

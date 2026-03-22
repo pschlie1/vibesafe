@@ -13,18 +13,18 @@ Scantient supports four authentication methods depending on the use-case:
 - Used by all dashboard page routes
 - Cookie: `scantient-session` (HttpOnly, Secure, SameSite=Lax)
 
-### 2. API Key (`X-API-Key` header) — v1 API
+### 2. API Key (`X-API-Key` header) . v1 API
 - Generated in **Settings → API Keys** (prefix: `vs_`)
 - Sent as: `X-API-Key: vs_your_key_here`
 - Rate-limited per org per tier (see Rate Limits section)
 - Scoped to the organization that created the key
 
-### 3. Agent Key (`X-Agent-Key` header) — Agent / CI endpoints
+### 3. Agent Key (`X-Agent-Key` header) . Agent / CI endpoints
 - Generated per-app for CI pipeline integration
 - Sent as: `X-Agent-Key: your_agent_key_here`
 - Used by `/api/agent/scan` and `/api/agent/pending`
 
-### 4. Cron Secret (`Authorization: Bearer <secret>`) — Internal cron
+### 4. Cron Secret (`Authorization: Bearer <secret>`) . Internal cron
 - Set via `CRON_SECRET` environment variable
 - Used only by Vercel's scheduled job calling `/api/cron/run`
 - Validated with timing-safe comparison (audit-14)
@@ -43,13 +43,13 @@ All endpoints return JSON errors in this shape:
 
 | HTTP Status | Meaning |
 |-------------|---------|
-| 400 | Bad request — validation error (details in `error` field) |
-| 401 | Unauthorized — missing or invalid credentials |
-| 403 | Forbidden — valid credentials but insufficient permissions |
+| 400 | Bad request . validation error (details in `error` field) |
+| 401 | Unauthorized . missing or invalid credentials |
+| 403 | Forbidden . valid credentials but insufficient permissions |
 | 404 | Resource not found or not owned by requesting org |
-| 409 | Conflict — resource already exists |
-| 422 | Unprocessable — scan completed but found issues (CI scan) |
-| 429 | Rate limited — `Retry-After` header indicates when to retry |
+| 409 | Conflict . resource already exists |
+| 422 | Unprocessable . scan completed but found issues (CI scan) |
+| 429 | Rate limited . `Retry-After` header indicates when to retry |
 | 500 | Internal server error |
 | 503 | Service unavailable (e.g., misconfigured environment) |
 
@@ -92,8 +92,8 @@ All endpoints return JSON errors in this shape:
 **Cache:** 5 minutes
 
 **Query params:**
-- `slug` (required) — org slug
-- `format` — `svg` (default) or `json`
+- `slug` (required) . org slug
+- `format` . `svg` (default) or `json`
 
 **SVG Response:** `<svg>` badge with grade and score.
 
@@ -185,7 +185,7 @@ All v1 endpoints require `X-API-Key: vs_your_key_here`.
 { "appId": "clx..." }
 ```
 
-**Request (by URL — creates a temporary scan):**
+**Request (by URL . creates a temporary scan):**
 ```json
 { "url": "https://example.com" }
 ```
@@ -215,7 +215,7 @@ All v1 endpoints require `X-API-Key: vs_your_key_here`.
 ---
 
 ### `GET /api/v1/dashboard`
-**Purpose:** Organization dashboard summary — overall health metrics.  
+**Purpose:** Organization dashboard summary . overall health metrics.  
 **Rate limit:** None (read-only)
 
 **Response:**
@@ -277,7 +277,7 @@ Exceeded requests receive `HTTP 429` with a `Retry-After` header indicating seco
 | Endpoint group | Allowed origins |
 |----------------|----------------|
 | `/api/v1/*` | `https://scantient.com` (production) / `http://localhost:3000` (dev) |
-| `/api/public/*` | `*` (open — public endpoints by design) |
+| `/api/public/*` | `*` (open . public endpoints by design) |
 | `/api/*` (all others) | `https://scantient.com` (production) / `http://localhost:3000` (dev) |
 
 All endpoints respond to `OPTIONS` preflight requests.

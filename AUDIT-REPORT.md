@@ -24,7 +24,7 @@
 
 ---
 
-## 🔴 CRITICAL — Fix Immediately
+## 🔴 CRITICAL . Fix Immediately
 
 ---
 
@@ -57,7 +57,7 @@ Anyone with access to the repository (including GitHub, Vercel, or any CI/CD log
 ### C-2: Hardcoded JWT Fallback Secret in SSO Routes
 
 **Files:** `src/app/api/auth/sso/init/route.ts:7`, `src/app/api/auth/sso/callback/route.ts:8`  
-**Risk:** SSO authentication bypass — attacker can forge state cookies and hijack SSO sessions
+**Risk:** SSO authentication bypass . attacker can forge state cookies and hijack SSO sessions
 
 Both SSO routes use:
 ```typescript
@@ -69,7 +69,7 @@ If `JWT_SECRET` is unset (or in any environment where it defaults), an attacker 
 2. Skip the SSO provider entirely by replaying the callback URL with a forged state.
 3. Impersonate any user in any organization that has SSO enabled.
 
-Note: `src/lib/auth.ts` correctly throws if `JWT_SECRET` is missing — but these SSO routes silently fall back to a known string, creating an inconsistency.
+Note: `src/lib/auth.ts` correctly throws if `JWT_SECRET` is missing . but these SSO routes silently fall back to a known string, creating an inconsistency.
 
 **Recommended Fix:**
 ```typescript
@@ -91,7 +91,7 @@ const JWT_SECRET = (() => {
 The scanner fetches user-provided URLs without checking for private/internal IP ranges:
 
 ```typescript
-// scanner-http.ts:91 — no SSRF protection
+// scanner-http.ts:91 . no SSRF protection
 const response = await fetch(app.url, {
   method: "GET",
   ...
@@ -103,7 +103,7 @@ An authenticated user can register a URL like:
 - `http://10.0.0.1/admin` (internal network services)
 - `http://localhost:5432` (local database port)
 
-The public `/api/public/score` endpoint similarly fetches arbitrary user-supplied URLs (rate-limited but unauthenticated — an attacker just needs 10 IPs).
+The public `/api/public/score` endpoint similarly fetches arbitrary user-supplied URLs (rate-limited but unauthenticated . an attacker just needs 10 IPs).
 
 **Recommended Fix:**
 ```typescript
@@ -133,7 +133,7 @@ Add this check before any `fetch(userProvidedUrl, ...)` call.
 
 ---
 
-## 🟠 HIGH — Fix This Week
+## 🟠 HIGH . Fix This Week
 
 ---
 
@@ -150,11 +150,11 @@ const session = request.cookies.get("scantient-session");
 if (!session?.value) {
   // Only empty cookie triggers rejection
 }
-// Any non-empty value passes — including expired or forged JWTs
+// Any non-empty value passes . including expired or forged JWTs
 return NextResponse.next();
 ```
 
-While individual routes call `getSession()` (which does verify the JWT), the middleware provides a false security boundary. Routes that incorrectly rely on middleware having validated the token are silently vulnerable. There are also informational leaks — e.g., the dashboard page renders before the API call confirms auth.
+While individual routes call `getSession()` (which does verify the JWT), the middleware provides a false security boundary. Routes that incorrectly rely on middleware having validated the token are silently vulnerable. There are also informational leaks . e.g., the dashboard page renders before the API call confirms auth.
 
 **Recommended Fix:**
 Add lightweight JWT verification in middleware using the Edge Runtime-compatible `jose` library:
@@ -178,7 +178,7 @@ try {
 **Risk:** API tokens stored in DB can be trivially decoded; key derivation fallback "default-secret" compounds risk
 
 ```typescript
-// XOR with JWT_SECRET as key — this is NOT encryption
+// XOR with JWT_SECRET as key . this is NOT encryption
 export function obfuscate(value: string): string {
   const secret = process.env.JWT_SECRET ?? "default-secret"; // falls back to known string
   ...XOR loop...
@@ -186,10 +186,10 @@ export function obfuscate(value: string): string {
 ```
 
 Issues:
-1. XOR obfuscation provides zero cryptographic security — it's trivially reversible with the key.
+1. XOR obfuscation provides zero cryptographic security . it's trivially reversible with the key.
 2. The key itself (`JWT_SECRET`) is stored alongside the data it "protects" (same Vercel environment).
-3. The fallback `"default-secret"` means that if JWT_SECRET differs between environments, tokens stored in one environment cannot be decoded in another — causing silent failures.
-4. The fallback key is different from the SSO fallback (`"fallback-secret"`) — inconsistency.
+3. The fallback `"default-secret"` means that if JWT_SECRET differs between environments, tokens stored in one environment cannot be decoded in another . causing silent failures.
+4. The fallback key is different from the SSO fallback (`"fallback-secret"`) . inconsistency.
 5. SSO `clientSecret` is stored directly in the `SSOConfig` model as a plain string (not obfuscated).
 
 **Recommended Fix:**
@@ -238,7 +238,7 @@ Switch to an HMAC-signed URL approach where the badge URL contains a signed toke
 ### H-4: Newsletter Subscribe Endpoint Has No Rate Limiting
 
 **File:** `src/app/api/newsletter/subscribe/route.ts`  
-**Risk:** Email bombing — attacker can send unlimited emails to arbitrary addresses at Resend API cost; potential abuse for phishing or reputation damage
+**Risk:** Email bombing . attacker can send unlimited emails to arbitrary addresses at Resend API cost; potential abuse for phishing or reputation damage
 
 The endpoint accepts any valid email address and sends a welcome email with no rate limiting whatsoever. An attacker can:
 - Spam any victim's inbox by submitting their email thousands of times.
@@ -259,7 +259,7 @@ Also consider tracking per-email submissions to prevent the same email from bein
 
 ---
 
-### H-5: npm Audit — 5 HIGH Severity Vulnerabilities in @sentry/nextjs
+### H-5: npm Audit . 5 HIGH Severity Vulnerabilities in @sentry/nextjs
 
 **Location:** `package.json` (transitive dependencies)  
 **Risk:** Build-time vulnerabilities in webpack/terser could be exploited in CI/CD pipeline; known CVEs
@@ -278,18 +278,18 @@ All 5 findings trace back to the `@sentry/nextjs` dependency. The fix requires a
 ```bash
 npm install @sentry/nextjs@7.120.4
 ```
-Note: This is a major version bump — test Sentry instrumentation thoroughly after upgrade.
+Note: This is a major version bump . test Sentry instrumentation thoroughly after upgrade.
 
 ---
 
-## 🟡 MEDIUM — Fix This Sprint
+## 🟡 MEDIUM . Fix This Sprint
 
 ---
 
 ### M-1: Content Security Policy Allows `unsafe-eval` and `unsafe-inline`
 
 **File:** `next.config.ts`  
-**Risk:** CSP is effectively neutralized — XSS attacks will execute without CSP blocking them
+**Risk:** CSP is effectively neutralized . XSS attacks will execute without CSP blocking them
 
 ```typescript
 "Content-Security-Policy",
@@ -301,13 +301,13 @@ Note: This is a major version bump — test Sentry instrumentation thoroughly af
 **Recommended Fix:**
 Use nonce-based CSP (Next.js supports this natively):
 ```typescript
-// middleware.ts — generate nonce per request
+// middleware.ts . generate nonce per request
 import { nanoid } from "nanoid";
 const nonce = nanoid();
 // Pass nonce via header and use it in CSP:
 "script-src 'self' 'nonce-${nonce}'"
 ```
-Or at minimum remove `unsafe-eval` — Next.js 13+ App Router doesn't require it.
+Or at minimum remove `unsafe-eval` . Next.js 13+ App Router doesn't require it.
 
 ---
 
@@ -336,7 +336,7 @@ headers: { "Access-Control-Allow-Origin": allowedOrigins.includes(origin) ? orig
 **Risk:** Unverified users (e.g., from account enumeration or compromised signup) can access the application
 
 ```typescript
-// login/route.ts — missing check
+// login/route.ts . missing check
 const valid = await verifyPassword(password, user.passwordHash);
 if (!valid) return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
 // No: if (!user.emailVerified) return 403
@@ -394,10 +394,10 @@ fallbackMode: "fail-open"
 // With multiple Vercel instances, each has its own in-memory store = no protection
 ```
 
-The `reset-password` endpoint allows 10 attempts per hour per IP — high enough to be exploited if rate limiting fails.
+The `reset-password` endpoint allows 10 attempts per hour per IP . high enough to be exploited if rate limiting fails.
 
 **Recommended Fix:**
-1. Configure Upstash Redis (already scaffolded in env vars — just needs to be provisioned).
+1. Configure Upstash Redis (already scaffolded in env vars . just needs to be provisioned).
 2. Change both routes to `fallbackMode: "fail-closed"`.
 3. Lower `reset-password` maxAttempts to 5.
 
@@ -406,7 +406,7 @@ The `reset-password` endpoint allows 10 attempts per hour per IP — high enough
 ### M-6: Health Endpoint Leaks Operational Metrics Without Auth
 
 **File:** `src/app/api/health/route.ts`  
-**Risk:** Information disclosure — reveals monitored app count and last scan timestamp to unauthenticated callers
+**Risk:** Information disclosure . reveals monitored app count and last scan timestamp to unauthenticated callers
 
 ```json
 {
@@ -436,11 +436,11 @@ Return only the minimal status needed for load balancer health checks when unaut
 ```typescript
 if (!cronSecret) {
   console.warn("[cron] WARNING: CRON_SECRET is not set. Cron endpoint is unprotected (dev mode).");
-  // Continues executing — no early return!
+  // Continues executing . no early return!
 }
 ```
 
-The `.env` contains `CRON_SECRET="dev-secret-replace-in-production"` — a predictable value. If a developer deploys without setting this, the endpoint becomes fully open.
+The `.env` contains `CRON_SECRET="dev-secret-replace-in-production"` . a predictable value. If a developer deploys without setting this, the endpoint becomes fully open.
 
 **Recommended Fix:**
 ```typescript
@@ -456,7 +456,7 @@ Also ensure `vercel.json` cron runs use the Vercel `CRON_SECRET` auto-injection 
 
 ---
 
-### L-1: Password Policy — Only 8-Character Minimum, No Complexity Requirements
+### L-1: Password Policy . Only 8-Character Minimum, No Complexity Requirements
 
 **File:** `src/app/api/auth/signup/route.ts`  
 **Risk:** Weak passwords; moderate credential stuffing risk
@@ -532,12 +532,12 @@ secure: process.env.NODE_ENV === "production" || process.env.VERCEL_ENV === "pre
 ### L-5: Dashboard Route Has Two Separate Sequential DB Queries for App Counts
 
 **File:** `src/app/api/dashboard/route.ts`  
-**Risk:** Mild performance inefficiency — extra round-trip to DB
+**Risk:** Mild performance inefficiency . extra round-trip to DB
 
 ```typescript
 // Inside Promise.all:
 db.monitoredApp.count({ where: { orgId } })
-// After Promise.all resolves — a second count query:
+// After Promise.all resolves . a second count query:
 const healthyApps = await db.monitoredApp.count({ where: { orgId, status: "HEALTHY" } });
 ```
 
@@ -567,8 +567,8 @@ Fetched from: `https://scantient.com`
 | `X-Content-Type-Options` | ✅ Pass | `nosniff` |
 | `Referrer-Policy` | ✅ Pass | `strict-origin-when-cross-origin` |
 | `Permissions-Policy` | ✅ Pass | `camera=(), microphone=(), geolocation=()` |
-| `Content-Security-Policy` | ⚠️ Weak | `unsafe-eval` + `unsafe-inline` in `script-src` — see M-1 |
-| `Access-Control-Allow-Origin` | ⚠️ Broad | `*` — see M-2 |
+| `Content-Security-Policy` | ⚠️ Weak | `unsafe-eval` + `unsafe-inline` in `script-src` . see M-1 |
+| `Access-Control-Allow-Origin` | ⚠️ Broad | `*` . see M-2 |
 | `X-XSS-Protection` | ℹ️ Absent | Deprecated; modern browsers use CSP instead |
 
 **Header Score: 6/8** (Good foundation, CSP needs hardening)
@@ -588,7 +588,7 @@ Fetched from: `https://scantient.com`
 | Total | **91.4ms** |
 | Page size | 110 KB |
 
-**TTFB of 91ms is excellent** — Vercel CDN prerendering is working correctly.
+**TTFB of 91ms is excellent** . Vercel CDN prerendering is working correctly.
 
 ### Next.js Configuration (`next.config.ts`)
 
@@ -604,7 +604,7 @@ Fetched from: `https://scantient.com`
 
 | Route | Pattern | Risk |
 |---|---|---|
-| `GET /api/apps` | `findMany` with `include: { monitorRuns: { include: { findings } } }` | ⚠️ Each app loads runs+findings — consider pagination depth limits |
+| `GET /api/apps` | `findMany` with `include: { monitorRuns: { include: { findings } } }` | ⚠️ Each app loads runs+findings . consider pagination depth limits |
 | `GET /api/dashboard` | `Promise.all` + sequential `healthyApps` count | 🔵 Minor (see L-5) |
 | `GET /api/apps/[id]` | `include { monitorRuns: { take: 20 } }` | ✅ Bounded and indexed |
 | `GET /api/findings` | Deep join via `run.app.orgId` | ✅ Single query, indexed |
@@ -613,9 +613,9 @@ No severe N+1 patterns detected. Prisma handles JOINs efficiently. The `apps` ro
 
 ### Bundle & Caching
 
-- `Cache-Control: public, max-age=0, must-revalidate` on HTML — appropriate for dynamic pages
+- `Cache-Control: public, max-age=0, must-revalidate` on HTML . appropriate for dynamic pages
 - Static assets served with long-cache headers by Vercel CDN
-- No custom image domain configuration in `next.config.ts` — defaults are fine but consider `images.formats: ['image/avif', 'image/webp']` for optimization
+- No custom image domain configuration in `next.config.ts` . defaults are fine but consider `images.formats: ['image/avif', 'image/webp']` for optimization
 
 ### Performance Score: 82/100
 
@@ -641,8 +641,8 @@ Deductions:
 
 **Observations:**
 - ✅ Cron schedules are correctly configured
-- ⚠️ No `headers` configuration — all security headers are managed in `next.config.ts` (acceptable but fragile)
-- ⚠️ No `redirects` configured — consider adding `http://` → `https://` redirect (Vercel may handle this by default)
+- ⚠️ No `headers` configuration . all security headers are managed in `next.config.ts` (acceptable but fragile)
+- ⚠️ No `redirects` configured . consider adding `http://` → `https://` redirect (Vercel may handle this by default)
 - ℹ️ `/api/reports/weekly` cron has no visible auth protection in the route file reviewed
 
 ### `.env.example`
@@ -653,7 +653,7 @@ Well-structured with clear documentation. No actual secret values present. Appro
 
 ### Prisma / Database
 
-- ✅ All Prisma queries use parameterized ORM calls (no raw SQL injection risk — the single `$queryRaw\`SELECT 1\`` is a safe tagged template literal)
+- ✅ All Prisma queries use parameterized ORM calls (no raw SQL injection risk . the single `$queryRaw\`SELECT 1\`` is a safe tagged template literal)
 - ✅ Multi-tenant isolation enforced via `orgId` scoping on all data access functions
 - ✅ Cascade delete configured on all `orgId` foreign keys
 - ⚠️ No connection pool size configuration in `db.ts` (relies on Prisma default of 5 connections)
@@ -674,10 +674,10 @@ All 5 high findings are in `@sentry/nextjs` and its build-time dependencies (web
 ## Prioritized Remediation Checklist
 
 ### This Hour (Critical)
-- [ ] **Rotate Neon DB password** — the one in `.env` is exposed
+- [ ] **Rotate Neon DB password** . the one in `.env` is exposed
 - [ ] **Remove `.env` from git** (add to `.gitignore`, purge history)
-- [ ] **Rotate JWT_SECRET** — current value is weak and predictable
-- [ ] **Fix SSO fallback secret** — replace `?? "fallback-secret"` with throw
+- [ ] **Rotate JWT_SECRET** . current value is weak and predictable
+- [ ] **Fix SSO fallback secret** . replace `?? "fallback-secret"` with throw
 
 ### This Week (High)
 - [ ] Add SSRF blocklist for private IP ranges in scanner and public/score endpoint
@@ -688,7 +688,7 @@ All 5 high findings are in `@sentry/nextjs` and its build-time dependencies (web
 - [ ] Upgrade `@sentry/nextjs` to 7.x (5 high CVEs)
 
 ### This Sprint (Medium)
-- [ ] Harden CSP — remove `unsafe-eval`, implement nonce-based CSP
+- [ ] Harden CSP . remove `unsafe-eval`, implement nonce-based CSP
 - [ ] Restrict CORS to application origin
 - [ ] Add `emailVerified` check to login route
 - [ ] Add explicit JWT `algorithm`, `iss`, and `aud` claims
@@ -718,9 +718,9 @@ All 5 high findings are in `@sentry/nextjs` and its build-time dependencies (web
 | Rate Limiting | 75/100 | C |
 | SSRF / Injection Protection | 40/100 | F |
 | Performance | 82/100 | B |
-| **Overall Security Grade** | — | **D** |
+| **Overall Security Grade** |  | **D** |
 
-The application has a solid foundation — Zod validation throughout, Prisma ORM (no raw SQL), good tenant isolation, bcrypt for passwords, and rate limiting on auth endpoints. However, the committed production credentials (C-1), hardcoded fallback secrets (C-2), and SSRF vulnerability (C-3) are severe enough to prevent a passing grade until remediated.
+The application has a solid foundation . Zod validation throughout, Prisma ORM (no raw SQL), good tenant isolation, bcrypt for passwords, and rate limiting on auth endpoints. However, the committed production credentials (C-1), hardcoded fallback secrets (C-2), and SSRF vulnerability (C-3) are severe enough to prevent a passing grade until remediated.
 
 ---
 

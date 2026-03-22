@@ -4,13 +4,13 @@
 
 ---
 
-## Template 1: Cold — IT Director at a tech-forward company
+## Template 1: Cold . IT Director at a tech-forward company
 
-**Subject:** AI-built apps in your org — do you know what they're running?
+**Subject:** AI-built apps in your org . do you know what they're running?
 
 Hi [Name],
 
-Your developers are shipping apps with Cursor faster than your security team reviews them. Most of those apps have exposed configuration issues out of the box — missing security headers, session cookies without proper flags, sometimes API keys in client-side JavaScript.
+Your developers are shipping apps with Cursor faster than your security team reviews them. Most of those apps have exposed configuration issues out of the box . missing security headers, session cookies without proper flags, sometimes API keys in client-side JavaScript.
 
 I'm building a tool that monitors AI-generated apps from the outside, no SDK required. Register a URL, get a security scan in 60 seconds. Runs on a schedule, alerts you when something changes.
 
@@ -23,7 +23,7 @@ scantient.com
 
 ---
 
-## Template 2: Warm — Someone who engaged with the vibe coding content
+## Template 2: Warm . Someone who engaged with the vibe coding content
 
 **Subject:** Re: your comment on AI app governance
 
@@ -31,7 +31,7 @@ Hi [Name],
 
 Saw your comment on [thread/post] about managing AI-generated apps. You described the exact problem we built Scantient to solve.
 
-External security monitoring for apps built with Cursor, Lovable, Replit — no agent, no SDK, no code changes required. Continuous scanning, compliance evidence for SOC2, alerts to whoever owns the app.
+External security monitoring for apps built with Cursor, Lovable, Replit . no agent, no SDK, no code changes required. Continuous scanning, compliance evidence for SOC2, alerts to whoever owns the app.
 
 We have [X] apps in monitoring across [Y] organizations. Looking for a few more IT leaders to work with directly before we scale up.
 
@@ -49,7 +49,7 @@ Hi [Name],
 
 Your clients are shipping apps with AI coding tools faster than anyone can audit them. That creates liability for you as their managed provider.
 
-Scantient monitors every deployed web app — internal tools, customer-facing apps, AI-generated or otherwise — from the outside. No agents. No code changes. One dashboard across all your clients.
+Scantient monitors every deployed web app . internal tools, customer-facing apps, AI-generated or otherwise . from the outside. No agents. No code changes. One dashboard across all your clients.
 
 We're adding MSP functionality in the next build cycle and looking for 2-3 MSPs to design it with. You'd get early access, influence the roadmap, and a pricing structure built around your model.
 
@@ -67,9 +67,9 @@ Worth a conversation?
 - "VP Engineering" + "vibe coding" OR "AI apps" + regulated industry
 
 **Where to find them:**
-- The HN Cursor/compliance thread — people commenting are your exact ICP
-- Reddit r/sysadmin, r/msp — IT managers venting about shadow IT
-- LinkedIn posts about "my developers are shipping AI apps" — these people have budget and pain
+- The HN Cursor/compliance thread . people commenting are your exact ICP
+- Reddit r/sysadmin, r/msp . IT managers venting about shadow IT
+- LinkedIn posts about "my developers are shipping AI apps" . these people have budget and pain
 
 **Qualification criteria:**
 - Company uses AI coding tools (Cursor, Lovable, Replit, GitHub Copilot)

@@ -209,19 +209,19 @@ export default async function MspOverviewPage() {
                     {client.criticalFindings > 0 ? (
                       <span className="font-semibold text-error">{client.criticalFindings}</span>
                     ) : (
-                      <span className="text-muted">—</span>
+                      <span className="text-muted">.</span>
                     )}
                   </td>
                   <td className="px-4 py-3 text-right">
                     {client.highFindings > 0 ? (
                       <span className="font-semibold text-warning">{client.highFindings}</span>
                     ) : (
-                      <span className="text-muted">—</span>
+                      <span className="text-muted">.</span>
                     )}
                   </td>
                   <td className="px-4 py-3 text-right text-body">
                     {client.totalOpenFindings > 0 ? client.totalOpenFindings : (
-                      <span className="text-muted">—</span>
+                      <span className="text-muted">.</span>
                     )}
                   </td>
                   <td className="px-4 py-3 text-xs text-muted">
@@ -248,7 +248,7 @@ export default async function MspOverviewPage() {
       {/* Info callout */}
       <div className="mt-6 rounded-lg border border-info/20 bg-info/10 px-4 py-3">
         <p className="text-sm text-info">
-          <span className="font-semibold">MSP Mode</span> — To add a client organisation, create
+          <span className="font-semibold">MSP Mode</span> . To add a client organisation, create
           the org and set its{" "}
           <code className="rounded bg-info/10 px-1 font-mono text-xs">parentOrgId</code> to{" "}
           <code className="rounded bg-info/10 px-1 font-mono text-xs">{session.orgId}</code> via

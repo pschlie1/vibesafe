@@ -48,9 +48,9 @@ npm install @sentry/nextjs
 ```
 
 **Step 2: Configuration Files** ✅
-- `sentry.client.config.ts` — Browser-side error tracking
-- `sentry.server.config.ts` — Backend error tracking
-- `sentry.edge.config.ts` — Edge runtime errors
+- `sentry.client.config.ts` . Browser-side error tracking
+- `sentry.server.config.ts` . Backend error tracking
+- `sentry.edge.config.ts` . Edge runtime errors
 
 **Step 3: Create Sentry Project** ⏳
 - Go to https://sentry.io

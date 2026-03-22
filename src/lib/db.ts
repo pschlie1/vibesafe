@@ -14,7 +14,7 @@ declare global {
  * 1. SINGLETON IN PRODUCTION: Previously the singleton was only stored on
  *    globalThis during development (`if (NODE_ENV !== 'production')`). On Vercel,
  *    warm Lambda invocations share the same global scope, so we MUST set
- *    globalThis in production too — otherwise every warm request creates a
+ *    globalThis in production too . otherwise every warm request creates a
  *    new PrismaClient (and a new connection pool) instead of reusing one.
  *
  * 2. CONNECTION_LIMIT: Each serverless function handles one request at a time.
@@ -33,7 +33,7 @@ export const db =
     log: process.env.NODE_ENV === "development" ? ["error", "warn"] : ["error"],
   });
 
-// Always persist to globalThis — covers both development hot-reloads AND
+// Always persist to globalThis . covers both development hot-reloads AND
 // production warm Lambda invocations.
 global.prisma = db;
 

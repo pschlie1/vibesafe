@@ -51,7 +51,7 @@ const checklistItems = [
     severityColor: "bg-error/10 text-error border-error/20",
     body: [
       "Your SSL certificate is the first thing every visitor's browser checks. If it's expired, every user sees a security warning and most will leave immediately. If it's about to expire (within 30 days), you're one missed renewal away from a complete site outage.",
-      "What to verify: Certificate is valid. Expiry is more than 30 days away. Auto-renewal is configured (Let's Encrypt on most platforms handles this). HTTPS is enforced — HTTP requests redirect to HTTPS, not serve content.",
+      "What to verify: Certificate is valid. Expiry is more than 30 days away. Auto-renewal is configured (Let's Encrypt on most platforms handles this). HTTPS is enforced . HTTP requests redirect to HTTPS, not serve content.",
       "Common failure mode: You set up Let's Encrypt manually six months ago. The cron job for renewal failed silently. You find out when a customer emails you that your site is \"not secure.\"",
     ],
     fix: "Run a scan on your domain and check the certificate validity and expiry date. Set a reminder 30 days before expiry for any cert you manage manually.",
@@ -62,9 +62,9 @@ const checklistItems = [
     severity: "High",
     severityColor: "bg-warning/10 text-warning border-warning/20",
     body: [
-      "Security headers are HTTP response headers that tell browsers how to handle your app. They're invisible to users but protect against XSS, clickjacking, MIME sniffing, and protocol downgrade attacks. Missing them is a free vulnerability that requires no exploitation — it's just not protected.",
+      "Security headers are HTTP response headers that tell browsers how to handle your app. They're invisible to users but protect against XSS, clickjacking, MIME sniffing, and protocol downgrade attacks. Missing them is a free vulnerability that requires no exploitation . it's just not protected.",
       "The five headers you need: Strict-Transport-Security (HSTS), Content-Security-Policy (CSP), X-Frame-Options, X-Content-Type-Options, Referrer-Policy.",
-      "In Next.js, add them in next.config.js under the headers() function. In Express, use the helmet middleware — it adds all of these in one line.",
+      "In Next.js, add them in next.config.js under the headers() function. In Express, use the helmet middleware . it adds all of these in one line.",
     ],
     fix: "An external scan checks for all five headers and tells you which are missing. Takes 60 seconds.",
   },
@@ -74,7 +74,7 @@ const checklistItems = [
     severity: "Critical",
     severityColor: "bg-error/10 text-error border-error/20",
     body: [
-      "This is the most common critical finding in post-deploy scans — and the most embarrassing, because it's entirely preventable. An API key that leaks in a JavaScript bundle or API response is immediately readable to anyone who opens DevTools.",
+      "This is the most common critical finding in post-deploy scans . and the most embarrassing, because it's entirely preventable. An API key that leaks in a JavaScript bundle or API response is immediately readable to anyone who opens DevTools.",
       "What gets exposed: OpenAI API keys (someone racks up a huge bill). Stripe secret keys (someone processes fraudulent charges). Supabase service role keys (someone reads your entire database). AWS credentials (someone mines crypto in your account).",
       "The rule: any key that says 'secret,' 'private,' or 'service_role' stays on the server. Use NEXT_PUBLIC_ only for genuinely public configuration (publishable Stripe keys, analytics IDs, feature flags).",
     ],
@@ -88,7 +88,7 @@ const checklistItems = [
     body: [
       "CORS (Cross-Origin Resource Sharing) controls which websites can make requests to your API from a browser. If you set Access-Control-Allow-Origin: * (the developer's shortcut when CORS errors appear), you've told every website in the world they can make requests to your API.",
       "For most APIs, this means: malicious sites can read your users' data on their behalf (using their session cookies). For AI APIs, it also means: attackers can run LLM inference at your expense from any website.",
-      "The correct setting for production: Access-Control-Allow-Origin: https://yourapp.com — your specific domain only.",
+      "The correct setting for production: Access-Control-Allow-Origin: https://yourapp.com . your specific domain only.",
     ],
     fix: "External scans probe your API endpoints and check CORS headers. Wildcard policies are flagged immediately.",
   },
@@ -100,7 +100,7 @@ const checklistItems = [
     body: [
       "Within minutes of a new domain appearing in DNS, automated scanners probe it for common sensitive paths. These include: /.env, /.git/HEAD, /api/debug, /admin, /phpinfo.php, Spring Boot actuators like /actuator/health, /actuator/env, and dozens more.",
       "If any of these return 200 (OK), they're exposing data. A /.env response leaks your entire environment. A /.git/HEAD response confirms your stack. A /api/debug endpoint might expose request logs, user data, or internal state.",
-      "The fix isn't just 403 Forbidden — return 404. A 403 tells an attacker the endpoint exists and they just can't access it. A 404 is a dead end.",
+      "The fix isn't just 403 Forbidden . return 404. A 403 tells an attacker the endpoint exists and they just can't access it. A 404 is a dead end.",
     ],
     fix: "A good external scan tests 15+ of these paths automatically. Check your scan results for any that return 200.",
   },
@@ -123,7 +123,7 @@ const checklistItems = [
     severityColor: "bg-info/10 text-info border-info/20",
     body: [
       "Rate limiting is what stands between your production infrastructure and a script that hammers your API 10,000 times per minute. Without it: your database gets overloaded, your LLM bill spikes, and a determined attacker can brute-force auth endpoints.",
-      "For AI apps specifically, rate limiting is critical — every unprotected request to an LLM endpoint costs you money. For auth endpoints (login, signup, forgot-password), rate limiting prevents credential stuffing attacks.",
+      "For AI apps specifically, rate limiting is critical . every unprotected request to an LLM endpoint costs you money. For auth endpoints (login, signup, forgot-password), rate limiting prevents credential stuffing attacks.",
       "Minimum viable rate limiting: 100 requests/minute per IP on API endpoints. Stricter for auth endpoints (10/minute). Stricter still for LLM endpoints (10/minute per user).",
     ],
     fix: "Check for X-RateLimit-Limit and X-RateLimit-Remaining headers in your API responses. Their absence doesn't always mean no rate limiting, but their presence confirms it.",
@@ -151,7 +151,7 @@ export default function PostDeploySecurityChecklistPage() {
           Your Deploy Just Went Live. Now Run This Security Checklist.
         </h1>
         <p className="mt-4 text-lg text-dusty-denim-700 dark:text-dusty-denim-400">
-          Shipping is the goal. But in the five minutes between &quot;deployed to Vercel&quot; and &quot;posted the link on Twitter,&quot; automated scanners are already probing your new domain. Here&apos;s what to check — and how to check it in under 60 seconds.
+          Shipping is the goal. But in the five minutes between &quot;deployed to Vercel&quot; and &quot;posted the link on Twitter,&quot; automated scanners are already probing your new domain. Here&apos;s what to check . and how to check it in under 60 seconds.
         </p>
         <div className="mt-6 flex items-center gap-4 text-sm text-dusty-denim-500">
           <time dateTime="2026-02-05">February 5, 2026</time>
@@ -163,7 +163,7 @@ export default function PostDeploySecurityChecklistPage() {
       {/* Body intro */}
       <div className="prose prose-slate dark:prose-invert max-w-none">
         <p>
-          The average time between a new domain appearing in certificate transparency logs and the first automated security probe: under 10 minutes. Attackers don&apos;t wait for you to get traction — they scan everything, looking for easy wins.
+          The average time between a new domain appearing in certificate transparency logs and the first automated security probe: under 10 minutes. Attackers don&apos;t wait for you to get traction . they scan everything, looking for easy wins.
         </p>
         <p>
           Most post-deploy security failures aren&apos;t sophisticated. They&apos;re the same seven issues, in the same order, on almost every new app. This checklist covers all of them. You can check most of these manually, or run a <Link href="/score" className="text-prussian-blue-600 hover:underline">Scantient scan</Link> and get all of them in one result in 60 seconds.
@@ -202,14 +202,14 @@ export default function PostDeploySecurityChecklistPage() {
         <h2>The Quick Reference: Paste This Into Your Launch Checklist</h2>
         <ul>
           <li>✅ SSL certificate valid, expires in 30+ days, auto-renewal active</li>
-          <li>✅ HTTPS enforced — HTTP redirects to HTTPS</li>
+          <li>✅ HTTPS enforced . HTTP redirects to HTTPS</li>
           <li>✅ Security headers present: HSTS, CSP, X-Frame-Options, X-Content-Type-Options, Referrer-Policy</li>
           <li>✅ No secret API keys in JavaScript bundle or API responses</li>
           <li>✅ CORS locked to specific origins (no wildcard <code>*</code>)</li>
           <li>✅ Sensitive paths return 404: /.env, /.git/HEAD, /api/debug, /admin</li>
           <li>✅ CSP is non-trivial and configured with a nonce or hash</li>
           <li>✅ Rate limiting active on API endpoints (especially auth and LLM endpoints)</li>
-          <li>✅ <Link href="/score" className="text-prussian-blue-600 hover:underline">External security scan run</Link> — Scantient checks all of the above in 60 seconds</li>
+          <li>✅ <Link href="/score" className="text-prussian-blue-600 hover:underline">External security scan run</Link> . Scantient checks all of the above in 60 seconds</li>
         </ul>
 
         <h2>The One Command That Replaces Most of This</h2>
@@ -217,17 +217,17 @@ export default function PostDeploySecurityChecklistPage() {
           You can manually check headers with <code>curl -I https://yourapp.com</code>. You can inspect your JavaScript bundle in DevTools. You can probe your own sensitive paths.
         </p>
         <p>
-          Or you can paste your URL into <Link href="/score" className="text-prussian-blue-600 hover:underline">Scantient</Link> and get all seven checks — with severity ratings and specific fix instructions — in 60 seconds. No signup. No SDK. No setup.
+          Or you can paste your URL into <Link href="/score" className="text-prussian-blue-600 hover:underline">Scantient</Link> and get all seven checks . with severity ratings and specific fix instructions . in 60 seconds. No signup. No SDK. No setup.
         </p>
         <p>
-          The free scan covers everything in this checklist. If you want continuous monitoring (alerts when your security posture changes after each deploy, monthly compliance reports), <Link href="/pricing" className="text-prussian-blue-600 hover:underline">the lifetime deal is $79</Link>. One-time payment, no recurring fees — worth it for peace of mind on every future deploy.
+          The free scan covers everything in this checklist. If you want continuous monitoring (alerts when your security posture changes after each deploy, monthly compliance reports), <Link href="/pricing" className="text-prussian-blue-600 hover:underline">the lifetime deal is $79</Link>. One-time payment, no recurring fees . worth it for peace of mind on every future deploy.
         </p>
         <p>
-          For AI apps specifically, add the items from our guide on <Link href="/blog/securing-ai-app-api" className="text-prussian-blue-600 hover:underline">securing your AI app&apos;s API</Link> to this checklist — LLM endpoints have additional risks (rate limiting, CORS, prompt injection) that go beyond what standard security scanners check.
+          For AI apps specifically, add the items from our guide on <Link href="/blog/securing-ai-app-api" className="text-prussian-blue-600 hover:underline">securing your AI app&apos;s API</Link> to this checklist . LLM endpoints have additional risks (rate limiting, CORS, prompt injection) that go beyond what standard security scanners check.
         </p>
         <p>
           If you haven&apos;t already run through pre-launch security, the <Link href="/blog/indie-dev-security-checklist" className="text-prussian-blue-600 hover:underline">full indie dev security checklist</Link> covers everything from environment variable hygiene to database access controls. And the fastest way to verify your post-deploy posture right now:{" "}
-          <Link href="/score" className="text-prussian-blue-600 hover:underline">Run a live external scan post-deploy</Link> — it checks all seven categories above in 60 seconds, no signup required.
+          <Link href="/score" className="text-prussian-blue-600 hover:underline">Run a live external scan post-deploy</Link> . it checks all seven categories above in 60 seconds, no signup required.
         </p>
       </div>
 

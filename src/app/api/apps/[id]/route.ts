@@ -80,7 +80,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
     where: { id },
     data: {
       ...restData,
-      // Encrypt probe token at rest — null clears the token, undefined skips the field
+      // Encrypt probe token at rest . null clears the token, undefined skips the field
       ...(probeToken !== undefined
         ? { probeToken: probeToken ? encrypt(probeToken) : null }
         : {}),

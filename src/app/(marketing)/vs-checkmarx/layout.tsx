@@ -1,5 +1,5 @@
 /**
- * vs-checkmarx page layout — provides metadata and JSON-LD schema for the /vs-checkmarx route.
+ * vs-checkmarx page layout . provides metadata and JSON-LD schema for the /vs-checkmarx route.
  * The page is a "use client" component, so metadata is defined here.
  */
 import type { Metadata } from "next";
@@ -9,7 +9,7 @@ import Script from "next/script";
 export const metadata: Metadata = {
   title: "Checkmarx vs Scantient: API Security Without the Complexity",
   description:
-    "Need a Checkmarx alternative without the enterprise complexity? Scantient delivers external API security scanning in 60 seconds — no agent, no integration, no six-figure contract.",
+    "Need a Checkmarx alternative without the enterprise complexity? Scantient delivers external API security scanning in 60 seconds . no agent, no integration, no six-figure contract.",
   openGraph: {
     title: "Checkmarx vs Scantient: API Security Without the Complexity",
     description:
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Checkmarx vs Scantient: API Security Without the Complexity",
     description:
-      "Checkmarx alternative. External API security scanning in 60 seconds — no enterprise contract, no complexity.",
+      "Checkmarx alternative. External API security scanning in 60 seconds . no enterprise contract, no complexity.",
     images: ["https://scantient.com/og-image.png"],
   },
 };
@@ -68,7 +68,7 @@ const faqSchema = {
       name: "Does Scantient require installing any software or agents?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "No. Scantient is a fully external scanner. You provide your application's URL, and Scantient scans it from the outside — exactly as an attacker would. No agent installation, no IDE plugins, no CI/CD integration required. This makes setup take 2 minutes instead of days, and means zero impact on your development workflow.",
+        text: "No. Scantient is a fully external scanner. You provide your application's URL, and Scantient scans it from the outside . exactly as an attacker would. No agent installation, no IDE plugins, no CI/CD integration required. This makes setup take 2 minutes instead of days, and means zero impact on your development workflow.",
       },
     },
   ],

@@ -30,5 +30,5 @@ We evaluated NextAuth, Clerk, and a custom session approach.
 ## Consequences
 
 - **Positive:** No external auth service dependency; full control; works in any deployment
-- **Negative:** We own the security surface — must stay current with best practices
+- **Negative:** We own the security surface . must stay current with best practices
 - **Mitigation:** Rate limiting, brute-force guards, and audit logging for all auth events (added audit-10)

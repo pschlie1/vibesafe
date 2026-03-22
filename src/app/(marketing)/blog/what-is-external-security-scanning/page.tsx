@@ -4,7 +4,7 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "What Is External Security Scanning? (And Why Every Production API Needs It) | Scantient Blog",
   description:
-    "External security scanning tests your live API the way an attacker would — from the outside. Learn what it covers, why code-level tools miss it, and why every production API needs it.",
+    "External security scanning tests your live API the way an attacker would . from the outside. Learn what it covers, why code-level tools miss it, and why every production API needs it.",
   keywords: "external security scanning, production API security scan, external API scanner, runtime security testing, API security monitoring",
   openGraph: {
     title: "What Is External Security Scanning? (And Why Every Production API Needs It)",
@@ -28,7 +28,7 @@ const articleSchema = {
   "@type": "Article",
   headline: "What Is External Security Scanning? (And Why Every Production API Needs It)",
   description:
-    "External security scanning tests your live API the way an attacker would — from the outside. Learn what it covers, why code-level tools miss it, and why every production API needs it.",
+    "External security scanning tests your live API the way an attacker would . from the outside. Learn what it covers, why code-level tools miss it, and why every production API needs it.",
   datePublished: "2026-03-16T00:00:00Z",
   dateModified: "2026-03-21T00:00:00Z",
   author: { "@type": "Organization", name: "Scantient" },
@@ -87,7 +87,7 @@ export default function WhatIsExternalSecurityScanningPage() {
           </h1>
           <p className="mt-4 text-lg text-dusty-denim-700 dark:text-dusty-denim-400">
             Your code review finds bugs. Your dependency scanner finds CVEs. But neither one can
-            see what your live API looks like from the internet. External scanning can — and it
+            see what your live API looks like from the internet. External scanning can . and it
             reveals a completely different class of security problems.
           </p>
           <div className="mt-6 flex items-center gap-4 text-sm text-dusty-denim-500">
@@ -112,20 +112,20 @@ export default function WhatIsExternalSecurityScanningPage() {
             </li>
             <li>
               <strong>Outside-in (external scanning):</strong> Make real requests to the running
-              application from the internet. See exactly what an attacker sees — response headers,
+              application from the internet. See exactly what an attacker sees . response headers,
               CORS behavior, exposed endpoints, SSL configuration, runtime data exposure.
             </li>
           </ul>
           <p>
             Most developer security tools operate inside-out. Snyk scans your{" "}
             <code>package.json</code>. Semgrep reads your TypeScript. GitGuardian watches your git
-            history. These are all valuable — but they all require access to your code and operate
+            history. These are all valuable . but they all require access to your code and operate
             before your app is deployed.
           </p>
           <p>
             External security scanning operates outside-in. It doesn&apos;t need your code. It doesn&apos;t
             need your credentials. It talks to your live, deployed API the same way an attacker
-            would — and it reveals what your app actually looks like on the internet, which is
+            would . and it reveals what your app actually looks like on the internet, which is
             often very different from what you intended.
           </p>
 
@@ -139,7 +139,7 @@ export default function WhatIsExternalSecurityScanningPage() {
           <p>
             Security headers like <code>Content-Security-Policy</code>,{" "}
             <code>Strict-Transport-Security</code>, <code>X-Frame-Options</code>, and{" "}
-            <code>X-Content-Type-Options</code> are set in your server&apos;s HTTP responses — not in
+            <code>X-Content-Type-Options</code> are set in your server&apos;s HTTP responses . not in
             your application code. They can be present in your <code>next.config.js</code> but
             missing in production if your hosting platform overrides them. They can be configured
             correctly in staging and broken in your CDN layer. The only way to know what headers
@@ -151,7 +151,7 @@ export default function WhatIsExternalSecurityScanningPage() {
             Cross-Origin Resource Sharing policies define which domains can make authenticated
             requests to your API. A wildcard{" "}
             <code>Access-Control-Allow-Origin: *</code> policy is only visible in the HTTP response
-            — it doesn&apos;t exist anywhere in your static codebase until your server generates it.
+            . it doesn&apos;t exist anywhere in your static codebase until your server generates it.
             External scanning sends probe requests designed to reveal your CORS policy and flag
             overpermissive configurations that could enable cross-site attacks.
           </p>
@@ -169,13 +169,13 @@ export default function WhatIsExternalSecurityScanningPage() {
             Attackers automatically probe new domains for common dangerous paths:{" "}
             <code>/.env</code>, <code>/.git/HEAD</code>, <code>/api/admin</code>,{" "}
             <code>/phpinfo.php</code>, Spring Boot actuators, debug endpoints. External scanning
-            checks the same paths and tells you which ones respond — before an attacker finds them.
+            checks the same paths and tells you which ones respond . before an attacker finds them.
           </p>
 
           <h3>API Key and Secret Exposure</h3>
           <p>
             API keys can appear in JavaScript bundles, API responses, HTML comments, or error
-            messages — all at runtime, in ways that aren&apos;t visible in source code alone. External
+            messages . all at runtime, in ways that aren&apos;t visible in source code alone. External
             scanning reads your app&apos;s actual HTTP responses and JavaScript bundles looking for
             patterns that match known API key formats (OpenAI, Stripe, AWS, Supabase, and dozens
             more).
@@ -222,11 +222,11 @@ export default function WhatIsExternalSecurityScanningPage() {
           </ul>
           <p>
             Snyk would find none of these. They&apos;re not dependency vulnerabilities. They&apos;re
-            runtime configuration problems — and they&apos;re exactly the kind of issue that external
+            runtime configuration problems . and they&apos;re exactly the kind of issue that external
             scanning is designed to catch.
           </p>
           <p>
-            This is why CTOs who care about security use both types of tools — not one or the
+            This is why CTOs who care about security use both types of tools . not one or the
             other. For the full strategic breakdown:{" "}
             <Link href="/blog/why-ctos-choose-external-security-scanning" className="text-prussian-blue-600 hover:underline">
               Why CTOs Choose External Security Scanning Over Code-Level Tools
@@ -245,20 +245,20 @@ export default function WhatIsExternalSecurityScanningPage() {
           </p>
           <ul>
             <li>
-              <strong>Before launch</strong> — catch the obvious issues before your first real
+              <strong>Before launch</strong> . catch the obvious issues before your first real
               users arrive. New domains get probed by automated scanners within hours of
               registration.
             </li>
             <li>
-              <strong>After every significant deployment</strong> — configuration changes, new
+              <strong>After every significant deployment</strong> . configuration changes, new
               routes, infrastructure updates. Verify nothing broke.
             </li>
             <li>
-              <strong>On a regular schedule</strong> — SSL certificates expire, dependencies
+              <strong>On a regular schedule</strong> . SSL certificates expire, dependencies
               accumulate CVEs, and CORS policies drift. Monthly isn&apos;t enough; weekly is better.
             </li>
             <li>
-              <strong>When onboarding a new enterprise customer</strong> — many enterprise
+              <strong>When onboarding a new enterprise customer</strong> . many enterprise
               procurement teams now require a recent security assessment as part of vendor
               evaluation.
             </li>
@@ -290,7 +290,7 @@ export default function WhatIsExternalSecurityScanningPage() {
           <h2>How to Get Started</h2>
           <p>
             The lowest-friction way to understand your external security posture is a one-click
-            scan. No setup, no SDK, no code access required — just paste your URL.
+            scan. No setup, no SDK, no code access required . just paste your URL.
           </p>
           <p>
             <Link href="/score" className="text-prussian-blue-600 hover:underline">
@@ -302,7 +302,7 @@ export default function WhatIsExternalSecurityScanningPage() {
             <Link href="/pricing" className="text-prussian-blue-600 hover:underline">
               the lifetime plan is $79
             </Link>{" "}
-            — one payment, no recurring fees.
+            . one payment, no recurring fees.
           </p>
 
         </div>
@@ -310,7 +310,7 @@ export default function WhatIsExternalSecurityScanningPage() {
         {/* CTA */}
         <div className="mt-12 rounded-2xl border border-prussian-blue-200 dark:border-prussian-blue-800 bg-prussian-blue-50 dark:bg-prussian-blue-950/30 p-8 text-center">
           <h3 className="text-xl font-bold text-ink-black-950 dark:text-alabaster-grey-50">
-            Scan Your API Free — See What an Attacker Sees
+            Scan Your API Free . See What an Attacker Sees
           </h3>
           <p className="mt-2 text-sm text-dusty-denim-700 dark:text-dusty-denim-400">
             External security scan: headers, CORS, SSL, exposed endpoints, API key exposure. 60 seconds. No signup.
@@ -351,7 +351,7 @@ export default function WhatIsExternalSecurityScanningPage() {
               href="/pricing"
               className="text-sm text-prussian-blue-600 hover:underline"
             >
-              Scantient Pricing — Lifetime Access from $79 →
+              Scantient Pricing . Lifetime Access from $79 →
             </Link>
           </div>
         </div>

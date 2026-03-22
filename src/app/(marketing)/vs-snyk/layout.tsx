@@ -1,5 +1,5 @@
 /**
- * vs-snyk page layout — provides metadata and JSON-LD schema for the /vs-snyk route.
+ * vs-snyk page layout . provides metadata and JSON-LD schema for the /vs-snyk route.
  * The page is a "use client" component, so metadata is defined here.
  */
 import type { Metadata } from "next";
@@ -9,11 +9,11 @@ import Script from "next/script";
 export const metadata: Metadata = {
   title: "Snyk vs Scantient: Post-Deploy Security Without Enterprise Pricing",
   description:
-    "Looking for a Snyk alternative? Scantient covers what Snyk misses — runtime security, deployed app scanning, and API vulnerability detection. $79 lifetime vs Snyk's per-seat pricing.",
+    "Looking for a Snyk alternative? Scantient covers what Snyk misses . runtime security, deployed app scanning, and API vulnerability detection. $79 lifetime vs Snyk's per-seat pricing.",
   openGraph: {
     title: "Snyk vs Scantient: Post-Deploy Security Without Enterprise Pricing",
     description:
-      "Snyk alternative for startups. Scantient scans your deployed app for runtime security gaps Snyk never sees — no per-seat pricing, $79 lifetime.",
+      "Snyk alternative for startups. Scantient scans your deployed app for runtime security gaps Snyk never sees . no per-seat pricing, $79 lifetime.",
     url: "https://scantient.com/vs-snyk",
     siteName: "Scantient",
     type: "website",
@@ -44,7 +44,7 @@ const faqSchema = {
       name: "Is Scantient a Snyk alternative?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Scantient and Snyk solve complementary but different problems. Snyk focuses on dependency vulnerability scanning in your source code (shift-left). Scantient monitors your deployed application from the outside — checking security headers, CORS policies, exposed endpoints, SSL certificates, and secrets in JavaScript bundles. Most startups benefit from using both: Snyk in CI for dependency scanning, Scantient for continuous post-deploy monitoring.",
+        text: "Scantient and Snyk solve complementary but different problems. Snyk focuses on dependency vulnerability scanning in your source code (shift-left). Scantient monitors your deployed application from the outside . checking security headers, CORS policies, exposed endpoints, SSL certificates, and secrets in JavaScript bundles. Most startups benefit from using both: Snyk in CI for dependency scanning, Scantient for continuous post-deploy monitoring.",
       },
     },
     {
@@ -52,7 +52,7 @@ const faqSchema = {
       name: "What does Scantient check that Snyk doesn't?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Scantient checks your live, deployed application — things Snyk can't see from source code: HTTP security headers (CSP, HSTS, X-Frame-Options), CORS policy enforcement, SSL certificate health and expiry, exposed debug endpoints like /.env or /api/admin, API keys visible in bundled JavaScript, and third-party script integrity. These runtime issues are invisible to static code analysis.",
+        text: "Scantient checks your live, deployed application . things Snyk can't see from source code: HTTP security headers (CSP, HSTS, X-Frame-Options), CORS policy enforcement, SSL certificate health and expiry, exposed debug endpoints like /.env or /api/admin, API keys visible in bundled JavaScript, and third-party script integrity. These runtime issues are invisible to static code analysis.",
       },
     },
     {
@@ -68,7 +68,7 @@ const faqSchema = {
       name: "Do I need to install an SDK to use Scantient?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "No. Scantient is an external scanner — you paste your URL and get results in 60 seconds. No SDK installation, no CI/CD integration required, no code changes. This is by design: external scanning tests what attackers actually see, not what's in your source code.",
+        text: "No. Scantient is an external scanner . you paste your URL and get results in 60 seconds. No SDK installation, no CI/CD integration required, no code changes. This is by design: external scanning tests what attackers actually see, not what's in your source code.",
       },
     },
   ],

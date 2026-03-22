@@ -76,9 +76,9 @@ describe("verifyWebhookSignature", () => {
     const payload = "test-payload";
     const secret = "secret";
     const sig = signWebhookPayload(payload, secret);
-    // Uppercase the hex — should fail
+    // Uppercase the hex . should fail
     const upperSig = sig.replace(/[a-f]/g, (c) => c.toUpperCase());
-    // May or may not match depending on case — just ensure it's deterministic
+    // May or may not match depending on case . just ensure it's deterministic
     const result1 = verifyWebhookSignature(payload, sig, secret);
     expect(result1).toBe(true);
     if (sig !== upperSig) {

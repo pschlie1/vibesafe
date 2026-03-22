@@ -4,7 +4,7 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "The Indie Dev Security Checklist: Ship Fast Without Getting Hacked | Scantient Blog",
   description:
-    "A practical startup security checklist for indie developers. 12 security items to check before (and after) launch — what to do, why it matters, and how to verify each one.",
+    "A practical startup security checklist for indie developers. 12 security items to check before (and after) launch . what to do, why it matters, and how to verify each one.",
   keywords: "startup security checklist, indie dev security, api security tools, ship fast security, developer security checklist, api vulnerability scanner",
   openGraph: {
     title: "The Indie Dev Security Checklist: Ship Fast Without Getting Hacked",
@@ -53,7 +53,7 @@ export default function IndieDevSecurityChecklistPage() {
           The Indie Dev Security Checklist: Ship Fast Without Getting Hacked
         </h1>
         <p className="mt-4 text-lg text-dusty-denim-700 dark:text-dusty-denim-400">
-          Security doesn&apos;t have to slow you down. But ignoring it will. Here&apos;s a practical pre-launch checklist for indie developers and startup teams — every item is actionable, fast, and specific about what to check and how.
+          Security doesn&apos;t have to slow you down. But ignoring it will. Here&apos;s a practical pre-launch checklist for indie developers and startup teams . every item is actionable, fast, and specific about what to check and how.
         </p>
         <div className="mt-6 flex items-center gap-4 text-sm text-dusty-denim-500">
           <time dateTime="2025-12-10">December 10, 2025</time>
@@ -66,10 +66,10 @@ export default function IndieDevSecurityChecklistPage() {
       <div className="prose prose-slate dark:prose-invert max-w-none">
 
         <p>
-          Indie devs get security wrong in a predictable way: not from ignorance, but from timing. Security is the thing you&apos;ll &quot;handle later&quot; — after you validate the idea, after you get your first users, after you hit $1K MRR. Then you forget. Then something breaks.
+          Indie devs get security wrong in a predictable way: not from ignorance, but from timing. Security is the thing you&apos;ll &quot;handle later&quot; . after you validate the idea, after you get your first users, after you hit $1K MRR. Then you forget. Then something breaks.
         </p>
         <p>
-          This checklist is designed for the reality of how indie devs work: fast, solo or tiny team, shipping constantly, no dedicated security team. Each item is specific — what exactly to check, how to check it, and why attackers care.
+          This checklist is designed for the reality of how indie devs work: fast, solo or tiny team, shipping constantly, no dedicated security team. Each item is specific . what exactly to check, how to check it, and why attackers care.
         </p>
         <p>
           The good news: most of these take under 30 minutes total to verify. A <Link href="/score" className="text-prussian-blue-600 hover:underline">single automated scan</Link> covers the majority of them in 60 seconds.
@@ -131,7 +131,7 @@ export default function IndieDevSecurityChecklistPage() {
           They should all return 404, not 200 or 403.
         </p>
         <p>
-          <strong>Why attackers care:</strong> Attackers run automated scripts that probe every new domain on the internet for these paths within hours of launch. A <code>/.env</code> returning 200 exposes your database connection strings, API keys, and service credentials. This is how most indie dev breaches happen — not clever hacking, just checking obvious paths.
+          <strong>Why attackers care:</strong> Attackers run automated scripts that probe every new domain on the internet for these paths within hours of launch. A <code>/.env</code> returning 200 exposes your database connection strings, API keys, and service credentials. This is how most indie dev breaches happen . not clever hacking, just checking obvious paths.
         </p>
         <p>
           <strong>Fix:</strong> Return 404 (not 403) for these paths. 403 tells attackers the path exists. 404 is ambiguous.
@@ -150,7 +150,7 @@ export default function IndieDevSecurityChecklistPage() {
 
         <h3>✅ 6. SSL Certificate Is Valid and Monitored</h3>
         <p>
-          <strong>What to check:</strong> Go to <a href="https://www.ssllabs.com/ssltest/" target="_blank" rel="noopener noreferrer" className="text-prussian-blue-600 hover:underline">SSL Labs</a> and run a test on your domain. You want grade A. Also note the expiry date — it should be 30+ days away.
+          <strong>What to check:</strong> Go to <a href="https://www.ssllabs.com/ssltest/" target="_blank" rel="noopener noreferrer" className="text-prussian-blue-600 hover:underline">SSL Labs</a> and run a test on your domain. You want grade A. Also note the expiry date . it should be 30+ days away.
         </p>
         <p>
           <strong>Why attackers care:</strong> An expired certificate takes your site offline with a browser security warning. 100% of users see it and most leave. For B2B, it can kill a deal. For e-commerce, it stops all purchases instantly.
@@ -177,7 +177,7 @@ export default function IndieDevSecurityChecklistPage() {
           <strong>What to check:</strong> Compare your production environment variable list against your <code>.env.example</code> file. Every variable that&apos;s required should be set. None should be test/placeholder values in production (look for: <code>test_</code>, <code>sk_test_</code>, <code>example</code>, <code>your_key_here</code>).
         </p>
         <p>
-          <strong>Why attackers care:</strong> Apps running with test API keys often have weaker validation, rate limiting, or logging. Stripe test mode processes don&apos;t charge real cards — which looks like a payment went through but nothing was billed.
+          <strong>Why attackers care:</strong> Apps running with test API keys often have weaker validation, rate limiting, or logging. Stripe test mode processes don&apos;t charge real cards . which looks like a payment went through but nothing was billed.
         </p>
         <p>
           <strong>Fix:</strong> Audit your Vercel/Railway/Heroku environment variable dashboard before launch. Every <code>sk_test_</code> becomes <code>sk_live_</code>.
@@ -188,7 +188,7 @@ export default function IndieDevSecurityChecklistPage() {
           <strong>What to check:</strong> If you&apos;re using Supabase, check that RLS (Row Level Security) is enabled on all tables. If you&apos;re using a managed Postgres, check that the connection string requires SSL (<code>sslmode=require</code>) and that the database is not exposed to 0.0.0.0/0.
         </p>
         <p>
-          <strong>Why attackers care:</strong> An internet-facing database with weak credentials is compromised within minutes. This is one of the most common ways indie dev apps get data exfiltrated — not through the web app, but directly through the database.
+          <strong>Why attackers care:</strong> An internet-facing database with weak credentials is compromised within minutes. This is one of the most common ways indie dev apps get data exfiltrated . not through the web app, but directly through the database.
         </p>
         <p>
           <strong>Fix:</strong> Database should accept connections only from your app servers (private networking). Always use SSL for database connections. Enable RLS in Supabase.
@@ -201,7 +201,7 @@ export default function IndieDevSecurityChecklistPage() {
           <strong>What to check:</strong> Try logging in with the wrong password 10 times in a row. Does your app slow down, show a captcha, or block the IP? If not, you have no rate limiting.
         </p>
         <p>
-          <strong>Why attackers care:</strong> Without rate limiting, attackers can run credential stuffing attacks — trying millions of email/password combinations from breached databases. If any of your users reuse passwords (most do), their accounts can be taken over.
+          <strong>Why attackers care:</strong> Without rate limiting, attackers can run credential stuffing attacks . trying millions of email/password combinations from breached databases. If any of your users reuse passwords (most do), their accounts can be taken over.
         </p>
         <p>
           <strong>Fix:</strong> Use Upstash Redis + @upstash/ratelimit in Next.js API routes. Or use a managed auth provider (Auth0, Clerk) that includes rate limiting.
@@ -212,7 +212,7 @@ export default function IndieDevSecurityChecklistPage() {
           <strong>What to check:</strong> Run <code>npm audit</code> or <code>pnpm audit</code> in your project directory. Look for high and critical vulnerabilities. Also run <code>npm outdated</code> to see what&apos;s behind.
         </p>
         <p>
-          <strong>Why attackers care:</strong> Known CVEs in popular packages get exploited at scale. The Log4Shell vulnerability affected millions of systems. Left-pad, event-stream, node-ipc — supply chain attacks through npm packages are real and frequent.
+          <strong>Why attackers care:</strong> Known CVEs in popular packages get exploited at scale. The Log4Shell vulnerability affected millions of systems. Left-pad, event-stream, node-ipc . supply chain attacks through npm packages are real and frequent.
         </p>
         <p>
           <strong>Fix:</strong> Enable Dependabot in GitHub (free). Run <code>npm audit fix</code> weekly. Prioritize critical and high severity fixes. For medium, fix before the next launch.
@@ -220,13 +220,13 @@ export default function IndieDevSecurityChecklistPage() {
 
         <h3>✅ 12. Run a Full External Security Scan Before Launch</h3>
         <p>
-          <strong>What to check:</strong> Run <Link href="/score" className="text-prussian-blue-600 hover:underline">a free Scantient scan</Link> on your production URL. This covers all of the above in one pass — exposed secrets, security headers, CORS, debug endpoints, SSL, and more. No signup, no SDK, just your URL.
+          <strong>What to check:</strong> Run <Link href="/score" className="text-prussian-blue-600 hover:underline">a free Scantient scan</Link> on your production URL. This covers all of the above in one pass . exposed secrets, security headers, CORS, debug endpoints, SSL, and more. No signup, no SDK, just your URL.
         </p>
         <p>
           <strong>Why attackers care:</strong> An external scan mimics exactly what an attacker does in the first 5 minutes of probing a new target. If anything obvious is exposed, you&apos;ll know before they do.
         </p>
         <p>
-          <strong>How Scantient helps:</strong> The free scan covers all the categories above. For ongoing monitoring (so you know immediately when something changes in production), <Link href="/pricing" className="text-prussian-blue-600 hover:underline">the lifetime deal is $79</Link> — continuous monitoring with alerts, no recurring fees.
+          <strong>How Scantient helps:</strong> The free scan covers all the categories above. For ongoing monitoring (so you know immediately when something changes in production), <Link href="/pricing" className="text-prussian-blue-600 hover:underline">the lifetime deal is $79</Link> . continuous monitoring with alerts, no recurring fees.
         </p>
 
         <h2>The Pre-Launch Checklist (Quick Reference)</h2>
@@ -248,7 +248,7 @@ export default function IndieDevSecurityChecklistPage() {
         </div>
 
         <p>
-          If you want to read more about the specific mistakes that cause the worst breaches, check the <Link href="/blog/7-api-security-mistakes" className="text-prussian-blue-600 hover:underline">7 API security mistakes killing startups</Link> post — each mistake maps to one of these checklist items with real-world examples. And once you&apos;ve shipped, don&apos;t forget your <Link href="/blog/post-deploy-security-checklist" className="text-prussian-blue-600 hover:underline">post-deployment security checks</Link> — the risks change once real traffic hits your app.
+          If you want to read more about the specific mistakes that cause the worst breaches, check the <Link href="/blog/7-api-security-mistakes" className="text-prussian-blue-600 hover:underline">7 API security mistakes killing startups</Link> post . each mistake maps to one of these checklist items with real-world examples. And once you&apos;ve shipped, don&apos;t forget your <Link href="/blog/post-deploy-security-checklist" className="text-prussian-blue-600 hover:underline">post-deployment security checks</Link> . the risks change once real traffic hits your app.
         </p>
 
       </div>

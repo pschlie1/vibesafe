@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "OWASP LLM Top 10: What API Builders Need to Know in 2026",
     description:
-      "OWASP published a Top 10 for LLM applications. Here's what it means for developers building APIs that use language models — and how to fix each one.",
+      "OWASP published a Top 10 for LLM applications. Here's what it means for developers building APIs that use language models . and how to fix each one.",
   },
 };
 
@@ -87,8 +87,8 @@ export default function OwaspLlmTop10ApiBuildersPage() {
           </h1>
           <p className="mt-4 text-lg text-dusty-denim-700 dark:text-dusty-denim-400">
             OWASP published the LLM Top 10 to give developers a framework for securing AI
-            applications. If you&apos;re building APIs that call language models — for completions,
-            embeddings, agents, or RAG pipelines — these vulnerabilities apply directly to you.
+            applications. If you&apos;re building APIs that call language models . for completions,
+            embeddings, agents, or RAG pipelines . these vulnerabilities apply directly to you.
           </p>
           <div className="mt-6 flex items-center gap-4 text-sm text-dusty-denim-500">
             <time dateTime="2026-03-07">March 7, 2026</time>
@@ -106,7 +106,7 @@ export default function OwaspLlmTop10ApiBuildersPage() {
               OWASP API Security Top 10
             </Link>{" "}
             was written for traditional REST and GraphQL APIs. It covers broken object-level
-            authorization, excessive data exposure, lack of rate limiting. Excellent baseline —
+            authorization, excessive data exposure, lack of rate limiting. Excellent baseline .
             but it doesn&apos;t address the attack surface that emerges when your API calls a language
             model.
           </p>
@@ -136,15 +136,15 @@ export default function OwaspLlmTop10ApiBuildersPage() {
           <p>
             <strong>Mitigations:</strong> Separate system prompt from user input architecturally.
             Use parameterized LLM calls where possible. Validate and sanitize all external
-            content before including it in prompts. Implement output validation — don&apos;t trust
+            content before including it in prompts. Implement output validation . don&apos;t trust
             model outputs blindly in automated pipelines.
           </p>
 
           <h2>LLM02: Insecure Output Handling</h2>
           <p>
             LLM output is attacker-controlled data. If your API takes model output and passes it
-            to another system without sanitization — a shell command, a database query, a rendered
-            HTML template — you have a secondary injection vulnerability. The LLM becomes a
+            to another system without sanitization . a shell command, a database query, a rendered
+            HTML template . you have a secondary injection vulnerability. The LLM becomes a
             proxy for injection attacks.
           </p>
           <p>
@@ -181,7 +181,7 @@ export default function OwaspLlmTop10ApiBuildersPage() {
           <h2>LLM04: Model Denial of Service</h2>
           <p>
             LLM inference is expensive. Adversarially crafted inputs can maximize token
-            consumption — either through very long inputs, inputs that cause maximum-length
+            consumption . either through very long inputs, inputs that cause maximum-length
             outputs, or recursive patterns that exhaust context windows. The result is degraded
             availability and increased costs.
           </p>
@@ -211,7 +211,7 @@ export default function OwaspLlmTop10ApiBuildersPage() {
               Scan your AI-integrated API for security issues
             </p>
             <p className="mt-1 text-sm text-dusty-denim-700 dark:text-dusty-denim-400">
-              Scantient catches the external attack surface of APIs — including AI endpoints.
+              Scantient catches the external attack surface of APIs . including AI endpoints.
               Headers, CORS, authentication, exposed endpoints. Free scan.
             </p>
             <Link
@@ -226,13 +226,13 @@ export default function OwaspLlmTop10ApiBuildersPage() {
           <p>
             Models memorize training data. They can be prompted to reproduce PII, credentials,
             proprietary content, or system configuration from their training corpus. In
-            fine-tuned models trained on your company data, this risk is elevated — the model
+            fine-tuned models trained on your company data, this risk is elevated . the model
             may reproduce internal documents, customer records, or API keys that were in the
             training set.
           </p>
           <p>
             In production RAG systems, the model may reproduce sensitive retrieved content to
-            users who shouldn&apos;t have access to it — effectively bypassing your access control
+            users who shouldn&apos;t have access to it . effectively bypassing your access control
             layer if authorization isn&apos;t enforced at retrieval time.
           </p>
           <p>
@@ -252,7 +252,7 @@ export default function OwaspLlmTop10ApiBuildersPage() {
           <p>
             An agent that can send emails on behalf of any user is a different security surface
             than an API endpoint that sends an email. The LLM is now the authorization
-            decision-maker — and it can be manipulated.
+            decision-maker . and it can be manipulated.
           </p>
           <p>
             <strong>Mitigations:</strong> Apply least-privilege to tool scopes. Require explicit
@@ -263,8 +263,8 @@ export default function OwaspLlmTop10ApiBuildersPage() {
           <h2>LLM08: Excessive Agency</h2>
           <p>
             This is the agentic AI version of privilege escalation. If an LLM agent has been
-            granted too much autonomy — too many tools, too broad permissions, too little
-            human oversight — a compromised or manipulated agent can cause damage proportional
+            granted too much autonomy . too many tools, too broad permissions, too little
+            human oversight . a compromised or manipulated agent can cause damage proportional
             to those permissions.
           </p>
           <p>
@@ -276,8 +276,8 @@ export default function OwaspLlmTop10ApiBuildersPage() {
           <h2>LLM09: Overreliance</h2>
           <p>
             LLMs hallucinate. They produce confident, fluent, incorrect output. If your API
-            uses LLM output for consequential decisions — medical advice, legal interpretation,
-            financial recommendations, security policy — without validation, you&apos;re inheriting
+            uses LLM output for consequential decisions . medical advice, legal interpretation,
+            financial recommendations, security policy . without validation, you&apos;re inheriting
             the model&apos;s error rate into your application.
           </p>
           <p>
@@ -290,7 +290,7 @@ export default function OwaspLlmTop10ApiBuildersPage() {
           <h2>LLM10: Model Theft</h2>
           <p>
             Fine-tuned models represent significant investment. Adversarial queries can extract
-            enough information about model behavior to reconstruct a functional copy —
+            enough information about model behavior to reconstruct a functional copy .
             particularly for specialized fine-tunes. For most API developers using commercial
             APIs, this risk sits with the provider. For those self-hosting fine-tuned models,
             it&apos;s relevant.
@@ -308,23 +308,23 @@ export default function OwaspLlmTop10ApiBuildersPage() {
           </p>
           <ul>
             <li>
-              <strong>LLM01 (Prompt Injection)</strong> — the highest-impact, most widely
+              <strong>LLM01 (Prompt Injection)</strong> . the highest-impact, most widely
               applicable risk for any API that accepts user input and passes it to an LLM
             </li>
             <li>
-              <strong>LLM02 (Insecure Output Handling)</strong> — critical for any API that
+              <strong>LLM02 (Insecure Output Handling)</strong> . critical for any API that
               pipes model output to other systems
             </li>
             <li>
-              <strong>LLM04 (Model DoS)</strong> — relevant for any production API that charges
+              <strong>LLM04 (Model DoS)</strong> . relevant for any production API that charges
               for LLM-backed operations
             </li>
             <li>
-              <strong>LLM06 (Sensitive Information Disclosure)</strong> — especially relevant
+              <strong>LLM06 (Sensitive Information Disclosure)</strong> . especially relevant
               for RAG architectures handling multi-tenant data
             </li>
             <li>
-              <strong>LLM07 &amp; LLM08 (Plugin Design / Excessive Agency)</strong> — critical for
+              <strong>LLM07 &amp; LLM08 (Plugin Design / Excessive Agency)</strong> . critical for
               agentic systems with tool access
             </li>
           </ul>
@@ -346,7 +346,7 @@ export default function OwaspLlmTop10ApiBuildersPage() {
         {/* CTA */}
         <div className="mt-12 rounded-2xl border border-prussian-blue-200 dark:border-prussian-blue-800 bg-prussian-blue-50 dark:bg-prussian-blue-950/30 p-8 text-center">
           <h3 className="text-xl font-bold text-ink-black-950 dark:text-alabaster-grey-50">
-            Scan Your API Free — 60 Seconds
+            Scan Your API Free . 60 Seconds
           </h3>
           <p className="mt-2 text-sm text-dusty-denim-700 dark:text-dusty-denim-400">
             External security scan of your live API. Catches headers, CORS, SSL, exposed endpoints. No signup.

@@ -17,7 +17,7 @@ const checks: Check[] = [
   { icon: "⚙️", title: "Exposed Debug Endpoints", outcome: "Your outcome: Attackers don't find .env, .git/HEAD, /api/admin, phpinfo.", desc: "Attackers check for debug endpoints within 2 minutes of finding your site. We check first." },
   { icon: "🚀", title: "Performance & Uptime Alerts", outcome: "Your outcome: Know about outages before your CEO calls.", desc: "We baseline your response time and alert if load time jumps to 8 seconds. Get notified of 500 errors within hours, before customers report them." },
   { icon: "🔗", title: "Malicious External Scripts", outcome: "Your outcome: No backdoors from compromised CDNs.", desc: "Every third-party script is a potential breach. We detect unencrypted loads, suspicious data URIs, and supply chain compromises." },
-  { icon: "📋", title: "Form & API Security Flaws", outcome: "Your outcome: Forms submit to YOUR domain, not attacker's.", desc: "We catch forms submitting to wrong domains, missing CSRF tokens, unencrypted API calls — the stuff compliance auditors find." },
+  { icon: "📋", title: "Form & API Security Flaws", outcome: "Your outcome: Forms submit to YOUR domain, not attacker's.", desc: "We catch forms submitting to wrong domains, missing CSRF tokens, unencrypted API calls . the stuff compliance auditors find." },
   { icon: "🌐", title: "CORS & API Exposure Issues", outcome: "Your outcome: Competitors can't read your customer data via API.", desc: "One misconfigured CORS header = your API exposed. We detect overpermissive access." },
   { icon: "🔐", title: "SSL Certificate Expiry", outcome: "Your outcome: Your site never goes dark due to expired SSL.", desc: "A lapsed certificate = 100% downtime. We alert 30, 14, and 7 days before expiry." },
   { icon: "📡", title: "Subdomain Takeover Risks", outcome: "Your outcome: Forgotten DNS records aren't free subdomains for attackers.", desc: "We detect DNS misconfigurations, orphaned CNAME records, and unused subdomains." },
@@ -131,7 +131,7 @@ const organizationSchema = {
   name: "Scantient",
   url: "https://scantient.com",
   logo: "https://scantient.com/logo.png",
-  description: "Scantient provides automated security scanning and monitoring for AI-generated and indie developer applications — catching vulnerabilities, misconfigurations, and compliance gaps before attackers do.",
+  description: "Scantient provides automated security scanning and monitoring for AI-generated and indie developer applications . catching vulnerabilities, misconfigurations, and compliance gaps before attackers do.",
 };
 
 const faqSchema = {
@@ -289,7 +289,7 @@ export default function LandingPage() {
         <div className="mx-auto max-w-[1000px]">
           <h2 className="mb-16 text-center text-3xl font-extrabold tracking-[-0.02em] text-heading sm:text-4xl">How Scantient works</h2>
 
-          {/* Zigzag timeline — desktop */}
+          {/* Zigzag timeline . desktop */}
           <div className="hidden md:block relative">
             {/* Center vertical line */}
             <div className="absolute left-1/2 top-0 bottom-0 w-px bg-border" />
@@ -304,7 +304,7 @@ export default function LandingPage() {
                 const isOdd = idx % 2 === 0; // 0-indexed: step 1 (idx=0) → left, step 2 (idx=1) → right
                 return (
                   <div key={item.step} className="relative flex items-center">
-                    {/* Step number circle — centered on the line */}
+                    {/* Step number circle . centered on the line */}
                     <div className="absolute left-1/2 -translate-x-1/2 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-primary text-sm font-bold text-white shadow-md">
                       {item.step}
                     </div>
@@ -338,7 +338,7 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* Mobile fallback — single column vertical stack */}
+          {/* Mobile fallback . single column vertical stack */}
           <div className="md:hidden space-y-12">
             {[
               { step: "1", title: "Register your apps", desc: "Paste your app URL. No code changes, no SDK, no developer involvement required. Setup takes 30 seconds." },
@@ -401,7 +401,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Social Proof — radical transparency */}
+      {/* Social Proof . radical transparency */}
       <section className="border-y border-border bg-surface px-6 py-24 sm:py-32">
         <div className="mx-auto max-w-[1200px]">
           <h2 className="mb-4 text-center text-3xl font-extrabold tracking-[-0.02em] text-heading sm:text-4xl">Results that speak for themselves</h2>

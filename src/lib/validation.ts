@@ -11,7 +11,7 @@ import { z } from "zod";
 // ---------------------------------------------------------------------------
 
 /**
- * Strong password schema — requires minimum 12 characters plus at least one
+ * Strong password schema . requires minimum 12 characters plus at least one
  * uppercase letter, one lowercase letter, one digit, and one special character.
  */
 export const passwordSchema = z
@@ -78,7 +78,7 @@ export function isReservedSlug(slug: string): boolean {
 // ---------------------------------------------------------------------------
 
 /**
- * Strict HTTP/HTTPS URL — rejects file://, ftp://, data:, javascript:, etc.
+ * Strict HTTP/HTTPS URL . rejects file://, ftp://, data:, javascript:, etc.
  * Use this for any user-supplied URL that will be fetched or rendered.
  */
 export const urlSchema = z

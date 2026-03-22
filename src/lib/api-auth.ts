@@ -1,7 +1,7 @@
 import crypto from "node:crypto";
 import { db } from "@/lib/db";
 
-// API keys use a "vs_" prefix — reject anything that doesn't match before hitting the DB.
+// API keys use a "vs_" prefix . reject anything that doesn't match before hitting the DB.
 const API_KEY_PREFIX = "vs_";
 const API_KEY_MIN_LENGTH = 10;  // Must have prefix + at least 7 chars
 const API_KEY_MAX_LENGTH = 60;  // Generous ceiling; prevents extreme-length DB queries

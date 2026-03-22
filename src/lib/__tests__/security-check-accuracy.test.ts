@@ -7,7 +7,7 @@
  *   - 1 test: finding does NOT fire on good input (false positive prevention)
  *   - 1 test: edge case (empty input, malformed headers, etc.)
  *
- * Zero real network calls — all async functions mocked via vi.mock.
+ * Zero real network calls . all async functions mocked via vi.mock.
  */
 
 import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
@@ -74,20 +74,20 @@ function secureHeaders(): Headers {
 // 1. scanJavaScriptForKeys
 // ─────────────────────────────────────────────────────────────────────────────
 
-// Assembled at runtime — avoids GitHub push-protection on Stripe test data
+// Assembled at runtime . avoids GitHub push-protection on Stripe test data
 const FAKE_SK_LIVE = "sk_" + "live_abcdef1234567890abcdef12345678";
 
-describe("scanJavaScriptForKeys — secret detection", () => {
+describe("scanJavaScriptForKeys . secret detection", () => {
   it("fires CRITICAL on Stripe live secret key in JS bundle", () => {
     const findings = scanJavaScriptForKeys([`const key = '${FAKE_SK_LIVE}';`]);
     expect(findings.length).toBeGreaterThanOrEqual(1);
     expect(findings.some((f) => f.severity === "CRITICAL")).toBe(true);
   });
 
-  it("does NOT fire on Stripe publishable key (pk_live_) — safe to expose", () => {
+  it("does NOT fire on Stripe publishable key (pk_live_) . safe to expose", () => {
     const findings = scanJavaScriptForKeys(["const pub = 'pk_live_abcdef1234567890abcdef12345678';"]);
     expect(findings.every((f) => f.code !== "SECRET_IN_BUNDLE")).toBe(true);
-    // pk_live_ keys are NOT secrets — they're meant to be public
+    // pk_live_ keys are NOT secrets . they're meant to be public
     const stripeFindings = findings.filter((f) => f.title?.includes("pk_live"));
     expect(stripeFindings).toHaveLength(0);
   });
@@ -98,7 +98,7 @@ describe("scanJavaScriptForKeys — secret detection", () => {
 
   it("does NOT fire on generic 32-char alphanumeric that is NOT a known secret format", () => {
     const findings = scanJavaScriptForKeys(["const id = 'abcdef1234567890abcdef1234567890';"]);
-    // Should not flag as a secret — no recognized prefix
+    // Should not flag as a secret . no recognized prefix
     expect(findings.filter((f) => f.severity === "CRITICAL")).toHaveLength(0);
   });
 
@@ -119,7 +119,7 @@ describe("scanJavaScriptForKeys — secret detection", () => {
 // 2. checkSecurityHeaders
 // ─────────────────────────────────────────────────────────────────────────────
 
-describe("checkSecurityHeaders — header compliance", () => {
+describe("checkSecurityHeaders . header compliance", () => {
   it("fires on completely missing security headers", () => {
     const findings = checkSecurityHeaders(makeHeaders({ "content-type": "text/html" }));
     // Codes are MISSING_HEADER_{HEADER-NAME-UPPERCASE-WITH-UNDERSCORES}
@@ -156,7 +156,7 @@ describe("checkSecurityHeaders — header compliance", () => {
 // 3. checkClientSideAuthBypass
 // ─────────────────────────────────────────────────────────────────────────────
 
-describe("checkClientSideAuthBypass — client-side auth pattern detection", () => {
+describe("checkClientSideAuthBypass . client-side auth pattern detection", () => {
   it("fires on localStorage isAdmin pattern", () => {
     const html = `<script>if(localStorage.getItem('isAdmin') === 'true') showAdmin();</script>`;
     const findings = checkClientSideAuthBypass(html);
@@ -185,7 +185,7 @@ describe("checkClientSideAuthBypass — client-side auth pattern detection", () 
 // 4. checkInlineScripts
 // ─────────────────────────────────────────────────────────────────────────────
 
-describe("checkInlineScripts — XSS and secrets in inline code", () => {
+describe("checkInlineScripts . XSS and secrets in inline code", () => {
   it("fires on dangerouslySetInnerHTML assignment in compiled React output", () => {
     // Pattern: [^"']dangerouslySetInnerHTML\s*[:=]\s*\{  (colon or equals, then opening brace)
     const html = `<script>component.dangerouslySetInnerHTML = {__html: userInput}</script>`;
@@ -194,7 +194,7 @@ describe("checkInlineScripts — XSS and secrets in inline code", () => {
   });
 
   it("does NOT fire on dangerouslySetInnerHTML as text in PHP/HTML page (false positive prevention)", () => {
-    // A PHP tutorial or docs page might mention it in plain text — not in a script tag
+    // A PHP tutorial or docs page might mention it in plain text . not in a script tag
     const html = `<p>React uses <code>dangerouslySetInnerHTML</code> for raw HTML injection.</p>
 <p>This is a WordPress site. No React here.</p>`;
     const findings = checkInlineScripts(html);
@@ -219,7 +219,7 @@ describe("checkInlineScripts — XSS and secrets in inline code", () => {
 // 5. checkInlineScriptCount
 // ─────────────────────────────────────────────────────────────────────────────
 
-describe("checkInlineScriptCount — CSP weakening from script count", () => {
+describe("checkInlineScriptCount . CSP weakening from script count", () => {
   it("fires when more than 5 inline scripts and no CSP header", () => {
     const html = Array.from({ length: 6 }, (_, i) => `<script>var x${i}=1;</script>`).join("");
     const headers = makeHeaders({});
@@ -250,7 +250,7 @@ describe("checkInlineScriptCount — CSP weakening from script count", () => {
 // 6. checkMetaAndConfig
 // ─────────────────────────────────────────────────────────────────────────────
 
-describe("checkMetaAndConfig — source maps and server disclosure", () => {
+describe("checkMetaAndConfig . source maps and server disclosure", () => {
   it("fires on sourcemap comment in HTML referencing .map file in production", () => {
     const html = `<script src="/app.js">/* //# sourceMappingURL=app.js.map */</script>`;
     const headers = makeHeaders({});
@@ -282,7 +282,7 @@ describe("checkMetaAndConfig — source maps and server disclosure", () => {
 // 7. checkOpenRedirects
 // ─────────────────────────────────────────────────────────────────────────────
 
-describe("checkOpenRedirects — redirect parameter detection", () => {
+describe("checkOpenRedirects . redirect parameter detection", () => {
   it("fires on redirect parameter with external URL in HTML", () => {
     const html = `<a href="/login?redirect=https://evil.com">Login</a>`;
     const findings = checkOpenRedirects(html);
@@ -312,7 +312,7 @@ describe("checkOpenRedirects — redirect parameter detection", () => {
 // 8. checkCookieSecurity
 // ─────────────────────────────────────────────────────────────────────────────
 
-describe("checkCookieSecurity — cookie flag validation", () => {
+describe("checkCookieSecurity . cookie flag validation", () => {
   it("fires when Set-Cookie lacks HttpOnly flag", () => {
     const headers = makeHeaders({ "set-cookie": "session=abc123; Secure; SameSite=Strict" });
     const findings = checkCookieSecurity(headers);
@@ -353,7 +353,7 @@ describe("checkCookieSecurity — cookie flag validation", () => {
 // 9. checkCORSMisconfiguration
 // ─────────────────────────────────────────────────────────────────────────────
 
-describe("checkCORSMisconfiguration — CORS policy validation", () => {
+describe("checkCORSMisconfiguration . CORS policy validation", () => {
   it("fires CRITICAL when Access-Control-Allow-Origin is wildcard with credentials", () => {
     const headers = makeHeaders({
       "access-control-allow-origin": "*",
@@ -395,7 +395,7 @@ describe("checkCORSMisconfiguration — CORS policy validation", () => {
 // 10. checkInformationDisclosure
 // ─────────────────────────────────────────────────────────────────────────────
 
-describe("checkInformationDisclosure — error and stack trace detection", () => {
+describe("checkInformationDisclosure . error and stack trace detection", () => {
   it("fires on Python traceback in response body", () => {
     const body = `Traceback (most recent call last):\n  File "app.py", line 42, in <module>\nKeyError: 'password'`;
     const findings = checkInformationDisclosure(body, makeHeaders({}));
@@ -434,7 +434,7 @@ describe("checkInformationDisclosure — error and stack trace detection", () =>
 // 11. checkSSLIssues
 // ─────────────────────────────────────────────────────────────────────────────
 
-describe("checkSSLIssues — HTTPS and HSTS validation", () => {
+describe("checkSSLIssues . HTTPS and HSTS validation", () => {
   it("fires HIGH on mixed content (HTTP resource on HTTPS page)", () => {
     const html = `<img src="http://cdn.example.com/logo.png">`;
     const headers = makeHeaders({});
@@ -476,7 +476,7 @@ describe("checkSSLIssues — HTTPS and HSTS validation", () => {
 // 12. checkDependencyExposure
 // ─────────────────────────────────────────────────────────────────────────────
 
-describe("checkDependencyExposure — package file exposure in HTML", () => {
+describe("checkDependencyExposure . package file exposure in HTML", () => {
   it("fires CRITICAL when .env file is linked in HTML", () => {
     const html = `<a href="/.env">env file</a>`;
     const findings = checkDependencyExposure(html);
@@ -504,13 +504,13 @@ describe("checkDependencyExposure — package file exposure in HTML", () => {
 // 13. checkAPISecurity
 // ─────────────────────────────────────────────────────────────────────────────
 
-describe("checkAPISecurity — API-specific security checks", () => {
+describe("checkAPISecurity . API-specific security checks", () => {
   it("fires MISSING_RATE_LIMITING on /api/* URL without rate limit headers", () => {
     const findings = checkAPISecurity("", makeHeaders({}), "https://example.com/api/users");
     expect(findings.some((f) => f.code === "NO_RATE_LIMITING")).toBe(true);
   });
 
-  it("does NOT fire NO_RATE_LIMITING_HEADERS on homepage URL — false positive prevention", () => {
+  it("does NOT fire NO_RATE_LIMITING_HEADERS on homepage URL . false positive prevention", () => {
     const findings = checkAPISecurity("", makeHeaders({}), "https://example.com");
     expect(findings.every((f) => f.code !== "NO_RATE_LIMITING")).toBe(true);
   });
@@ -545,7 +545,7 @@ describe("checkAPISecurity — API-specific security checks", () => {
 // 14. checkThirdPartyScripts
 // ─────────────────────────────────────────────────────────────────────────────
 
-describe("checkThirdPartyScripts — CDN and supply chain checks", () => {
+describe("checkThirdPartyScripts . CDN and supply chain checks", () => {
   it("fires CRITICAL on HTTP third-party script (not HTTPS)", () => {
     const html = `<script src="http://cdn.example.com/lib.js"></script>`;
     const findings = checkThirdPartyScripts(html, "https://mysite.com");
@@ -587,10 +587,10 @@ describe("checkThirdPartyScripts — CDN and supply chain checks", () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 15. checkFormSecurity — including false positive regression tests
+// 15. checkFormSecurity . including false positive regression tests
 // ─────────────────────────────────────────────────────────────────────────────
 
-describe("checkFormSecurity — form security checks", () => {
+describe("checkFormSecurity . form security checks", () => {
   it("fires HIGH on form submitting to a genuinely external domain", () => {
     const html = `<form action="https://payment-processor.com/charge" method="POST"><input type="text" name="card"></form>`;
     const findings = checkFormSecurity(html, "https://mysite.com");
@@ -610,10 +610,10 @@ describe("checkFormSecurity — form security checks", () => {
     const html = `<form action="https://www.example.com/submit" method="POST">
       <input type="email" name="email">
     </form>`;
-    // www.example.com is NOT the same as example.com — correct to flag this
+    // www.example.com is NOT the same as example.com . correct to flag this
     // as external (different hostnames). This validates the hostname comparison logic.
     const findings = checkFormSecurity(html, "https://example.com");
-    // www.example.com !== example.com — this SHOULD be flagged
+    // www.example.com !== example.com . this SHOULD be flagged
     const externalFindings = findings.filter((f) => f.code === "FORM_EXTERNAL_ACTION");
     expect(externalFindings.length).toBeGreaterThanOrEqual(1);
   });
@@ -640,7 +640,7 @@ describe("checkFormSecurity — form security checks", () => {
     expect(findings.filter((f) => f.severity === "CRITICAL" || f.severity === "HIGH")).toHaveLength(0);
   });
 
-  it("works without baseUrl — does not throw", () => {
+  it("works without baseUrl . does not throw", () => {
     const html = `<form action="https://external.com/submit" method="POST"></form>`;
     expect(() => checkFormSecurity(html)).not.toThrow();
   });
@@ -650,9 +650,9 @@ describe("checkFormSecurity — form security checks", () => {
 // 16. checkDependencyVersions
 // ─────────────────────────────────────────────────────────────────────────────
 
-describe("checkDependencyVersions — outdated library detection", () => {
+describe("checkDependencyVersions . outdated library detection", () => {
   it("fires HIGH on jQuery 1.x (outdated)", () => {
-    // Pattern: /jquery[^"'\d\n]*v?(\d+\.\d+\.\d+)/i — comment format works well
+    // Pattern: /jquery[^"'\d\n]*v?(\d+\.\d+\.\d+)/i . comment format works well
     const payload = `/* jQuery v1.11.3 */`;
     const findings = checkDependencyVersions([payload]);
     expect(findings.some((f) => f.severity === "HIGH" && f.title?.includes("jQuery"))).toBe(true);
@@ -690,10 +690,10 @@ describe("checkDependencyVersions — outdated library detection", () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 17. checkUptimeStatus — synchronous, no network
+// 17. checkUptimeStatus . synchronous, no network
 // ─────────────────────────────────────────────────────────────────────────────
 
-describe("checkUptimeStatus — uptime and response time checks", () => {
+describe("checkUptimeStatus . uptime and response time checks", () => {
   it("fires CRITICAL on status 500", () => {
     const findings = checkUptimeStatus(500, 200);
     expect(findings.some((f) => f.severity === "CRITICAL")).toBe(true);
@@ -721,10 +721,10 @@ describe("checkUptimeStatus — uptime and response time checks", () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 18. checkExposedEndpoints — async, mocked HTTP
+// 18. checkExposedEndpoints . async, mocked HTTP
 // ─────────────────────────────────────────────────────────────────────────────
 
-describe("checkExposedEndpoints — sensitive file and endpoint probing", () => {
+describe("checkExposedEndpoints . sensitive file and endpoint probing", () => {
   beforeEach(() => {
     mockSsrfSafeFetch.mockResolvedValue(new Response("", { status: 404 }));
   });
@@ -744,7 +744,7 @@ describe("checkExposedEndpoints — sensitive file and endpoint probing", () => 
     expect(findings.some((f) => f.code === "SENSITIVE_FILE_EXPOSED" && f.title?.includes(".env"))).toBe(true);
   });
 
-  it("does NOT fire SENSITIVE_FILE_EXPOSED when /.env returns HTML (SPA catch-all — false positive prevention)", async () => {
+  it("does NOT fire SENSITIVE_FILE_EXPOSED when /.env returns HTML (SPA catch-all . false positive prevention)", async () => {
     mockSsrfSafeFetch.mockImplementation(async () => {
       return new Response("<!doctype html><html><head><title>App</title></head><body><div id='root'></div></body></html>", {
         status: 200,
@@ -817,10 +817,10 @@ describe("checkExposedEndpoints — sensitive file and endpoint probing", () => 
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 19. checkSSLCertExpiry — async, mocked
+// 19. checkSSLCertExpiry . async, mocked
 // ─────────────────────────────────────────────────────────────────────────────
 
-describe("checkSSLCertExpiry — TLS certificate expiry checks", () => {
+describe("checkSSLCertExpiry . TLS certificate expiry checks", () => {
   it("returns empty array for http:// URLs (no TLS to check)", async () => {
     const findings = await checkSSLCertExpiry("http://example.com");
     expect(Array.isArray(findings)).toBe(true);
@@ -830,10 +830,10 @@ describe("checkSSLCertExpiry — TLS certificate expiry checks", () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 20. checkBrokenLinks — async, mocked
+// 20. checkBrokenLinks . async, mocked
 // ─────────────────────────────────────────────────────────────────────────────
 
-describe("checkBrokenLinks — link validation", () => {
+describe("checkBrokenLinks . link validation", () => {
   beforeEach(() => {
     // checkBrokenLinks uses global fetch (not ssrfSafeFetch) via followRedirects
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response("Not Found", { status: 404 })));

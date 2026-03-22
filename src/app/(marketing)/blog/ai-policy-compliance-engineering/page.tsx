@@ -32,7 +32,7 @@ const faqSchema = {
       name: "What is shadow AI in engineering teams?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Shadow AI refers to AI tools and models used by employees without IT's knowledge or approval — tools like ChatGPT, GitHub Copilot, Cursor, or Claude that engineers use daily but that haven't been vetted, approved, or monitored by the organization. Like shadow IT before it, shadow AI creates compliance gaps and data exposure risks.",
+        text: "Shadow AI refers to AI tools and models used by employees without IT's knowledge or approval . tools like ChatGPT, GitHub Copilot, Cursor, or Claude that engineers use daily but that haven't been vetted, approved, or monitored by the organization. Like shadow IT before it, shadow AI creates compliance gaps and data exposure risks.",
       },
     },
     {
@@ -48,7 +48,7 @@ const faqSchema = {
       name: "How does shadow AI create compliance failures?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "When engineers paste code, customer data, or internal documentation into unapproved AI tools, that data may be used to train models or stored on third-party servers outside your data processing agreements. This can violate GDPR, HIPAA, SOC 2, and other frameworks — and your auditors will ask about it.",
+        text: "When engineers paste code, customer data, or internal documentation into unapproved AI tools, that data may be used to train models or stored on third-party servers outside your data processing agreements. This can violate GDPR, HIPAA, SOC 2, and other frameworks . and your auditors will ask about it.",
       },
     },
     {
@@ -64,7 +64,7 @@ const faqSchema = {
       name: "How many AI tools does the average engineering team use?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Research suggests the average engineering team uses 8–15 distinct AI tools — ranging from code assistants like Copilot and Cursor to general LLMs like ChatGPT and Claude, image generators, and specialized AI coding agents. Most organizations have formal policies covering fewer than 2 of them.",
+        text: "Research suggests the average engineering team uses 8–15 distinct AI tools . ranging from code assistants like Copilot and Cursor to general LLMs like ChatGPT and Claude, image generators, and specialized AI coding agents. Most organizations have formal policies covering fewer than 2 of them.",
       },
     },
   ],
@@ -81,7 +81,7 @@ const checklist = [
   },
   {
     item: "Output review requirements",
-    detail: "AI-generated code must be reviewed and understood by a human before merging — 'AI wrote it' is not an excuse for skipping security review.",
+    detail: "AI-generated code must be reviewed and understood by a human before merging . 'AI wrote it' is not an excuse for skipping security review.",
   },
   {
     item: "IP and licensing",
@@ -89,7 +89,7 @@ const checklist = [
   },
   {
     item: "Incident reporting",
-    detail: "Clear process for reporting suspected data leakage via AI tools — including what counts as an incident.",
+    detail: "Clear process for reporting suspected data leakage via AI tools . including what counts as an incident.",
   },
   {
     item: "New tool approval process",
@@ -97,7 +97,7 @@ const checklist = [
   },
   {
     item: "Audit logging",
-    detail: "Requirement to maintain logs of what AI tools are used and for what purpose — essential for compliance evidence.",
+    detail: "Requirement to maintain logs of what AI tools are used and for what purpose . essential for compliance evidence.",
   },
 ];
 
@@ -132,7 +132,7 @@ export default function AIPolicyComplianceBlogPage() {
         </h1>
         <p className="mt-6 text-lg leading-relaxed text-muted">
           Ask your engineers how many AI tools they use daily. GitHub Copilot, ChatGPT, Claude, Cursor, Codeium,
-          Tabnine, Gemini, Perplexity — the list adds up fast. The average engineering team is running 10 or more.
+          Tabnine, Gemini, Perplexity . the list adds up fast. The average engineering team is running 10 or more.
           Now ask how many of those tools are covered by a formal usage policy. For most organizations, the answer is zero.
         </p>
 
@@ -140,7 +140,7 @@ export default function AIPolicyComplianceBlogPage() {
           <h2 className="text-2xl font-semibold">The Shadow AI Problem Is Already Here</h2>
           <div className="mt-6 space-y-4 leading-relaxed text-body">
             <p>
-              Shadow IT — employees using unapproved software — has been a compliance headache for decades. But
+              Shadow IT . employees using unapproved software . has been a compliance headache for decades. But
               shadow AI is shadow IT on steroids. The barrier to using a new AI tool is a browser tab, not a
               software install. Engineers don&apos;t think of opening Claude.ai as a security decision. It just feels
               like using a search engine.
@@ -149,7 +149,7 @@ export default function AIPolicyComplianceBlogPage() {
               But it&apos;s not a search engine. When an engineer pastes a function signature, a database schema, or
               a stack trace into ChatGPT to debug a production issue, that data leaves your environment. It may
               be used for model training. It&apos;s stored on servers outside your data processing agreements.
-              If that code touches customer records, you may have just created a GDPR incident — without anyone
+              If that code touches customer records, you may have just created a GDPR incident . without anyone
               realizing it.
             </p>
             <p>
@@ -186,7 +186,7 @@ export default function AIPolicyComplianceBlogPage() {
                 When a SOC 2 auditor asks how you govern AI tool usage across your engineering team, &ldquo;we
                 trust our engineers&rdquo; is not a control. Auditors want policy documentation, training
                 records, monitoring evidence, and incident logs. If you&apos;re starting from zero when the
-                audit begins, you&apos;re not starting from zero — you&apos;re starting from a finding.
+                audit begins, you&apos;re not starting from zero . you&apos;re starting from a finding.
               </p>
             </div>
           </div>
@@ -195,7 +195,7 @@ export default function AIPolicyComplianceBlogPage() {
         <div className="mt-14">
           <h2 className="text-2xl font-semibold">What an AI Usage Policy Actually Needs</h2>
           <p className="mt-4 text-muted">
-            A good AI usage policy isn&apos;t a legal wall — it&apos;s a practical guide that enables engineers
+            A good AI usage policy isn&apos;t a legal wall . it&apos;s a practical guide that enables engineers
             to work efficiently while protecting the organization. Here&apos;s the checklist:
           </p>
           <div className="mt-8 space-y-4">
@@ -223,7 +223,7 @@ export default function AIPolicyComplianceBlogPage() {
             <p>
               <strong className="text-heading">Start with visibility, not control.</strong> Before you can
               enforce anything, you need to know what&apos;s being used. Automated scanning tools can detect
-              AI tool usage patterns across your organization — which domains are being accessed, from which
+              AI tool usage patterns across your organization . which domains are being accessed, from which
               endpoints, using what credentials. This gives you a baseline without invasive monitoring.
             </p>
             <p>
@@ -235,12 +235,12 @@ export default function AIPolicyComplianceBlogPage() {
             <p>
               <strong className="text-heading">Automate audit trails.</strong> Continuous monitoring means you
               don&apos;t need point-in-time audits. Tools like Scantient can continuously scan for AI tool
-              usage, flag policy gaps, and generate the audit evidence your compliance team needs — without
+              usage, flag policy gaps, and generate the audit evidence your compliance team needs . without
               requiring manual data collection or self-reported surveys (which are useless).
             </p>
             <p>
               <strong className="text-heading">Pair detection with education.</strong> When the scanner flags
-              an unapproved tool, the response shouldn&apos;t be a disciplinary action — it should be a
+              an unapproved tool, the response shouldn&apos;t be a disciplinary action . it should be a
               conversation and a faster path to getting the tool approved. Most policy violations happen
               because engineers don&apos;t know the policy exists, not because they&apos;re trying to
               circumvent controls.
@@ -252,7 +252,7 @@ export default function AIPolicyComplianceBlogPage() {
           <h2 className="text-2xl font-bold">Find out what AI tools your team is actually using</h2>
           <p className="mx-auto mt-3 max-w-lg text-sm text-muted">
             Scantient scans your organization for AI tool usage, policy gaps, and compliance risks. Get your
-            first report in minutes — no agents, no IT tickets, no disruption.
+            first report in minutes . no agents, no IT tickets, no disruption.
           </p>
           <Link
             href="/signup"

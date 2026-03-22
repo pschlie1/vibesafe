@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
-export const metadata: Metadata = { title: "API Documentation — Scantient" };
+export const metadata: Metadata = { title: "API Documentation . Scantient" };
 
 function Code({ children }: { children: string }) {
   return (

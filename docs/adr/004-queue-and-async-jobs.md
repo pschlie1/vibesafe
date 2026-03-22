@@ -5,7 +5,7 @@
 
 ## Context
 
-Scantient performs HTTP security scans, PDF report generation, email delivery, and webhook firing — all of which are I/O-bound and potentially slow. Running these synchronously in API route handlers would cause request timeouts on Vercel's 10s edge limit and degrade UX.
+Scantient performs HTTP security scans, PDF report generation, email delivery, and webhook firing . all of which are I/O-bound and potentially slow. Running these synchronously in API route handlers would cause request timeouts on Vercel's 10s edge limit and degrade UX.
 
 ## Decision
 
@@ -14,7 +14,7 @@ Scantient performs HTTP security scans, PDF report generation, email delivery, a
 | Job Type | Mechanism | Notes |
 |----------|-----------|-------|
 | Scheduled HTTP scans | Vercel Cron → `POST /api/cron/run` | Fires every 5 min; claims apps atomically before scanning |
-| Alert delivery | Fire-and-forget in `scanner-http.ts` | `sendCriticalFindingsAlert().catch()` — non-blocking |
+| Alert delivery | Fire-and-forget in `scanner-http.ts` | `sendCriticalFindingsAlert().catch()` . non-blocking |
 | Email (Resend) | Awaited inline in route handler | Acceptable; Resend p99 < 500ms |
 | Webhook delivery | Fire-and-forget in `alerts.ts` | HMAC-signed; non-blocking |
 | PDF generation | Awaited inline in `/api/reports/pdf` | Acceptable for < 5s generation |
@@ -24,7 +24,7 @@ Scantient performs HTTP security scans, PDF report generation, email delivery, a
 
 - Current job volume doesn't justify the operational overhead of a persistent queue
 - Vercel Cron provides reliable scheduling without a worker process
-- Upstash Redis is already in the stack for rate limiting — could be extended to a queue if needed
+- Upstash Redis is already in the stack for rate limiting . could be extended to a queue if needed
 - Atomic `updateMany` claim step prevents duplicate scan processing
 
 ### Future Trigger: Adopt BullMQ When

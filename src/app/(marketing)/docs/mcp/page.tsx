@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "MCP API Documentation — Scantient",
+  title: "MCP API Documentation . Scantient",
   description: "Connect AI agents to Scantient via the Model Context Protocol (MCP) endpoint.",
 };
 
@@ -48,7 +48,7 @@ function ToolCard({
                 <tr key={p.name} className="border-b border-border">
                   <td className="py-2 pr-4 font-mono text-sm">{p.name}</td>
                   <td className="py-2 pr-4 text-muted">{p.type}</td>
-                  <td className="py-2 pr-4">{p.required ? "✅" : "—"}</td>
+                  <td className="py-2 pr-4">{p.required ? "✅" : "."}</td>
                   <td className="py-2 text-body">{p.description}</td>
                 </tr>
               ))}

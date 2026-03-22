@@ -89,6 +89,6 @@ export async function POST(req: Request) {
     await sendPasswordResetEmail(email, resetLink);
   }
 
-  // Always return 200 — don't leak user existence
+  // Always return 200 . don't leak user existence
   return NextResponse.json({ ok: true });
 }

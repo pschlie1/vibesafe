@@ -19,7 +19,7 @@ Scantient needs visibility into errors, performance, and business metrics across
 
 ### Structured Logging: Console + Vercel Log Drain
 
-- All route errors logged via `logApiError(err, { route, ...context })` — never raw `console.error`
+- All route errors logged via `logApiError(err, { route, ...context })` . never raw `console.error`
 - No secrets or PII logged (enforced by code review + audit checks)
 - Request IDs included in log context for correlation
 - Vercel Log Drain can forward to Datadog/Logtail if needed

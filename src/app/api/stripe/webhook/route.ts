@@ -60,7 +60,7 @@ export async function POST(req: Request) {
 
   let event;
   try {
-    // constructEvent verifies the Stripe-Signature header — events not originating
+    // constructEvent verifies the Stripe-Signature header . events not originating
     // from Stripe will throw and return 400 before any DB writes occur.
     event = getStripe().webhooks.constructEvent(body, sig, process.env.STRIPE_WEBHOOK_SECRET);
   } catch {

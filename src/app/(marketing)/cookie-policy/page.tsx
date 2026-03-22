@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Cookie Policy — Scantient",
+  title: "Cookie Policy . Scantient",
   description: "How Scantient uses cookies and similar technologies.",
 };
 

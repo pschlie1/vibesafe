@@ -23,7 +23,7 @@ const envSchema = z.object({
   CRON_SECRET: z.string().min(16, "CRON_SECRET must be at least 16 characters"),
   JWT_SECRET: z.string().min(16, "JWT_SECRET must be at least 16 characters"),
 
-  // ─── Optional — validated when present ────────────────────────────────────
+  // ─── Optional . validated when present ────────────────────────────────────
   // Non-critical env vars are intentionally lenient here to avoid taking down
   // the entire API surface due to optional integration misconfiguration.
   // Each integration validates its own config at use-time.
@@ -36,11 +36,11 @@ const envSchema = z.object({
 });
 
 // ---------------------------------------------------------------------------
-// Validation (runs once at module load — i.e., at server startup)
+// Validation (runs once at module load . i.e., at server startup)
 // ---------------------------------------------------------------------------
 
 function validateEnv() {
-  // Skip during Next.js build phase — env vars are only available at runtime
+  // Skip during Next.js build phase . env vars are only available at runtime
   // on the deployed server, not during `next build` static analysis.
   if (process.env.NEXT_PHASE === "phase-production-build") {
     return process.env as NodeJS.ProcessEnv;
@@ -60,7 +60,7 @@ function validateEnv() {
       .join("\n");
 
     console.error(
-      `\n❌ Invalid environment configuration — server cannot start safely.\n\nMissing or invalid variables:\n${issues}\n\nSet these in your .env file or deployment environment and restart.\n`,
+      `\n❌ Invalid environment configuration . server cannot start safely.\n\nMissing or invalid variables:\n${issues}\n\nSet these in your .env file or deployment environment and restart.\n`,
     );
 
     // Throw so the process exits immediately in a Node.js server context.

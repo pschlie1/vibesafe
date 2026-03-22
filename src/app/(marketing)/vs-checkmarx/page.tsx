@@ -175,7 +175,7 @@ export default function VsCheckmarxPage() {
         <div className="mx-auto max-w-[800px] text-center">
           <h2 className="text-3xl font-bold text-ink-black-950 dark:text-alabaster-grey-50 mb-6">The post-deploy gap</h2>
           <p className="text-dusty-denim-700 dark:text-dusty-denim-500 mb-8">
-            Checkmarx scans code before deployment. But what about after? Configuration issues, runtime secrets, performance degradation — these show up <em>in production</em>.
+            Checkmarx scans code before deployment. But what about after? Configuration issues, runtime secrets, performance degradation . these show up <em>in production</em>.
           </p>
           <p className="text-dusty-denim-700 dark:text-dusty-denim-500">
             Scantient fills this gap with continuous post-deploy monitoring. Checkmarx + Scantient = complete security coverage.

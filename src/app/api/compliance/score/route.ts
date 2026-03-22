@@ -20,7 +20,7 @@ export async function GET() {
     );
   }
 
-  // Load open findings for this org — capped at 2000 (enough for accurate scoring)
+  // Load open findings for this org . capped at 2000 (enough for accurate scoring)
   const openFindings = await db.finding.findMany({
     where: {
       status: "OPEN",

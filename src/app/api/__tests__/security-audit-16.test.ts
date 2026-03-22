@@ -4,7 +4,7 @@
  * Tests for Audit-16 security fixes:
  *  1. API key revocation on team member removal (Focus 5)
  *  2. Badge slug rate limiting (Focus 6)
- *  3. Badge slug JSON format exposes org.name — acceptable by design (public badge)
+ *  3. Badge slug JSON format exposes org.name . acceptable by design (public badge)
  */
 
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -45,7 +45,7 @@ vi.mock("@/lib/cors", () => ({
   CORS_HEADERS_PUBLIC: {},
 }));
 
-// ─── badge/route helpers — real implementations ───────────────────────────────
+// ─── badge/route helpers . real implementations ───────────────────────────────
 vi.mock("@/app/api/public/badge/route", async (importOriginal) => {
   const real = await importOriginal<typeof import("@/app/api/public/badge/route")>();
   return {
@@ -95,7 +95,7 @@ beforeEach(() => {
 // ─────────────────────────────────────────────────────────────────────────────
 // Focus 5: API key revocation on team member removal
 // ─────────────────────────────────────────────────────────────────────────────
-describe("Focus 5: DELETE /api/team/[id] — API key revocation", () => {
+describe("Focus 5: DELETE /api/team/[id] . API key revocation", () => {
   it("deletes API keys created by removed user before deleting the user", async () => {
     apiKeyDeleteMany.mockResolvedValue({ count: 3 });
     const { DELETE } = await import("@/app/api/team/[id]/route");
@@ -166,9 +166,9 @@ describe("Focus 5: DELETE /api/team/[id] — API key revocation", () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Focus 6: Badge slug — rate limiting
+// Focus 6: Badge slug . rate limiting
 // ─────────────────────────────────────────────────────────────────────────────
-describe("Focus 6: GET /api/public/badge/[slug] — rate limiting", () => {
+describe("Focus 6: GET /api/public/badge/[slug] . rate limiting", () => {
   it("returns 429 JSON when rate limit exceeded", async () => {
     checkRateLimit.mockResolvedValue({ allowed: false, retryAfterSeconds: 30 });
     const { GET } = await import("@/app/api/public/badge/[slug]/route");
@@ -192,7 +192,7 @@ describe("Focus 6: GET /api/public/badge/[slug] — rate limiting", () => {
     expect(res.headers.get("Retry-After")).toBe("45");
   });
 
-  it("rate-limits by IP — calls checkRateLimit with IP-keyed bucket", async () => {
+  it("rate-limits by IP . calls checkRateLimit with IP-keyed bucket", async () => {
     const { GET } = await import("@/app/api/public/badge/[slug]/route");
     await GET(makeBadgeSlugRequest("acme-corp"), {
       params: Promise.resolve({ slug: "acme-corp" }),

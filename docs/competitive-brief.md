@@ -5,10 +5,10 @@
 ## Market Category
 
 Scantient sits between two existing categories:
-- **DAST / Vulnerability Scanners** (Detectify, Probely, Intruder, Acunetix) — deep authenticated scanning, SQL injection, XSS detection
-- **EASM / Attack Surface Management** (Attaxion, Detectify Surface, CyCognito) — discover and map external assets
+- **DAST / Vulnerability Scanners** (Detectify, Probely, Intruder, Acunetix) . deep authenticated scanning, SQL injection, XSS detection
+- **EASM / Attack Surface Management** (Attaxion, Detectify Surface, CyCognito) . discover and map external assets
 
-Scantient's category: **AI App Portfolio Governance** — continuous external monitoring of apps built by non-security engineers using AI tools. This category does not have an established name yet. That is an advantage.
+Scantient's category: **AI App Portfolio Governance** . continuous external monitoring of apps built by non-security engineers using AI tools. This category does not have an established name yet. That is an advantage.
 
 ---
 
@@ -39,7 +39,7 @@ Scantient's category: **AI App Portfolio Governance** — continuous external mo
 | CVE database matching | ✅ | ✅ | ❌ |
 | JavaScript execution | ✅ | Partial | ❌ |
 
-**This is our known gap.** We scan what is visible without executing JavaScript. We detect configuration-level issues, not code-level vulnerabilities. For many AI-generated apps, configuration issues are the most common and impactful class of vulnerability — but we should not position against traditional scanners, we should position alongside them.
+**This is our known gap.** We scan what is visible without executing JavaScript. We detect configuration-level issues, not code-level vulnerabilities. For many AI-generated apps, configuration issues are the most common and impactful class of vulnerability . but we should not position against traditional scanners, we should position alongside them.
 
 ---
 
@@ -63,7 +63,7 @@ Scantient's category: **AI App Portfolio Governance** — continuous external mo
 ## Positioning Statement
 
 **For competitors (if asked directly):**
-"Detectify and Intruder are excellent for security teams running deep authenticated scans on applications they own and maintain. Scantient is for IT leaders who need governance visibility across dozens of apps built by developers using AI tools — most of which have never been through a security review."
+"Detectify and Intruder are excellent for security teams running deep authenticated scans on applications they own and maintain. Scantient is for IT leaders who need governance visibility across dozens of apps built by developers using AI tools . most of which have never been through a security review."
 
 **Complementary angle (not competing):**
 Scantient catches what traditional scanners miss about configuration and governance. Traditional scanners catch what Scantient misses about code-level vulnerabilities. Many enterprises will run both.
@@ -73,7 +73,7 @@ Scantient catches what traditional scanners miss about configuration and governa
 ## Win Conditions
 
 We win when the buyer is:
-- An IT Director or CISO (not a security engineer) — they want governance, not findings
+- An IT Director or CISO (not a security engineer) . they want governance, not findings
 - Managing 5-50 apps built by developers without security training
 - Going through SOC2 or facing an insurance questionnaire
 - At a company that has adopted Cursor, Lovable, or similar AI dev tools
@@ -88,6 +88,6 @@ We lose when the buyer wants:
 
 ## Next Competitive Moves
 
-1. **MSP/Agency tier** — Detectify has no multi-tenant MSP offering. This is an uncontested segment.
-2. **App discovery** — automatically finding AI-generated apps in an organization before the IT leader even knows they exist. No competitor does this for vibe-coded apps.
-3. **Free tier as competitive wedge** — public `/score` URL gives instant value with no signup. Detectify requires a paid trial to scan.
+1. **MSP/Agency tier** . Detectify has no multi-tenant MSP offering. This is an uncontested segment.
+2. **App discovery** . automatically finding AI-generated apps in an organization before the IT leader even knows they exist. No competitor does this for vibe-coded apps.
+3. **Free tier as competitive wedge** . public `/score` URL gives instant value with no signup. Detectify requires a paid trial to scan.

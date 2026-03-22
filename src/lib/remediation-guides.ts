@@ -10,7 +10,7 @@ export const REMEDIATION_GUIDES: Record<string, { title: string; steps: string[]
   EXPOSED_API_KEY: {
     title: "Exposed API Key",
     steps: [
-      "1. Do NOT commit the API key again—rotate it immediately in your provider's dashboard",
+      "1. Do NOT commit the API key again.rotate it immediately in your provider's dashboard",
       "2. Move all API keys to environment variables: const apiKey = process.env.OPENAI_API_KEY",
       "3. Remove the key from all client-side code (React, JavaScript bundles)",
       "4. Use a backend API route to proxy requests (e.g., /api/proxy → calls OpenAI)",
@@ -25,7 +25,7 @@ export const REMEDIATION_GUIDES: Record<string, { title: string; steps: string[]
       "1. Verify: Is authentication decided in client-side JavaScript? (e.g., if (user.role === 'admin')).",
       "2. Move all auth checks to the server: return 401 if the user is not authenticated",
       "3. Use session tokens or JWTs verified on the backend for every request",
-      "4. Never trust client-side role checks—always verify on the server",
+      "4. Never trust client-side role checks.always verify on the server",
       "5. Example: Server route should check req.user.role before returning sensitive data",
       "6. Re-scan to confirm the endpoint is now properly protected",
     ],
@@ -75,7 +75,7 @@ export const REMEDIATION_GUIDES: Record<string, { title: string; steps: string[]
       "2. Move token to request body (POST) or Authorization header",
       "3. Example: Instead of /api/verify?token=xyz, use POST /api/verify with { token: 'xyz' } in body",
       "4. If it's a password reset link, use a secure session-based approach instead",
-      "5. Tokens in URLs are logged in browser history, server logs, and proxies—always avoid",
+      "5. Tokens in URLs are logged in browser history, server logs, and proxies.always avoid",
       "6. Re-scan to verify tokens are no longer in URLs",
     ],
   },
@@ -85,7 +85,7 @@ export const REMEDIATION_GUIDES: Record<string, { title: string; steps: string[]
     steps: [
       "1. Find the API endpoint that returns a password or secret",
       "2. Remove all sensitive data from responses: no passwords, keys, or private tokens",
-      "3. Return only: { userId, email, role, lastLogin } — never credentials",
+      "3. Return only: { userId, email, role, lastLogin } . never credentials",
       "4. Use a separate secure endpoint to allow password changes (requires old password + new password)",
       "5. Add a check in your code review: grep for 'password' in API responses",
       "6. Re-scan and verify the endpoint no longer leaks credentials",
@@ -127,7 +127,7 @@ export const REMEDIATION_GUIDES: Record<string, { title: string; steps: string[]
       "3. Example (Node.js): res.cookie('session', token, { secure: true })",
       "4. Example (Next.js): Response headers with Set-Cookie: session=...; Secure; ...",
       "5. Without Secure flag, attackers can intercept the cookie over HTTP",
-      "6. Verify your site only uses HTTPS—no mixed HTTP/HTTPS content",
+      "6. Verify your site only uses HTTPS.no mixed HTTP/HTTPS content",
       "7. Re-scan to confirm the Secure flag is present",
     ],
   },
@@ -178,7 +178,7 @@ export const REMEDIATION_GUIDES: Record<string, { title: string; steps: string[]
       "1. This is a critical misconfiguration: Access-Control-Allow-Origin: * AND Access-Control-Allow-Credentials: true",
       "2. Remove one: Either use specific origins OR remove Allow-Credentials",
       "3. Correct approach: Access-Control-Allow-Origin: https://yourdomain.com; Access-Control-Allow-Credentials: true",
-      "4. Never use '*' with credentials—it exposes your API to any origin",
+      "4. Never use '*' with credentials.it exposes your API to any origin",
       "5. Test: Verify your API rejects requests from unauthorized origins",
       "6. Re-scan to confirm the misconfiguration is fixed",
     ],
@@ -206,7 +206,7 @@ export const REMEDIATION_GUIDES: Record<string, { title: string; steps: string[]
       "3. Or: Restrict access to internal IPs only",
       "4. Or: Add authentication (if it's intentional admin access)",
       "5. Example (Node.js): if (req.ip !== '127.0.0.1') return 403",
-      "6. Never expose debug endpoints in production—use proper logging instead",
+      "6. Never expose debug endpoints in production.use proper logging instead",
       "7. Re-scan to verify the endpoint is no longer accessible",
     ],
   },
@@ -232,7 +232,7 @@ export const REMEDIATION_GUIDES: Record<string, { title: string; steps: string[]
       "2. Move sensitive files outside the web root (out of public/ directory)",
       "3. Add access restrictions in your web server config",
       "4. Example (nginx): location ~ /\\\\.env { deny all; }",
-      "5. Example (Node.js): Check NODE_ENV—never serve .env files to clients",
+      "5. Example (Node.js): Check NODE_ENV.never serve .env files to clients",
       "6. Add to .gitignore: .env, .env.local, config files with secrets",
       "7. Re-scan and verify sensitive files are not accessible",
     ],
@@ -245,7 +245,7 @@ export const REMEDIATION_GUIDES: Record<string, { title: string; steps: string[]
       "2. Update to the latest stable version: jquery-3.7.x or newer",
       "3. Option A: Update CDN link: <script src=\"https://code.jquery.com/jquery-3.7.1.min.js\"></script>",
       "4. Option B: Update npm package: npm install --save jquery@latest",
-      "5. Test your site thoroughly—jQuery updates can have breaking changes",
+      "5. Test your site thoroughly.jQuery updates can have breaking changes",
       "6. Consider replacing jQuery with vanilla JavaScript (Fetch API, DOM methods)",
       "7. Re-scan and verify jQuery is updated to the latest version",
     ],
@@ -266,7 +266,7 @@ export const REMEDIATION_GUIDES: Record<string, { title: string; steps: string[]
   },
 
   PERF_REGRESSION_DOUBLED: {
-    title: "Performance Regression — Response Time Doubled",
+    title: "Performance Regression . Response Time Doubled",
     steps: [
       "1. Check your server: CPU, memory, disk I/O all at normal levels?",
       "2. Check database: Are queries slow? Add database indexes if needed",
@@ -282,7 +282,7 @@ export const REMEDIATION_GUIDES: Record<string, { title: string; steps: string[]
   SSL_CERT_EXPIRED: {
     title: "SSL Certificate Expired",
     steps: [
-      "1. Your site is no longer using HTTPS—browsers show warnings to visitors",
+      "1. Your site is no longer using HTTPS.browsers show warnings to visitors",
       "2. Immediately renew your SSL certificate with your certificate provider",
       "3. For free certificates: Use Let's Encrypt (via certbot or hosting provider)",
       "4. Example (Let's Encrypt): certbot renew --force-renewal",
@@ -295,7 +295,7 @@ export const REMEDIATION_GUIDES: Record<string, { title: string; steps: string[]
   SSL_CERT_EXPIRING_HIGH: {
     title: "SSL Certificate Expiring in Less Than 14 Days",
     steps: [
-      "1. Your SSL certificate is expiring soon—renew it within the next 2 weeks",
+      "1. Your SSL certificate is expiring soon.renew it within the next 2 weeks",
       "2. For Let's Encrypt: Renewal usually happens automatically, but check logs",
       "3. For paid certificates: Purchase renewal from your provider",
       "4. Example (manual renewal): certbot renew",
@@ -354,7 +354,7 @@ export const REMEDIATION_GUIDES: Record<string, { title: string; steps: string[]
       "4. Verify it's not a typo or subdomain takeover",
       "5. If sending sensitive data: Require additional verification (2FA, email confirmation)",
       "6. Example: Forms submitting to payment processors (Stripe, PayPal) are normal",
-      "7. If unexpected: This could indicate a compromised form—investigate immediately",
+      "7. If unexpected: This could indicate a compromised form.investigate immediately",
     ],
   },
 

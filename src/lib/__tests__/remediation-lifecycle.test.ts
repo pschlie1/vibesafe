@@ -27,7 +27,7 @@ beforeEach(() => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// parseRemediationMeta — unit tests
+// parseRemediationMeta . unit tests
 // ─────────────────────────────────────────────────────────────────────────────
 describe("parseRemediationMeta", () => {
   it("returns default meta for null notes", async () => {
@@ -81,9 +81,9 @@ describe("parseRemediationMeta", () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// verifyResolvedFindings — auto-resolve OPEN findings (audit-15 C1 fix)
+// verifyResolvedFindings . auto-resolve OPEN findings (audit-15 C1 fix)
 // ─────────────────────────────────────────────────────────────────────────────
-describe("verifyResolvedFindings — auto-resolve OPEN findings", () => {
+describe("verifyResolvedFindings . auto-resolve OPEN findings", () => {
   it("auto-resolves an OPEN finding whose code is not in the new scan", async () => {
     const { verifyResolvedFindings } = await import("@/lib/remediation-lifecycle");
 
@@ -153,7 +153,7 @@ describe("verifyResolvedFindings — auto-resolve OPEN findings", () => {
         },
       ]);
 
-    const newCodes = new Set<string>(); // empty — nothing detected
+    const newCodes = new Set<string>(); // empty . nothing detected
     await verifyResolvedFindings("app_1", newCodes);
 
     expect(findingUpdate).toHaveBeenCalledWith(
@@ -238,7 +238,7 @@ describe("verifyResolvedFindings — auto-resolve OPEN findings", () => {
         { id: "f2", code: "CODE_B", status: "IN_PROGRESS", notes: null, run: { appId: "app_1" } },
       ]);
 
-    // Empty scan — nothing detected
+    // Empty scan . nothing detected
     await verifyResolvedFindings("app_1", new Set<string>());
 
     expect(findingUpdate).toHaveBeenCalledTimes(2);

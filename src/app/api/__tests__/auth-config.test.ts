@@ -268,7 +268,7 @@ describe("Scanner applies auth headers from app config", () => {
     try {
       await runHttpScanForApp("app_1");
     } catch {
-      // expected — partial mock
+      // expected . partial mock
     }
 
     // Find the main page fetch (not asset fetches)

@@ -46,7 +46,7 @@ export default function Footer() {
       {/* Top section */}
       <div className="mx-auto max-w-[1200px] px-6">
         <div className="grid grid-cols-1 gap-12 py-20 sm:grid-cols-2 lg:grid-cols-5">
-          {/* Col 1 — Brand (2/5 width on lg) */}
+          {/* Col 1 . Brand (2/5 width on lg) */}
           <div className="lg:col-span-2">
             <div className="flex items-center gap-2">
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-surface-raised">
@@ -59,7 +59,7 @@ export default function Footer() {
             </p>
           </div>
 
-          {/* Cols 2–5 — Link columns */}
+          {/* Cols 2–5 . Link columns */}
           {footerColumns.map((col) => (
             <div key={col.header}>
               <h4 className="mb-6 text-xs font-bold uppercase tracking-widest text-heading">

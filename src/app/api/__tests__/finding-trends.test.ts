@@ -23,7 +23,7 @@ vi.mock("@/lib/db", () => ({
   },
 }));
 
-// ─── date-fns mock — use real implementation ──────────────────────────────────
+// ─── date-fns mock . use real implementation ──────────────────────────────────
 // (no mock needed, date-fns is a pure library)
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -57,7 +57,7 @@ beforeEach(() => {
   getSession.mockResolvedValue(null);
   findingFindMany.mockResolvedValue([]);
   monitorRunFindMany.mockResolvedValue([]);
-  // Default: PRO tier — passes the trends tier gate
+  // Default: PRO tier . passes the trends tier gate
   subscriptionFindUnique.mockResolvedValue({ tier: "PRO" });
 });
 

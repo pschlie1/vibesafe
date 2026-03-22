@@ -13,8 +13,8 @@ Scantient uses stateless JWT sessions stored in HttpOnly cookies (see ADR-002). 
 
 Two security-sensitive events require session invalidation:
 
-- **Team member removal** — a removed user should lose API access as soon as possible.
-- **Role downgrade** — a user whose role is changed should see the new role reflected promptly.
+- **Team member removal** . a removed user should lose API access as soon as possible.
+- **Role downgrade** . a user whose role is changed should see the new role reflected promptly.
 
 ## Decision
 
@@ -35,7 +35,7 @@ Two security-sensitive events require session invalidation:
 | Role downgraded | ≤ 5 minutes | New (lower) role enforced |
 | Role upgraded | ≤ 5 minutes | New (higher) role enforced |
 
-### API Key revocation (complementary fix — Audit-16, Focus 5)
+### API Key revocation (complementary fix . Audit-16, Focus 5)
 
 Because JWT sessions have a 5-minute lag, **API keys created by a removed user are explicitly revoked at the time of removal** (synchronous DB delete before the user record is deleted). This eliminates the API key attack vector entirely and does not rely on session expiry.
 
@@ -59,4 +59,4 @@ If requirements change (e.g., immediate session kill for enterprise compliance),
 - **Positive:** No DB hit on every request; stateless JWT benefit preserved.
 - **Positive:** API keys are immediately revoked on user removal (no lag).
 - **Negative:** Up to 5-minute window where a removed user's browser session remains technically valid for cookie-based requests.
-- **Mitigation:** The 5-minute window is constrained; the user cannot create new sessions after removal (login will fail — the user record is deleted).
+- **Mitigation:** The 5-minute window is constrained; the user cannot create new sessions after removal (login will fail . the user record is deleted).

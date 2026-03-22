@@ -32,7 +32,7 @@ beforeEach(() => {
   vi.useFakeTimers();
   vi.clearAllMocks();
   notificationCreate.mockResolvedValue({});
-  // Default: no recent notification (cooldown inactive) — allows alerts through
+  // Default: no recent notification (cooldown inactive) . allows alerts through
   notificationFindFirst.mockResolvedValue(null);
   // Default to ENTERPRISE so existing tests with configs continue to pass
   getOrgLimits.mockResolvedValue({ tier: "ENTERPRISE", status: "ACTIVE" });
@@ -71,7 +71,7 @@ const MOCK_APP = {
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
-// sendCriticalFindingsAlert — no-op when no findings
+// sendCriticalFindingsAlert . no-op when no findings
 // ─────────────────────────────────────────────────────────────────────────────
 describe("sendCriticalFindingsAlert", () => {
   it("returns immediately when findings array is empty", async () => {
@@ -234,7 +234,7 @@ describe("sendCriticalFindingsAlert", () => {
 
 // ─── Alert Cooldown / De-duplication ────────────────────────────────────────
 
-describe("sendCriticalFindingsAlert — cooldown", () => {
+describe("sendCriticalFindingsAlert . cooldown", () => {
   it("skips alert when cooldown is active (recent delivered notification exists)", async () => {
     process.env.RESEND_API_KEY = "test-key-cooldown";
     monitoredAppFindUnique.mockResolvedValueOnce(MOCK_APP);
@@ -265,7 +265,7 @@ describe("sendCriticalFindingsAlert — cooldown", () => {
     await vi.runAllTimersAsync();
     await promise;
 
-    // No email should fire — cooldown is active
+    // No email should fire . cooldown is active
     expect(mockFetch).not.toHaveBeenCalled();
     expect(notificationCreate).not.toHaveBeenCalled();
   });

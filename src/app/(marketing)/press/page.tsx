@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Press — Scantient",
+  title: "Press . Scantient",
   description: "Press resources, brand assets, and media inquiries for Scantient.",
 };
 

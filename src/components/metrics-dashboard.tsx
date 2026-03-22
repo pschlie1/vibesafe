@@ -93,7 +93,7 @@ export function MetricsDashboard() {
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
         <MetricCard
           label="MTTR"
-          value={metrics.mttr != null ? `${metrics.mttr}h` : "—"}
+          value={metrics.mttr != null ? `${metrics.mttr}h` : "."}
           subtext={mttrChangeText || "Mean time to remediate"}
           trend={mttrTrend}
         />
@@ -110,7 +110,7 @@ export function MetricsDashboard() {
         <MetricCard
           label="Resolved This Week"
           value={String(metrics.resolvedThisWeek)}
-          subtext={metrics.mtta != null ? `Avg acknowledge: ${metrics.mtta}h` : "MTTA: —"}
+          subtext={metrics.mtta != null ? `Avg acknowledge: ${metrics.mtta}h` : "MTTA: ."}
         />
       </div>
     </div>

@@ -4,7 +4,7 @@
  * Tests for audit-4 security and business logic fixes:
  *  Fix 1: Alert dispatch respects current org tier
  *  Fix 2: Agent endpoints re-check tier after downgrade
- *  Fix 3: Agent scan code injection — finding code allowlist
+ *  Fix 3: Agent scan code injection . finding code allowlist
  *  Fix 4: EXPIRED/CANCELED orgs are skipped by cron scanner
  *  Fix 5: Team member removal and role management
  *
@@ -167,7 +167,7 @@ afterEach(() => {
 // ─────────────────────────────────────────────────────────────────────────────
 // Fix 1: Alert dispatch respects current org tier
 // ─────────────────────────────────────────────────────────────────────────────
-describe("Fix 1: Alert tier enforcement — sendCriticalFindingsAlert", () => {
+describe("Fix 1: Alert tier enforcement . sendCriticalFindingsAlert", () => {
   beforeEach(() => {
     vi.useFakeTimers();
   });
@@ -176,7 +176,7 @@ describe("Fix 1: Alert tier enforcement — sendCriticalFindingsAlert", () => {
     vi.useRealTimers();
   });
 
-  it("STARTER tier — SLACK config is skipped, EMAIL config is sent", async () => {
+  it("STARTER tier . SLACK config is skipped, EMAIL config is sent", async () => {
     process.env.RESEND_API_KEY = "test-resend-key";
 
     monitoredAppFindUnique.mockResolvedValue(MOCK_APP);
@@ -216,7 +216,7 @@ describe("Fix 1: Alert tier enforcement — sendCriticalFindingsAlert", () => {
     await vi.runAllTimersAsync();
     await promise;
 
-    // Should have called fetch exactly once (EMAIL only — Resend API)
+    // Should have called fetch exactly once (EMAIL only . Resend API)
     expect(mockFetch).toHaveBeenCalledTimes(1);
     const call = mockFetch.mock.calls[0];
     expect(call[0]).toBe("https://api.resend.com/emails");
@@ -229,7 +229,7 @@ describe("Fix 1: Alert tier enforcement — sendCriticalFindingsAlert", () => {
     expect(notifData.alertConfigId).toBe("cfg_email");
   });
 
-  it("EXPIRED tier — all configs skipped, no alerts sent", async () => {
+  it("EXPIRED tier . all configs skipped, no alerts sent", async () => {
     monitoredAppFindUnique.mockResolvedValue(MOCK_APP);
     alertConfigFindMany.mockResolvedValue([
       {
@@ -285,7 +285,7 @@ describe("Fix 1: Alert tier enforcement — sendCriticalFindingsAlert", () => {
 // Fix 2: Agent endpoints re-check tier after downgrade
 // ─────────────────────────────────────────────────────────────────────────────
 describe("Fix 2: resolveAppFromBearer rejects non-PRO+ orgs", () => {
-  it("FREE org agent key — POST /api/agent/scan returns 401", async () => {
+  it("FREE org agent key . POST /api/agent/scan returns 401", async () => {
     const { raw, hash } = generateKey();
     monitoredAppFindFirst.mockResolvedValue({
       id: "app_1",
@@ -302,7 +302,7 @@ describe("Fix 2: resolveAppFromBearer rejects non-PRO+ orgs", () => {
     expect(res.status).toBe(401);
   });
 
-  it("STARTER org agent key — POST /api/agent/scan returns 401", async () => {
+  it("STARTER org agent key . POST /api/agent/scan returns 401", async () => {
     const { raw, hash } = generateKey();
     monitoredAppFindFirst.mockResolvedValue({
       id: "app_1",
@@ -319,7 +319,7 @@ describe("Fix 2: resolveAppFromBearer rejects non-PRO+ orgs", () => {
     expect(res.status).toBe(401);
   });
 
-  it("PRO org agent key — POST /api/agent/scan is authorized (not 401)", async () => {
+  it("PRO org agent key . POST /api/agent/scan is authorized (not 401)", async () => {
     const { raw, hash } = generateKey();
     monitoredAppFindFirst.mockResolvedValue({
       id: "app_1",
@@ -337,7 +337,7 @@ describe("Fix 2: resolveAppFromBearer rejects non-PRO+ orgs", () => {
     expect(res.status).not.toBe(401);
   });
 
-  it("EXPIRED org agent key — GET /api/agent/pending returns 401", async () => {
+  it("EXPIRED org agent key . GET /api/agent/pending returns 401", async () => {
     const { raw, hash } = generateKey();
     monitoredAppFindFirst.mockResolvedValue({
       id: "app_1",
@@ -354,7 +354,7 @@ describe("Fix 2: resolveAppFromBearer rejects non-PRO+ orgs", () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Fix 3: Agent scan code injection — finding code allowlist
+// Fix 3: Agent scan code injection . finding code allowlist
 // ─────────────────────────────────────────────────────────────────────────────
 describe("Fix 3: Finding code allowlist", () => {
   function setupValidBearerApp() {
@@ -370,7 +370,7 @@ describe("Fix 3: Finding code allowlist", () => {
     return raw;
   }
 
-  it("valid finding code is accepted — returns 200", async () => {
+  it("valid finding code is accepted . returns 200", async () => {
     const raw = setupValidBearerApp();
     const { POST } = await import("@/app/api/agent/scan/route");
     const res = await POST(
@@ -437,7 +437,7 @@ describe("Fix 3: Finding code allowlist", () => {
     expect(JSON.stringify(body)).toContain("200");
   });
 
-  it("exactly 200 findings accepted — returns 200", async () => {
+  it("exactly 200 findings accepted . returns 200", async () => {
     const raw = setupValidBearerApp();
     monitorRunCreate.mockResolvedValue({ id: "run_200" });
 
@@ -461,7 +461,7 @@ describe("Fix 3: Finding code allowlist", () => {
 // Fix 4: EXPIRED/CANCELED orgs skipped by cron scanner
 // ─────────────────────────────────────────────────────────────────────────────
 describe("Fix 4: EXPIRED/CANCELED org scan skipped in runHttpScanForApp", () => {
-  it("CANCELED status — returns skipped result and defers nextCheckAt by 24h", async () => {
+  it("CANCELED status . returns skipped result and defers nextCheckAt by 24h", async () => {
     monitoredAppFindUnique.mockResolvedValue(MOCK_APP);
     getOrgLimits.mockResolvedValue({ tier: "EXPIRED", status: "CANCELED" });
 
@@ -485,7 +485,7 @@ describe("Fix 4: EXPIRED/CANCELED org scan skipped in runHttpScanForApp", () => 
     expect(monitorRunCreate).not.toHaveBeenCalled();
   });
 
-  it("EXPIRED tier with non-CANCELED status — scan is also skipped", async () => {
+  it("EXPIRED tier with non-CANCELED status . scan is also skipped", async () => {
     monitoredAppFindUnique.mockResolvedValue(MOCK_APP);
     getOrgLimits.mockResolvedValue({ tier: "EXPIRED", status: "TRIALING" });
 
@@ -496,7 +496,7 @@ describe("Fix 4: EXPIRED/CANCELED org scan skipped in runHttpScanForApp", () => 
     expect(monitorRunCreate).not.toHaveBeenCalled();
   });
 
-  it("CANCELED status but non-EXPIRED tier — scan is also skipped", async () => {
+  it("CANCELED status but non-EXPIRED tier . scan is also skipped", async () => {
     monitoredAppFindUnique.mockResolvedValue(MOCK_APP);
     getOrgLimits.mockResolvedValue({ tier: "PRO", status: "CANCELED" });
 
@@ -511,11 +511,11 @@ describe("Fix 4: EXPIRED/CANCELED org scan skipped in runHttpScanForApp", () => 
 // ─────────────────────────────────────────────────────────────────────────────
 // Fix 5: Team member removal and role management
 // ─────────────────────────────────────────────────────────────────────────────
-describe("Fix 5: DELETE /api/team/[id] — member removal", () => {
+describe("Fix 5: DELETE /api/team/[id] . member removal", () => {
   const ownerSession = { id: "owner_1", orgId: "org_a", role: "OWNER", name: "Owner" };
   const adminSession = { id: "admin_1", orgId: "org_a", role: "ADMIN", name: "Admin" };
 
-  it("OWNER removes a MEMBER — returns 200 with ok:true", async () => {
+  it("OWNER removes a MEMBER . returns 200 with ok:true", async () => {
     getSession.mockResolvedValue(ownerSession);
     userFindFirst.mockResolvedValue({
       id: "member_1",
@@ -535,7 +535,7 @@ describe("Fix 5: DELETE /api/team/[id] — member removal", () => {
     expect(userDelete).toHaveBeenCalledWith({ where: { id: "member_1" } });
   });
 
-  it("ADMIN removes a MEMBER — returns 200", async () => {
+  it("ADMIN removes a MEMBER . returns 200", async () => {
     getSession.mockResolvedValue(adminSession);
     userFindFirst.mockResolvedValue({
       id: "member_2",
@@ -552,7 +552,7 @@ describe("Fix 5: DELETE /api/team/[id] — member removal", () => {
     expect(res.status).toBe(200);
   });
 
-  it("cannot remove self — returns 400", async () => {
+  it("cannot remove self . returns 400", async () => {
     getSession.mockResolvedValue(ownerSession);
 
     const { DELETE } = await import("@/app/api/team/[id]/route");
@@ -564,7 +564,7 @@ describe("Fix 5: DELETE /api/team/[id] — member removal", () => {
     expect(body.error).toContain("yourself");
   });
 
-  it("cannot remove the OWNER — returns 403", async () => {
+  it("cannot remove the OWNER . returns 403", async () => {
     getSession.mockResolvedValue(adminSession);
     userFindFirst.mockResolvedValue({
       id: "other_owner",
@@ -582,7 +582,7 @@ describe("Fix 5: DELETE /api/team/[id] — member removal", () => {
     expect(body.error).toContain("owner");
   });
 
-  it("MEMBER role cannot delete — returns 403", async () => {
+  it("MEMBER role cannot delete . returns 403", async () => {
     getSession.mockResolvedValue({ id: "m1", orgId: "org_a", role: "MEMBER" });
 
     const { DELETE } = await import("@/app/api/team/[id]/route");
@@ -614,11 +614,11 @@ describe("Fix 5: DELETE /api/team/[id] — member removal", () => {
   });
 });
 
-describe("Fix 5: PATCH /api/team/[id] — role change", () => {
+describe("Fix 5: PATCH /api/team/[id] . role change", () => {
   const ownerSession = { id: "owner_1", orgId: "org_a", role: "OWNER", name: "Owner" };
   const adminSession = { id: "admin_1", orgId: "org_a", role: "ADMIN", name: "Admin" };
 
-  it("OWNER changes a MEMBER to ADMIN — returns 200 with updated member", async () => {
+  it("OWNER changes a MEMBER to ADMIN . returns 200 with updated member", async () => {
     getSession.mockResolvedValue(ownerSession);
     userFindFirst.mockResolvedValue({
       id: "member_1",
@@ -642,7 +642,7 @@ describe("Fix 5: PATCH /api/team/[id] — role change", () => {
     expect(body.member.role).toBe("ADMIN");
   });
 
-  it("ADMIN cannot change roles — returns 403", async () => {
+  it("ADMIN cannot change roles . returns 403", async () => {
     getSession.mockResolvedValue(adminSession);
 
     const { PATCH } = await import("@/app/api/team/[id]/route");
@@ -654,7 +654,7 @@ describe("Fix 5: PATCH /api/team/[id] — role change", () => {
     expect(body.error).toContain("owner");
   });
 
-  it("cannot change own role — returns 400", async () => {
+  it("cannot change own role . returns 400", async () => {
     getSession.mockResolvedValue(ownerSession);
 
     const { PATCH } = await import("@/app/api/team/[id]/route");
@@ -666,7 +666,7 @@ describe("Fix 5: PATCH /api/team/[id] — role change", () => {
     expect(body.error).toContain("own role");
   });
 
-  it("cannot change the OWNER role — returns 403", async () => {
+  it("cannot change the OWNER role . returns 403", async () => {
     getSession.mockResolvedValue(ownerSession);
     userFindFirst.mockResolvedValue({
       id: "other_owner",

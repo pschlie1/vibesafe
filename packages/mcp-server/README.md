@@ -44,7 +44,7 @@ npx @scantient/mcp-server
 
 | Tool | Auth Required | Description |
 |------|--------------|-------------|
-| `scan_url` | No | Quick scan any URL — no API key needed |
+| `scan_url` | No | Quick scan any URL . no API key needed |
 | `scan_authenticated` | Yes | Full scan with higher rate limits |
 | `check_headers` | No | Check security headers only |
 | `check_ssl` | No | Check SSL certificate and config |

@@ -23,7 +23,7 @@
 - Or customer report escalated by support
 
 ### 2. Declare
-- Post in `#incidents`: "**INCIDENT P[0/1]**: [short description] — [your name] incident commander"
+- Post in `#incidents`: "**INCIDENT P[0/1]**: [short description] . [your name] incident commander"
 - Create incident in PagerDuty if not auto-created
 
 ### 3. Triage (first 10 min)

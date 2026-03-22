@@ -109,7 +109,7 @@ describe("POST /api/auth/forgot-password", () => {
     expect(res.status).toBe(200);
   });
 
-  it("returns 200 (not 429) when rate limited — avoids email-existence leak", async () => {
+  it("returns 200 (not 429) when rate limited . avoids email-existence leak", async () => {
     checkRateLimit.mockResolvedValueOnce({ allowed: false });
     const { POST } = await import("@/app/api/auth/forgot-password/route");
     const res = await POST(makeReq({ email: "a@b.com" }));

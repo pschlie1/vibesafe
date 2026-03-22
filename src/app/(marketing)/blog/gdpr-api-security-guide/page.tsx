@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "GDPR and API Security: What European Founders Must Implement Before Launch",
     description:
-      "GDPR isn't just a privacy policy checkbox. It imposes concrete technical requirements on your APIs — authentication, logging, data minimization, and breach response. Here's what to implement before you go live.",
+      "GDPR isn't just a privacy policy checkbox. It imposes concrete technical requirements on your APIs . authentication, logging, data minimization, and breach response. Here's what to implement before you go live.",
     url: "https://scantient.com/blog/gdpr-api-security-guide",
     siteName: "Scantient",
     type: "article",
@@ -87,7 +87,7 @@ export default function GdprApiSecurityGuidePage() {
           </h1>
           <p className="mt-4 text-lg text-dusty-denim-700 dark:text-dusty-denim-400">
             GDPR isn&apos;t just a privacy policy checkbox. It imposes concrete technical requirements
-            on your APIs — and regulators are handing out fines to startups that treat it like an
+            on your APIs . and regulators are handing out fines to startups that treat it like an
             afterthought.
           </p>
           <div className="mt-6 flex items-center gap-4 text-sm text-dusty-denim-500">
@@ -101,7 +101,7 @@ export default function GdprApiSecurityGuidePage() {
         <div className="prose prose-slate dark:prose-invert max-w-none">
 
           <p>
-            If you&apos;re building a SaaS product in Europe — or selling to European customers — GDPR
+            If you&apos;re building a SaaS product in Europe . or selling to European customers . GDPR
             compliance isn&apos;t optional. And while most founders know they need a privacy policy and a
             cookie banner, fewer understand what GDPR actually requires at the API level.
           </p>
@@ -109,19 +109,19 @@ export default function GdprApiSecurityGuidePage() {
             The regulation&apos;s technical requirements go deep: encryption, access controls, logging,
             data minimization, and breach notification timelines that depend entirely on how well
             your infrastructure is monitored. This guide covers what European founders must
-            implement in their APIs before launch — and the gaps regulators most commonly cite.
+            implement in their APIs before launch . and the gaps regulators most commonly cite.
           </p>
 
           <h2>Why APIs Are Central to GDPR Compliance</h2>
           <p>
             APIs are the primary mechanism through which personal data moves in modern applications.
             Every POST to your user registration endpoint, every GET that returns customer records,
-            every webhook that sends data to a third-party service — these are all GDPR-relevant
+            every webhook that sends data to a third-party service . these are all GDPR-relevant
             operations. The regulation doesn&apos;t distinguish between your frontend and your API; it
             cares about how personal data is processed and protected.
           </p>
           <p>
-            Article 32 of GDPR — &quot;Security of Processing&quot; — specifically requires &quot;appropriate
+            Article 32 of GDPR . &quot;Security of Processing&quot; . specifically requires &quot;appropriate
             technical and organizational measures&quot; to protect personal data. For an API-first
             startup, this translates into concrete implementation requirements that your code must
             satisfy before you process a single EU resident&apos;s data.
@@ -165,11 +165,11 @@ export default function GdprApiSecurityGuidePage() {
               data unless explicitly granted broader scope.
             </li>
             <li>
-              Admin endpoints that can access any user&apos;s data need stronger authentication — MFA,
+              Admin endpoints that can access any user&apos;s data need stronger authentication . MFA,
               separate credentials, and enhanced audit logging.
             </li>
             <li>
-              Service-to-service authentication must be cryptographically verified — not just
+              Service-to-service authentication must be cryptographically verified . not just
               IP-based allowlisting.
             </li>
           </ul>
@@ -178,7 +178,7 @@ export default function GdprApiSecurityGuidePage() {
             <Link href="/blog/soc2-api-security-requirements" className="text-prussian-blue-600 hover:underline">
               SOC 2 API security requirements guide
             </Link>{" "}
-            for the authentication controls that both GDPR and SOC 2 expect — the overlap is
+            for the authentication controls that both GDPR and SOC 2 expect . the overlap is
             substantial.
           </p>
 
@@ -191,7 +191,7 @@ export default function GdprApiSecurityGuidePage() {
             <li>
               API responses should not return fields the client doesn&apos;t need. If your{" "}
               <code>GET /users/:id</code> returns the full user object including password hashes,
-              email, phone, and billing address — when the caller only needs the display name —
+              email, phone, and billing address . when the caller only needs the display name .
               that&apos;s a data minimization failure.
             </li>
             <li>
@@ -213,7 +213,7 @@ export default function GdprApiSecurityGuidePage() {
             </p>
             <p className="mt-1 text-sm text-dusty-denim-700 dark:text-dusty-denim-400">
               Scantient scans for TLS configuration, exposed headers, and security misconfigurations
-              — the technical gaps GDPR auditors look for first.
+              . the technical gaps GDPR auditors look for first.
             </p>
             <Link
               href="/score"
@@ -225,7 +225,7 @@ export default function GdprApiSecurityGuidePage() {
 
           <h3>4. Audit Logging and Accountability (Articles 5(2), 30)</h3>
           <p>
-            GDPR requires that you be able to demonstrate compliance — the &quot;accountability&quot;
+            GDPR requires that you be able to demonstrate compliance . the &quot;accountability&quot;
             principle. For APIs, this means your logging must capture enough to reconstruct what
             happened to personal data:
           </p>
@@ -238,7 +238,7 @@ export default function GdprApiSecurityGuidePage() {
           <p>
             Logs must be retained for a period that allows you to respond to data subject access
             requests (DSARs) and regulatory inquiries. A common practice is 12 months, though the
-            regulation doesn&apos;t specify an exact period — it must be appropriate to the risk.
+            regulation doesn&apos;t specify an exact period . it must be appropriate to the risk.
           </p>
           <p>
             Critically: audit logs themselves may contain personal data (user IDs, IP addresses,
@@ -265,13 +265,13 @@ export default function GdprApiSecurityGuidePage() {
               breach has occurred and when the 72-hour clock starts
             </li>
             <li>
-              Contact information for your supervisory authority ready — in Germany it&apos;s the BfDI
+              Contact information for your supervisory authority ready . in Germany it&apos;s the BfDI
               or relevant Landesbehörde; in Ireland it&apos;s the DPC; in France it&apos;s the CNIL
             </li>
           </ul>
           <p>
             Most early-stage startups have no alerting whatsoever. The first sign of an API
-            breach is often a user complaint or — worse — a journalist. The 72-hour window is
+            breach is often a user complaint or . worse . a journalist. The 72-hour window is
             extremely tight if you start from zero.
           </p>
 
@@ -279,12 +279,12 @@ export default function GdprApiSecurityGuidePage() {
           <p>
             GDPR gives EU residents rights over their personal data: access, rectification,
             erasure (&quot;right to be forgotten&quot;), portability, and objection. These aren&apos;t just
-            business process requirements — they require specific API capabilities:
+            business process requirements . they require specific API capabilities:
           </p>
           <ul>
             <li>
               <strong>Right of access:</strong> You need an endpoint (or manual process) to
-              retrieve all personal data associated with a user account — including data in
+              retrieve all personal data associated with a user account . including data in
               analytics systems, backups, and third-party integrations.
             </li>
             <li>
@@ -323,7 +323,7 @@ export default function GdprApiSecurityGuidePage() {
           <ul>
             <li>
               <strong>Excessive data in API responses.</strong> GET endpoints returning entire
-              user objects — including fields not needed for the use case — is one of the most
+              user objects . including fields not needed for the use case . is one of the most
               cited technical violations.
             </li>
             <li>
@@ -340,7 +340,7 @@ export default function GdprApiSecurityGuidePage() {
             </li>
             <li>
               <strong>Inadequate breach detection.</strong> No monitoring means no awareness
-              of breaches — and regulators take a dim view of delayed notifications.
+              of breaches . and regulators take a dim view of delayed notifications.
             </li>
           </ul>
 
@@ -351,7 +351,7 @@ export default function GdprApiSecurityGuidePage() {
             <Link href="/blog/soc2-api-security-requirements" className="text-prussian-blue-600 hover:underline">
               SOC 2 certification
             </Link>{" "}
-            — encryption, access control, logging, vulnerability management — are largely the same
+            . encryption, access control, logging, vulnerability management . are largely the same
             controls GDPR requires. And the{" "}
             <Link href="/blog/owasp-top-10-api-checklist" className="text-prussian-blue-600 hover:underline">
               OWASP Top 10 for APIs
@@ -359,7 +359,7 @@ export default function GdprApiSecurityGuidePage() {
             covers the vulnerability classes most likely to lead to a GDPR-reportable breach.
           </p>
           <p>
-            Building to GDPR compliance from the start isn&apos;t a competitive disadvantage — it&apos;s
+            Building to GDPR compliance from the start isn&apos;t a competitive disadvantage . it&apos;s
             the foundation that makes SOC 2, ISO 27001, and enterprise sales much easier later.
           </p>
 
@@ -377,10 +377,10 @@ export default function GdprApiSecurityGuidePage() {
         {/* CTA */}
         <div className="mt-12 rounded-2xl border border-prussian-blue-200 dark:border-prussian-blue-800 bg-prussian-blue-50 dark:bg-prussian-blue-950/30 p-8 text-center">
           <h3 className="text-xl font-bold text-ink-black-950 dark:text-alabaster-grey-50">
-            Scan Your API Free — 60 Seconds
+            Scan Your API Free . 60 Seconds
           </h3>
           <p className="mt-2 text-sm text-dusty-denim-700 dark:text-dusty-denim-400">
-            Check TLS configuration, security headers, and exposed endpoints — the technical gaps
+            Check TLS configuration, security headers, and exposed endpoints . the technical gaps
             GDPR auditors find first. No signup required.
           </p>
           <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">

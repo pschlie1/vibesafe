@@ -101,7 +101,7 @@ describe("runDueHttpScans", () => {
   });
 
   it("handles individual app scan failure gracefully (one failure doesn't stop batch)", async () => {
-    // Return two apps — findUnique returns null for both (causing "App not found" throw)
+    // Return two apps . findUnique returns null for both (causing "App not found" throw)
     monitoredAppFindMany.mockResolvedValueOnce([
       { id: "app_1", orgId: "org_a", nextCheckAt: null },
       { id: "app_2", orgId: "org_a", nextCheckAt: null },
@@ -120,7 +120,7 @@ describe("runDueHttpScans", () => {
   });
 
   it("processes apps in batches of 5 (concurrency=5)", async () => {
-    // 6 apps — 1st batch of 5, then 1 more
+    // 6 apps . 1st batch of 5, then 1 more
     const apps = Array.from({ length: 6 }, (_, i) => ({
       id: `app_${i + 1}`,
       orgId: "org_a",

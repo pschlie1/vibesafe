@@ -4,7 +4,7 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "API Rate Limiting: How to Implement It and Why Skipping It Costs You | Scantient Blog",
   description:
-    "API rate limiting prevents abuse, protects your infrastructure, and reduces costs. How to implement sliding window, token bucket, and fixed window rate limits — and what attackers do when you skip it.",
+    "API rate limiting prevents abuse, protects your infrastructure, and reduces costs. How to implement sliding window, token bucket, and fixed window rate limits . and what attackers do when you skip it.",
   keywords: "API rate limiting, how to implement rate limiting, API rate limit guide, rate limiting strategies, sliding window rate limit, protect API abuse",
   openGraph: {
     title: "API Rate Limiting: How to Implement It and Why Skipping It Costs You",
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "API Rate Limiting: How to Implement It and Why Skipping It Costs You",
     description:
-      "Rate limiting is one of the most impactful API security controls. How to implement it — and why skipping it is expensive.",
+      "Rate limiting is one of the most impactful API security controls. How to implement it . and why skipping it is expensive.",
   },
 };
 
@@ -28,7 +28,7 @@ const articleSchema = {
   "@type": "Article",
   headline: "API Rate Limiting: How to Implement It and Why Skipping It Costs You",
   description:
-    "API rate limiting prevents abuse, protects your infrastructure, and reduces costs. How to implement sliding window, token bucket, and fixed window rate limits — and what attackers do when you skip it.",
+    "API rate limiting prevents abuse, protects your infrastructure, and reduces costs. How to implement sliding window, token bucket, and fixed window rate limits . and what attackers do when you skip it.",
   datePublished: "2025-12-18T00:00:00Z",
   dateModified: "2025-12-18T00:00:00Z",
   author: { "@type": "Organization", name: "Scantient" },
@@ -88,7 +88,7 @@ export default function ApiRateLimitingGuidePage() {
           <p className="mt-4 text-lg text-dusty-denim-700 dark:text-dusty-denim-400">
             APIs without rate limiting are open doors for brute force attacks, credential stuffing,
             expensive scraping, and denial-of-service. It&apos;s one of the OWASP API Top 10 for a
-            reason — and one of the easiest controls to implement correctly.
+            reason . and one of the easiest controls to implement correctly.
           </p>
           <div className="mt-6 flex items-center gap-4 text-sm text-dusty-denim-500">
             <time dateTime="2025-12-18">December 18, 2025</time>
@@ -129,22 +129,22 @@ export default function ApiRateLimitingGuidePage() {
           </p>
           <ul>
             <li>
-              <strong>Authentication</strong> — Rate limiting doesn&apos;t verify who the requester is.
+              <strong>Authentication</strong> . Rate limiting doesn&apos;t verify who the requester is.
               It limits frequency regardless of identity.
             </li>
             <li>
-              <strong>Authorization</strong> — Rate limiting doesn&apos;t control what a requester can
+              <strong>Authorization</strong> . Rate limiting doesn&apos;t control what a requester can
               access. It controls how often they can access it.
             </li>
             <li>
-              <strong>Throttling</strong> — Throttling typically slows responses rather than
+              <strong>Throttling</strong> . Throttling typically slows responses rather than
               rejecting them. Rate limiting returns an error response.
             </li>
           </ul>
           <p>
             The client identifier for rate limiting is usually IP address (for unauthenticated
             endpoints) or API key / user ID (for authenticated endpoints). Using both in combination
-            — per-IP and per-user — provides the best coverage.
+            . per-IP and per-user . provides the best coverage.
           </p>
 
           <h2>What Attackers Do Without Rate Limiting</h2>
@@ -163,7 +163,7 @@ export default function ApiRateLimitingGuidePage() {
           <p>
             Even with strong hashed passwords, credential stuffing works because many users
             reuse passwords from other services that have been breached. Rate limiting doesn&apos;t
-            need to be aggressive — 5 failed attempts per IP per minute is enough to make
+            need to be aggressive . 5 failed attempts per IP per minute is enough to make
             automated stuffing impractical.
           </p>
 
@@ -175,15 +175,15 @@ export default function ApiRateLimitingGuidePage() {
             a bot can iterate through IDs and collect every record you have.
           </p>
           <p>
-            Rate limiting adds friction that makes bulk scraping economically unattractive —
+            Rate limiting adds friction that makes bulk scraping economically unattractive .
             especially when combined with API key authentication requirements.
           </p>
 
           <h3>Resource exhaustion and cost amplification</h3>
           <p>
             Expensive operations (AI inference, PDF generation, email sending, database-heavy
-            queries) have a per-request cost. Without rate limiting, a single malicious actor —
-            or a buggy client in an infinite loop — can generate thousands of expensive requests,
+            queries) have a per-request cost. Without rate limiting, a single malicious actor .
+            or a buggy client in an infinite loop . can generate thousands of expensive requests,
             driving up your infrastructure and third-party API costs. This is especially relevant
             for{" "}
             <Link href="/blog/7-api-security-mistakes" className="text-prussian-blue-600 hover:underline">
@@ -199,7 +199,7 @@ export default function ApiRateLimitingGuidePage() {
             </p>
             <p className="mt-1 text-sm text-dusty-denim-700 dark:text-dusty-denim-400">
               Configuration and reality often diverge. Scantient tests your live endpoints to
-              verify rate limiting is in effect — not just in code. Free scan, no signup.
+              verify rate limiting is in effect . not just in code. Free scan, no signup.
             </p>
             <Link
               href="/score"
@@ -225,7 +225,7 @@ export default function ApiRateLimitingGuidePage() {
           </p>
           <p>
             <strong>Cons:</strong> Vulnerable to burst attacks. A client can make 100 requests at
-            the end of one window and 100 more at the start of the next — 200 requests in two
+            the end of one window and 100 more at the start of the next . 200 requests in two
             seconds against a &quot;100 requests per minute&quot; limit.
           </p>
 
@@ -374,7 +374,7 @@ app.use('/api/auth/reset-password', authLimiter);`}</code></pre>
 
           <h2>The 429 Response: Getting It Right</h2>
           <p>
-            When you reject a request due to rate limiting, the response matters — both for
+            When you reject a request due to rate limiting, the response matters . both for
             legitimate clients that need to handle backoff correctly, and for your debugging
             experience.
           </p>
@@ -389,7 +389,7 @@ app.use('/api/auth/reset-password', authLimiter);`}</code></pre>
           </ul>
           <p>
             Return a clear JSON body: <code>&#123;"error": "rate_limit_exceeded", "retryAfter": 45&#125;</code>.
-            Never return an empty body on a 429 — it makes debugging miserable for API consumers.
+            Never return an empty body on a 429 . it makes debugging miserable for API consumers.
           </p>
 
           <h2>Common Rate Limiting Mistakes</h2>
@@ -404,14 +404,14 @@ app.use('/api/auth/reset-password', authLimiter);`}</code></pre>
             </li>
             <li>
               <strong>Skipping rate limiting on internal or &quot;admin&quot; endpoints.</strong>
-              If an endpoint is accessible from the internet, it needs rate limiting — regardless
+              If an endpoint is accessible from the internet, it needs rate limiting . regardless
               of how few clients are supposed to use it.
             </li>
             <li>
               <strong>Setting limits in code but not verifying them in production.</strong>
               Rate limiting middleware can be accidentally disabled by a middleware ordering
               change, a deployment configuration issue, or a proxy stripping headers. Verify
-              that rate limiting is actually enforced on your live endpoints — not just configured
+              that rate limiting is actually enforced on your live endpoints . not just configured
               in code. See the{" "}
               <Link href="/blog/owasp-top-10-api-checklist" className="text-prussian-blue-600 hover:underline">
                 OWASP API Top 10 checklist
@@ -430,10 +430,10 @@ app.use('/api/auth/reset-password', authLimiter);`}</code></pre>
         {/* CTA */}
         <div className="mt-12 rounded-2xl border border-prussian-blue-200 dark:border-prussian-blue-800 bg-prussian-blue-50 dark:bg-prussian-blue-950/30 p-8 text-center">
           <h3 className="text-xl font-bold text-ink-black-950 dark:text-alabaster-grey-50">
-            Scan Your API Free — 60 Seconds
+            Scan Your API Free . 60 Seconds
           </h3>
           <p className="mt-2 text-sm text-dusty-denim-700 dark:text-dusty-denim-400">
-            Verify that rate limiting is actually enforced on your live endpoints — not just
+            Verify that rate limiting is actually enforced on your live endpoints . not just
             configured in code. External scan covers rate limiting, headers, CORS, and more.
           </p>
           <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">

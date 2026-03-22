@@ -10,7 +10,7 @@ Employees at mid-market companies ship AI-built internal tools and customer-faci
 
 ## What This Ships (Customer Value)
 
-- **Register apps in seconds** — just the URL, owner email, and criticality level
+- **Register apps in seconds** . just the URL, owner email, and criticality level
 - **External scans (no SDK)** for:
   - Exposed API keys in client-side JavaScript (54% prevalence)
   - Missing security headers (72% prevalence)
@@ -61,13 +61,13 @@ Open http://localhost:3000
 
 | Endpoint | Method | Auth | Description |
 |----------|--------|------|-------------|
-| `/api/apps` | GET | — | List all monitored apps |
-| `/api/apps` | POST | — | Register new app |
-| `/api/scan/:id` | POST | — | Run immediate scan |
+| `/api/apps` | GET |  | List all monitored apps |
+| `/api/apps` | POST |  | Register new app |
+| `/api/scan/:id` | POST |  | Run immediate scan |
 | `/api/cron/run` | GET | Bearer | Run all due scans (cron) |
-| `/api/dashboard` | GET | — | Portfolio summary + recent runs |
+| `/api/dashboard` | GET |  | Portfolio summary + recent runs |
 | `/api/reports/weekly` | GET | Bearer | Weekly governance report |
-| `/api/health` | GET | — | Service health check |
+| `/api/health` | GET |  | Service health check |
 
 ## CI/CD
 

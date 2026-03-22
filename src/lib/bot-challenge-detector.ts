@@ -20,7 +20,7 @@ export function detectBotChallenge(
     return { challenged: true, provider: "vercel", confidence: "high" };
   }
 
-  // Cloudflare — challenge or managed challenge
+  // Cloudflare . challenge or managed challenge
   const cfMitigated = headers.get("cf-mitigated");
   if (cfMitigated === "challenge") {
     return { challenged: true, provider: "cloudflare", confidence: "high" };

@@ -93,7 +93,7 @@ beforeEach(() => {
   getOrgLimits.mockResolvedValue({ maxApps: 2, maxUsers: 1, tier: "FREE" });
 });
 
-describe("POST /api/public/ci-scan — app limit enforcement (CB-4)", () => {
+describe("POST /api/public/ci-scan . app limit enforcement (CB-4)", () => {
   it("returns 403 when org is at app limit", async () => {
     countApps.mockResolvedValue(2); // at limit (maxApps: 2)
     getOrgLimits.mockResolvedValue({ maxApps: 2, maxUsers: 1, tier: "FREE" });

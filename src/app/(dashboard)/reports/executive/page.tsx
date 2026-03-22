@@ -312,17 +312,17 @@ export default async function ExecutiveReportPage() {
                       <StatusBadge status={app.status} />
                     </td>
                     <td className="px-4 py-3 text-xs">
-                      {app.uptimePercent !== null ? `${app.uptimePercent}%` : "—"}
+                      {app.uptimePercent !== null ? `${app.uptimePercent}%` : "."}
                     </td>
                     <td className="px-4 py-3">
                       {app.openFindings > 0 ? (
                         <span className="text-sm font-semibold text-error">{app.openFindings}</span>
                       ) : (
-                        <span className="text-sm text-muted">—</span>
+                        <span className="text-sm text-muted">.</span>
                       )}
                     </td>
                     <td className="px-4 py-3 text-xs text-muted">
-                      {app.lastScanned ? format(app.lastScanned, "MMM d, yyyy") : "—"}
+                      {app.lastScanned ? format(app.lastScanned, "MMM d, yyyy") : "."}
                     </td>
                   </tr>
                 ))}

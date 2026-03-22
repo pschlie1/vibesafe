@@ -289,7 +289,7 @@ function ScorePage() {
                 </h2>
                 <p className="mt-1 text-sm text-heading">
                   {result.findingsCount > 0
-                    ? "This is a one-time snapshot. These issues could worsen, new ones could appear — and you won't know unless you scan again manually."
+                    ? "This is a one-time snapshot. These issues could worsen, new ones could appear . and you won't know unless you scan again manually."
                     : "Security posture changes constantly: new deploys, cert expirations, header regressions. Without monitoring, you'll find out too late."}
                 </p>
               </div>
@@ -306,7 +306,7 @@ function ScorePage() {
                         <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted">Feature</th>
                         <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-muted">Free Scan</th>
                         <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-prussian-blue-600 dark:text-prussian-blue-400 bg-prussian-blue-50 dark:bg-prussian-blue-950/20">
-                          LTD — $79
+                          LTD . $79
                           <span className="ml-1 text-[10px] font-bold text-prussian-blue-500">once</span>
                         </th>
                         <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-muted">Pro $399/mo</th>
@@ -359,7 +359,7 @@ function ScorePage() {
 
                 {/* Urgency */}
                 <p className="mt-2 text-xs font-medium text-warning">
-                  ⏳ LTD pricing won&apos;t last forever — lock in $79 before it goes monthly-only
+                  ⏳ LTD pricing won&apos;t last forever . lock in $79 before it goes monthly-only
                 </p>
 
                 <div className="mt-5 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
@@ -367,7 +367,7 @@ function ScorePage() {
                     href="/pricing"
                     className="inline-flex items-center gap-2 rounded-lg bg-prussian-blue-600 px-7 py-3 text-sm font-bold text-white shadow-lg transition hover:bg-prussian-blue-700 hover:shadow-xl"
                   >
-                    Get Lifetime Access — $79 →
+                    Get Lifetime Access . $79 →
                   </Link>
                   <Link
                     href="/pricing"

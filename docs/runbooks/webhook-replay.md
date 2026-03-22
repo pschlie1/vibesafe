@@ -102,5 +102,5 @@ If a Scantient alert notification failed to deliver:
 
 - [ ] Subscription tier matches what customer paid for
 - [ ] Customer can access tier-gated features
-- [ ] No duplicate events processed (Stripe webhook handler uses `upsert` — safe)
+- [ ] No duplicate events processed (Stripe webhook handler uses `upsert` . safe)
 - [ ] Add note to incident timeline if replay was part of incident response

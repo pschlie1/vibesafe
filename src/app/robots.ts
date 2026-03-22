@@ -6,7 +6,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        // Do not list /api/ — it reveals API surface to attackers.
+        // Do not list /api/ . it reveals API surface to attackers.
         // Routes below are auth-protected server-side; robots.txt is not a security control.
         disallow: ["/dashboard", "/settings", "/onboarding", "/invite"],
       },

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Careers — Scantient",
+  title: "Careers . Scantient",
   description: "Join Scantient and help build security infrastructure for the AI era.",
 };
 

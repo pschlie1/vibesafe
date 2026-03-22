@@ -3,12 +3,12 @@ import { NextResponse } from "next/server";
 /**
  * CORS configuration for Scantient API routes.
  *
- * /api/v1/** — API-key authenticated developer endpoints. Authentication is
+ * /api/v1/** . API-key authenticated developer endpoints. Authentication is
  *              carried in the Authorization header (not cookies), so wildcard
  *              origin is safe. Credentials are NOT allowed.
  *
- * /api/public/** — Unauthenticated public endpoints (badges, scores, CI scans).
- *                  Open CORS is intentional — they're designed for embedding.
+ * /api/public/** . Unauthenticated public endpoints (badges, scores, CI scans).
+ *                  Open CORS is intentional . they're designed for embedding.
  */
 
 export const CORS_HEADERS_API = {

@@ -2,7 +2,7 @@
  * scanner-auth-checks.test.ts
  *
  * Unit tests for scanner-auth.ts via runAuthScan().
- * All HTTP is mocked — zero real network calls.
+ * All HTTP is mocked . zero real network calls.
  *
  * Covers:
  *  - AUTH_NO_RATE_LIMIT (checkRateLimiting)
@@ -94,16 +94,16 @@ function makeResponse(body: string, status: number, headers: Record<string, stri
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// AUTH_NO_RATE_LIMIT — checkRateLimiting
+// AUTH_NO_RATE_LIMIT . checkRateLimiting
 // ─────────────────────────────────────────────────────────────────────────────
 
-describe("AUTH_NO_RATE_LIMIT — rate limit detection", () => {
+describe("AUTH_NO_RATE_LIMIT . rate limit detection", () => {
   beforeEach(() => {
     vi.resetAllMocks();
   });
 
   it("fires when all 6 requests return same status with no rate limit headers", async () => {
-    // All requests return 401 — consistent, no rate limiting
+    // All requests return 401 . consistent, no rate limiting
     mockSsrfSafeFetch.mockImplementation(async () =>
       makeResponse('{"error":"Invalid credentials"}', 401),
     );
@@ -147,7 +147,7 @@ describe("AUTH_NO_RATE_LIMIT — rate limit detection", () => {
   });
 
   it("does NOT fire on non-auth endpoint paths", async () => {
-    // Product listing endpoint — should not be checked for auth rate limiting
+    // Product listing endpoint . should not be checked for auth rate limiting
     mockSsrfSafeFetch.mockImplementation(async () =>
       makeResponse('{"products":[]}', 200),
     );
@@ -174,10 +174,10 @@ describe("AUTH_NO_RATE_LIMIT — rate limit detection", () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// AUTH_ACCOUNT_ENUMERATION — checkAccountEnumeration
+// AUTH_ACCOUNT_ENUMERATION . checkAccountEnumeration
 // ─────────────────────────────────────────────────────────────────────────────
 
-describe("AUTH_ACCOUNT_ENUMERATION — account enumeration detection", () => {
+describe("AUTH_ACCOUNT_ENUMERATION . account enumeration detection", () => {
   beforeEach(() => {
     vi.resetAllMocks();
   });
@@ -230,10 +230,10 @@ describe("AUTH_ACCOUNT_ENUMERATION — account enumeration detection", () => {
     expect(findings.every((f) => f.code !== "AUTH_ACCOUNT_ENUMERATION")).toBe(true);
   });
 
-  it("does NOT fire when site has no login form — AUTH_ACCOUNT_ENUMERATION must NOT fire on non-auth endpoints", async () => {
+  it("does NOT fire when site has no login form . AUTH_ACCOUNT_ENUMERATION must NOT fire on non-auth endpoints", async () => {
     mockSsrfSafeFetch.mockImplementation(async () => makeResponse('{"error":"user not found"}', 401));
 
-    // No auth endpoints — only a generic API endpoint
+    // No auth endpoints . only a generic API endpoint
     const findings = await runAuthScan(
       [makeApiEndpoint({ path: "/api/search", url: "https://example.com/api/search", category: "api" })],
       "https://example.com",
@@ -242,7 +242,7 @@ describe("AUTH_ACCOUNT_ENUMERATION — account enumeration detection", () => {
   });
 
   it("does NOT fire when rate limited during enumeration check", async () => {
-    // Returns 429 on all requests — rate limiting active
+    // Returns 429 on all requests . rate limiting active
     mockSsrfSafeFetch.mockImplementation(async () => makeResponse("Too Many Requests", 429));
 
     const findings = await runAuthScan([makeAuthEndpoint()], "https://example.com");
@@ -251,17 +251,17 @@ describe("AUTH_ACCOUNT_ENUMERATION — account enumeration detection", () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// AUTH_COOKIE_MISSING_FLAGS — checkAuthCookieSecurity
+// AUTH_COOKIE_MISSING_FLAGS . checkAuthCookieSecurity
 // ─────────────────────────────────────────────────────────────────────────────
 
-describe("AUTH_COOKIE_MISSING_FLAGS — auth cookie security", () => {
+describe("AUTH_COOKIE_MISSING_FLAGS . auth cookie security", () => {
   beforeEach(() => {
     vi.resetAllMocks();
   });
 
   it("fires when auth response sets cookie without HttpOnly flag", async () => {
     // Use mockImplementation (not mockResolvedValue) to create FRESH Response objects.
-    // mockResolvedValue shares ONE Response — after the first res.text() call, the
+    // mockResolvedValue shares ONE Response . after the first res.text() call, the
     // body is consumed, and postJson returns null for all subsequent calls.
     mockSsrfSafeFetch.mockImplementation(async () =>
       makeResponse('{"token":"abc"}', 200, {
@@ -298,10 +298,10 @@ describe("AUTH_COOKIE_MISSING_FLAGS — auth cookie security", () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// AUTH_PERMISSIVE_CORS — checkPermissiveCors
+// AUTH_PERMISSIVE_CORS . checkPermissiveCors
 // ─────────────────────────────────────────────────────────────────────────────
 
-describe("AUTH_PERMISSIVE_CORS — CORS policy on auth endpoints", () => {
+describe("AUTH_PERMISSIVE_CORS . CORS policy on auth endpoints", () => {
   beforeEach(() => {
     vi.resetAllMocks();
   });
@@ -343,10 +343,10 @@ describe("AUTH_PERMISSIVE_CORS — CORS policy on auth endpoints", () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// ADMIN_ENDPOINT_UNAUTHED — checkAdminEndpointUnauthed
+// ADMIN_ENDPOINT_UNAUTHED . checkAdminEndpointUnauthed
 // ─────────────────────────────────────────────────────────────────────────────
 
-describe("ADMIN_ENDPOINT_UNAUTHED — admin endpoint access control", () => {
+describe("ADMIN_ENDPOINT_UNAUTHED . admin endpoint access control", () => {
   beforeEach(() => {
     vi.resetAllMocks();
   });
@@ -393,7 +393,7 @@ describe("ADMIN_ENDPOINT_UNAUTHED — admin endpoint access control", () => {
   it("fires with HIGH severity (not CRITICAL) when /admin returns 200 with HTML (not JSON)", async () => {
     // Admin 200 HTML → HIGH (may be unprotected admin panel)
     // Admin 200 JSON → CRITICAL (API data exposed)
-    // The check fires for BOTH — just different severities
+    // The check fires for BOTH . just different severities
     mockSsrfSafeFetch.mockImplementation(async () =>
       new Response("<html><body><h1>Login Required</h1></body></html>", {
         status: 200,
@@ -409,10 +409,10 @@ describe("ADMIN_ENDPOINT_UNAUTHED — admin endpoint access control", () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// GRAPHQL_INTROSPECTION_EXPOSED — checkGraphqlIntrospection
+// GRAPHQL_INTROSPECTION_EXPOSED . checkGraphqlIntrospection
 // ─────────────────────────────────────────────────────────────────────────────
 
-describe("GRAPHQL_INTROSPECTION_EXPOSED — GraphQL introspection detection", () => {
+describe("GRAPHQL_INTROSPECTION_EXPOSED . GraphQL introspection detection", () => {
   beforeEach(() => {
     vi.resetAllMocks();
   });
@@ -465,7 +465,7 @@ describe("GRAPHQL_INTROSPECTION_EXPOSED — GraphQL introspection detection", ()
   });
 
   it("does NOT fire on non-GraphQL endpoints even if response contains __schema", async () => {
-    // A non-graphql URL — should not run introspection check
+    // A non-graphql URL . should not run introspection check
     const apiEndpoint = makeApiEndpoint({
       url: "https://example.com/api/schema",
       path: "/api/schema",
@@ -493,10 +493,10 @@ describe("GRAPHQL_INTROSPECTION_EXPOSED — GraphQL introspection detection", ()
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Token in URL — checkTokenInUrl
+// Token in URL . checkTokenInUrl
 // ─────────────────────────────────────────────────────────────────────────────
 
-describe("checkTokenInUrl — auth token in URL detection", () => {
+describe("checkTokenInUrl . auth token in URL detection", () => {
   beforeEach(() => {
     vi.resetAllMocks();
   });
@@ -539,7 +539,7 @@ describe("runAuthScan edge cases", () => {
       makeResponse('{"error":"Invalid credentials"}', 401),
     );
 
-    // Provide the same login endpoint twice — should not produce duplicate findings
+    // Provide the same login endpoint twice . should not produce duplicate findings
     const findings = await runAuthScan(
       [makeAuthEndpoint(), makeAuthEndpoint()],
       "https://example.com",
@@ -551,7 +551,7 @@ describe("runAuthScan edge cases", () => {
     expect(uniqueTitles.size).toBe(rateLimitFindings.length);
   });
 
-  it("handles network errors gracefully — never throws", async () => {
+  it("handles network errors gracefully . never throws", async () => {
     mockSsrfSafeFetch.mockRejectedValue(new Error("Network error: ECONNREFUSED"));
 
     await expect(
@@ -559,7 +559,7 @@ describe("runAuthScan edge cases", () => {
     ).resolves.toBeDefined();
   });
 
-  it("handles mixed endpoint types — only runs relevant checks per type", async () => {
+  it("handles mixed endpoint types . only runs relevant checks per type", async () => {
     mockSsrfSafeFetch.mockImplementation(async () => makeResponse("{}", 200));
 
     const endpoints = [

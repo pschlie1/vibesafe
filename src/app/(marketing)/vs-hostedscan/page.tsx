@@ -30,14 +30,14 @@ export default function VsHostedScanPage() {
             <span className="text-prussian-blue-600 dark:text-prussian-blue-400 transition-colors">Which External Security Scanner Fits Your Stack?</span>
           </h1>
           <p className="mx-auto mt-8 max-w-[640px] text-lg leading-relaxed text-dusty-denim-700 dark:text-dusty-denim-500 transition-colors">
-            Both tools scan your app from the outside — no code access required. But they make very different bets on what &quot;security scanning&quot; means for indie devs and small teams.
+            Both tools scan your app from the outside . no code access required. But they make very different bets on what &quot;security scanning&quot; means for indie devs and small teams.
           </p>
           <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link
               href="/score"
               className="rounded-lg bg-prussian-blue-600 dark:bg-prussian-blue-500 px-8 py-3.5 text-sm font-semibold text-white shadow-lg shadow-prussian-blue-600/25 dark:shadow-prussian-blue-500/20 transition-all hover:bg-prussian-blue-700 dark:hover:bg-prussian-blue-600 hover:shadow-xl hover:shadow-prussian-blue-700/40 dark:hover:shadow-prussian-blue-600/40 active:scale-95"
             >
-              Run a free scan — 60 seconds
+              Run a free scan . 60 seconds
             </Link>
             <Link
               href="/pricing"
@@ -53,7 +53,7 @@ export default function VsHostedScanPage() {
       <section className="mx-auto max-w-[1200px] px-6 py-16">
         <div className="mx-auto max-w-3xl text-dusty-denim-700 dark:text-dusty-denim-400 space-y-6 text-base leading-relaxed">
           <p>
-            HostedScan and Scantient are both external security scanners — meaning you point them at a URL, and they audit your app the way an attacker would: from the outside, without needing access to your source code, CI/CD pipeline, or internal infrastructure.
+            HostedScan and Scantient are both external security scanners . meaning you point them at a URL, and they audit your app the way an attacker would: from the outside, without needing access to your source code, CI/CD pipeline, or internal infrastructure.
           </p>
           <p>
             That makes them genuine alternatives. But the audiences, feature sets, and pricing philosophies are quite different. Here&apos;s an honest breakdown.
@@ -83,7 +83,7 @@ export default function VsHostedScanPage() {
                 { feature: "Requires agent/SDK?", hostedscan: "No (external scanning)", scantient: "No (external scanning)" },
                 { feature: "Network scanning", hostedscan: "Yes (ports, services)", scantient: "No (API/web focus)" },
                 { feature: "API security focus", hostedscan: "Partial", scantient: "Primary focus" },
-                { feature: "LTD pricing", hostedscan: "No (subscription only)", scantient: "Yes — $79 one-time" },
+                { feature: "LTD pricing", hostedscan: "No (subscription only)", scantient: "Yes . $79 one-time" },
                 { feature: "Monthly subscription", hostedscan: "From ~$99/mo", scantient: "From $29/mo" },
                 { feature: "Target audience", hostedscan: "SMBs, IT teams, compliance-focused", scantient: "Indie devs, solo founders, small SaaS teams" },
                 { feature: "Compliance reporting", hostedscan: "Yes (SOC 2, OWASP, PCI reports)", scantient: "Monthly PDF reports" },
@@ -109,7 +109,7 @@ export default function VsHostedScanPage() {
               <h3 className="text-xl font-bold text-ink-black-950 dark:text-alabaster-grey-50 mb-6">HostedScan is better when…</h3>
               <ul className="space-y-3">
                 {[
-                  "You need to audit the full network perimeter — not just your web app",
+                  "You need to audit the full network perimeter . not just your web app",
                   "Your team is compliance-driven and needs formal reports (SOC 2, PCI DSS)",
                   "You're managing multiple targets across clients (MSP use case)",
                   "You want scheduled, recurring scans with detailed issue tracking",
@@ -130,7 +130,7 @@ export default function VsHostedScanPage() {
                   "You care most about API security: exposed keys, CORS misconfig, missing headers",
                   "You want to pay once ($79 LTD) and stop paying monthly forever",
                   "You're pre-revenue or early-stage and every dollar counts",
-                  "You want a fast, scannable security score before launch day — not a full audit engagement",
+                  "You want a fast, scannable security score before launch day . not a full audit engagement",
                 ].map((item) => (
                   <li key={item} className="flex items-start gap-3 text-sm text-dusty-denim-700 dark:text-dusty-denim-400">
                     <span className="mt-0.5 h-5 w-5 shrink-0 text-success">✓</span>
@@ -152,10 +152,10 @@ export default function VsHostedScanPage() {
               HostedScan is a mature product. They&apos;ve been around longer, they cover more scanning categories (network scanning is genuinely useful for SMBs with on-prem infrastructure), and their compliance reporting is solid for teams that need it.
             </p>
             <p>
-              But HostedScan&apos;s pricing and feature depth is calibrated for IT teams and small businesses with recurring security budgets. If you&apos;re a developer who just deployed a Next.js app and wants to know if your API is leaking secrets or missing CSP headers — HostedScan is more tool than you need, and you&apos;ll pay for it accordingly.
+              But HostedScan&apos;s pricing and feature depth is calibrated for IT teams and small businesses with recurring security budgets. If you&apos;re a developer who just deployed a Next.js app and wants to know if your API is leaking secrets or missing CSP headers . HostedScan is more tool than you need, and you&apos;ll pay for it accordingly.
             </p>
             <p>
-              Scantient trades breadth for speed and focus. No network port scanning. No SBOM. No enterprise compliance workflows. What you get instead: the fastest path from &quot;I just deployed&quot; to &quot;I know my API security posture&quot; — and a lifetime deal that means you never pay again.
+              Scantient trades breadth for speed and focus. No network port scanning. No SBOM. No enterprise compliance workflows. What you get instead: the fastest path from &quot;I just deployed&quot; to &quot;I know my API security posture&quot; . and a lifetime deal that means you never pay again.
             </p>
             <p>
               For most indie devs, that trade-off is obvious. For IT directors managing a hybrid network with 20 services? HostedScan probably wins. The good news: you don&apos;t have to pick one forever. Run a{" "}
@@ -204,7 +204,7 @@ export default function VsHostedScanPage() {
             See your API security score in 60 seconds
           </h2>
           <p className="mt-4 text-base text-dusty-denim-700 dark:text-dusty-denim-400">
-            No account required. No SDK. No setup. Paste your URL and get an instant external security scan — the same checks attackers run on your app.
+            No account required. No SDK. No setup. Paste your URL and get an instant external security scan . the same checks attackers run on your app.
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link
@@ -217,7 +217,7 @@ export default function VsHostedScanPage() {
               href="/pricing"
               className="rounded-lg border border-alabaster-grey-200 dark:border-ink-black-800 bg-white dark:bg-ink-black-900 px-8 py-3.5 text-sm font-semibold text-dusty-denim-700 dark:text-dusty-denim-100 transition-all hover:bg-alabaster-grey-50 active:scale-95"
             >
-              Get lifetime access — $79
+              Get lifetime access . $79
             </Link>
           </div>
           <p className="mt-6 text-xs text-dusty-denim-500">

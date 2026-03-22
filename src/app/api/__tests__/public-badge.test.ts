@@ -210,7 +210,7 @@ describe("GET /api/public/badge/[slug]", () => {
 
 // ─── Audit 22: SVG XML Injection Guard ───────────────────────────────────────
 
-describe("A22: escapeSvg — SVG XML injection guard", () => {
+describe("A22: escapeSvg . SVG XML injection guard", () => {
   it("escapes < and > in SVG text content", async () => {
     // Import actual (non-mocked) escapeSvg from security lib
     const { escapeSvg } = await vi.importActual<typeof import("@/lib/security")>("@/lib/security");
@@ -239,7 +239,7 @@ describe("A22: escapeSvg — SVG XML injection guard", () => {
       typeof import("@/app/api/public/badge/route")
     >("@/app/api/public/badge/route");
 
-    // makeBadgeSvg takes score: number and grade: string — simulate an edge case
+    // makeBadgeSvg takes score: number and grade: string . simulate an edge case
     // where grade contains XML-special chars (would not happen via scoreToGrade but
     // tests the defensive escaping for any future caller passing user data).
     const svg = makeBadgeSvg(85, "<A>");

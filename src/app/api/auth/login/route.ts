@@ -34,7 +34,7 @@ export async function POST(req: Request) {
 
     const { email, password } = parsed.data;
 
-    // Per-email rate limit: 10 attempts/hour — stops brute-force via IP rotation
+    // Per-email rate limit: 10 attempts/hour . stops brute-force via IP rotation
     const emailLimit = await checkRateLimit(`login-email:${email.toLowerCase()}`, {
       maxAttempts: 10,
       windowMs: 60 * 60 * 1000,
@@ -69,7 +69,7 @@ export async function POST(req: Request) {
     }
 
     const session = await createSession(user.id);
-    // Audit log: user.login (fire-and-forget — never block the auth response)
+    // Audit log: user.login (fire-and-forget . never block the auth response)
     logAudit(session, "user.login", "auth").catch(() => { /* non-fatal */ });
     return NextResponse.json({ user: session });
   } catch {

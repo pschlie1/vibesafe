@@ -93,7 +93,7 @@ vi.mock("@/lib/db", () => ({
 }));
 
 // ─── Rate limit mock ──────────────────────────────────────────────────────────
-// Must be stubbed here — the bulk-add route (audit-23) calls checkRateLimit.
+// Must be stubbed here . the bulk-add route (audit-23) calls checkRateLimit.
 // Without this stub the in-memory rate-limit store fills up across tests,
 // causing unrelated bulk-add tests to receive 429 instead of the expected response.
 vi.mock("@/lib/rate-limit", () => ({
@@ -163,10 +163,10 @@ beforeEach(() => {
 });
 
 // =============================================================================
-// SECTION 1: App limit enforcement — POST /api/apps
+// SECTION 1: App limit enforcement . POST /api/apps
 // =============================================================================
 
-describe("POST /api/apps — app limit enforcement per tier", () => {
+describe("POST /api/apps . app limit enforcement per tier", () => {
   const validApp = {
     url: "https://example.com",
     name: "My App",
@@ -287,10 +287,10 @@ describe("POST /api/apps — app limit enforcement per tier", () => {
 });
 
 // =============================================================================
-// SECTION 2: Bulk app limits — POST /api/apps/bulk
+// SECTION 2: Bulk app limits . POST /api/apps/bulk
 // =============================================================================
 
-describe("POST /api/apps/bulk — bulk app limit per tier", () => {
+describe("POST /api/apps/bulk . bulk app limit per tier", () => {
   it("FREE: blocks bulk add when already at limit (2 of 2)", async () => {
     getSession.mockResolvedValue(makeSession());
     getOrgLimits.mockResolvedValue(makeLimits("FREE"));
@@ -397,10 +397,10 @@ describe("POST /api/apps/bulk — bulk app limit per tier", () => {
 });
 
 // =============================================================================
-// SECTION 3: API key access — POST /api/keys
+// SECTION 3: API key access . POST /api/keys
 // =============================================================================
 
-describe("POST /api/keys — API key access per tier", () => {
+describe("POST /api/keys . API key access per tier", () => {
   it("FREE: blocks API key creation with upgrade prompt", async () => {
     getSession.mockResolvedValue(makeSession("ADMIN"));
     getOrgLimits.mockResolvedValue(makeLimits("FREE"));
@@ -523,10 +523,10 @@ describe("POST /api/keys — API key access per tier", () => {
 });
 
 // =============================================================================
-// SECTION 4: Alert channel gating — POST /api/alerts
+// SECTION 4: Alert channel gating . POST /api/alerts
 // =============================================================================
 
-describe("POST /api/alerts — alert channel gating per tier", () => {
+describe("POST /api/alerts . alert channel gating per tier", () => {
   it("FREE: blocks ALL alert channels (EMAIL, SLACK, WEBHOOK)", async () => {
     getSession.mockResolvedValue(makeSession());
     getOrgLimits.mockResolvedValue(makeLimits("FREE"));
@@ -662,10 +662,10 @@ describe("POST /api/alerts — alert channel gating per tier", () => {
 });
 
 // =============================================================================
-// SECTION 5: Executive reports — GET /api/reports/executive
+// SECTION 5: Executive reports . GET /api/reports/executive
 // =============================================================================
 
-describe("GET /api/reports/executive — tier gating", () => {
+describe("GET /api/reports/executive . tier gating", () => {
   /** Set up minimal DB mocks for a successful executive report fetch */
   function setupReportDB() {
     organizationFindUnique.mockResolvedValue({ name: "Test Org" });
@@ -747,10 +747,10 @@ describe("GET /api/reports/executive — tier gating", () => {
 });
 
 // =============================================================================
-// SECTION 6: Evidence packs — GET /api/reports/evidence
+// SECTION 6: Evidence packs . GET /api/reports/evidence
 // =============================================================================
 
-describe("GET /api/reports/evidence — tier gating", () => {
+describe("GET /api/reports/evidence . tier gating", () => {
   const validUrl = "http://localhost/api/reports/evidence?from=2025-01-01&to=2025-12-31&framework=soc2";
 
   it("FREE: blocks evidence pack with tier message", async () => {
@@ -853,10 +853,10 @@ describe("GET /api/reports/evidence — tier gating", () => {
 });
 
 // =============================================================================
-// SECTION 7: PDF reports — GET /api/reports/pdf
+// SECTION 7: PDF reports . GET /api/reports/pdf
 // =============================================================================
 
-describe("GET /api/reports/pdf — tier gating", () => {
+describe("GET /api/reports/pdf . tier gating", () => {
   it("FREE: blocks PDF report with tier message", async () => {
     getSession.mockResolvedValue(makeSession());
     getOrgLimits.mockResolvedValue(makeLimits("FREE"));
@@ -924,10 +924,10 @@ describe("GET /api/reports/pdf — tier gating", () => {
 });
 
 // =============================================================================
-// SECTION 8: Jira integration — tier gating
+// SECTION 8: Jira integration . tier gating
 // =============================================================================
 
-describe("/api/integrations/jira — Jira tier gating", () => {
+describe("/api/integrations/jira . Jira tier gating", () => {
   const validJiraConfig = {
     url: "https://myorg.atlassian.net",
     email: "admin@myorg.com",
@@ -1066,10 +1066,10 @@ describe("/api/integrations/jira — Jira tier gating", () => {
 });
 
 // =============================================================================
-// SECTION 9: SSO configuration — tier gating
+// SECTION 9: SSO configuration . tier gating
 // =============================================================================
 
-describe("/api/integrations/sso — SSO tier gating", () => {
+describe("/api/integrations/sso . SSO tier gating", () => {
   const validSSOConfig = {
     provider: "oidc",
     clientId: "client-id-123",
@@ -1238,10 +1238,10 @@ describe("/api/integrations/sso — SSO tier gating", () => {
 });
 
 // =============================================================================
-// SECTION 10: Org limits endpoint — GET /api/org/limits
+// SECTION 10: Org limits endpoint . GET /api/org/limits
 // =============================================================================
 
-describe("GET /api/org/limits — returns correct tier limits", () => {
+describe("GET /api/org/limits . returns correct tier limits", () => {
   it("FREE: returns correct maxApps and maxUsers", async () => {
     getSession.mockResolvedValue(makeSession());
     getOrgLimits.mockResolvedValue(makeLimits("FREE"));
@@ -1330,10 +1330,10 @@ describe("GET /api/org/limits — returns correct tier limits", () => {
 });
 
 // =============================================================================
-// SECTION 11: User/invite limits — POST /api/team
+// SECTION 11: User/invite limits . POST /api/team
 // =============================================================================
 
-describe("POST /api/team — user limit enforcement per tier", () => {
+describe("POST /api/team . user limit enforcement per tier", () => {
   it("FREE: blocks inviting second user (at limit 1 of 1)", async () => {
     getSession.mockResolvedValue(makeSession("ADMIN"));
     canAddUser.mockResolvedValue({
@@ -1439,10 +1439,10 @@ describe("POST /api/team — user limit enforcement per tier", () => {
 });
 
 // =============================================================================
-// SECTION 12: Expired trial hard-block — cross-feature smoke test
+// SECTION 12: Expired trial hard-block . cross-feature smoke test
 // =============================================================================
 
-describe("EXPIRED tier — hard-blocks all gated features", () => {
+describe("EXPIRED tier . hard-blocks all gated features", () => {
   beforeEach(() => {
     getSession.mockResolvedValue(makeSession("ADMIN"));
     requireRole.mockResolvedValue(makeSession("OWNER"));

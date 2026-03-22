@@ -83,7 +83,7 @@ export default async function DashboardPage() {
 
           {apps.length === 0 ? (
             <div className="p-8 text-center">
-              <p className="text-sm text-muted">Ready to secure your apps? Add your first app to start monitoring. You'll get your first security scan in under 60 seconds — no setup required.</p>
+              <p className="text-sm text-muted">Ready to secure your apps? Add your first app to start monitoring. You'll get your first security scan in under 60 seconds . no setup required.</p>
               <div className="mt-4 flex items-center justify-center gap-3">
                 <Link
                   href="/apps/bulk-add"
@@ -145,11 +145,11 @@ export default async function DashboardPage() {
                               <span className="text-muted"> / {findingsCount}</span>
                             </span>
                           ) : (
-                            <span className="text-xs text-muted">—</span>
+                            <span className="text-xs text-muted">.</span>
                           )}
                         </td>
                         <td className="px-4 py-3 text-xs text-muted">
-                          {run?.responseTimeMs ? `${run.responseTimeMs}ms` : "—"}
+                          {run?.responseTimeMs ? `${run.responseTimeMs}ms` : "."}
                         </td>
                         <td className="px-4 py-3">
                           <ScanButton appId={app.id} />

@@ -1,4 +1,4 @@
-# Scantient Tier 2 — Subsystem Health Probe Spec
+# Scantient Tier 2 . Subsystem Health Probe Spec
 
 **Version:** 1.0  
 **Status:** Active
@@ -49,9 +49,9 @@ Accept: application/json
 
 ### Status Code
 
-- `200 OK` — probe succeeded (even if some subsystems are degraded — `ok: false` in the body is sufficient)
-- `401 Unauthorized` — missing or invalid `X-Scan-Token`
-- `503 Service Unavailable` — probe itself is unavailable (treated as a total failure by Scantient)
+- `200 OK` . probe succeeded (even if some subsystems are degraded . `ok: false` in the body is sufficient)
+- `401 Unauthorized` . missing or invalid `X-Scan-Token`
+- `503 Service Unavailable` . probe itself is unavailable (treated as a total failure by Scantient)
 
 ### Response Body (JSON)
 
@@ -76,7 +76,7 @@ Accept: application/json
     "email": {
       "ok": false,
       "provider": "resend",
-      "error": "API key invalid — 403 Forbidden"
+      "error": "API key invalid . 403 Forbidden"
     },
     "queue": {
       "ok": true,
@@ -179,11 +179,11 @@ Accept: application/json
 
 ## Security Guidelines
 
-1. **Validate the token first** — before doing any work. Return 401 immediately on mismatch.
+1. **Validate the token first** . before doing any work. Return 401 immediately on mismatch.
 2. **Use constant-time comparison** for the token to prevent timing attacks.
-3. **Never expose internal errors** — return generic messages in `error` fields, not stack traces.
+3. **Never expose internal errors** . return generic messages in `error` fields, not stack traces.
 4. **Use `crypto.timingSafeEqual`** (Node.js) or equivalent for token comparison.
-5. **Keep the token secret** — treat it like a database password. Rotate it if exposed.
+5. **Keep the token secret** . treat it like a database password. Rotate it if exposed.
 
 ---
 
@@ -342,7 +342,7 @@ export default router;
    openssl rand -hex 32
    ```
 4. Add the token to your app's environment variables as `SCANTIENT_PROBE_TOKEN`
-5. Save — Scantient will probe your app after each security scan
+5. Save . Scantient will probe your app after each security scan
 
 ---
 
@@ -352,5 +352,5 @@ export default router;
 - **Timeout**: 10 seconds
 - **Redirects**: up to 3 hops (SSRF-safe)
 - **On success**: stores `ProbeResult` JSON in `MonitorRun.probeResult`
-- **On failure**: stores `{ ok: false, error: "..." }` — never blocks the security scan
+- **On failure**: stores `{ ok: false, error: "..." }` . never blocks the security scan
 - **Retry**: not retried within the same scan; the next scheduled scan will try again

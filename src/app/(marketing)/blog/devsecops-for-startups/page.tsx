@@ -4,7 +4,7 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "DevSecOps for Startups: How to Bake Security Into Your CI/CD Without Slowing Down | Scantient Blog",
   description:
-    "DevSecOps for startups: how to integrate security into your CI/CD pipeline without slowing down shipping. SAST, SCA, secrets scanning, container scanning, and external API monitoring — the lean startup security stack.",
+    "DevSecOps for startups: how to integrate security into your CI/CD pipeline without slowing down shipping. SAST, SCA, secrets scanning, container scanning, and external API monitoring . the lean startup security stack.",
   keywords: "DevSecOps for startups, security in CI/CD pipeline, DevSecOps small team, shift-left security startup, CI/CD security checks, startup security pipeline",
   openGraph: {
     title: "DevSecOps for Startups: How to Bake Security Into Your CI/CD Without Slowing Down",
@@ -28,7 +28,7 @@ const articleSchema = {
   "@type": "Article",
   headline: "DevSecOps for Startups: How to Bake Security Into Your CI/CD Without Slowing Down",
   description:
-    "DevSecOps for startups: how to integrate security into your CI/CD pipeline without slowing down shipping. SAST, SCA, secrets scanning, container scanning, and external API monitoring — the lean startup security stack.",
+    "DevSecOps for startups: how to integrate security into your CI/CD pipeline without slowing down shipping. SAST, SCA, secrets scanning, container scanning, and external API monitoring . the lean startup security stack.",
   datePublished: "2026-02-22T00:00:00Z",
   dateModified: "2026-02-22T00:00:00Z",
   author: { "@type": "Organization", name: "Scantient" },
@@ -101,14 +101,14 @@ export default function DevSecOpsForStartupsPage() {
         <div className="prose prose-slate dark:prose-invert max-w-none">
 
           <p>
-            DevSecOps — Development, Security, and Operations integrated as a single practice —
+            DevSecOps . Development, Security, and Operations integrated as a single practice .
             sounds like an enterprise concept. It conjures images of dedicated security engineers,
             quarterly penetration tests, and compliance frameworks. For a five-person startup
             shipping daily, it can feel irrelevant.
           </p>
           <p>
             But the core insight of DevSecOps is exactly what early-stage startups need: catch
-            security problems at the point when they&apos;re cheapest to fix — in code, before they
+            security problems at the point when they&apos;re cheapest to fix . in code, before they
             reach production. A SQL injection found in a code review takes 30 minutes to fix.
             The same vulnerability discovered after a breach takes months and significant revenue.
           </p>
@@ -125,22 +125,22 @@ export default function DevSecOpsForStartupsPage() {
             a different part of the security surface:
           </p>
           <ol>
-            <li><strong>Secret scanning</strong> — catch credentials before they reach git</li>
-            <li><strong>Static analysis (SAST)</strong> — catch code-level vulnerability patterns</li>
-            <li><strong>Dependency scanning (SCA)</strong> — catch vulnerable packages</li>
-            <li><strong>Container scanning</strong> — catch base image vulnerabilities</li>
-            <li><strong>External API scanning</strong> — catch what&apos;s exposed in production</li>
+            <li><strong>Secret scanning</strong> . catch credentials before they reach git</li>
+            <li><strong>Static analysis (SAST)</strong> . catch code-level vulnerability patterns</li>
+            <li><strong>Dependency scanning (SCA)</strong> . catch vulnerable packages</li>
+            <li><strong>Container scanning</strong> . catch base image vulnerabilities</li>
+            <li><strong>External API scanning</strong> . catch what&apos;s exposed in production</li>
           </ol>
           <p>
             Not every startup needs all five from day one. But understanding what each layer
-            catches — and what it misses — lets you prioritize intelligently based on your threat
+            catches . and what it misses . lets you prioritize intelligently based on your threat
             model and stage.
           </p>
 
           <h2>Layer 1: Secret Scanning (Zero Tolerance)</h2>
           <p>
             Secret scanning is non-negotiable and costs nothing. The blast radius of a leaked
-            credential is immediate and severe — it&apos;s the fastest path from &quot;we got hacked&quot; to
+            credential is immediate and severe . it&apos;s the fastest path from &quot;we got hacked&quot; to
             &quot;everything is on fire.&quot;
           </p>
 
@@ -170,13 +170,13 @@ repos:
     GITHUB_TOKEN: $\{{ secrets.GITHUB_TOKEN }}`}</code></pre>
           <p>
             GitHub Secret Scanning (automatic for public repos, Advanced Security for private)
-            adds a third layer — but treat it as a safety net, not a primary control.
+            adds a third layer . but treat it as a safety net, not a primary control.
           </p>
 
           <h2>Layer 2: Static Analysis (SAST)</h2>
           <p>
             Static Application Security Testing analyzes your source code for vulnerability
-            patterns — without running the code. It catches things like:
+            patterns . without running the code. It catches things like:
           </p>
           <ul>
             <li>Injection flaws (SQL injection, command injection, path traversal)</li>
@@ -207,7 +207,7 @@ repos:
           <h3>Integration</h3>
           <p>
             Wire SAST into your CI pipeline as a PR check. Configure it to fail on high/critical
-            findings — not medium or low — to avoid alert fatigue that causes developers to ignore
+            findings . not medium or low . to avoid alert fatigue that causes developers to ignore
             the tool entirely.
           </p>
           <pre><code>{`# GitHub Actions SAST with Semgrep
@@ -225,7 +225,7 @@ repos:
               SAST covers your code. What covers your live API?
             </p>
             <p className="mt-1 text-sm text-dusty-denim-700 dark:text-dusty-denim-400">
-              Scantient is the external layer of your DevSecOps stack — scanning what&apos;s actually
+              Scantient is the external layer of your DevSecOps stack . scanning what&apos;s actually
               exposed in production, not what&apos;s in your source code. Free scan, no signup.
             </p>
             <Link
@@ -239,7 +239,7 @@ repos:
           <h2>Layer 3: Dependency Scanning (SCA)</h2>
           <p>
             Software Composition Analysis (SCA) scans your dependencies for known vulnerabilities.
-            Your application might be perfectly written — but if you import a library with a
+            Your application might be perfectly written . but if you import a library with a
             critical CVE, you inherit that vulnerability.
           </p>
 
@@ -248,7 +248,7 @@ repos:
             <li>
               <strong>GitHub Dependabot:</strong> Free, automatic. Opens PRs when vulnerable
               dependency versions are detected. Enable in Settings → Code security and analysis.
-              Start here — zero friction.
+              Start here . zero friction.
             </li>
             <li>
               <strong>npm audit / pip-audit / cargo audit:</strong> Native package ecosystem
@@ -265,7 +265,7 @@ repos:
           <p>
             New CVEs are published continuously. A dependency that was clean when you deployed
             may have a critical vulnerability today. Dependabot handles this by continuously
-            monitoring your lockfiles against the advisory database — but you need to actually
+            monitoring your lockfiles against the advisory database . but you need to actually
             merge the PRs it opens, not let them accumulate.
           </p>
           <p>
@@ -286,7 +286,7 @@ repos:
             <li>
               <strong>Trivy (by Aqua Security):</strong> Open source, fast, comprehensive.
               Scans container images for OS packages, language dependencies, and misconfigurations.
-              The easiest starting point — one command, excellent coverage.
+              The easiest starting point . one command, excellent coverage.
             </li>
             <li>
               <strong>Docker Scout:</strong> Built into Docker Desktop and Docker Hub. Integrated
@@ -314,12 +314,12 @@ repos:
           <p>
             Pin your base images to specific digests (not just tags) to get reproducible builds.
             Use minimal base images (Alpine, distroless) to reduce attack surface. Schedule
-            weekly rebuilds even when no code changes — this picks up base image patches.
+            weekly rebuilds even when no code changes . this picks up base image patches.
           </p>
 
-          <h2>Layer 5: External API Scanning — The Missing Layer</h2>
+          <h2>Layer 5: External API Scanning . The Missing Layer</h2>
           <p>
-            Here&apos;s where most startup DevSecOps stacks stop — and where they leave a critical
+            Here&apos;s where most startup DevSecOps stacks stop . and where they leave a critical
             gap. The four layers above all operate pre-deploy: they analyze code, dependencies,
             and container images before they ship. None of them can see what your API looks like
             after it&apos;s deployed.
@@ -336,7 +336,7 @@ repos:
           </ul>
           <p>
             External API scanning is the post-deploy layer that catches what internal tools can&apos;t
-            see. It tests your live API from the outside — the same perspective an attacker has.
+            see. It tests your live API from the outside . the same perspective an attacker has.
           </p>
           <p>
             For a deeper look at why this layer is distinct,{" "}
@@ -349,7 +349,7 @@ repos:
           <h3>How Scantient fits the DevSecOps stack</h3>
           <p>
             Scantient is the external API scanning layer for startup DevSecOps stacks. It runs
-            from outside your infrastructure — no agent, no SDK, no access to your codebase —
+            from outside your infrastructure . no agent, no SDK, no access to your codebase .
             and reports on what your deployed API exposes to the internet.
           </p>
           <p>
@@ -365,7 +365,7 @@ repos:
             </li>
           </ul>
           <p>
-            This is the layer that closes the DevSecOps loop — you shift security left with SAST,
+            This is the layer that closes the DevSecOps loop . you shift security left with SAST,
             SCA, and secret scanning, and you verify the deployed state with external monitoring.
             Neither is sufficient without the other.
           </p>
@@ -424,7 +424,7 @@ jobs:
 
           <h2>The Alert Fatigue Problem</h2>
           <p>
-            The most common failure mode for startup DevSecOps isn&apos;t ignoring security — it&apos;s
+            The most common failure mode for startup DevSecOps isn&apos;t ignoring security . it&apos;s
             implementing too many checks, generating too many alerts, and having developers learn
             to ignore the noise. Security tooling that blocks CI on every low-severity finding
             is worse than no tooling at all.
@@ -448,7 +448,7 @@ jobs:
             <Link href="/blog/saas-launch-security-checklist" className="text-prussian-blue-600 hover:underline">
               SaaS launch security checklist
             </Link>{" "}
-            — it covers the items that should be verified in production before you go public,
+            . it covers the items that should be verified in production before you go public,
             complementing the CI/CD checks that catch issues pre-deploy. The two together give
             you full pipeline-to-production coverage.
           </p>
@@ -498,7 +498,7 @@ jobs:
           </h3>
           <p className="mt-2 text-sm text-dusty-denim-700 dark:text-dusty-denim-400">
             SAST catches code issues. Dependency scanning catches CVEs. Scantient catches what&apos;s
-            exposed after you deploy. Run your first external scan free — no signup, no SDK.
+            exposed after you deploy. Run your first external scan free . no signup, no SDK.
           </p>
           <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link

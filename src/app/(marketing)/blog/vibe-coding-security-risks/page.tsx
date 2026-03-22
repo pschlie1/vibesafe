@@ -4,12 +4,12 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "Vibe Coding Security Risks: What AI-Generated Code Gets Wrong About APIs | Scantient Blog",
   description:
-    "AI coding tools let anyone ship a production API in hours. Here's what vibe-coded applications consistently get wrong about security — and what to check before you go live.",
+    "AI coding tools let anyone ship a production API in hours. Here's what vibe-coded applications consistently get wrong about security . and what to check before you go live.",
   keywords: "vibe coding security, AI generated code security, vibe coding risks, AI code security vulnerabilities, LLM generated code security, Cursor security, Copilot security risks",
   openGraph: {
     title: "Vibe Coding Security Risks: What AI-Generated Code Gets Wrong About APIs",
     description:
-      "Vibe coding ships fast. It also ships with predictable, systematic security gaps. Here's what AI-generated APIs consistently get wrong — and how to fix it before you get hacked.",
+      "Vibe coding ships fast. It also ships with predictable, systematic security gaps. Here's what AI-generated APIs consistently get wrong . and how to fix it before you get hacked.",
     url: "https://scantient.com/blog/vibe-coding-security-risks",
     siteName: "Scantient",
     type: "article",
@@ -28,7 +28,7 @@ const articleSchema = {
   "@type": "Article",
   headline: "Vibe Coding Security Risks: What AI-Generated Code Gets Wrong About APIs",
   description:
-    "AI coding tools let anyone ship a production API in hours. Here's what vibe-coded applications consistently get wrong about security — and what to check before you go live.",
+    "AI coding tools let anyone ship a production API in hours. Here's what vibe-coded applications consistently get wrong about security . and what to check before you go live.",
   datePublished: "2026-03-15T00:00:00Z",
   dateModified: "2026-03-15T00:00:00Z",
   author: { "@type": "Organization", name: "Scantient" },
@@ -87,7 +87,7 @@ export default function VibeCodingSecurityRisksPage() {
           </h1>
           <p className="mt-4 text-lg text-dusty-denim-700 dark:text-dusty-denim-400">
             Vibe coding ships product fast. It also ships with predictable, systematic security gaps
-            — because AI models optimize for functional code, not secure code. Here&apos;s what to look
+            . because AI models optimize for functional code, not secure code. Here&apos;s what to look
             for and fix before you go live.
           </p>
           <div className="mt-6 flex items-center gap-4 text-sm text-dusty-denim-500">
@@ -101,21 +101,21 @@ export default function VibeCodingSecurityRisksPage() {
         <div className="prose prose-slate dark:prose-invert max-w-none">
 
           <p>
-            Vibe coding — using AI tools like Cursor, Copilot, Claude, or v0 to generate entire
-            features or applications — has collapsed the time from idea to deployed product.
+            Vibe coding . using AI tools like Cursor, Copilot, Claude, or v0 to generate entire
+            features or applications . has collapsed the time from idea to deployed product.
             Founders who couldn&apos;t write a backend a year ago are now shipping full-stack SaaS apps
             in weekends.
           </p>
           <p>
             This is genuinely exciting. It&apos;s also creating a new class of security problems that
             the industry is only beginning to document. AI models are trained on vast amounts of
-            code — including insecure code — and they optimize for getting the task done, not for
+            code . including insecure code . and they optimize for getting the task done, not for
             getting it done securely. The result is a predictable set of security gaps that appear
             in vibe-coded applications with striking consistency.
           </p>
           <p>
             If you&apos;ve built your app primarily with AI assistance, this article is a checklist of
-            what to verify before you go live. These aren&apos;t theoretical risks — they&apos;re patterns
+            what to verify before you go live. These aren&apos;t theoretical risks . they&apos;re patterns
             we see repeatedly.
           </p>
 
@@ -139,7 +139,7 @@ export default function VibeCodingSecurityRisksPage() {
           <p>
             None of these are failures to understand the prompt. They&apos;re rational defaults for code
             that needs to work, in the absence of explicit security requirements. The AI generates
-            what was asked for. Security is almost always an implicit requirement — and implicit
+            what was asked for. Security is almost always an implicit requirement . and implicit
             requirements don&apos;t make it into the output.
           </p>
 
@@ -150,7 +150,7 @@ export default function VibeCodingSecurityRisksPage() {
             Cross-Origin Resource Sharing (CORS) is one of the most commonly misconfigured
             settings in AI-generated APIs. When CORS causes friction during development (browser
             errors blocking requests), the AI&apos;s suggested fix is often to set{" "}
-            <code>Access-Control-Allow-Origin: *</code> — allowing any website to make
+            <code>Access-Control-Allow-Origin: *</code> . allowing any website to make
             authenticated requests to your API.
           </p>
           <p>
@@ -161,9 +161,9 @@ export default function VibeCodingSecurityRisksPage() {
 
           <h3>2. Missing Security Headers</h3>
           <p>
-            Security headers — <code>Strict-Transport-Security</code>,{" "}
+            Security headers . <code>Strict-Transport-Security</code>,{" "}
             <code>Content-Security-Policy</code>, <code>X-Frame-Options</code>,{" "}
-            <code>X-Content-Type-Options</code> — protect against a range of attacks including
+            <code>X-Content-Type-Options</code> . protect against a range of attacks including
             XSS, clickjacking, and protocol downgrade. They have zero effect on functionality
             and are almost never included in AI-generated boilerplate.
           </p>
@@ -175,7 +175,7 @@ export default function VibeCodingSecurityRisksPage() {
 
           <h3>3. No Rate Limiting on Auth Endpoints</h3>
           <p>
-            AI-generated authentication code is functional — it checks passwords, issues tokens,
+            AI-generated authentication code is functional . it checks passwords, issues tokens,
             handles sessions. What it almost never includes is rate limiting on the login endpoint.
           </p>
           <p>
@@ -185,7 +185,7 @@ export default function VibeCodingSecurityRisksPage() {
           </p>
           <p>
             Check your login, password reset, and magic link endpoints. Each should be rate
-            limited — at minimum by IP address, ideally also by user account.
+            limited . at minimum by IP address, ideally also by user account.
           </p>
 
           {/* Inline CTA */}
@@ -195,7 +195,7 @@ export default function VibeCodingSecurityRisksPage() {
             </p>
             <p className="mt-1 text-sm text-dusty-denim-700 dark:text-dusty-denim-400">
               Scantient checks your production API for the misconfigurations AI-generated code
-              consistently produces — CORS, security headers, TLS, and more. Free, 60 seconds.
+              consistently produces . CORS, security headers, TLS, and more. Free, 60 seconds.
             </p>
             <Link
               href="/score"
@@ -226,7 +226,7 @@ export default function VibeCodingSecurityRisksPage() {
           <p>
             This one is particularly common in full-stack frameworks where the AI generates both
             frontend and backend code. API keys, service credentials, and other secrets
-            occasionally end up in client-side bundles — either through environment variable
+            occasionally end up in client-side bundles . either through environment variable
             naming errors (<code>NEXT_PUBLIC_SECRET_KEY</code>) or by being directly embedded
             in frontend code.
           </p>
@@ -238,8 +238,8 @@ export default function VibeCodingSecurityRisksPage() {
 
           <h3>6. Authorization Gaps Between Features</h3>
           <p>
-            When you build features incrementally with AI assistance — &quot;now add the ability for
-            users to share projects&quot; — each new feature is generated in isolation. The AI
+            When you build features incrementally with AI assistance . &quot;now add the ability for
+            users to share projects&quot; . each new feature is generated in isolation. The AI
             implements the sharing feature correctly, but it may not consider whether the new
             sharing endpoint respects the same authorization rules as the rest of your API.
           </p>
@@ -254,7 +254,7 @@ export default function VibeCodingSecurityRisksPage() {
           <p>
             AI-generated API code often selects more data than needed for a given request. A user
             profile endpoint might select all columns including internal fields, flags, and
-            admin metadata — and return all of it in the response. This is a data minimization
+            admin metadata . and return all of it in the response. This is a data minimization
             failure and can expose information that shouldn&apos;t be client-visible.
           </p>
           <p>
@@ -266,7 +266,7 @@ export default function VibeCodingSecurityRisksPage() {
           <p>
             These aren&apos;t bugs in the AI tools. They&apos;re a structural consequence of how AI
             assistance works: you describe what you want to build, the AI builds something that
-            works, and security — which is largely invisible in the happy path — gets skipped
+            works, and security . which is largely invisible in the happy path . gets skipped
             unless you explicitly ask for it.
           </p>
           <p>
@@ -314,7 +314,7 @@ export default function VibeCodingSecurityRisksPage() {
         {/* CTA */}
         <div className="mt-12 rounded-2xl border border-prussian-blue-200 dark:border-prussian-blue-800 bg-prussian-blue-50 dark:bg-prussian-blue-950/30 p-8 text-center">
           <h3 className="text-xl font-bold text-ink-black-950 dark:text-alabaster-grey-50">
-            Scan Your API Free — 60 Seconds
+            Scan Your API Free . 60 Seconds
           </h3>
           <p className="mt-2 text-sm text-dusty-denim-700 dark:text-dusty-denim-400">
             Built with Cursor, Copilot, or Claude? Scantient checks your deployed API for the

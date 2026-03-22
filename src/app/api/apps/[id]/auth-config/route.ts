@@ -16,7 +16,7 @@ const putBodySchema = z
   .array(authHeaderSchema)
   .max(10, "Maximum 10 auth headers allowed");
 
-/** GET — return masked auth headers for the app (OWNER/ADMIN only, PRO+ tier) */
+/** GET . return masked auth headers for the app (OWNER/ADMIN only, PRO+ tier) */
 export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await getSession();
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -42,7 +42,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
   return NextResponse.json({ headers: maskAuthHeaders(headers) });
 }
 
-/** PUT — save/replace auth headers (OWNER/ADMIN only, PRO+ tier) */
+/** PUT . save/replace auth headers (OWNER/ADMIN only, PRO+ tier) */
 export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await getSession();
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -92,7 +92,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
   return NextResponse.json({ ok: true, count: parsed.data.length });
 }
 
-/** DELETE — remove auth headers */
+/** DELETE . remove auth headers */
 export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await getSession();
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

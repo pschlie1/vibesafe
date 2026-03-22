@@ -73,14 +73,14 @@ export default function AppEditPage() {
         setError(typeof data.error === "string" ? data.error : "Failed to save settings");
       } else {
         setSuccess(true);
-        setProbeToken(""); // Clear the token field — never show it back
+        setProbeToken(""); // Clear the token field . never show it back
         // Refresh app data
         const updated = (await res.json()) as { app: AppData };
         setApp(updated.app);
         setProbeUrl(updated.app.probeUrl ?? "");
       }
     } catch {
-      setError("Network error — please try again");
+      setError("Network error . please try again");
     } finally {
       setSaving(false);
     }
@@ -111,7 +111,7 @@ export default function AppEditPage() {
         ← Back to {app.name}
       </Link>
 
-      <h1 className="mb-6 text-xl font-bold">App Settings — {app.name}</h1>
+      <h1 className="mb-6 text-xl font-bold">App Settings . {app.name}</h1>
 
       <form onSubmit={handleSubmit} className="space-y-8">
         {/* General */}
@@ -136,7 +136,7 @@ export default function AppEditPage() {
               {app.url}
             </p>
             <p className="mt-1 text-xs text-muted">
-              URL cannot be changed here — delete and re-add the app to change it.
+              URL cannot be changed here . delete and re-add the app to change it.
             </p>
           </div>
         </section>
@@ -187,7 +187,7 @@ export default function AppEditPage() {
             {app.probeUrl && (
               <p className="flex items-center gap-1.5 text-xs text-success">
                 <span>✓</span>
-                <span>Probe configured — health data will appear after the next scan</span>
+                <span>Probe configured . health data will appear after the next scan</span>
               </p>
             )}
           </div>

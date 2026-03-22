@@ -72,7 +72,7 @@ Target: Transform pricing to emphasize limited-time deal scarcity
 
 ---
 
-### PHASE 5C: CONTENT BLITZ — 5 BLOG POSTS (2-3 hours)
+### PHASE 5C: CONTENT BLITZ . 5 BLOG POSTS (2-3 hours)
 Target: Publish SEO-optimized content 2-4 weeks before LTD launch
 
 **Blog Posts to Create:**
@@ -164,7 +164,7 @@ All deliverables complete when:
 ---
 
 ## NOTES
-- **Design Philosophy:** Apple/Jony Ive simplicity — strip to essentials
+- **Design Philosophy:** Apple/Jony Ive simplicity . strip to essentials
 - **Model:** NO free tier. LTD-only launch for 3 weeks, then Pro subscription
 - **Strategy:** Mike Rawson's playbook ($59-200 LTD, Reddit + content + AppSumo)
 - **Success Metric:** $5K revenue in first 3 weeks (validation threshold)

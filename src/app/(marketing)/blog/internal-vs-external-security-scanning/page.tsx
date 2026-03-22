@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Internal vs External Security Scanning: What's the Difference and Do You Need Both?",
     description:
-      "SAST catches code-level bugs. DAST finds what attackers see at runtime. You need both — but external scanning costs nothing and takes 60 seconds to start.",
+      "SAST catches code-level bugs. DAST finds what attackers see at runtime. You need both . but external scanning costs nothing and takes 60 seconds to start.",
     url: "https://scantient.com/blog/internal-vs-external-security-scanning",
     siteName: "Scantient",
     type: "article",
@@ -86,7 +86,7 @@ export default function InternalVsExternalSecurityScanningPage() {
             Internal vs External Security Scanning: What&apos;s the Difference and Do You Need Both?
           </h1>
           <p className="mt-4 text-lg text-dusty-denim-700 dark:text-dusty-denim-400">
-            Security scanning is not one thing. SAST, DAST, internal scanning, external scanning —
+            Security scanning is not one thing. SAST, DAST, internal scanning, external scanning .
             each sees a different slice of your attack surface. Here&apos;s what each type catches,
             what it misses, and how a small team should prioritize.
           </p>
@@ -102,14 +102,14 @@ export default function InternalVsExternalSecurityScanningPage() {
 
           <p>
             When a security vendor says &quot;we scan your application,&quot; they mean something very
-            specific — and it might not be what you think. Static analysis, dynamic analysis,
+            specific . and it might not be what you think. Static analysis, dynamic analysis,
             internal network scanning, and external perimeter scanning all test different things.
             Using only one type leaves real vulnerabilities invisible.
           </p>
 
           <h2>What Is Internal Security Scanning?</h2>
           <p>
-            Internal security scanning (often called SAST — Static Application Security Testing,
+            Internal security scanning (often called SAST . Static Application Security Testing,
             or infrastructure scanning) operates from inside your environment. It has access to
             your source code, running infrastructure, internal network, and configuration files.
           </p>
@@ -130,13 +130,13 @@ export default function InternalVsExternalSecurityScanningPage() {
           <p>
             The critical limitation: internal scanning requires access to your codebase or
             infrastructure. That means setup, integration, and ongoing maintenance. It also means
-            you&apos;re finding potential vulnerabilities in code — not confirming that they&apos;re actually
+            you&apos;re finding potential vulnerabilities in code . not confirming that they&apos;re actually
             exploitable in production.
           </p>
 
           <h2>What Is External Security Scanning?</h2>
           <p>
-            External security scanning (often called DAST — Dynamic Application Security Testing,
+            External security scanning (often called DAST . Dynamic Application Security Testing,
             or perimeter scanning) operates from outside your environment, exactly as an attacker
             would. It has no access to your source code. It interacts with your running application
             over the public internet.
@@ -158,7 +158,7 @@ export default function InternalVsExternalSecurityScanningPage() {
             <Link href="/blog/what-is-external-security-scanning" className="text-prussian-blue-600 hover:underline">
               External security scanning
             </Link>{" "}
-            tests what attackers actually see — not what your code theoretically does. This is
+            tests what attackers actually see . not what your code theoretically does. This is
             the difference between &quot;this function could be vulnerable to SQL injection&quot; and
             &quot;this endpoint is returning database errors when sent a single quote.&quot;
           </p>
@@ -234,10 +234,10 @@ export default function InternalVsExternalSecurityScanningPage() {
             <strong>What SAST/internal scanning misses:</strong>
           </p>
           <ul>
-            <li>Runtime behavior — code may look safe but behave differently in production</li>
+            <li>Runtime behavior . code may look safe but behave differently in production</li>
             <li>Third-party service misconfigurations</li>
             <li>Infrastructure issues not captured in code (cloud console changes, manual configs)</li>
-            <li>The actual attacker perspective — external attack surface may differ from what the code suggests</li>
+            <li>The actual attacker perspective . external attack surface may differ from what the code suggests</li>
           </ul>
           <p>
             <strong>What DAST/external scanning misses:</strong>
@@ -249,7 +249,7 @@ export default function InternalVsExternalSecurityScanningPage() {
             <li>Internal services not exposed to the public internet</li>
           </ul>
           <p>
-            This is why the canonical answer is &quot;you need both&quot; — they have different blind spots
+            This is why the canonical answer is &quot;you need both&quot; . they have different blind spots
             that complement each other.
           </p>
 
@@ -259,7 +259,7 @@ export default function InternalVsExternalSecurityScanningPage() {
           </p>
           <ol>
             <li>
-              <strong>Start with external scanning</strong> — it costs nothing, requires no
+              <strong>Start with external scanning</strong> . it costs nothing, requires no
               setup, and tests what attackers actually see right now. A 60-second scan can surface
               real vulnerabilities in your live production API.{" "}
               <Link href="/blog/why-ctos-choose-external-security-scanning" className="text-prussian-blue-600 hover:underline">
@@ -268,12 +268,12 @@ export default function InternalVsExternalSecurityScanningPage() {
               because the ROI-to-effort ratio is unmatched.
             </li>
             <li>
-              <strong>Add dependency scanning next</strong> — Snyk or Dependabot integrated
+              <strong>Add dependency scanning next</strong> . Snyk or Dependabot integrated
               into your CI pipeline catches known CVEs in your dependencies automatically.
               Low setup cost, high signal.
             </li>
             <li>
-              <strong>Add SAST last</strong> — tools like Semgrep provide valuable signal, but
+              <strong>Add SAST last</strong> . tools like Semgrep provide valuable signal, but
               they generate false positives that require triage time. Build the simpler layers
               first.
             </li>
@@ -281,7 +281,7 @@ export default function InternalVsExternalSecurityScanningPage() {
           <p>
             The worst outcome is spending weeks setting up a comprehensive SAST pipeline while
             your production API has a missing <code>Strict-Transport-Security</code> header and
-            an open admin endpoint — both of which an external scan would have caught in under
+            an open admin endpoint . both of which an external scan would have caught in under
             a minute.
           </p>
 
@@ -314,7 +314,7 @@ export default function InternalVsExternalSecurityScanningPage() {
         {/* CTA */}
         <div className="mt-12 rounded-2xl border border-prussian-blue-200 dark:border-prussian-blue-800 bg-prussian-blue-50 dark:bg-prussian-blue-950/30 p-8 text-center">
           <h3 className="text-xl font-bold text-ink-black-950 dark:text-alabaster-grey-50">
-            Start With External Scanning — It&apos;s Free
+            Start With External Scanning . It&apos;s Free
           </h3>
           <p className="mt-2 text-sm text-dusty-denim-700 dark:text-dusty-denim-400">
             See your API&apos;s external attack surface in 60 seconds. No code access. No signup.

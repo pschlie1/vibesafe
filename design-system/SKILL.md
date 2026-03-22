@@ -1,4 +1,4 @@
-# Design System Skill — Scantient
+# Design System Skill . Scantient
 
 **Purpose:** Ensure all UI code follows Scantient's dark-first design contract using semantic Tailwind classes.
 
@@ -25,7 +25,7 @@
   <p className="text-muted">Subtitle</p>
 </div>
 
-// Wrong — will fail lint
+// Wrong . will fail lint
 <div className="bg-white text-gray-900 border border-gray-200">
 <div style={{ color: "#ef4444" }}>
 ```
@@ -56,7 +56,7 @@ For charts/canvas that need hex values, import from `@/lib/chart-colors.ts`.
 // Correct
 <div className="p-4 mt-6 gap-3">Content</div>
 
-// Wrong — will trigger warning
+// Wrong . will trigger warning
 <div className="mt-[37px]">Content</div>
 ```
 
@@ -72,14 +72,14 @@ import { FormInput, FormSelect } from "@/components/ui";
 // Correct
 <FormInput name="email" label="Email Address" type="email" required />
 
-// Wrong — will fail lint
+// Wrong . will fail lint
 <input type="email" name="email" />
 ```
 
 **Available wrappers:**
-- `FormInput` — text, email, password, number, etc.
-- `FormTextarea` — multi-line text
-- `FormSelect` — dropdowns
+- `FormInput` . text, email, password, number, etc.
+- `FormTextarea` . multi-line text
+- `FormSelect` . dropdowns
 
 ---
 
@@ -91,10 +91,10 @@ Import from `@/components/ui/`:
 import { Button, Card, CardContent, CardTitle, Badge, Container } from "@/components/ui";
 ```
 
-- **Button** — Variants: `primary`, `ghost`, `danger`, `link`. Sizes: `sm`, `md`, `lg`
-- **Card** — `bg-surface border-border`. Sub-components: Card, CardHeader, CardTitle, CardContent, CardFooter
-- **Badge** — Severity: `critical`, `high`, `medium`, `low`. Status: `healthy`, `warning`, `error`, `info`
-- **Container** — `max-w-[1200px] mx-auto px-6`
+- **Button** . Variants: `primary`, `ghost`, `danger`, `link`. Sizes: `sm`, `md`, `lg`
+- **Card** . `bg-surface border-border`. Sub-components: Card, CardHeader, CardTitle, CardContent, CardFooter
+- **Badge** . Severity: `critical`, `high`, `medium`, `low`. Status: `healthy`, `warning`, `error`, `info`
+- **Container** . `max-w-[1200px] mx-auto px-6`
 
 ---
 
@@ -102,11 +102,11 @@ import { Button, Card, CardContent, CardTitle, Badge, Container } from "@/compon
 
 Three route groups with shared layouts:
 
-- **`(marketing)`** — MarketingNav + Footer provided by layout
-- **`(dashboard)`** — Nav + container-page provided by layout
-- **`(auth)`** — Centered card layout
+- **`(marketing)`** . MarketingNav + Footer provided by layout
+- **`(dashboard)`** . Nav + container-page provided by layout
+- **`(auth)`** . Centered card layout
 
-Pages should NOT import nav/footer directly — the layout handles it.
+Pages should NOT import nav/footer directly . the layout handles it.
 
 ---
 

@@ -17,7 +17,7 @@ const faqSchema = {
       name: "How long does a scan take?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Most scans complete in under 60 seconds. We run 20 security checks in parallel against your live URL, so results are ready fast — no waiting, no queuing.",
+        text: "Most scans complete in under 60 seconds. We run 20 security checks in parallel against your live URL, so results are ready fast . no waiting, no queuing.",
       },
     },
     {
@@ -41,27 +41,27 @@ const faqSchema = {
       name: "Do I need to install anything?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "No. Scantient is a 100% external scanner — no SDK, no npm package, no code changes required. We scan your app the same way an attacker would: from the outside, against your live URL.",
+        text: "No. Scantient is a 100% external scanner . no SDK, no npm package, no code changes required. We scan your app the same way an attacker would: from the outside, against your live URL.",
       },
     },
   ],
 };
 
 export const metadata: Metadata = {
-  title: "Free API Security Scan — Check Your Site in 60 Seconds | Scantient",
+  title: "Free API Security Scan . Check Your Site in 60 Seconds | Scantient",
   description:
-    "Run a free API vulnerability scanner and security audit on your site in 60 seconds. No signup, no SDK — paste your URL and get instant results. Scantient checks 20 security controls.",
+    "Run a free API vulnerability scanner and security audit on your site in 60 seconds. No signup, no SDK . paste your URL and get instant results. Scantient checks 20 security controls.",
   openGraph: {
-    title: "Free API Security Scan — Check Your Site in 60 Seconds | Scantient",
+    title: "Free API Security Scan . Check Your Site in 60 Seconds | Scantient",
     description:
-      "Free api vulnerability scanner. Paste your URL and get a full security audit api in 60 seconds — 20 checks, no signup, no installation required.",
+      "Free api vulnerability scanner. Paste your URL and get a full security audit api in 60 seconds . 20 checks, no signup, no installation required.",
     url: "https://scantient.com/score",
     siteName: "Scantient",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Free API Security Scan — Check Your Site in 60 Seconds | Scantient",
+    title: "Free API Security Scan . Check Your Site in 60 Seconds | Scantient",
     description:
       "Free api vulnerability scanner and security audit api. Paste your URL, get results in 60 seconds.",
   },

@@ -6,7 +6,7 @@ import { canAddUser, logAudit } from "@/lib/tenant";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 import { passwordSchema } from "@/lib/validation";
 
-// GET /api/auth/invite/[token] — return invite details
+// GET /api/auth/invite/[token] . return invite details
 export async function GET(
   req: Request,
   { params }: { params: Promise<{ token: string }> },
@@ -47,7 +47,7 @@ const acceptSchema = z.object({
   password: passwordSchema,
 });
 
-// POST /api/auth/invite/[token] — accept invite and create account
+// POST /api/auth/invite/[token] . accept invite and create account
 export async function POST(
   req: Request,
   { params }: { params: Promise<{ token: string }> },
@@ -106,7 +106,7 @@ export async function POST(
 
   const passwordHash = await hashPassword(password);
 
-  // Atomically create user and delete invite — if either step fails the other
+  // Atomically create user and delete invite . if either step fails the other
   // is rolled back. Without this transaction, a failed invite.delete would leave
   // the invite reusable by a second party to create a duplicate account.
   const user = await db.$transaction(async (tx) => {

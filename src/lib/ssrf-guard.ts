@@ -76,7 +76,7 @@ export async function ssrfSafeFetch(
   let current = url;
 
   for (let hop = 0; hop <= maxRedirects; hop++) {
-    // SSRF check at EVERY hop — catches open-redirect chains
+    // SSRF check at EVERY hop . catches open-redirect chains
     if (await isPrivateUrl(current)) {
       throw new Error(`SSRF: blocked request to private/internal address at hop ${hop}: ${current}`);
     }
@@ -86,14 +86,14 @@ export async function ssrfSafeFetch(
       redirect: "manual", // never auto-follow; we control each step
     });
 
-    // Not a redirect — return the real response
+    // Not a redirect . return the real response
     if (res.status < 300 || res.status >= 400) {
       return res;
     }
 
     const location = res.headers.get("location");
     if (!location) {
-      // Redirect with no Location header — return as-is
+      // Redirect with no Location header . return as-is
       return res;
     }
 

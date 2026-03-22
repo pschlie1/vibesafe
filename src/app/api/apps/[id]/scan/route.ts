@@ -1,7 +1,7 @@
 /**
  * POST /api/apps/[id]/scan
  *
- * App-scoped scan trigger — delegates to the existing scan engine.
+ * App-scoped scan trigger . delegates to the existing scan engine.
  * Provides a resource-nested URL consistent with the Fix → Verify loop UI.
  */
 import { NextResponse } from "next/server";

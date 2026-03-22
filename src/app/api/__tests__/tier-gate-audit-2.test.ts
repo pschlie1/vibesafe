@@ -187,7 +187,7 @@ function makeReq(method = "POST", body?: unknown): Request {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// C-1: stripe/checkout — ENTERPRISE_PLUS in enum
+// C-1: stripe/checkout . ENTERPRISE_PLUS in enum
 // ─────────────────────────────────────────────────────────────────────────────
 describe("C-1: POST /api/stripe/checkout", () => {
   beforeEach(() => {
@@ -233,7 +233,7 @@ describe("C-1: POST /api/stripe/checkout", () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// C-2: jira/ticket — tier gate
+// C-2: jira/ticket . tier gate
 // ─────────────────────────────────────────────────────────────────────────────
 describe("C-2: POST /api/integrations/jira/ticket", () => {
   beforeEach(() => {
@@ -285,7 +285,7 @@ describe("C-2: POST /api/integrations/jira/ticket", () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// C-3: jira/test — tier gate
+// C-3: jira/test . tier gate
 // ─────────────────────────────────────────────────────────────────────────────
 describe("C-3: POST /api/integrations/jira/test", () => {
   beforeEach(() => {
@@ -328,7 +328,7 @@ describe("C-3: POST /api/integrations/jira/test", () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// C-4: findings/github-issue — tier gate
+// C-4: findings/github-issue . tier gate
 // ─────────────────────────────────────────────────────────────────────────────
 describe("C-4: POST /api/findings/[id]/github-issue", () => {
   beforeEach(() => {
@@ -370,7 +370,7 @@ describe("C-4: POST /api/findings/[id]/github-issue", () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// H-1: scan/[id] — manual scan rate limit
+// H-1: scan/[id] . manual scan rate limit
 // ─────────────────────────────────────────────────────────────────────────────
 describe("H-1: POST /api/scan/[id]", () => {
   beforeEach(() => {
@@ -424,7 +424,7 @@ describe("H-1: POST /api/scan/[id]", () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// H-2: apps/agent-key — tier gate
+// H-2: apps/agent-key . tier gate
 // ─────────────────────────────────────────────────────────────────────────────
 describe("H-2: POST /api/apps/[id]/agent-key", () => {
   beforeEach(() => {
@@ -464,7 +464,7 @@ describe("H-2: POST /api/apps/[id]/agent-key", () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// H-3: apps/auth-config — tier gate
+// H-3: apps/auth-config . tier gate
 // ─────────────────────────────────────────────────────────────────────────────
 describe("H-3: GET/PUT /api/apps/[id]/auth-config", () => {
   beforeEach(() => {
@@ -510,7 +510,7 @@ describe("H-3: GET/PUT /api/apps/[id]/auth-config", () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// H-4: apps/trends — tier gate
+// H-4: apps/trends . tier gate
 // ─────────────────────────────────────────────────────────────────────────────
 describe("H-4: GET /api/apps/[id]/trends", () => {
   beforeEach(() => {
@@ -547,9 +547,9 @@ describe("H-4: GET /api/apps/[id]/trends", () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// H-5: api-auth — tier re-check for downgraded orgs
+// H-5: api-auth . tier re-check for downgraded orgs
 // ─────────────────────────────────────────────────────────────────────────────
-describe("H-5: authenticateApiKey — tier re-check", () => {
+describe("H-5: authenticateApiKey . tier re-check", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -650,14 +650,14 @@ describe("H-5: authenticateApiKey — tier re-check", () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// H-6: invite/[token] POST — canAddUser at acceptance
+// H-6: invite/[token] POST . canAddUser at acceptance
 // ─────────────────────────────────────────────────────────────────────────────
 describe("H-6: POST /api/auth/invite/[token]", () => {
   const futureDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
 
   beforeEach(() => {
     vi.resetAllMocks();
-    // Audit 18: rate limit is now checked on invite route — allow by default
+    // Audit 18: rate limit is now checked on invite route . allow by default
     checkRateLimit.mockResolvedValue({ allowed: true });
     getClientIp.mockReturnValue("1.2.3.4");
     inviteFindUnique.mockResolvedValue({

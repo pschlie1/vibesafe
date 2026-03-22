@@ -69,9 +69,9 @@ describe("parseAiPolicyMeta", () => {
   });
 });
 
-// ─── checkAITools — no detections ─────────────────────────────────────────────
+// ─── checkAITools . no detections ─────────────────────────────────────────────
 
-describe("checkAITools — no AI tools present", () => {
+describe("checkAITools . no AI tools present", () => {
   it("returns empty array for clean page", () => {
     const findings = checkAITools(emptyHtml, emptyHeaders, emptyJs);
     expect(findings).toHaveLength(0);
@@ -86,9 +86,9 @@ describe("checkAITools — no AI tools present", () => {
   });
 });
 
-// ─── checkAITools — CSP header detection ────────────────────────────────────
+// ─── checkAITools . CSP header detection ────────────────────────────────────
 
-describe("checkAITools — CSP header vector", () => {
+describe("checkAITools . CSP header vector", () => {
   it("detects OpenAI via CSP connect-src domain", () => {
     const headers = makeHeaders({
       "content-security-policy":
@@ -143,9 +143,9 @@ describe("checkAITools — CSP header vector", () => {
   });
 });
 
-// ─── checkAITools — script src detection ─────────────────────────────────────
+// ─── checkAITools . script src detection ─────────────────────────────────────
 
-describe("checkAITools — script-src vector", () => {
+describe("checkAITools . script-src vector", () => {
   it("detects OpenAI SDK script tag", () => {
     const html = `<html><head>
       <script src="https://openai.com/scripts/sdk.js"></script>
@@ -166,9 +166,9 @@ describe("checkAITools — script-src vector", () => {
   });
 });
 
-// ─── checkAITools — HTML fetch reference detection ───────────────────────────
+// ─── checkAITools . HTML fetch reference detection ───────────────────────────
 
-describe("checkAITools — html-fetch vector", () => {
+describe("checkAITools . html-fetch vector", () => {
   it("detects OpenAI from inline fetch call in HTML", () => {
     const html = `<html><body>
       <script>
@@ -197,9 +197,9 @@ describe("checkAITools — html-fetch vector", () => {
   });
 });
 
-// ─── checkAITools — JS bundle detection ─────────────────────────────────────
+// ─── checkAITools . JS bundle detection ─────────────────────────────────────
 
-describe("checkAITools — js-bundle vector", () => {
+describe("checkAITools . js-bundle vector", () => {
   it("detects OpenAI from API URL in JS bundle", () => {
     const js = [
       `const client = new OpenAI({ baseURL: "https://api.openai.com/v1" });`,
@@ -237,9 +237,9 @@ describe("checkAITools — js-bundle vector", () => {
   });
 });
 
-// ─── checkAITools — response header detection ────────────────────────────────
+// ─── checkAITools . response header detection ────────────────────────────────
 
-describe("checkAITools — response-header vector", () => {
+describe("checkAITools . response-header vector", () => {
   it("detects OpenAI proxy from x-powered-by header", () => {
     const headers = makeHeaders({ "x-powered-by": "openai-proxy/1.0" });
     const findings = checkAITools(emptyHtml, headers, emptyJs);
@@ -257,9 +257,9 @@ describe("checkAITools — response-header vector", () => {
   });
 });
 
-// ─── checkAITools — deduplication ────────────────────────────────────────────
+// ─── checkAITools . deduplication ────────────────────────────────────────────
 
-describe("checkAITools — deduplication", () => {
+describe("checkAITools . deduplication", () => {
   it("only creates one finding per AI tool even if detected in multiple vectors", () => {
     // OpenAI detected in both CSP AND JS bundle
     const headers = makeHeaders({
@@ -274,7 +274,7 @@ describe("checkAITools — deduplication", () => {
 
 // ─── Finding structure validation ─────────────────────────────────────────────
 
-describe("checkAITools — finding structure", () => {
+describe("checkAITools . finding structure", () => {
   it("produces findings with correct code and severity", () => {
     const headers = makeHeaders({
       "content-security-policy": "connect-src https://api.openai.com",

@@ -87,7 +87,7 @@ export default function Soc2ApiSecurityRequirementsPage() {
           </h1>
           <p className="mt-4 text-lg text-dusty-denim-700 dark:text-dusty-denim-400">
             Enterprise deals stall on security questionnaires. SOC 2 certification unlocks those
-            deals — but only if you&apos;ve built the right API security controls first. Here&apos;s
+            deals . but only if you&apos;ve built the right API security controls first. Here&apos;s
             what auditors actually look for.
           </p>
           <div className="mt-6 flex items-center gap-4 text-sm text-dusty-denim-500">
@@ -107,7 +107,7 @@ export default function Soc2ApiSecurityRequirementsPage() {
             losing deals to competitors who have it.
           </p>
           <p>
-            But SOC 2 isn&apos;t just a checkbox — it&apos;s a structured audit of your security controls
+            But SOC 2 isn&apos;t just a checkbox . it&apos;s a structured audit of your security controls
             against AICPA&apos;s Trust Services Criteria. And for software companies, a significant
             portion of those controls relate directly to API security. Getting ready for SOC 2
             means understanding what auditors will actually test.
@@ -134,7 +134,7 @@ export default function Soc2ApiSecurityRequirementsPage() {
 
           <h2>The Five Trust Services Criteria</h2>
           <p>
-            SOC 2 is organized around five Trust Services Criteria (TSC). Security (CC — Common
+            SOC 2 is organized around five Trust Services Criteria (TSC). Security (CC . Common
             Criteria) is mandatory for all SOC 2 reports. The others (Availability, Processing
             Integrity, Confidentiality, Privacy) are optional and included based on what&apos;s
             relevant to your service.
@@ -147,7 +147,7 @@ export default function Soc2ApiSecurityRequirementsPage() {
 
           <h2>What SOC 2 Requires for API Security</h2>
           <p>
-            The Trust Services Criteria don&apos;t prescribe specific technologies — they require
+            The Trust Services Criteria don&apos;t prescribe specific technologies . they require
             demonstrable controls. Here are the API security requirements auditors evaluate most
             closely:
           </p>
@@ -170,7 +170,7 @@ export default function Soc2ApiSecurityRequirementsPage() {
 
           <h3>Encryption in Transit and at Rest (CC6.1)</h3>
           <p>
-            All API traffic must use TLS. Your SSL/TLS configuration must be current — TLS 1.0
+            All API traffic must use TLS. Your SSL/TLS configuration must be current . TLS 1.0
             and 1.1 are deprecated and will be flagged. Certificate management must be documented.
           </p>
           <p>
@@ -200,7 +200,7 @@ export default function Soc2ApiSecurityRequirementsPage() {
           </p>
           <ul>
             <li>
-              Regular security scanning of your production API — both external (DAST) and
+              Regular security scanning of your production API . both external (DAST) and
               dependency scanning (SCA). See{" "}
               <Link href="/blog/owasp-top-10-api-checklist" className="text-prussian-blue-600 hover:underline">
                 the OWASP Top 10 API checklist
@@ -211,7 +211,7 @@ export default function Soc2ApiSecurityRequirementsPage() {
             <li>Evidence that critical vulnerabilities are remediated within a defined SLA</li>
           </ul>
           <p>
-            Auditors look for repeatability and documentation — not just &quot;we ran a scan.&quot;
+            Auditors look for repeatability and documentation . not just &quot;we ran a scan.&quot;
             They want to see scan results, a remediation ticket, and evidence the issue was fixed.
           </p>
 
@@ -221,7 +221,7 @@ export default function Soc2ApiSecurityRequirementsPage() {
               Build your SOC 2 evidence trail starting now
             </p>
             <p className="mt-1 text-sm text-dusty-denim-700 dark:text-dusty-denim-400">
-              Scantient scans your API externally and generates documented findings — a starting
+              Scantient scans your API externally and generates documented findings . a starting
               point for your vulnerability management evidence. Free scan, no setup.
             </p>
             <Link
@@ -244,7 +244,7 @@ export default function Soc2ApiSecurityRequirementsPage() {
           </ul>
           <p>
             A git workflow with required reviews and CI/CD pipelines generally satisfies this
-            criterion. The key is documentation — auditors will ask how this works, not just
+            criterion. The key is documentation . auditors will ask how this works, not just
             whether it exists.
           </p>
 
@@ -270,28 +270,28 @@ export default function Soc2ApiSecurityRequirementsPage() {
           </p>
           <ul>
             <li>
-              <strong>No documented key rotation policy</strong> — API keys exist, but there&apos;s
+              <strong>No documented key rotation policy</strong> . API keys exist, but there&apos;s
               no process for rotating them or evidence that rotation actually happens.
             </li>
             <li>
-              <strong>Missing security headers</strong> — <code>Strict-Transport-Security</code>,{" "}
+              <strong>Missing security headers</strong> . <code>Strict-Transport-Security</code>,{" "}
               <code>Content-Security-Policy</code>, and <code>X-Frame-Options</code> are absent
               from API responses.
             </li>
             <li>
-              <strong>Insufficient logging</strong> — Access logs exist but are ephemeral, lack
+              <strong>Insufficient logging</strong> . Access logs exist but are ephemeral, lack
               retention guarantees, or don&apos;t capture authentication events.
             </li>
             <li>
-              <strong>No vulnerability scanning evidence</strong> — The team &quot;does security&quot;
+              <strong>No vulnerability scanning evidence</strong> . The team &quot;does security&quot;
               but can&apos;t produce scan results, remediation tickets, or a tracking cadence.
             </li>
             <li>
-              <strong>Overpermissioned service accounts</strong> — Internal services use admin
+              <strong>Overpermissioned service accounts</strong> . Internal services use admin
               credentials instead of least-privilege scoped tokens.
             </li>
             <li>
-              <strong>Undocumented third-party integrations</strong> — APIs call external
+              <strong>Undocumented third-party integrations</strong> . APIs call external
               services with no vendor security assessment or DPA documentation.
             </li>
           </ul>
@@ -323,7 +323,7 @@ export default function Soc2ApiSecurityRequirementsPage() {
         {/* CTA */}
         <div className="mt-12 rounded-2xl border border-prussian-blue-200 dark:border-prussian-blue-800 bg-prussian-blue-50 dark:bg-prussian-blue-950/30 p-8 text-center">
           <h3 className="text-xl font-bold text-ink-black-950 dark:text-alabaster-grey-50">
-            Scan Your API Free — 60 Seconds
+            Scan Your API Free . 60 Seconds
           </h3>
           <p className="mt-2 text-sm text-dusty-denim-700 dark:text-dusty-denim-400">
             Get documented scan results to start building your SOC 2 evidence trail. No signup. No SDK.

@@ -2,11 +2,11 @@
  * security-audit-24.test.ts
  *
  * Tests for Audit-24 security fixes:
- *  1. API key deletion — role check (MEMBER/VIEWER must get 403)
- *  2. Agent scan POST — rate limiting
- *  3. Weekly report — cron path removed (no cross-tenant data leakage)
- *  4. Alerts test — rate limiting added
- *  5. Alerts test — internal error messages not leaked to client
+ *  1. API key deletion . role check (MEMBER/VIEWER must get 403)
+ *  2. Agent scan POST . rate limiting
+ *  3. Weekly report . cron path removed (no cross-tenant data leakage)
+ *  4. Alerts test . rate limiting added
+ *  5. Alerts test . internal error messages not leaked to client
  */
 
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -145,7 +145,7 @@ function makeReq(body: unknown, method = "POST", headers: Record<string, string>
 }
 
 // ═════════════════════════════════════════════════════════════════════════════
-// 1. API Key Deletion — Role Check
+// 1. API Key Deletion . Role Check
 // ═════════════════════════════════════════════════════════════════════════════
 describe("A24-1: API key deletion role check", () => {
   it("source: keys/[id]/route.ts includes role check for OWNER/ADMIN", () => {
@@ -265,7 +265,7 @@ describe("A24-1: API key deletion role check", () => {
 });
 
 // ═════════════════════════════════════════════════════════════════════════════
-// 2. Agent Scan POST — Rate Limiting
+// 2. Agent Scan POST . Rate Limiting
 // ═════════════════════════════════════════════════════════════════════════════
 describe("A24-2: Agent scan POST rate limiting", () => {
   const VALID_AGENT_TOKEN = "sa_validagentkey12345678901234567890";
@@ -335,9 +335,9 @@ describe("A24-2: Agent scan POST rate limiting", () => {
 });
 
 // ═════════════════════════════════════════════════════════════════════════════
-// 3. Weekly Report — cron path removed (no cross-tenant data leakage)
+// 3. Weekly Report . cron path removed (no cross-tenant data leakage)
 // ═════════════════════════════════════════════════════════════════════════════
-describe("A24-3: Weekly report — cron path removed", () => {
+describe("A24-3: Weekly report . cron path removed", () => {
   it("source: reports/weekly/route.ts does NOT contain isCron variable", () => {
     const src = readFileSync(resolve(__dir, "../reports/weekly/route.ts"), "utf8");
     expect(src).not.toContain("isCron");
@@ -345,14 +345,14 @@ describe("A24-3: Weekly report — cron path removed", () => {
 
   it("source: reports/weekly/route.ts does NOT reference process.env.CRON_SECRET at runtime", () => {
     const src = readFileSync(resolve(__dir, "../reports/weekly/route.ts"), "utf8");
-    // The removed cron path used `process.env.CRON_SECRET` for comparison —
+    // The removed cron path used `process.env.CRON_SECRET` for comparison .
     // that runtime reference must be gone (mentions in comments are fine).
     expect(src).not.toContain("process.env.CRON_SECRET");
   });
 
   it("source: reports/weekly/route.ts does NOT return all-orgs data (no findMany on organization)", () => {
     const src = readFileSync(resolve(__dir, "../reports/weekly/route.ts"), "utf8");
-    // The cron path used db.organization.findMany — it should be gone
+    // The cron path used db.organization.findMany . it should be gone
     expect(src).not.toContain("organization.findMany");
     expect(src).not.toContain("db.organization");
   });
@@ -415,7 +415,7 @@ describe("A24-3: Weekly report — cron path removed", () => {
   it("sending Authorization: Bearer <CRON_SECRET> with a valid session does NOT return all-org data", async () => {
     // This simulates the attack: a logged-in user who knows the CRON_SECRET value
     // sends it in the Authorization header hoping to trigger the old cron path that
-    // returned all-org data.  The cron path has been removed entirely — the handler
+    // returned all-org data.  The cron path has been removed entirely . the handler
     // no longer accepts a request parameter, so the Authorization header cannot
     // even reach route logic.  We set CRON_SECRET in env to confirm the route
     // never reads it and always returns per-org scoped data.
@@ -455,9 +455,9 @@ describe("A24-3: Weekly report — cron path removed", () => {
 });
 
 // ═════════════════════════════════════════════════════════════════════════════
-// 4. Alerts Test — Rate Limiting
+// 4. Alerts Test . Rate Limiting
 // ═════════════════════════════════════════════════════════════════════════════
-describe("A24-4: Alerts test endpoint — rate limiting", () => {
+describe("A24-4: Alerts test endpoint . rate limiting", () => {
   it("source: alerts/test/route.ts imports checkRateLimit", () => {
     const src = readFileSync(resolve(__dir, "../alerts/test/route.ts"), "utf8");
     expect(src).toContain("checkRateLimit");
@@ -513,9 +513,9 @@ describe("A24-4: Alerts test endpoint — rate limiting", () => {
 });
 
 // ═════════════════════════════════════════════════════════════════════════════
-// 5. Alerts Test — Error Message Not Leaked
+// 5. Alerts Test . Error Message Not Leaked
 // ═════════════════════════════════════════════════════════════════════════════
-describe("A24-5: Alerts test — internal error messages not leaked", () => {
+describe("A24-5: Alerts test . internal error messages not leaked", () => {
   const INTERNAL_DETAIL = "ECONNREFUSED 10.0.0.1:443 (internal webhook host)";
 
   it("returns a generic error message when sendTestNotification throws", async () => {

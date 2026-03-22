@@ -8,7 +8,7 @@ import { checkRateLimit } from "@/lib/rate-limit";
 
 const checkoutSchema = z.object({
   // Keep ENTERPRISE_PLUS accepted for backward compatibility, even if not shown in customer-facing pricing UI.
-  // LTD is a one-time payment — handled with mode: "payment" instead of "subscription".
+  // LTD is a one-time payment . handled with mode: "payment" instead of "subscription".
   plan: z.enum(["LTD", "FREE", "STARTER", "PRO", "ENTERPRISE", "ENTERPRISE_PLUS"]),
 });
 

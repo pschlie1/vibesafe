@@ -48,19 +48,19 @@ describe("extractSuggestedDomain", () => {
     expect(extractSuggestedDomain("user@us.megacorp.com")).toBe("https://us.megacorp.com");
   });
 
-  it("handles malformed email gracefully — no @ sign", () => {
+  it("handles malformed email gracefully . no @ sign", () => {
     expect(extractSuggestedDomain("notanemail")).toBeNull();
   });
 
-  it("handles malformed email gracefully — empty string", () => {
+  it("handles malformed email gracefully . empty string", () => {
     expect(extractSuggestedDomain("")).toBeNull();
   });
 
-  it("handles malformed email gracefully — @ at end", () => {
+  it("handles malformed email gracefully . @ at end", () => {
     expect(extractSuggestedDomain("user@")).toBeNull();
   });
 
-  it("handles malformed email gracefully — domain without dot", () => {
+  it("handles malformed email gracefully . domain without dot", () => {
     expect(extractSuggestedDomain("user@localhost")).toBeNull();
   });
 

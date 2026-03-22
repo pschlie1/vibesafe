@@ -123,7 +123,7 @@ export default async function AppDetailsPage({ params }: { params: Promise<{ id:
         <TrendCharts appId={app.id} />
       </div>
 
-      {/* Subsystem Health — only shown if probeUrl is configured */}
+      {/* Subsystem Health . only shown if probeUrl is configured */}
       {app.probeUrl && (
         <div className="mb-8">
           <h2 className="mb-4 text-lg font-semibold">Subsystem Health</h2>
@@ -131,7 +131,7 @@ export default async function AppDetailsPage({ params }: { params: Promise<{ id:
         </div>
       )}
 
-      {/* Infrastructure Health — only shown if connector results are present */}
+      {/* Infrastructure Health . only shown if connector results are present */}
       {latestConnectorResults && Object.keys(latestConnectorResults).length > 0 && (
         <div className="mb-8">
           <h2 className="mb-4 text-lg font-semibold">Infrastructure Health</h2>
@@ -139,7 +139,7 @@ export default async function AppDetailsPage({ params }: { params: Promise<{ id:
         </div>
       )}
 
-      {/* Scan diff banner — shown when we have at least 2 runs */}
+      {/* Scan diff banner . shown when we have at least 2 runs */}
       {app.monitorRuns.length >= 2 && (resolvedSinceLastScan > 0 || newSinceLastScan > 0) && (
         <div className="mb-4 flex flex-wrap items-center gap-3 rounded-lg border border-border bg-surface-raised px-4 py-3">
           <span className="text-xs font-semibold uppercase tracking-wide text-muted">Since last scan:</span>
@@ -259,7 +259,7 @@ function SubsystemHealthCard({
     return (
       <div className="rounded-lg border bg-surface px-4 py-6 text-center">
         <p className="text-sm text-muted">
-          No probe data yet — trigger a scan to populate subsystem health.
+          No probe data yet . trigger a scan to populate subsystem health.
         </p>
         <p className="mt-1 text-xs text-muted">Probing: {probeUrl}</p>
       </div>
@@ -319,7 +319,7 @@ function SubsystemRow({
     return (
       <div className="flex items-center justify-between px-4 py-3">
         <span className="text-sm capitalize text-muted">{label}</span>
-        <span className="text-xs text-muted">— not configured</span>
+        <span className="text-xs text-muted">. not configured</span>
       </div>
     );
   }

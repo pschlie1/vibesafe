@@ -26,11 +26,11 @@ export default function VsGitGuardianPage() {
             </span>
           </div>
           <h1 className="mx-auto max-w-4xl text-4xl font-extrabold leading-[1.1] tracking-[-0.02em] text-ink-black-950 dark:text-alabaster-grey-50 sm:text-6xl lg:text-[3.75rem] transition-colors">
-            The Maker's Choice: <br />
-            <span className="text-prussian-blue-600 dark:text-prussian-blue-400 transition-colors">Speed, simplicity, and confidence</span>
+            Scan your live app for security issues. <br />
+            <span className="text-prussian-blue-600 dark:text-prussian-blue-400 transition-colors">No code integration needed.</span>
           </h1>
           <p className="mx-auto mt-8 max-w-[600px] text-lg leading-relaxed text-dusty-denim-700 dark:text-dusty-denim-500 transition-colors">
-            GitGuardian scans git history. Scantient scans your deployed app. Same outcome (no leaked secrets), different approach.
+            GitGuardian finds secrets in your code repository. Scantient finds secrets exposed in your deployed app. Both prevent data breaches using different approaches.
           </p>
           <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link
@@ -136,8 +136,8 @@ export default function VsGitGuardianPage() {
             <h3 className="text-lg font-bold text-ink-black-950 dark:text-alabaster-grey-50 mb-4">GitGuardian finds:</h3>
             <ul className="space-y-2">
               {[
-                "✓ Leaked Stripe key in git history (6 months old)",
-                "You already rotated it? Too bad, GitGuardian still sees it.",
+                "✓ Leaked Stripe key from git history (rotated 6 months ago)",
+                "The key remains visible in repo history even after rotation.",
               ].map((item) => (
                 <li key={item} className="text-sm text-dusty-denim-700 dark:text-dusty-denim-500">{item}</li>
               ))}
@@ -150,9 +150,9 @@ export default function VsGitGuardianPage() {
             <ul className="space-y-2">
               {[
                 "✓ Exposed Stripe key in JavaScript bundle (LIVE)",
-                "✓ Missing CSP header (XSS vulnerability)",
-                "✓ Debug endpoint at /api/admin (security mistake)",
-                "✓ SSL cert expiring in 7 days (would break your site)",
+                "✓ Missing CSP header allowing inline scripts",
+                "✓ Performance regression from 2s to 5s load time",
+                "✓ SSL cert expiring in 7 days",
               ].map((item) => (
                 <li key={item} className="text-sm text-dusty-denim-700 dark:text-dusty-denim-500">{item}</li>
               ))}
@@ -162,7 +162,7 @@ export default function VsGitGuardianPage() {
         </div>
 
         <p className="mt-8 text-center text-dusty-denim-700 dark:text-dusty-denim-500 max-w-2xl mx-auto">
-          Both found the leaked key. Scantient found 3 other critical issues in 60 seconds, no code changes needed. GitGuardian needs setup and doesn't check what's actually running.
+          GitGuardian found the leaked key. Scantient found 3 other critical issues in 60 seconds without requiring code changes.
         </p>
       </section>
 

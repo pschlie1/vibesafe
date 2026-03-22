@@ -46,7 +46,7 @@ beforeEach(() => {
 });
 
 // ── verify-email ──────────────────────────────────────────────────────────────
-describe("GET /api/auth/verify-email — rate limit (Audit 18)", () => {
+describe("GET /api/auth/verify-email . rate limit (Audit 18)", () => {
   it("returns 429 with Retry-After when rate limit is exceeded", async () => {
     checkRateLimit.mockResolvedValueOnce({ allowed: false, retryAfterSeconds: 45 });
 
@@ -94,7 +94,7 @@ describe("GET /api/auth/verify-email — rate limit (Audit 18)", () => {
 });
 
 // ── logout ────────────────────────────────────────────────────────────────────
-describe("POST /api/auth/logout — rate limit (Audit 18)", () => {
+describe("POST /api/auth/logout . rate limit (Audit 18)", () => {
   it("returns 429 with Retry-After when rate limit is exceeded", async () => {
     checkRateLimit.mockResolvedValueOnce({ allowed: false, retryAfterSeconds: 30 });
 
@@ -147,7 +147,7 @@ describe("POST /api/auth/logout — rate limit (Audit 18)", () => {
 });
 
 // ── stripe/checkout ───────────────────────────────────────────────────────────
-describe("POST /api/stripe/checkout — rate limit (Audit 18)", () => {
+describe("POST /api/stripe/checkout . rate limit (Audit 18)", () => {
   it("returns 429 with Retry-After when rate limit is exceeded", async () => {
     const { getSession } = await import("@/lib/auth");
     (getSession as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
@@ -177,7 +177,7 @@ describe("POST /api/stripe/checkout — rate limit (Audit 18)", () => {
       email: "test@example.com",
     });
     checkRateLimit.mockResolvedValueOnce({ allowed: true });
-    // After rate limit passes, it will try to parse body and hit db — mock to avoid error
+    // After rate limit passes, it will try to parse body and hit db . mock to avoid error
     const { db } = await import("@/lib/db");
     (db.organization.findUnique as ReturnType<typeof vi.fn>).mockResolvedValueOnce(null);
 

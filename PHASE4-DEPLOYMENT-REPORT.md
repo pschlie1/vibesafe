@@ -11,11 +11,11 @@
 
 **Phase 4 has successfully delivered:**
 
-1. ✅ **Production Deployment** — Phase 3A/3B live on scantient.com (HTTP 200)
-2. ✅ **Error Tracking Setup** — Sentry infrastructure configured (manual project creation needed)
-3. ✅ **Conversion Funnel Tracking** — 11 events, analytics API, dashboard ready
-4. ✅ **Performance Monitoring** — Core Web Vitals tracking, API latency, alerts
-5. ✅ **Comprehensive Documentation** — 6 documents covering all Phase 4 deliverables
+1. ✅ **Production Deployment** . Phase 3A/3B live on scantient.com (HTTP 200)
+2. ✅ **Error Tracking Setup** . Sentry infrastructure configured (manual project creation needed)
+3. ✅ **Conversion Funnel Tracking** . 11 events, analytics API, dashboard ready
+4. ✅ **Performance Monitoring** . Core Web Vitals tracking, API latency, alerts
+5. ✅ **Comprehensive Documentation** . 6 documents covering all Phase 4 deliverables
 
 **What's Working:**
 - Production site loads without errors
@@ -167,12 +167,12 @@ import { trackEvent } from '@/lib/events';
 ---
 
 ### Task 5: Documentation ✅ COMPLETE
-- [x] PHASE4-PLAN.md — Detailed execution plan (all 5 tasks)
-- [x] DEPLOYMENT.md — Sentry setup, rollback procedure, incident response
-- [x] SENTRY-SETUP.md — Step-by-step Sentry project creation
-- [x] CONVERSION_TRACKING.md — Event catalog, funnel definition, queries
-- [x] PERFORMANCE_DASHBOARD.md — Web Vitals, thresholds, baseline structure
-- [x] This report — PHASE4-DEPLOYMENT-REPORT.md
+- [x] PHASE4-PLAN.md . Detailed execution plan (all 5 tasks)
+- [x] DEPLOYMENT.md . Sentry setup, rollback procedure, incident response
+- [x] SENTRY-SETUP.md . Step-by-step Sentry project creation
+- [x] CONVERSION_TRACKING.md . Event catalog, funnel definition, queries
+- [x] PERFORMANCE_DASHBOARD.md . Web Vitals, thresholds, baseline structure
+- [x] This report . PHASE4-DEPLOYMENT-REPORT.md
 
 ---
 
@@ -247,11 +247,11 @@ curl -I https://scantient.com
 
 | Metric | Baseline | Target | Status |
 |--------|----------|--------|--------|
-| LCP (median) | — ms | <2500ms | ⏳ TBD |
-| CLS (median) | — | <0.1 | ⏳ TBD |
-| Error rate | —% | <1% | ⏳ TBD |
-| Signup rate | —% | >3% | ⏳ TBD |
-| Paid conversion | —% | >1% | ⏳ TBD |
+| LCP (median) | . ms | <2500ms | ⏳ TBD |
+| CLS (median) |  | <0.1 | ⏳ TBD |
+| Error rate | .% | <1% | ⏳ TBD |
+| Signup rate | .% | >3% | ⏳ TBD |
+| Paid conversion | .% | >1% | ⏳ TBD |
 
 ---
 

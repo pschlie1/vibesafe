@@ -32,7 +32,7 @@ Scantient uses Supabase for managed PostgreSQL. PITR is available on Pro plan+.
 1. Go to https://supabase.com/dashboard → Project → Settings → Database
 2. Click **"Restore database"** (PITR tab)
 3. Enter the target timestamp (UTC)
-4. Confirm — Supabase will restore to a new instance
+4. Confirm . Supabase will restore to a new instance
 5. Update `DATABASE_URL` in Vercel environment to point to restored instance
 6. Run `npx prisma migrate deploy` to ensure schema is current
 7. Verify data integrity with spot queries
@@ -63,7 +63,7 @@ npx prisma migrate deploy
 
 - [ ] Spot-check critical tables: `User`, `Organization`, `Subscription`, `MonitoredApp`
 - [ ] Verify row counts match expectations
-- [ ] Run `npx prisma migrate status` — all migrations should be applied
+- [ ] Run `npx prisma migrate status` . all migrations should be applied
 - [ ] Re-enable writes: set `MAINTENANCE_MODE=false`
 - [ ] Smoke test: login, list apps, trigger scan
 - [ ] Document the incident and data loss window in post-mortem

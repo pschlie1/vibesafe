@@ -31,7 +31,7 @@ beforeEach(() => {
   auditLogCreate.mockResolvedValue({});
 });
 
-describe("authenticateApiKey — Bearer token format pre-validation (Audit 22)", () => {
+describe("authenticateApiKey . Bearer token format pre-validation (Audit 22)", () => {
   it("returns null and does NOT hit DB when key is missing", async () => {
     const { authenticateApiKey } = await import("@/lib/api-auth");
     const req = new Request("http://localhost");
@@ -79,7 +79,7 @@ describe("authenticateApiKey — Bearer token format pre-validation (Audit 22)",
       headers: { Authorization: BEARER_VALID },
     });
     await authenticateApiKey(req);
-    // The key passed format validation — DB should be queried
+    // The key passed format validation . DB should be queried
     expect(apiKeyFindFirst).toHaveBeenCalledOnce();
   });
 
@@ -94,7 +94,7 @@ describe("authenticateApiKey — Bearer token format pre-validation (Audit 22)",
   });
 });
 
-describe("authenticateApiKeyHeader — X-API-Key format pre-validation (Audit 22)", () => {
+describe("authenticateApiKeyHeader . X-API-Key format pre-validation (Audit 22)", () => {
   it("returns null and does NOT hit DB when key lacks vs_ prefix", async () => {
     const { authenticateApiKeyHeader } = await import("@/lib/api-auth");
     const req = new Request("http://localhost", {

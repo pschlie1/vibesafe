@@ -2,13 +2,13 @@
  * security-audit-9.test.ts
  * Tests for 8 fixes shipped in fix/deep-audit-9:
  *
- * A9-1:  SSRF via redirect chain — ssrfSafeFetch checks every hop
+ * A9-1:  SSRF via redirect chain . ssrfSafeFetch checks every hop
  * A9-2:  Webhook signing uses server secret (WEBHOOK_SIGNING_SECRET) not raw URL
- * A9-3:  Scan concurrency guard — runDueHttpScans claims apps before scanning
+ * A9-3:  Scan concurrency guard . runDueHttpScans claims apps before scanning
  * A9-4:  N+1 autoTriageFinding → Promise.all (parallel, not sequential)
  * A9-5:  N+1 verifyResolvedFindings → Promise.all (parallel, not sequential)
  * A9-6:  Session cookie Secure flag on refresh checks VERCEL_ENV (parity with createSession)
- * A9-7:  SSO init sanitizes error — no raw error message to client
+ * A9-7:  SSO init sanitizes error . no raw error message to client
  * A9-8:  checksRun updated to findings.length on scan completion (was stuck at 0)
  *
  * NOTE (audit-10 fix): vi.mock calls moved to module level to avoid Vitest hoisting
@@ -50,7 +50,7 @@ vi.mock("@/lib/db", () => ({
   },
 }));
 
-// ─── Security checks mock (all return empty — no findings) ───────────────────
+// ─── Security checks mock (all return empty . no findings) ───────────────────
 vi.mock("@/lib/security", () => ({
   checkAPISecurity: vi.fn().mockReturnValue([]),
   checkBrokenLinks: vi.fn().mockResolvedValue([]),
@@ -116,10 +116,10 @@ beforeEach(() => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// A9-1: ssrfSafeFetch — SSRF via redirect chain
+// A9-1: ssrfSafeFetch . SSRF via redirect chain
 // Uses vi.importActual to bypass the module-level mock and test the real function
 // ─────────────────────────────────────────────────────────────────────────────
-describe("A9-1: ssrfSafeFetch — SSRF redirect chain blocked", () => {
+describe("A9-1: ssrfSafeFetch . SSRF redirect chain blocked", () => {
   afterEach(() => {
     vi.unstubAllGlobals();
     vi.restoreAllMocks();
@@ -228,7 +228,7 @@ describe("A9-1: ssrfSafeFetch — SSRF redirect chain blocked", () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// A9-2: Webhook signing — uses derived key, not raw URL
+// A9-2: Webhook signing . uses derived key, not raw URL
 // ─────────────────────────────────────────────────────────────────────────────
 describe("A9-2: Webhook signing uses derived key from WEBHOOK_SIGNING_SECRET", () => {
   afterEach(() => {
@@ -282,7 +282,7 @@ describe("A9-2: Webhook signing uses derived key from WEBHOOK_SIGNING_SECRET", (
 
     const masterSecret = process.env.WEBHOOK_SIGNING_SECRET;
     if (!masterSecret) {
-      console.warn("[alerts] WEBHOOK_SIGNING_SECRET not set — webhook signatures use URL as key (insecure).");
+      console.warn("[alerts] WEBHOOK_SIGNING_SECRET not set . webhook signatures use URL as key (insecure).");
     }
     expect(warnSpy).toHaveBeenCalled();
 
@@ -292,9 +292,9 @@ describe("A9-2: Webhook signing uses derived key from WEBHOOK_SIGNING_SECRET", (
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// A9-3: Scan concurrency guard — apps claimed before scanning
+// A9-3: Scan concurrency guard . apps claimed before scanning
 // ─────────────────────────────────────────────────────────────────────────────
-describe("A9-3: runDueHttpScans — concurrency guard via updateMany claim", () => {
+describe("A9-3: runDueHttpScans . concurrency guard via updateMany claim", () => {
   it("scanner-http.ts source calls updateMany before individual scans", () => {
     const src = readFileSync(resolve(__dir, "../../../lib/scanner-http.ts"), "utf8");
     expect(src).toContain("updateMany");
@@ -419,9 +419,9 @@ describe("A9-5: verifyResolvedFindings uses Promise.all (not for-await loop)", (
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// A9-6: Session cookie Secure flag — VERCEL_ENV parity
+// A9-6: Session cookie Secure flag . VERCEL_ENV parity
 // ─────────────────────────────────────────────────────────────────────────────
-describe("A9-6: auth.ts getSession refresh — Secure flag includes VERCEL_ENV check", () => {
+describe("A9-6: auth.ts getSession refresh . Secure flag includes VERCEL_ENV check", () => {
   it("auth.ts refresh path contains VERCEL_ENV in the Secure flag expression", () => {
     const src = readFileSync(resolve(__dir, "../../../lib/auth.ts"), "utf8");
     expect(src).toContain("VERCEL_ENV");
@@ -445,7 +445,7 @@ describe("A9-6: auth.ts getSession refresh — Secure flag includes VERCEL_ENV c
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// A9-7: SSO init — sanitized error (no raw message leaked)
+// A9-7: SSO init . sanitized error (no raw message leaked)
 // ─────────────────────────────────────────────────────────────────────────────
 describe("A9-7: SSO init route sanitizes error response", () => {
   it("sso/init/route.ts source does NOT echo err.message to client in the catch block", () => {
@@ -458,7 +458,7 @@ describe("A9-7: SSO init route sanitizes error response", () => {
   });
 
   it("catch block returns 500 with safe generic message only", () => {
-    const err = new Error("connect ECONNREFUSED 127.0.0.1:443 — super internal");
+    const err = new Error("connect ECONNREFUSED 127.0.0.1:443 . super internal");
 
     const oldError = err instanceof Error ? err.message : "SSO init failed";
     const newError = "SSO configuration error. Please contact your administrator.";

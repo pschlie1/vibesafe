@@ -44,7 +44,7 @@ describe("createAppSchema", () => {
 });
 
 // ── URL protocol validation (audit-15: H3 fix) ──────────────────────────────
-describe("createAppSchema — strict URL protocol enforcement", () => {
+describe("createAppSchema . strict URL protocol enforcement", () => {
   it("rejects file:// URLs", () => {
     const result = createAppSchema.safeParse({
       name: "Test App",
@@ -92,7 +92,7 @@ describe("createAppSchema — strict URL protocol enforcement", () => {
 });
 
 // ── String length limits (audit-15: M1 fix) ─────────────────────────────────
-describe("createAppSchema — string length limits", () => {
+describe("createAppSchema . string length limits", () => {
   it("rejects app name over 100 characters", () => {
     const result = createAppSchema.safeParse({
       name: "A".repeat(101),

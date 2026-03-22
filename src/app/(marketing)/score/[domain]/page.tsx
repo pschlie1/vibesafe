@@ -1,5 +1,5 @@
 /**
- * /score/[domain] — Shareable Security Score Card
+ * /score/[domain] . Shareable Security Score Card
  *
  * Public, no-auth page showing a read-only security score for any monitored app.
  * Fetches the latest MonitorRun for the domain from the database and renders
@@ -160,10 +160,10 @@ export async function generateMetadata({
 
   if (!data) {
     return {
-      title: `${domain} — Security Score | Scantient`,
+      title: `${domain} . Security Score | Scantient`,
       description: `${domain} isn't currently monitored by Scantient. Scan it free to get a security grade.`,
       openGraph: {
-        title: `${domain} — Not yet monitored | Scantient`,
+        title: `${domain} . Not yet monitored | Scantient`,
         description: "Scan this domain free to get a security grade.",
         url: `https://scantient.com/score/${domain}`,
       },
@@ -172,17 +172,17 @@ export async function generateMetadata({
 
   const { grade, score } = data;
   return {
-    title: `${domain} — Grade ${grade} (${score}/100) | Scantient`,
+    title: `${domain} . Grade ${grade} (${score}/100) | Scantient`,
     description: `${domain} has a security score of ${score}/100 (Grade ${grade}). Monitored by Scantient.`,
     openGraph: {
-      title: `${domain} — Security Grade ${grade} · ${score}/100`,
+      title: `${domain} . Security Grade ${grade} · ${score}/100`,
       description: `This site scored ${score}/100 (Grade ${grade}) on Scantient's security scan. ${data.findings.length > 0 ? `Top issue: ${data.findings[0].title}` : "No open issues found."}`,
       url: `https://scantient.com/score/${domain}`,
       type: "website",
     },
     twitter: {
       card: "summary",
-      title: `${domain} — Security Grade ${grade} · ${score}/100`,
+      title: `${domain} . Security Grade ${grade} · ${score}/100`,
       description: `Scantient security score for ${domain}.`,
     },
   };
@@ -220,7 +220,7 @@ function UpgradeCTASection({ findingsCount, domain }: { findingsCount: number; d
         </h2>
         <p className="mt-1 text-sm text-heading">
           {hasIssues
-            ? "This is a one-time snapshot. These issues could change, worsen, or new ones could appear — and you won't know."
+            ? "This is a one-time snapshot. These issues could change, worsen, or new ones could appear . and you won't know."
             : "Clean scans can change. A new deploy, an expired cert, a misconfigured header. Without monitoring, you'll find out too late."}
         </p>
       </div>
@@ -239,7 +239,7 @@ function UpgradeCTASection({ findingsCount, domain }: { findingsCount: number; d
                 <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted">Feature</th>
                 <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-muted">Free Scan</th>
                 <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-prussian-blue-600 dark:text-prussian-blue-400 bg-prussian-blue-50 dark:bg-prussian-blue-950/20">
-                  LTD — $79
+                  LTD . $79
                   <span className="ml-1 text-[10px] font-bold text-prussian-blue-500 dark:text-prussian-blue-400">once</span>
                 </th>
                 <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-muted">Pro $399/mo</th>
@@ -292,7 +292,7 @@ function UpgradeCTASection({ findingsCount, domain }: { findingsCount: number; d
 
         {/* Urgency */}
         <p className="mt-2 text-xs font-medium text-warning">
-          ⏳ LTD pricing won&apos;t last forever — lock in $79 before it goes monthly-only
+          ⏳ LTD pricing won&apos;t last forever . lock in $79 before it goes monthly-only
         </p>
 
         <div className="mt-5 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
@@ -300,7 +300,7 @@ function UpgradeCTASection({ findingsCount, domain }: { findingsCount: number; d
             href="/pricing"
             className="inline-flex items-center gap-2 rounded-lg bg-prussian-blue-600 px-7 py-3 text-sm font-bold text-white shadow-lg transition hover:bg-prussian-blue-700 hover:shadow-xl"
           >
-            Get Lifetime Access — $79 →
+            Get Lifetime Access . $79 →
           </Link>
           <Link
             href="/score"
@@ -475,7 +475,7 @@ function NotFoundCard({ domain }: { domain: string }) {
             {domain} isn&apos;t monitored yet
           </h1>
           <p className="mt-2 text-sm text-muted">
-            Run a free instant scan to get a security grade — no account needed.
+            Run a free instant scan to get a security grade . no account needed.
           </p>
         </div>
         <Link
@@ -503,7 +503,7 @@ function NotFoundCard({ domain }: { domain: string }) {
             { icon: "📡", label: "Daily automated scans" },
             { icon: "🔔", label: "Email alerts on changes" },
             { icon: "📄", label: "Monthly compliance PDFs" },
-            { icon: "♾️", label: "Lifetime — pay once" },
+            { icon: "♾️", label: "Lifetime . pay once" },
           ].map((item) => (
             <div key={item.label} className="flex items-center gap-2 text-sm text-heading">
               <span>{item.icon}</span>
@@ -514,13 +514,13 @@ function NotFoundCard({ domain }: { domain: string }) {
 
         <div className="text-center space-y-2">
           <p className="text-xs font-medium text-warning">
-            ⏳ LTD pricing won&apos;t last forever — lock in $79 before it goes monthly-only
+            ⏳ LTD pricing won&apos;t last forever . lock in $79 before it goes monthly-only
           </p>
           <Link
             href="/pricing"
             className="inline-flex items-center gap-2 rounded-lg bg-prussian-blue-600 px-7 py-3 text-sm font-bold text-white shadow-lg transition hover:bg-prussian-blue-700"
           >
-            Get Lifetime Access — $79 →
+            Get Lifetime Access . $79 →
           </Link>
           <p className="text-xs text-muted">No subscription. No surprises.</p>
         </div>

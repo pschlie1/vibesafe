@@ -43,7 +43,7 @@ This is the highest-severity issue in AI-generated apps. Cursor and similar tool
 
 1. Open DevTools → Sources → look through your JavaScript bundle files
 2. Search for strings like `sk_`, `pk_`, `api_key`, `secret`, `token`, `password`
-3. Check your `next.config.js` or `vite.config.js` for `NEXT_PUBLIC_` variables — anything with that prefix goes to the browser
+3. Check your `next.config.js` or `vite.config.js` for `NEXT_PUBLIC_` variables . anything with that prefix goes to the browser
 
 **What to do if you find one:**
 
@@ -56,9 +56,9 @@ Revoke the key immediately. Then move it to a server-side environment variable t
 In DevTools → Application → Cookies, check every cookie your app sets.
 
 Each cookie should have:
-- `Secure` — only sent over HTTPS
-- `HttpOnly` — not accessible from JavaScript (prevents XSS stealing sessions)
-- `SameSite=Strict` or `SameSite=Lax` — prevents CSRF
+- `Secure` . only sent over HTTPS
+- `HttpOnly` . not accessible from JavaScript (prevents XSS stealing sessions)
+- `SameSite=Strict` or `SameSite=Lax` . prevents CSRF
 
 If your session cookie lacks `HttpOnly`, any XSS vulnerability in your app gives an attacker your users' sessions.
 
@@ -66,16 +66,16 @@ If your session cookie lacks `HttpOnly`, any XSS vulnerability in your app gives
 
 ## Authentication Patterns (15 minutes to review)
 
-AI coding tools generate authentication that works — but often works in the wrong place.
+AI coding tools generate authentication that works . but often works in the wrong place.
 
 **Check for client-side-only auth:**
 ```javascript
-// This is wrong — the UI hides the button but the route is still accessible
+// This is wrong . the UI hides the button but the route is still accessible
 if (user.role !== 'admin') {
   return null; // hides the admin panel in the UI
 }
 
-// This is right — the server checks the role
+// This is right . the server checks the role
 const session = await getSession();
 if (session.role !== 'admin') {
   return Response.json({ error: 'Forbidden' }, { status: 403 });
@@ -112,7 +112,7 @@ AI-generated apps frequently include analytics scripts, chat widgets, and font l
 
 Run it monthly. Keep a record of when you ran it and what you found. That record is your evidence of continuous monitoring for SOC2 and ISO27001 audits.
 
-If you have more than five apps, manual monthly checks do not scale. Automated external scanning — where a tool checks every app on a schedule without needing access to your code or infrastructure — is the practical alternative.
+If you have more than five apps, manual monthly checks do not scale. Automated external scanning . where a tool checks every app on a schedule without needing access to your code or infrastructure . is the practical alternative.
 
 ---
 

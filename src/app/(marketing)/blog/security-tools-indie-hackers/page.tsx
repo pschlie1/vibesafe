@@ -4,12 +4,12 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "The Best Security Tools for Indie Hackers in 2026 (Budget Under $100/Year) | Scantient Blog",
   description:
-    "The best security tools for indie hackers and solo developers in 2026 — free and under $100/year. Covers secret scanning, dependency checks, headers, external API scanning, and more.",
+    "The best security tools for indie hackers and solo developers in 2026 . free and under $100/year. Covers secret scanning, dependency checks, headers, external API scanning, and more.",
   keywords: "security tools indie developer, free security scanner startup, indie hacker security, best security tools startups 2026, budget security tools developer",
   openGraph: {
     title: "The Best Security Tools for Indie Hackers in 2026 (Budget Under $100/Year)",
     description:
-      "You don't need a $50K/year security stack. Here are the best security tools for indie hackers — most free, one $79 lifetime deal that covers your whole API.",
+      "You don't need a $50K/year security stack. Here are the best security tools for indie hackers . most free, one $79 lifetime deal that covers your whole API.",
     url: "https://scantient.com/blog/security-tools-indie-hackers",
     siteName: "Scantient",
     type: "article",
@@ -28,7 +28,7 @@ const articleSchema = {
   "@type": "Article",
   headline: "The Best Security Tools for Indie Hackers in 2026 (Budget Under $100/Year)",
   description:
-    "The best security tools for indie hackers and solo developers in 2026 — free and under $100/year. Covers secret scanning, dependency checks, headers, external API scanning, and more.",
+    "The best security tools for indie hackers and solo developers in 2026 . free and under $100/year. Covers secret scanning, dependency checks, headers, external API scanning, and more.",
   datePublished: "2026-01-29T00:00:00Z",
   dateModified: "2026-01-29T00:00:00Z",
   author: { "@type": "Organization", name: "Scantient" },
@@ -88,7 +88,7 @@ export default function SecurityToolsIndieHackersPage() {
           <p className="mt-4 text-lg text-dusty-denim-700 dark:text-dusty-denim-400">
             Enterprise security stacks cost $30,000–$100,000 per year. You don&apos;t need that. You
             need the right five or six tools that cover the vulnerabilities actually likely to hit
-            your project — without eating your MRR.
+            your project . without eating your MRR.
           </p>
           <div className="mt-6 flex items-center gap-4 text-sm text-dusty-denim-500">
             <time dateTime="2026-01-29">January 29, 2026</time>
@@ -103,7 +103,7 @@ export default function SecurityToolsIndieHackersPage() {
           <p>
             The security tool market is built for enterprise buyers. Vendors want six-figure
             contracts, multi-month sales cycles, and procurement committees. As an indie hacker or
-            solo founder, you have none of those things — and you shouldn&apos;t need them. The real
+            solo founder, you have none of those things . and you shouldn&apos;t need them. The real
             threats you face (leaked secrets, misconfigured APIs, missing headers, exposed
             endpoints) are well-understood and entirely preventable with a focused, cheap stack.
           </p>
@@ -140,7 +140,7 @@ export default function SecurityToolsIndieHackersPage() {
 
           <h3>1. GitHub Secret Scanning (Free for public repos, included in GitHub Advanced Security)</h3>
           <p>
-            GitHub automatically scans public repositories for hundreds of secret patterns —
+            GitHub automatically scans public repositories for hundreds of secret patterns .
             Stripe keys, AWS credentials, Twilio tokens, and more. When a match is found, the
             platform notifies both you and the affected service provider, which may immediately
             revoke the exposed key.
@@ -149,7 +149,7 @@ export default function SecurityToolsIndieHackersPage() {
             <strong>What it catches:</strong> API keys accidentally committed to git. Nothing else.
           </p>
           <p>
-            <strong>What it misses:</strong> Everything after commit — live API misconfigurations,
+            <strong>What it misses:</strong> Everything after commit . live API misconfigurations,
             runtime exposure, header issues, CORS problems.
           </p>
           <p>
@@ -157,7 +157,7 @@ export default function SecurityToolsIndieHackersPage() {
             (paid) for private repos.
           </p>
           <p>
-            <strong>Setup time:</strong> Zero — it&apos;s automatic on public repos. Enable in Settings
+            <strong>Setup time:</strong> Zero . it&apos;s automatic on public repos. Enable in Settings
             → Code security and analysis for private repos.
           </p>
 
@@ -167,24 +167,24 @@ export default function SecurityToolsIndieHackersPage() {
             have a native auditing tool:
           </p>
           <ul>
-            <li><code>npm audit</code> — built into npm, runs in seconds</li>
-            <li><code>pip-audit</code> — Python equivalent, installable via pip</li>
-            <li>GitHub Dependabot — opens PRs automatically when vulnerable versions are detected</li>
-            <li>Snyk Free tier — 200 tests/month across languages</li>
+            <li><code>npm audit</code> . built into npm, runs in seconds</li>
+            <li><code>pip-audit</code> . Python equivalent, installable via pip</li>
+            <li>GitHub Dependabot . opens PRs automatically when vulnerable versions are detected</li>
+            <li>Snyk Free tier . 200 tests/month across languages</li>
           </ul>
           <p>
             <strong>Cost:</strong> Free for all of the above at indie scale.
           </p>
           <p>
             <strong>What it misses:</strong> Runtime issues, API configuration problems, secrets in
-            deployed code. Dependency scanning is shift-left — it only sees your codebase, not your
+            deployed code. Dependency scanning is shift-left . it only sees your codebase, not your
             live API.
           </p>
 
           <h3>3. Mozilla Observatory (Free)</h3>
           <p>
             Mozilla&apos;s Observatory is a free web tool that checks your site&apos;s HTTP security
-            headers — Content-Security-Policy, X-Frame-Options, HSTS, X-Content-Type-Options,
+            headers . Content-Security-Policy, X-Frame-Options, HSTS, X-Content-Type-Options,
             Referrer-Policy, and more. Enter your domain, get a letter grade and fix recommendations
             in under 30 seconds.
           </p>
@@ -208,7 +208,7 @@ export default function SecurityToolsIndieHackersPage() {
           </p>
           <p>
             <strong>Limitation:</strong> Significant setup time. Requires configuration to avoid
-            false positives and to test authenticated endpoints. Not a 60-second solution — more
+            false positives and to test authenticated endpoints. Not a 60-second solution . more
             like a half-day project to get meaningful results.
           </p>
 
@@ -218,8 +218,8 @@ export default function SecurityToolsIndieHackersPage() {
               Want a 60-second external scan without ZAP setup complexity?
             </p>
             <p className="mt-1 text-sm text-dusty-denim-700 dark:text-dusty-denim-400">
-              Scantient scans your live API from the outside — headers, CORS, exposed endpoints,
-              TLS configuration — no setup, no signup required.
+              Scantient scans your live API from the outside . headers, CORS, exposed endpoints,
+              TLS configuration . no setup, no signup required.
             </p>
             <Link
               href="/score"
@@ -234,7 +234,7 @@ export default function SecurityToolsIndieHackersPage() {
             Here&apos;s where the indie hacker stack typically has a gap. The free tools above cover
             secrets in code (GitHub scanning), vulnerable packages (npm audit), and header
             configuration (Observatory). None of them test your <em>live API</em> from the outside
-            — the way an attacker would actually probe it.
+            . the way an attacker would actually probe it.
           </p>
           <p>
             That&apos;s what{" "}
@@ -242,7 +242,7 @@ export default function SecurityToolsIndieHackersPage() {
               Scantient LTD at $79
             </Link>{" "}
             is built for. One-time payment, lifetime access. It runs external API security scans
-            against your deployed endpoints — checking:
+            against your deployed endpoints . checking:
           </p>
           <ul>
             <li>Security headers (CSP, HSTS, X-Frame-Options, X-Content-Type-Options)</li>
@@ -255,7 +255,7 @@ export default function SecurityToolsIndieHackersPage() {
           <p>
             For a solo developer or early-stage startup, $79 once is the obvious choice over
             any enterprise DAST tool with a five-figure annual contract. You get the same external
-            perspective — what your API looks like to an attacker on the internet — without the
+            perspective . what your API looks like to an attacker on the internet . without the
             procurement process.
           </p>
           <p>
@@ -271,7 +271,7 @@ export default function SecurityToolsIndieHackersPage() {
 
           <h3>Doppler (Free tier generous, paid from $6.50/month)</h3>
           <p>
-            Doppler is a secrets management platform — a better alternative to <code>.env</code>
+            Doppler is a secrets management platform . a better alternative to <code>.env</code>
             files, especially for teams. It syncs secrets to your deployment platforms (Vercel,
             Railway, Fly.io, GitHub Actions) and gives you a central place to audit who has
             access to what.
@@ -290,7 +290,7 @@ export default function SecurityToolsIndieHackersPage() {
           <p>
             If you already use 1Password, the Secrets Automation add-on lets you pull secrets
             directly into your CI/CD pipelines and development environment without pasting keys
-            into configuration files. At indie scale, this is optional — Doppler or platform
+            into configuration files. At indie scale, this is optional . Doppler or platform
             env vars work fine. But if your team is already on 1Password, it&apos;s worth knowing
             the capability exists.
           </p>
@@ -342,7 +342,7 @@ export default function SecurityToolsIndieHackersPage() {
           <p className="mt-4">
             Total cost: $79, one time. That&apos;s less than one month of a single SaaS subscription
             for most indie hackers. The four free tools handle your code and build pipeline. Scantient
-            handles what your code can&apos;t see — how your deployed API looks from the internet.
+            handles what your code can&apos;t see . how your deployed API looks from the internet.
           </p>
 
           <h2>What This Stack Doesn&apos;t Cover</h2>
@@ -351,23 +351,23 @@ export default function SecurityToolsIndieHackersPage() {
           </p>
           <ul>
             <li>
-              <strong>Business logic vulnerabilities</strong> — Flaws in your application&apos;s
+              <strong>Business logic vulnerabilities</strong> . Flaws in your application&apos;s
               specific logic (e.g., price manipulation, insecure direct object references) require
               manual code review or penetration testing. No automated tool catches these reliably.
             </li>
             <li>
-              <strong>Authentication implementation bugs</strong> — JWT misconfiguration, OAuth
+              <strong>Authentication implementation bugs</strong> . JWT misconfiguration, OAuth
               flow issues, and session management problems may require code-level review beyond
               external scanning.
             </li>
             <li>
-              <strong>Infrastructure security</strong> — Cloud IAM policies, network segmentation,
+              <strong>Infrastructure security</strong> . Cloud IAM policies, network segmentation,
               and server configuration require cloud-native tooling (AWS Security Hub, etc.).
             </li>
           </ul>
           <p>
             For most indie hackers, this stack covers 80–90% of the exploitable surface at launch.
-            The remaining gaps are worth addressing as you grow and add revenue — but they don&apos;t
+            The remaining gaps are worth addressing as you grow and add revenue . but they don&apos;t
             need $50K/year of enterprise tooling to close.
           </p>
 
@@ -402,10 +402,10 @@ export default function SecurityToolsIndieHackersPage() {
         {/* CTA */}
         <div className="mt-12 rounded-2xl border border-prussian-blue-200 dark:border-prussian-blue-800 bg-prussian-blue-50 dark:bg-prussian-blue-950/30 p-8 text-center">
           <h3 className="text-xl font-bold text-ink-black-950 dark:text-alabaster-grey-50">
-            Scan Your API Free — 60 Seconds
+            Scan Your API Free . 60 Seconds
           </h3>
           <p className="mt-2 text-sm text-dusty-denim-700 dark:text-dusty-denim-400">
-            See exactly what your live API exposes to the internet — headers, CORS, endpoints,
+            See exactly what your live API exposes to the internet . headers, CORS, endpoints,
             TLS. No signup. No SDK. Results in under a minute.
           </p>
           <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">

@@ -15,7 +15,7 @@ function getJwtSecret(): string {
 }
 const SESSION_COOKIE = "scantient-session";
 const SESSION_DURATION = 24 * 60 * 60; // 24 hours in seconds
-/** Exported for tests only — frequency at which sessions are re-validated against the DB. */
+/** Exported for tests only . frequency at which sessions are re-validated against the DB. */
 export const REFRESH_THRESHOLD = 5 * 60; // 5 minutes in seconds
 
 function getSessionCookieOptions(isProductionOverride?: boolean) {

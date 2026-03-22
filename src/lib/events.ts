@@ -139,7 +139,7 @@ class EventsClient {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ events }),
-        // Don't wait for response — fire and forget
+        // Don't wait for response . fire and forget
         keepalive: true,
       });
     } catch (error) {

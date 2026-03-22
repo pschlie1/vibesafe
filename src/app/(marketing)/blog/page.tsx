@@ -3,7 +3,7 @@ import Link from "next/link";
 import NewsletterForm from "@/components/newsletter-form";
 
 export const metadata: Metadata = {
-  title: "Blog — Scantient",
+  title: "Blog . Scantient",
   description:
     "Security insights, compliance guides, and practical advice for IT leaders managing AI-generated applications.",
 };
@@ -14,7 +14,7 @@ const posts = [
     category: "AI Security",
     title: "Vibe Coding Security Risks: What AI-Generated Code Gets Wrong About APIs",
     excerpt:
-      "Vibe coding ships product fast — and with predictable security gaps. CORS wildcards, missing rate limits, verbose errors, IDOR vulnerabilities: the systematic issues AI-generated APIs share and how to fix them.",
+      "Vibe coding ships product fast . and with predictable security gaps. CORS wildcards, missing rate limits, verbose errors, IDOR vulnerabilities: the systematic issues AI-generated APIs share and how to fix them.",
     date: "March 15, 2026",
     readTime: "9 min read",
     featured: false,
@@ -34,7 +34,7 @@ const posts = [
     category: "Security",
     title: "How to Run a Security Audit When You Don't Have a Security Team",
     excerpt:
-      "A practical six-step DIY security audit for solo founders and small startups. External surface scan, secrets audit, auth review, dependency scan — find and fix your most critical vulnerabilities without a security team.",
+      "A practical six-step DIY security audit for solo founders and small startups. External surface scan, secrets audit, auth review, dependency scan . find and fix your most critical vulnerabilities without a security team.",
     date: "February 15, 2026",
     readTime: "10 min read",
     featured: false,
@@ -44,7 +44,7 @@ const posts = [
     category: "Compliance",
     title: "GDPR and API Security: What European Founders Must Implement Before Launch",
     excerpt:
-      "GDPR imposes concrete technical requirements on your APIs — encryption, access controls, audit logging, data minimization, and 72-hour breach notification. Here's what European founders must implement before processing EU resident data.",
+      "GDPR imposes concrete technical requirements on your APIs . encryption, access controls, audit logging, data minimization, and 72-hour breach notification. Here's what European founders must implement before processing EU resident data.",
     date: "January 6, 2026",
     readTime: "10 min read",
     featured: false,
@@ -54,7 +54,7 @@ const posts = [
     category: "API Security",
     title: "GraphQL Security: The Unique Vulnerabilities API Builders Miss",
     excerpt:
-      "GraphQL's flexibility creates attack surfaces REST never had. Introspection attacks, batching abuse, depth limiting, query complexity — the GraphQL-specific vulnerabilities developers miss when switching from REST.",
+      "GraphQL's flexibility creates attack surfaces REST never had. Introspection attacks, batching abuse, depth limiting, query complexity . the GraphQL-specific vulnerabilities developers miss when switching from REST.",
     date: "November 20, 2025",
     readTime: "10 min read",
     featured: false,
@@ -74,7 +74,7 @@ const posts = [
     category: "Checklist",
     title: "SaaS Launch Security Checklist: 15 Things to Check Before Going Live",
     excerpt:
-      "15 security items to verify before your SaaS launches — SSL, security headers, CORS, auth, rate limiting, exposed endpoints, secrets, and more. With a 60-second shortcut for the most common items.",
+      "15 security items to verify before your SaaS launches . SSL, security headers, CORS, auth, rate limiting, exposed endpoints, secrets, and more. With a 60-second shortcut for the most common items.",
     date: "March 21, 2026",
     readTime: "11 min read",
     featured: false,
@@ -94,7 +94,7 @@ const posts = [
     category: "Authentication",
     title: "JWT Security Best Practices: 8 Mistakes That Expose Your API",
     excerpt:
-      "The eight most common JWT security mistakes — the none algorithm bypass, weak secrets, no expiry, secrets in payloads, localStorage storage — with practical fixes for each one.",
+      "The eight most common JWT security mistakes . the none algorithm bypass, weak secrets, no expiry, secrets in payloads, localStorage storage . with practical fixes for each one.",
     date: "March 18, 2026",
     readTime: "9 min read",
     featured: false,
@@ -104,7 +104,7 @@ const posts = [
     category: "Security",
     title: "What Is External Security Scanning? (And Why Every Production API Needs It)",
     excerpt:
-      "Code review finds bugs. Dependency scanners find CVEs. Neither can see what your live API looks like from the internet. External scanning can — and it reveals a completely different class of security problems.",
+      "Code review finds bugs. Dependency scanners find CVEs. Neither can see what your live API looks like from the internet. External scanning can . and it reveals a completely different class of security problems.",
     date: "March 16, 2026",
     readTime: "9 min read",
     featured: false,
@@ -114,7 +114,7 @@ const posts = [
     category: "Authentication",
     title: "OAuth 2.0 Security Vulnerabilities Every Developer Should Know (And How to Fix Them)",
     excerpt:
-      "CSRF on OAuth flows, open redirect_uri validation, missing PKCE, token leakage, scope bypass — the OAuth 2.0 vulnerabilities that appear in production implementations and how to fix each one.",
+      "CSRF on OAuth flows, open redirect_uri validation, missing PKCE, token leakage, scope bypass . the OAuth 2.0 vulnerabilities that appear in production implementations and how to fix each one.",
     date: "March 12, 2026",
     readTime: "9 min read",
     featured: false,
@@ -124,7 +124,7 @@ const posts = [
     category: "API Security",
     title: "OWASP Top 10 for APIs: A Practical Checklist for 2026",
     excerpt:
-      "All 10 OWASP API Security risks with practical fixes — not just definitions. Which ones require code review, which ones you can check in 60 seconds, and how Scantient covers 7 of the 10 automatically.",
+      "All 10 OWASP API Security risks with practical fixes . not just definitions. Which ones require code review, which ones you can check in 60 seconds, and how Scantient covers 7 of the 10 automatically.",
     date: "March 10, 2026",
     readTime: "12 min read",
     featured: false,
@@ -134,7 +134,7 @@ const posts = [
     category: "AI Security",
     title: "OWASP LLM Top 10: What API Builders Need to Know in 2026",
     excerpt:
-      "OWASP's LLM Top 10 explained for API developers. Prompt injection, insecure output handling, training data poisoning, excessive agency — what each means for APIs that integrate language models.",
+      "OWASP's LLM Top 10 explained for API developers. Prompt injection, insecure output handling, training data poisoning, excessive agency . what each means for APIs that integrate language models.",
     date: "March 7, 2026",
     readTime: "12 min read",
     featured: false,
@@ -144,7 +144,7 @@ const posts = [
     category: "DevSecOps",
     title: "DevSecOps for Startups: How to Bake Security Into Your CI/CD Without Slowing Down",
     excerpt:
-      "You don't need a security team to ship securely. SAST, SCA, secrets scanning, container scanning, and external API monitoring — the lean startup security stack that actually catches real vulnerabilities.",
+      "You don't need a security team to ship securely. SAST, SCA, secrets scanning, container scanning, and external API monitoring . the lean startup security stack that actually catches real vulnerabilities.",
     date: "February 22, 2026",
     readTime: "11 min read",
     featured: false,
@@ -154,7 +154,7 @@ const posts = [
     category: "AI Security",
     title: "How to Secure Your OpenAI API Integration (And Not Get Charged $10,000 by Bots)",
     excerpt:
-      "Leaked OpenAI API keys can burn $10,000+ in hours before you notice. Key management, rate limiting, input validation, spending limits, and monitoring — how to close every path to that outcome.",
+      "Leaked OpenAI API keys can burn $10,000+ in hours before you notice. Key management, rate limiting, input validation, spending limits, and monitoring . how to close every path to that outcome.",
     date: "March 3, 2026",
     readTime: "8 min read",
     featured: false,
@@ -184,7 +184,7 @@ const posts = [
     category: "Security",
     title: "The Best Security Tools for Indie Hackers in 2026 (Budget Under $100/Year)",
     excerpt:
-      "Enterprise security stacks cost $50K+/year. Indie hackers don't need that. The exact stack — mostly free, one $79 lifetime deal — that covers your most likely attack surface without eating your MRR.",
+      "Enterprise security stacks cost $50K+/year. Indie hackers don't need that. The exact stack . mostly free, one $79 lifetime deal . that covers your most likely attack surface without eating your MRR.",
     date: "January 29, 2026",
     readTime: "8 min read",
     featured: false,
@@ -194,7 +194,7 @@ const posts = [
     category: "Security",
     title: "5 Security Headers Every Indie Dev Should Set (And How to Check Them)",
     excerpt:
-      "CSP, X-Frame-Options, HSTS, X-Content-Type-Options, Referrer-Policy — what each does, the one-liner to add it, and what attackers do when it's missing. Check all 5 in 60 seconds.",
+      "CSP, X-Frame-Options, HSTS, X-Content-Type-Options, Referrer-Policy . what each does, the one-liner to add it, and what attackers do when it's missing. Check all 5 in 60 seconds.",
     date: "March 5, 2026",
     readTime: "8 min read",
     featured: false,
@@ -214,7 +214,7 @@ const posts = [
     category: "AI Security",
     title: "Securing Your AI App's API: What to Check Before Launch",
     excerpt:
-      "API key exposure, rate limiting, input validation for LLM endpoints, prompt injection defense, data leakage, CORS — everything to audit on your AI app before launch day.",
+      "API key exposure, rate limiting, input validation for LLM endpoints, prompt injection defense, data leakage, CORS . everything to audit on your AI app before launch day.",
     date: "February 19, 2026",
     readTime: "10 min read",
     featured: false,
@@ -224,7 +224,7 @@ const posts = [
     category: "Security",
     title: "API Key Management: How to Store, Rotate, and Protect Your Keys",
     excerpt:
-      "API keys end up in GitHub, Slack, and log files constantly. Environment variables, vault services, rotation policies, exposure detection — a practical guide to API key management that actually sticks.",
+      "API keys end up in GitHub, Slack, and log files constantly. Environment variables, vault services, rotation policies, exposure detection . a practical guide to API key management that actually sticks.",
     date: "February 12, 2026",
     readTime: "8 min read",
     featured: false,
@@ -234,7 +234,7 @@ const posts = [
     category: "Checklist",
     title: "Your Deploy Just Went Live. Now Run This Security Checklist.",
     excerpt:
-      "SSL, security headers, exposed endpoints, API keys, CORS, CSP, rate limits — the production security checklist every indie dev should run before tweeting their launch. Check all of it in 60 seconds.",
+      "SSL, security headers, exposed endpoints, API keys, CORS, CSP, rate limits . the production security checklist every indie dev should run before tweeting their launch. Check all of it in 60 seconds.",
     date: "February 5, 2026",
     readTime: "8 min read",
     featured: false,
@@ -244,7 +244,7 @@ const posts = [
     category: "Comparisons",
     title: "GitGuardian vs Scantient: Secrets Detection vs Full Security Posture",
     excerpt:
-      "GitGuardian is the secrets scanning specialist. Scantient monitors your deployed app's full security posture. Honest comparison with pricing table — when to use each.",
+      "GitGuardian is the secrets scanning specialist. Scantient monitors your deployed app's full security posture. Honest comparison with pricing table . when to use each.",
     date: "January 22, 2026",
     readTime: "7 min read",
     featured: false,
@@ -264,7 +264,7 @@ const posts = [
     category: "Comparisons",
     title: "Snyk vs Scantient: What Your Startup Actually Needs",
     excerpt:
-      "An honest comparison — not marketing fluff. Snyk is enterprise shift-left dependency scanning. Scantient is post-deploy external API security monitoring. Here's when to use each, including a pricing table.",
+      "An honest comparison . not marketing fluff. Snyk is enterprise shift-left dependency scanning. Scantient is post-deploy external API security monitoring. Here's when to use each, including a pricing table.",
     date: "January 8, 2026",
     readTime: "10 min read",
     featured: false,
@@ -284,7 +284,7 @@ const posts = [
     category: "AI Compliance",
     title: "Your Engineering Team Probably Has No AI Usage Policy (And Why That's a Security Problem)",
     excerpt:
-      "Most engineering teams use 10+ AI tools with zero formal policy. Shadow AI is a compliance time bomb — here's what your AI usage policy actually needs.",
+      "Most engineering teams use 10+ AI tools with zero formal policy. Shadow AI is a compliance time bomb . here's what your AI usage policy actually needs.",
     date: "November 28, 2025",
     readTime: "7 min read",
     featured: false,
@@ -294,7 +294,7 @@ const posts = [
     category: "Strategy",
     title: "Why CTOs Choose External Security Scanning Over Code-Level Tools",
     excerpt:
-      "Shift-left is necessary but not sufficient. External scanning catches what code analysis misses — here's the gap every startup CTO needs to close before launch.",
+      "Shift-left is necessary but not sufficient. External scanning catches what code analysis misses . here's the gap every startup CTO needs to close before launch.",
     date: "November 5, 2025",
     readTime: "8 min read",
     featured: false,
@@ -304,7 +304,7 @@ const posts = [
     category: "Security",
     title: "7 API Security Mistakes Killing Your Startup",
     excerpt:
-      "Exposed API keys, missing security headers, overpermissive CORS — these seven mistakes are sitting in production apps right now. Real examples, what to do instead, and a startup security checklist.",
+      "Exposed API keys, missing security headers, overpermissive CORS . these seven mistakes are sitting in production apps right now. Real examples, what to do instead, and a startup security checklist.",
     date: "October 15, 2025",
     readTime: "9 min read",
     featured: false,

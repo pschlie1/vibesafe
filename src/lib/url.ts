@@ -17,7 +17,7 @@ export function safeHref(url: string | null | undefined): string {
       return url;
     }
   } catch {
-    // Invalid URL — fall through
+    // Invalid URL . fall through
   }
   return "#";
 }

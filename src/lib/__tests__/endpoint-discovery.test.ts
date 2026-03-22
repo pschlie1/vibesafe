@@ -9,7 +9,7 @@
  *  E. OpenAPI discovery
  *  F. Deduplication
  *
- * Zero real network calls — ssrfSafeFetch is fully mocked.
+ * Zero real network calls . ssrfSafeFetch is fully mocked.
  */
 
 import { describe, expect, it, vi, beforeEach } from "vitest";
@@ -44,7 +44,7 @@ function response401(): Response {
 // A. HTML form parsing
 // ─────────────────────────────────────────────────────────────────────────────
 
-describe("HTML form parsing — extractFromHtml via discoverEndpoints", () => {
+describe("HTML form parsing . extractFromHtml via discoverEndpoints", () => {
   beforeEach(() => {
     mockSsrfSafeFetch.mockResolvedValue(response404());
   });
@@ -110,7 +110,7 @@ describe("HTML form parsing — extractFromHtml via discoverEndpoints", () => {
 // B. JS bundle scanning
 // ─────────────────────────────────────────────────────────────────────────────
 
-describe("JS bundle scanning — extractFromJsBundles via discoverEndpoints", () => {
+describe("JS bundle scanning . extractFromJsBundles via discoverEndpoints", () => {
   beforeEach(() => {
     mockSsrfSafeFetch.mockResolvedValue(response404());
   });
@@ -156,7 +156,7 @@ describe("JS bundle scanning — extractFromJsBundles via discoverEndpoints", ()
 // C. Framework fingerprinting
 // ─────────────────────────────────────────────────────────────────────────────
 
-describe("detectFramework — framework identification from HTML signals", () => {
+describe("detectFramework . framework identification from HTML signals", () => {
   it("detects Next.js / NextAuth from __NEXT_DATA__ in HTML", () => {
     const html = `<script id="__NEXT_DATA__" type="application/json">{"props":{}}</script>
     <meta name="generator" content="Next.js">`;
@@ -200,7 +200,7 @@ describe("detectFramework — framework identification from HTML signals", () =>
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// D. Wordlist fuzzing — includes 200s and 401s, skips 404s
+// D. Wordlist fuzzing . includes 200s and 401s, skips 404s
 // ─────────────────────────────────────────────────────────────────────────────
 
 describe("Wordlist fuzzing via discoverEndpoints", () => {
@@ -230,7 +230,7 @@ describe("Wordlist fuzzing via discoverEndpoints", () => {
   });
 
   it("skips endpoints that return 404", async () => {
-    // All paths return 404 — no endpoints should be discovered from wordlist
+    // All paths return 404 . no endpoints should be discovered from wordlist
     mockSsrfSafeFetch.mockResolvedValue(response404());
 
     const endpoints = await discoverEndpoints("", [], "https://example.com");
@@ -238,7 +238,7 @@ describe("Wordlist fuzzing via discoverEndpoints", () => {
     expect(endpoints.every((ep) => ep.source !== "wordlist" || ep.path.length === 0)).toBe(true);
   });
 
-  it("skips endpoints that return 500 (server error — endpoint may not really exist)", async () => {
+  it("skips endpoints that return 500 (server error . endpoint may not really exist)", async () => {
     mockSsrfSafeFetch.mockImplementation(async () => {
       return new Response("Internal Server Error", { status: 500 });
     });
@@ -249,7 +249,7 @@ describe("Wordlist fuzzing via discoverEndpoints", () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// E. OpenAPI discovery — parses spec and extracts paths
+// E. OpenAPI discovery . parses spec and extracts paths
 // ─────────────────────────────────────────────────────────────────────────────
 
 describe("OpenAPI spec discovery via discoverEndpoints", () => {
@@ -295,7 +295,7 @@ describe("OpenAPI spec discovery via discoverEndpoints", () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// F. Deduplication — same path from multiple strategies appears once
+// F. Deduplication . same path from multiple strategies appears once
 // ─────────────────────────────────────────────────────────────────────────────
 
 describe("Endpoint deduplication", () => {
@@ -398,7 +398,7 @@ describe("Endpoint discovery edge cases", () => {
 
     const endpoints = await discoverEndpoints("", [], "https://example.com");
     expect(Array.isArray(endpoints)).toBe(true);
-    // Should not throw — should return whatever was discovered
+    // Should not throw . should return whatever was discovered
   });
 
   it("handles malformed baseUrl gracefully", async () => {

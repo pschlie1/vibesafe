@@ -4,7 +4,7 @@ import { jwtVerify } from "jose";
 
 /**
  * Generate a cryptographically random nonce for CSP.
- * Uses the Web Crypto API only — compatible with Edge Runtime (no Buffer/Node APIs).
+ * Uses the Web Crypto API only . compatible with Edge Runtime (no Buffer/Node APIs).
  */
 function generateNonce(): string {
   const bytes = new Uint8Array(16);
@@ -126,7 +126,7 @@ function applySecurityHeaders(
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const isApiRoute = pathname.startsWith("/api/");
-  // Public API routes (badges, public scores) should remain cacheable —
+  // Public API routes (badges, public scores) should remain cacheable .
   // exclude them from the no-store / private Cache-Control header.
   const isPublicApiRoute = pathname.startsWith("/api/public/");
 
@@ -151,7 +151,7 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith("/invite/") // invite token pages
   ) {
     const response = nextWithNonce();
-    // Do NOT apply no-store to public API routes — they serve cacheable content
+    // Do NOT apply no-store to public API routes . they serve cacheable content
     // (SVG badges, public scores) and should not be marked private/no-store.
     applySecurityHeaders(response, nonce, isApiRoute && !isPublicApiRoute);
     return response;
@@ -195,7 +195,7 @@ export async function middleware(request: NextRequest) {
   // Verify JWT signature + expiry using jose (Edge Runtime compatible)
   const jwtSecret = process.env.JWT_SECRET;
   if (!jwtSecret) {
-    // Config error — fail closed. Never allow unverified access.
+    // Config error . fail closed. Never allow unverified access.
     if (isApiRoute) {
       const res = NextResponse.json({ error: "Server configuration error" }, { status: 500 });
       applySecurityHeaders(res, nonce, true);
@@ -207,7 +207,7 @@ export async function middleware(request: NextRequest) {
     const secret = new TextEncoder().encode(jwtSecret);
     await jwtVerify(session.value, secret);
   } catch {
-    // Invalid or expired token — clear cookie and redirect/reject
+    // Invalid or expired token . clear cookie and redirect/reject
     if (isApiRoute) {
       const res = NextResponse.json({ error: "Unauthorized" }, { status: 401 });
       res.cookies.delete("scantient-session");

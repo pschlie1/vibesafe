@@ -9,9 +9,9 @@ import { ssrfSafeFetch } from "@/lib/ssrf-guard";
 // ────────────────────────────────────────────
 
 const KEY_PATTERNS: Array<{ pattern: RegExp; label: string }> = [
-  // AWS — AKIA is an access key ID; the pattern is consistent and well-known
+  // AWS . AKIA is an access key ID; the pattern is consistent and well-known
   { pattern: /AKIA[0-9A-Z]{16}/g, label: "AWS access key ID" },
-  // AWS secret access key (40 chars, base64url) — only flag when near an assignment
+  // AWS secret access key (40 chars, base64url) . only flag when near an assignment
   { pattern: /aws[_\-.]?secret[_\-.]?(?:access[_\-.]?)?key\s*[:=]\s*["'`]?[A-Za-z0-9/+=]{40}["'`]?/gi, label: "AWS secret access key" },
   { pattern: /sk-[a-zA-Z0-9]{20,}/g, label: "OpenAI secret key" },
   { pattern: /sk-ant-[a-zA-Z0-9\-_]{20,}/g, label: "Anthropic secret key" },
@@ -36,7 +36,7 @@ const KEY_PATTERNS: Array<{ pattern: RegExp; label: string }> = [
     pattern: /SUPABASE_ANON_KEY|supabaseKey|supabase_key/g,
     label: "Supabase anon key reference (verify not service key)",
   },
-  // Stripe — both live and test secret keys should not appear in client bundles
+  // Stripe . both live and test secret keys should not appear in client bundles
   { pattern: /stripe[_.]?secret[_.]?key\s*[:=]\s*["'`]sk_live_[^"'`]+["'`]/gi, label: "Stripe live secret key" },
   { pattern: /sk_live_[a-zA-Z0-9]{20,}/g, label: "Stripe live secret key" },
   { pattern: /sk_test_[a-zA-Z0-9]{20,}/g, label: "Stripe test secret key (should not be in client bundle)" },
@@ -50,7 +50,7 @@ const KEY_PATTERNS: Array<{ pattern: RegExp; label: string }> = [
 ];
 
 // Known safe public keys to suppress false positives
-// pk_test_ / pk_live_ are Stripe publishable keys — safe to expose
+// pk_test_ / pk_live_ are Stripe publishable keys . safe to expose
 // AKID is a common placeholder in docs, not a real key
 const SAFE_PREFIXES = ["pk_test_", "pk_live_", "sb-", "anon.", "AKID"];
 
@@ -184,11 +184,11 @@ const AUTH_BYPASS_PATTERNS: Array<{ pattern: RegExp; description: string }> = [
   },
   {
     pattern: /if\s*\(\s*(?:user|currentUser|auth)\.(?:role|isAdmin|is_admin)\s*(?:===?|!==?)\s*['"]admin['"]/,
-    description: "Client-side admin role check — authorization decisions should be server-enforced.",
+    description: "Client-side admin role check . authorization decisions should be server-enforced.",
   },
   {
     pattern: /document\.cookie\.(?:includes|indexOf|match)\(['"](?:admin|role|auth_token)['"]/,
-    description: "Cookie-based auth check in client code — validate on server instead.",
+    description: "Cookie-based auth check in client code . validate on server instead.",
   },
 ];
 
@@ -233,7 +233,7 @@ export function checkInlineScripts(html: string): SecurityFinding[] {
   // Check for dangerouslySetInnerHTML patterns (React-specific XSS risk).
   //
   // Key insight: Next.js RSC hydration payloads (self.__next_f.push(...)) embed
-  // JSON strings that contain `"dangerouslySetInnerHTML":{"__html":...}` — the key
+  // JSON strings that contain `"dangerouslySetInnerHTML":{"__html":...}` . the key
   // is always double-quoted in JSON context. Real JSX/JS usage is never quoted:
   //   JSX:      dangerouslySetInnerHTML={{ __html: ... }}
   //   Compiled: dangerouslySetInnerHTML:{__html:...}
@@ -243,7 +243,7 @@ export function checkInlineScripts(html: string): SecurityFinding[] {
   const INNER_HTML_ASSIGNMENT = /[^"']dangerouslySetInnerHTML\s*[:=]\s*\{/i;
 
   // Only check non-RSC inline script bodies. RSC hydration chunks start with
-  // `self.__next_f.push`, `self.__next_s`, or contain `__NEXT_DATA__` — these
+  // `self.__next_f.push`, `self.__next_s`, or contain `__NEXT_DATA__` . these
   // are framework-generated JSON payloads, not user-authored JS.
   const RSC_SCRIPT = /self\.__next_f\s*\.push|self\.__next_s|__NEXT_DATA__|__NEXT_FRAME__/;
   const inlineScriptBodies = Array.from(
@@ -286,7 +286,7 @@ export function checkInlineScripts(html: string): SecurityFinding[] {
  *   - Hash-based CSP: `script-src 'sha256-...'`
  *
  * If the CSP is absent or uses `unsafe-inline` (without a nonce), every inline
- * script can run — defeating the purpose of CSP entirely.
+ * script can run . defeating the purpose of CSP entirely.
  *
  * Threshold: > 5 inline scripts. Framework hydration produces several, but > 5
  * with no meaningful CSP is a signal worth surfacing.
@@ -300,7 +300,7 @@ export function checkInlineScriptCount(html: string, headers: Headers): Security
   ).filter((m) => m[1].trim().length > 0);
 
   const count = inlineScripts.length;
-  if (count <= 5) return findings; // Below threshold — not worth flagging
+  if (count <= 5) return findings; // Below threshold . not worth flagging
 
   const csp = headers.get("content-security-policy") ?? "";
 
@@ -312,7 +312,7 @@ export function checkInlineScriptCount(html: string, headers: Headers): Security
   const hasCsp = csp.length > 0;
 
   // CSP is strong if it uses nonce/hash/strict-dynamic (even with unsafe-inline present
-  // — modern browsers ignore unsafe-inline when a nonce or hash is present)
+  // . modern browsers ignore unsafe-inline when a nonce or hash is present)
   const cspIsStrong = hasNonce || hasHash || (hasStrictDynamic && hasCsp);
 
   if (cspIsStrong) return findings; // Inline scripts are acceptable with a strong CSP
@@ -324,7 +324,7 @@ export function checkInlineScriptCount(html: string, headers: Headers): Security
 
   findings.push({
     code: "INLINE_SCRIPTS",
-    title: `${count} inline script blocks detected — CSP protection insufficient`,
+    title: `${count} inline script blocks detected . CSP protection insufficient`,
     description:
       `${count} inline <script> blocks were found. ${cspNote} ` +
       `Without a nonce- or hash-based CSP, any injected inline script can execute, ` +
@@ -838,7 +838,7 @@ export async function checkSSLCertExpiry(url: string): Promise<SecurityFinding[]
       });
     }
   } catch {
-    // Cannot connect or read cert — skip silently
+    // Cannot connect or read cert . skip silently
   }
 
   return findings;
@@ -1094,7 +1094,7 @@ export function checkFormSecurity(html: string, baseUrl?: string): SecurityFindi
           const baseHostname = new URL(baseUrl).hostname;
           if (actionDomain === baseHostname) continue;
         } catch {
-          // baseUrl parse failed — fall through to flag as external
+          // baseUrl parse failed . fall through to flag as external
         }
       }
 
@@ -1175,7 +1175,7 @@ export async function checkBrokenLinks(
       continue;
     }
     if (href.startsWith("http://") || href.startsWith("https://")) {
-      // External — skip
+      // External . skip
       try {
         const linkOrigin = new URL(href).origin;
         if (linkOrigin !== baseOrigin) continue;
@@ -1281,7 +1281,7 @@ export async function checkPerformanceRegression(
       });
     }
   } catch {
-    // Database unavailable — skip silently
+    // Database unavailable . skip silently
   }
 
   return findings;
@@ -1323,7 +1323,7 @@ const PROBE_PATHS = [
   "/graphql",
   "/.git/HEAD",
   "/robots.txt",
-]; // probe all paths (18 total — each with 5s timeout, run in parallel)
+]; // probe all paths (18 total . each with 5s timeout, run in parallel)
 
 function looksLikeJson(body: string): boolean {
   const trimmed = body.trim();
@@ -1348,7 +1348,7 @@ export async function checkExposedEndpoints(baseUrl: string): Promise<SecurityFi
     PROBE_PATHS.map(async (path) => {
       const url = `${origin}${path}`;
       // Use ssrfSafeFetch so every redirect hop is validated against the
-      // SSRF guard — prevents a probe path redirecting to 169.254.169.254.
+      // SSRF guard . prevents a probe path redirecting to 169.254.169.254.
       const res = await ssrfSafeFetch(url, {
         method: "GET",
         signal: AbortSignal.timeout(5000),
@@ -1365,7 +1365,7 @@ export async function checkExposedEndpoints(baseUrl: string): Promise<SecurityFi
 
     if (status !== 200) continue;
 
-    // Skip HTML responses for sensitive file checks — SPAs return 200 HTML for
+    // Skip HTML responses for sensitive file checks . SPAs return 200 HTML for
     // all paths (catch-all routing), which would produce mass false positives.
     const isHtmlResponse = contentType.includes("text/html") || body.trimStart().startsWith("<!") || body.trimStart().startsWith("<html");
 
@@ -1426,7 +1426,7 @@ export async function checkExposedEndpoints(baseUrl: string): Promise<SecurityFi
     }
 
     // Sensitive data in response body
-    // Skip HTML pages — words like "secret" or "api_key" appear in marketing
+    // Skip HTML pages . words like "secret" or "api_key" appear in marketing
     // copy, documentation, and navigation menus on many legitimate sites.
     if (!isHtmlResponse && containsSensitiveData(body)) {
       findings.push({
@@ -1607,7 +1607,7 @@ export function checkDependencyVersions(jsPayloads: string[]): SecurityFinding[]
 
 /**
  * Escape a string for safe embedding in SVG/XML text content and attribute values.
- * SVG is XML — user-controlled values must be escaped before interpolation to
+ * SVG is XML . user-controlled values must be escaped before interpolation to
  * prevent XML injection (broken markup or injected elements).
  */
 export function escapeSvg(str: string): string {

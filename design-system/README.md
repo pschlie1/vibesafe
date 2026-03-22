@@ -4,12 +4,12 @@ Dark-first "Slate" theme using semantic Tailwind CSS classes defined in `globals
 
 ## Files
 
-- **`SKILL.md`** — Agent routing guide (read this first if you're writing UI)
-- **`../src/app/globals.css`** — @theme palette + semantic CSS custom properties
-- **`../src/lib/chart-colors.ts`** — Hex constants for recharts/canvas contexts
-- **`../src/components/ui/`** — Shared UI primitives (Button, Card, Badge, FormInput, etc.)
-- **`../eslint-rules/`** — Custom ESLint rules for design compliance
-- **`../.husky/pre-commit`** — Pre-commit hook that enforces design system locally
+- **`SKILL.md`** . Agent routing guide (read this first if you're writing UI)
+- **`../src/app/globals.css`** . @theme palette + semantic CSS custom properties
+- **`../src/lib/chart-colors.ts`** . Hex constants for recharts/canvas contexts
+- **`../src/components/ui/`** . Shared UI primitives (Button, Card, Badge, FormInput, etc.)
+- **`../eslint-rules/`** . Custom ESLint rules for design compliance
+- **`../.husky/pre-commit`** . Pre-commit hook that enforces design system locally
 
 ## Quick Start
 

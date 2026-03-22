@@ -1,6 +1,6 @@
 # @scantient/cli
 
-> Scan any URL for API security vulnerabilities in 60 seconds — from your terminal, CI pipeline, or agent workflow.
+> Scan any URL for API security vulnerabilities in 60 seconds . from your terminal, CI pipeline, or agent workflow.
 
 [![npm version](https://img.shields.io/npm/v/@scantient/cli)](https://www.npmjs.com/package/@scantient/cli)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
@@ -22,7 +22,7 @@ npx @scantient/cli scan https://api.example.com
 ## Quick Start
 
 ```bash
-# Free quick scan — no API key needed
+# Free quick scan . no API key needed
 scantient scan https://api.example.com
 
 # Authenticated scan (higher rate limits, more detail)
@@ -199,7 +199,7 @@ security-scan:
 
 ```bash
 #!/bin/bash
-# check-security.sh — run before deploy
+# check-security.sh . run before deploy
 set -e
 
 URL="${1:-https://api.example.com}"

@@ -191,20 +191,20 @@ After project creation, configure these alerts:
 ## Expected Errors (Normal)
 
 These won't alarm you:
-- `ResizeObserver loop limit exceeded` — Ignored (browser extension issue)
-- `Network request failed` — From flaky connections
-- `401 Unauthorized` — Expected auth failures
-- `429 Too Many Requests` — Rate limit temporary spike
-- TypeScript build warnings — Non-critical
+- `ResizeObserver loop limit exceeded` . Ignored (browser extension issue)
+- `Network request failed` . From flaky connections
+- `401 Unauthorized` . Expected auth failures
+- `429 Too Many Requests` . Rate limit temporary spike
+- TypeScript build warnings . Non-critical
 
 ## Critical Errors (Investigate)
 
 These require immediate action:
-- `500 Internal Server Error` — API crash
-- `FATAL: Database connection failed` — Data access down
-- `SyntaxError in component render` — Code deploy bug
-- `Stripe webhook failed` — Revenue-blocking issue
-- `LCP > 5000ms` — User experience severe
+- `500 Internal Server Error` . API crash
+- `FATAL: Database connection failed` . Data access down
+- `SyntaxError in component render` . Code deploy bug
+- `Stripe webhook failed` . Revenue-blocking issue
+- `LCP > 5000ms` . User experience severe
 
 ---
 

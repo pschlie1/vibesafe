@@ -1,4 +1,4 @@
-# Scantient Product Roadmap — Phase 1 Audit Complete
+# Scantient Product Roadmap . Phase 1 Audit Complete
 
 ## Audit Date: 2026-03-05
 
@@ -7,7 +7,7 @@
 ## Current State Analysis
 
 ### What Scantient Is
-External security monitoring SaaS for AI-generated web apps. No SDK required — just register the URL and Scantient runs continuous HTTP-based scans to detect:
+External security monitoring SaaS for AI-generated web apps. No SDK required . just register the URL and Scantient runs continuous HTTP-based scans to detect:
 - Exposed API keys in client-side JavaScript
 - Missing security headers
 - Client-side auth bypass patterns
@@ -45,7 +45,7 @@ External security monitoring SaaS for AI-generated web apps. No SDK required —
 **Starter ($199):**
 - **Hook:** "Monitor a small portfolio with governance reporting"
 - **Use Case:** Small IT teams
-- **Limitation:** Rarely chosen — gap between FREE and PRO is too big. Teams jump straight to PRO.
+- **Limitation:** Rarely chosen . gap between FREE and PRO is too big. Teams jump straight to PRO.
 - **Gap:** No API access, no integrations (Jira/GitHub/Teams). Feels unfinished.
 
 **Pro ($399):**
@@ -63,7 +63,7 @@ External security monitoring SaaS for AI-generated web apps. No SDK required —
 **Enterprise Plus ($2,500):**
 - **Hook:** "Unlimited apps, priority support"
 - **Use Case:** Enterprises at scale
-- **Reality:** 🔴 **BROKEN** — customers paying $2,500/month are silently stored as ENTERPRISE tier, getting 100-app limits instead of 999. Scan intervals still default to 24h instead of 1h. This is contractual fraud.
+- **Reality:** 🔴 **BROKEN** . customers paying $2,500/month are silently stored as ENTERPRISE tier, getting 100-app limits instead of 999. Scan intervals still default to 24h instead of 1h. This is contractual fraud.
 
 ---
 
@@ -73,25 +73,25 @@ External security monitoring SaaS for AI-generated web apps. No SDK required —
 **Impact:** Customers paying $2,500/month receive FREE tier features.  
 **File:** `src/app/api/stripe/webhook/route.ts`  
 **Fix:** 1 hour. Add ENTERPRISE_PLUS to Prisma enum.  
-**Revenue Impact:** HIGH — blocks any ENTERPRISE_PLUS sales.
+**Revenue Impact:** HIGH . blocks any ENTERPRISE_PLUS sales.
 
 ### 🔴 CB-2: ENTERPRISE_PLUS scan interval defaults to 24 hours
 **Impact:** ENTERPRISE_PLUS customers get 24h scan intervals instead of 1h.  
 **Files:** `src/lib/scanner-http.ts`, `src/app/api/agent/scan/route.ts`  
 **Fix:** 10 minutes. Add `ENTERPRISE_PLUS: 1` to two maps.  
-**Revenue Impact:** HIGH — immediate customer complaint after purchase.
+**Revenue Impact:** HIGH . immediate customer complaint after purchase.
 
 ### 🔴 CB-3: Jira integration completely broken (double-protocol URL)
 **Impact:** Zero Jira tickets can be created. Enterprise feature that doesn't work.  
 **Files:** `src/app/api/integrations/jira/test/route.ts`, `src/app/api/integrations/jira/ticket/route.ts`  
 **Fix:** 15 minutes. Remove prepended `https://` in URL construction.  
-**Revenue Impact:** CRITICAL — first demo breaks when testing Jira.
+**Revenue Impact:** CRITICAL . first demo breaks when testing Jira.
 
 ### 🔴 CB-4: CI Scan API bypasses app count limits
 **Impact:** Any API key holder can create unlimited monitored apps.  
 **File:** `src/app/api/public/ci-scan/route.ts`  
 **Fix:** 20 minutes. Add tier gate before auto-creating app.  
-**Revenue Impact:** HIGH — allows tier arbitrage.
+**Revenue Impact:** HIGH . allows tier arbitrage.
 
 ---
 
@@ -144,7 +144,7 @@ External security monitoring SaaS for AI-generated web apps. No SDK required —
 - **Design tokens enforced:** Colors, spacing, typography all use consistent tokens
 - **Auth flow is frictionless:** Signup → email verification → dashboard in <2 min
 - **Results display is clear:** Finding grade (0-100) is prominent, explanations are plain-language
-- **Mobile responsive:** Tested on iPad and mobile — layout holds up
+- **Mobile responsive:** Tested on iPad and mobile . layout holds up
 
 ### ❌ What Needs Work
 1. **Landing page copy is jargon-heavy:** "Exposed endpoints," "dangerouslySetInnerHTML," "CSP" mean nothing to non-technical buyers
@@ -178,9 +178,9 @@ External security monitoring SaaS for AI-generated web apps. No SDK required —
 - **Burp Suite** (security testing)
 
 ### Our Advantage
-- **No SDK integration required** — works with any web app
-- **Focused on AI-built app risks** — catches LLM-specific patterns (inline scripts, client-side auth)
-- **External monitoring** — catches prod issues, not just dev-time
+- **No SDK integration required** . works with any web app
+- **Focused on AI-built app risks** . catches LLM-specific patterns (inline scripts, client-side auth)
+- **External monitoring** . catches prod issues, not just dev-time
 
 ### Positioning by Tier
 
@@ -229,19 +229,19 @@ External security monitoring SaaS for AI-generated web apps. No SDK required —
 
 ## Quick Wins (1-2 days each, ship immediately)
 
-### QW-1: Fix Jira Integration (CB-3) — 20 min
+### QW-1: Fix Jira Integration (CB-3) . 20 min
 Remove `https://` prefix in URL construction. Test in CI. Ship immediately.
 
-### QW-2: Fix ENTERPRISE_PLUS tier gate (CB-1 + CB-2) — 1.5 hours
+### QW-2: Fix ENTERPRISE_PLUS tier gate (CB-1 + CB-2) . 1.5 hours
 Add ENTERPRISE_PLUS to Prisma enum, update scan interval maps, migrate existing ENTERPRISE_PLUS rows. Ship in a hotfix PR.
 
-### QW-3: Fix CI Scan API limit bypass (CB-4) — 30 min
+### QW-3: Fix CI Scan API limit bypass (CB-4) . 30 min
 Add `canAddApp()` check before auto-creating app. Return 403 with upgrade prompt. Ship in same hotfix PR.
 
-### QW-4: Add tier gate to trends endpoint (HP-1) — 20 min
+### QW-4: Add tier gate to trends endpoint (HP-1) . 20 min
 Add `getOrgLimits()` check, only allow PRO+. Ship in same hotfix PR.
 
-### QW-5: Fix Jira test endpoint tier gate (HP-5) — 10 min
+### QW-5: Fix Jira test endpoint tier gate (HP-5) . 10 min
 Copy tier gate from main Jira endpoint. Ship in same hotfix PR.
 
 **Total effort:** 2.5 hours. **Ship as:** Single PR "fix: critical billing and tier-gate bugs (CB1-4, HP1, HP5)"
@@ -304,19 +304,19 @@ After fixing CB1-4 (the critical bugs), the next focus is:
 ## Recommended Phase 2 (Next Week)
 
 **Priority 1 (Thu-Fri 2026-03-06/07):**
-1. Ship QW1-5 (fix critical bugs) — 2.5 hours
+1. Ship QW1-5 (fix critical bugs) . 2.5 hours
 2. Test hotfix against all tier gates
 3. Deploy to production
 4. Monitor for errors
 
 **Priority 2 (Mon-Tue 2026-03-10/11):**
-1. MT-1 (simplify pricing page) — 4 hours
-2. MT-4 (rewrite landing copy) — 4 hours
+1. MT-1 (simplify pricing page) . 4 hours
+2. MT-4 (rewrite landing copy) . 4 hours
 3. A/B test new landing page
 
 **Priority 3 (Wed-Fri 2026-03-12/14):**
-1. MT-2 (add remediation guides) — 2 days
-2. MT-3 (add snooze/ignore) — 1 day
+1. MT-2 (add remediation guides) . 2 days
+2. MT-3 (add snooze/ignore) . 1 day
 
 **Success metric:** By end of week, have <2% sign-up-to-paid conversion rate baseline. Everything after that is optimization.
 

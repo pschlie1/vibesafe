@@ -30,7 +30,7 @@ async function handler(req: Request): Promise<NextResponse> {
     return NextResponse.json({ error: "Invalid API key" }, { status: 401 });
   }
 
-  // Tier-based rate limit — shared bucket with UI manual scans to prevent bypass
+  // Tier-based rate limit . shared bucket with UI manual scans to prevent bypass
   const limits = await getOrgLimits(orgId);
   const maxScans = SCAN_RATE_LIMITS[limits.tier] ?? SCAN_RATE_LIMITS.FREE;
   const rateLimit = await checkRateLimit(`manual-scan:${orgId}`, {

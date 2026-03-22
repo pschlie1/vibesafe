@@ -122,7 +122,7 @@ function deriveWebhookSigningKey(url: string): string {
   const masterSecret = process.env.WEBHOOK_SIGNING_SECRET;
   if (!masterSecret) {
     console.warn(
-      "[alerts] WEBHOOK_SIGNING_SECRET not set — webhook signatures use URL as key (insecure). " +
+      "[alerts] WEBHOOK_SIGNING_SECRET not set . webhook signatures use URL as key (insecure). " +
         "Set WEBHOOK_SIGNING_SECRET to a long random secret in your environment.",
     );
     return url; // legacy fallback
@@ -131,7 +131,7 @@ function deriveWebhookSigningKey(url: string): string {
 }
 
 async function sendWebhook(url: string, payload: Record<string, unknown>) {
-  // Add webhookId nonce to the signed body — prevents replay attacks.
+  // Add webhookId nonce to the signed body . prevents replay attacks.
   // Since the HMAC signature covers the entire body string, including the
   // unique webhookId makes every delivery cryptographically distinct.
   // Recipients can store seen webhookIds and reject duplicates.
@@ -185,7 +185,7 @@ export async function sendCriticalFindingsAlert(appId: string, findings: Securit
   for (const config of configs) {
     if (!allowedChannels.includes(config.channel)) {
       console.warn(
-        `[alerts] Skipping ${config.channel} alert config ${config.id} — channel not allowed for org ${app.orgId} on tier ${limits.tier}. Config is stale.`,
+        `[alerts] Skipping ${config.channel} alert config ${config.id} . channel not allowed for org ${app.orgId} on tier ${limits.tier}. Config is stale.`,
       );
       continue;
     }
@@ -209,7 +209,7 @@ export async function sendCriticalFindingsAlert(appId: string, findings: Securit
     });
     if (recentNotif) {
       console.log(
-        `[alerts] Skipping alert config ${config.id} — cooldown active (last sent ${recentNotif.sentAt.toISOString()})`,
+        `[alerts] Skipping alert config ${config.id} . cooldown active (last sent ${recentNotif.sentAt.toISOString()})`,
       );
       continue;
     }
@@ -433,7 +433,7 @@ export async function sendChangeDetectedAlert(appId: string, appName: string, ap
   for (const config of configs) {
     if (!changeAllowedChannels.includes(config.channel)) {
       console.warn(
-        `[alerts] Skipping ${config.channel} change-detected alert config ${config.id} — channel not allowed for org ${app.orgId} on tier ${changeLimits.tier}. Config is stale.`,
+        `[alerts] Skipping ${config.channel} change-detected alert config ${config.id} . channel not allowed for org ${app.orgId} on tier ${changeLimits.tier}. Config is stale.`,
       );
       continue;
     }

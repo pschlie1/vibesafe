@@ -29,7 +29,7 @@ export interface BrowserScanResult {
 }
 
 export async function runBrowserScan(url: string): Promise<BrowserScanResult> {
-  // Dynamic import — Playwright only available in Node env, not edge
+  // Dynamic import . Playwright only available in Node env, not edge
   const { chromium } = await import("playwright");
 
   const browser = await chromium.launch({
@@ -88,7 +88,7 @@ export async function runBrowserScanFindings(
   // Add a finding noting bot protection was detected and browser scan was used
   const botFinding: SecurityFinding = {
     code: "BOT_PROTECTION_DETECTED",
-    title: `Bot protection active${botProvider ? ` (${botProvider})` : ""} — browser scan used`,
+    title: `Bot protection active${botProvider ? ` (${botProvider})` : ""} . browser scan used`,
     description: `This app is protected by ${botProvider ?? "a bot challenge system"}, which blocks standard HTTP scanners. Scantient automatically used a browser-based scan to get real results. Some checks (SSL cert expiry, DNS, exposed endpoints) are still performed via HTTP.`,
     severity: "LOW",
     fixPrompt:

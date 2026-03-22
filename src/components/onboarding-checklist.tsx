@@ -111,7 +111,7 @@ export function OnboardingChecklist() {
 
       setState(newState);
     } catch {
-      // silently fail — checklist just shows as incomplete
+      // silently fail . checklist just shows as incomplete
     } finally {
       setLoading(false);
     }

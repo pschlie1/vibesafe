@@ -208,7 +208,7 @@ export default function ConnectorsSettingsPage() {
   }
 
   useEffect(() => {
-    // loadStatuses is async — setState calls happen in a Promise, not synchronously in the effect body
+    // loadStatuses is async . setState calls happen in a Promise, not synchronously in the effect body
     // eslint-disable-next-line react-hooks/set-state-in-effect
     void loadStatuses();
   }, []);

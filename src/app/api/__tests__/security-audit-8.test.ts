@@ -24,7 +24,7 @@
 
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-// ─── @/lib/db — comprehensive mock covering all describe blocks ───────────────
+// ─── @/lib/db . comprehensive mock covering all describe blocks ───────────────
 const inviteFindUnique = vi.fn();
 const inviteDelete = vi.fn();
 const dbTransaction = vi.fn();
@@ -166,7 +166,7 @@ beforeEach(() => {
 // ─────────────────────────────────────────────────────────────────────────────
 // A8-1: Invite password min 8 → 12
 // ─────────────────────────────────────────────────────────────────────────────
-describe("A8-1: Invite /api/auth/invite/[token] — password min 12", () => {
+describe("A8-1: Invite /api/auth/invite/[token] . password min 12", () => {
   const FUTURE = new Date(Date.now() + 86_400_000);
 
   function makeReq(body: unknown) {
@@ -215,7 +215,7 @@ describe("A8-1: Invite /api/auth/invite/[token] — password min 12", () => {
 
     const { POST } = await import("@/app/api/auth/invite/[token]/route");
     const res = await POST(
-      // 12 chars: uppercase + lowercase + digit + special — meets all complexity requirements
+      // 12 chars: uppercase + lowercase + digit + special . meets all complexity requirements
       makeReq({ name: "Alice", password: "Pass123word!" }),
       { params: Promise.resolve({ token: "tok12" }) },
     );
@@ -226,7 +226,7 @@ describe("A8-1: Invite /api/auth/invite/[token] — password min 12", () => {
 // ─────────────────────────────────────────────────────────────────────────────
 // A8-2: Login per-email rate limit
 // ─────────────────────────────────────────────────────────────────────────────
-describe("A8-2: POST /api/auth/login — per-email rate limit", () => {
+describe("A8-2: POST /api/auth/login . per-email rate limit", () => {
   function makeReq(body: unknown) {
     return new Request("http://localhost", {
       method: "POST",
@@ -284,9 +284,9 @@ describe("A8-2: POST /api/auth/login — per-email rate limit", () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// A8-3: v1/scan/[id] — tier-based rate limit added
+// A8-3: v1/scan/[id] . tier-based rate limit added
 // ─────────────────────────────────────────────────────────────────────────────
-describe("A8-3: POST /api/v1/scan/[id] — tier-based rate limit", () => {
+describe("A8-3: POST /api/v1/scan/[id] . tier-based rate limit", () => {
   function postReq() {
     return new Request("http://localhost", {
       method: "POST",
@@ -346,9 +346,9 @@ describe("A8-3: POST /api/v1/scan/[id] — tier-based rate limit", () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// A8-4: v1/scan — replaced flat 10/hr with tier-based 24h bucket
+// A8-4: v1/scan . replaced flat 10/hr with tier-based 24h bucket
 // ─────────────────────────────────────────────────────────────────────────────
-describe("A8-4: POST /api/v1/scan — tier-based 24h rate limit", () => {
+describe("A8-4: POST /api/v1/scan . tier-based 24h rate limit", () => {
   function postReq(body: unknown) {
     return new Request("http://localhost", {
       method: "POST",
@@ -405,7 +405,7 @@ describe("A8-4: POST /api/v1/scan — tier-based 24h rate limit", () => {
 // ─────────────────────────────────────────────────────────────────────────────
 // A8-5: CI scan rate limit
 // ─────────────────────────────────────────────────────────────────────────────
-describe("A8-5: POST /api/public/ci-scan — rate limit enforced", () => {
+describe("A8-5: POST /api/public/ci-scan . rate limit enforced", () => {
   function postReq(body: unknown) {
     return new Request("http://localhost", {
       method: "POST",
@@ -451,9 +451,9 @@ describe("A8-5: POST /api/public/ci-scan — rate limit enforced", () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// A8-6: agent/pending — polling rate limit
+// A8-6: agent/pending . polling rate limit
 // ─────────────────────────────────────────────────────────────────────────────
-describe("A8-6: GET /api/agent/pending — polling rate limit", () => {
+describe("A8-6: GET /api/agent/pending . polling rate limit", () => {
   function makeReq() {
     return new Request("http://localhost", {
       headers: { Authorization: "Bearer sa_valid_key" },
@@ -502,9 +502,9 @@ describe("A8-6: GET /api/agent/pending — polling rate limit", () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// A8-7: compliance/score — take:2000 cap
+// A8-7: compliance/score . take:2000 cap
 // ─────────────────────────────────────────────────────────────────────────────
-describe("A8-7: GET /api/compliance/score — findings capped at 2000", () => {
+describe("A8-7: GET /api/compliance/score . findings capped at 2000", () => {
   it("calls findMany with take:2000", async () => {
     const { GET } = await import("@/app/api/compliance/score/route");
     await GET();
@@ -523,9 +523,9 @@ describe("A8-7: GET /api/compliance/score — findings capped at 2000", () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// A8-8: dashboard — findings per run capped with take + select
+// A8-8: dashboard . findings per run capped with take + select
 // ─────────────────────────────────────────────────────────────────────────────
-describe("A8-8: GET /api/dashboard — findings per run bounded", () => {
+describe("A8-8: GET /api/dashboard . findings per run bounded", () => {
   it("includes take:50 on nested findings", async () => {
     monitoredAppCount.mockResolvedValue(3);
     findingCount.mockResolvedValue(2);
@@ -553,9 +553,9 @@ describe("A8-8: GET /api/dashboard — findings per run bounded", () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// A8-9: v1/apps — take:200 cap
+// A8-9: v1/apps . take:200 cap
 // ─────────────────────────────────────────────────────────────────────────────
-describe("A8-9: GET /api/v1/apps — capped at 200", () => {
+describe("A8-9: GET /api/v1/apps . capped at 200", () => {
   it("calls findMany with take:200", async () => {
     const { GET } = await import("@/app/api/v1/apps/route");
     await GET(new Request("http://localhost", { headers: { Authorization: "Bearer vs_key" } }));
@@ -567,9 +567,9 @@ describe("A8-9: GET /api/v1/apps — capped at 200", () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// A8-10: v1/dashboard — take:200 cap
+// A8-10: v1/dashboard . take:200 cap
 // ─────────────────────────────────────────────────────────────────────────────
-describe("A8-10: GET /api/v1/dashboard — capped at 200", () => {
+describe("A8-10: GET /api/v1/dashboard . capped at 200", () => {
   it("calls findMany with take:200", async () => {
     const { GET } = await import("@/app/api/v1/dashboard/route");
     await GET(new Request("http://localhost", { headers: { Authorization: "Bearer vs_key" } }));
@@ -581,9 +581,9 @@ describe("A8-10: GET /api/v1/dashboard — capped at 200", () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// A8-11: MCP list_apps — take:200 cap
+// A8-11: MCP list_apps . take:200 cap
 // ─────────────────────────────────────────────────────────────────────────────
-describe("A8-11: POST /api/mcp — list_apps capped at 200", () => {
+describe("A8-11: POST /api/mcp . list_apps capped at 200", () => {
   function mcpReq(method: string, params?: Record<string, unknown>) {
     return new Request("http://localhost", {
       method: "POST",
@@ -603,9 +603,9 @@ describe("A8-11: POST /api/mcp — list_apps capped at 200", () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// A8-12: MCP get_remediation_metrics — take:5000 cap
+// A8-12: MCP get_remediation_metrics . take:5000 cap
 // ─────────────────────────────────────────────────────────────────────────────
-describe("A8-12: POST /api/mcp — get_remediation_metrics capped at 5000", () => {
+describe("A8-12: POST /api/mcp . get_remediation_metrics capped at 5000", () => {
   function mcpReq(method: string, params?: Record<string, unknown>) {
     return new Request("http://localhost", {
       method: "POST",
@@ -636,9 +636,9 @@ describe("A8-12: POST /api/mcp — get_remediation_metrics capped at 5000", () =
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// A8-13: reports/weekly — bounded apps+runs+findings
+// A8-13: reports/weekly . bounded apps+runs+findings
 // ─────────────────────────────────────────────────────────────────────────────
-describe("A8-13: GET /api/reports/weekly — bounded queries", () => {
+describe("A8-13: GET /api/reports/weekly . bounded queries", () => {
   function makeReq() {
     return new Request("http://localhost");
   }
@@ -672,9 +672,9 @@ describe("A8-13: GET /api/reports/weekly — bounded queries", () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// A8-14: reports/evidence — date range validation
+// A8-14: reports/evidence . date range validation
 // ─────────────────────────────────────────────────────────────────────────────
-describe("A8-14: GET /api/reports/evidence — date range validation", () => {
+describe("A8-14: GET /api/reports/evidence . date range validation", () => {
   function makeNextReq(params: Record<string, string>) {
     const url = new URL("http://localhost/api/reports/evidence");
     for (const [k, v] of Object.entries(params)) url.searchParams.set(k, v);

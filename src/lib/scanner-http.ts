@@ -115,7 +115,7 @@ export type UrlContext =
 /**
  * Classify a URL to determine which security checks are applicable.
  *
- * Classification is path-based and generic — no hardcoded domains.
+ * Classification is path-based and generic . no hardcoded domains.
  * Paths are matched case-insensitively.
  */
 export function classifyUrl(url: string): UrlContext {
@@ -123,10 +123,10 @@ export function classifyUrl(url: string): UrlContext {
   try {
     pathname = new URL(url).pathname.toLowerCase();
   } catch {
-    return "homepage"; // Unparseable URL — treat as homepage
+    return "homepage"; // Unparseable URL . treat as homepage
   }
 
-  // Health / monitoring endpoints — checked FIRST so /api/health is a health endpoint
+  // Health / monitoring endpoints . checked FIRST so /api/health is a health endpoint
   // (not a generic API endpoint that would trigger unnecessary auth probing)
   if (/\/(health|ping|status|ready|live)(\/|$)/.test(pathname)) {
     return "health-endpoint";
@@ -224,7 +224,7 @@ export async function runHttpScanForApp(appId: string, context: ScanContext = {}
     const botChallengeFindings: SecurityFinding[] = [];
     let collectedJsPayloads: string[] | undefined;
 
-    // Bot challenge detection — if blocked, try probe endpoint or Playwright fallback
+    // Bot challenge detection . if blocked, try probe endpoint or Playwright fallback
     const botResult = detectBotChallenge(statusCode, headers, html.slice(0, 2000));
     if (botResult.challenged) {
       let bypassSucceeded = false;
@@ -248,7 +248,7 @@ export async function runHttpScanForApp(appId: string, context: ScanContext = {}
             bypassSucceeded = true;
           }
         } catch {
-          // Probe fetch failed — fall through to Playwright fallback
+          // Probe fetch failed . fall through to Playwright fallback
         }
       }
 
@@ -264,7 +264,7 @@ export async function runHttpScanForApp(appId: string, context: ScanContext = {}
 
       botChallengeFindings.push({
         code: "BOT_PROTECTION_DETECTED",
-        title: `Bot protection active${botResult.provider ? ` (${botResult.provider})` : ""} — browser scan used`,
+        title: `Bot protection active${botResult.provider ? ` (${botResult.provider})` : ""} . browser scan used`,
         description: `This app is protected by ${botResult.provider ?? "a bot challenge system"}, which blocks standard HTTP scanners. Scantient automatically fell back to a browser-based scan to get real results. Some checks (SSL cert expiry, exposed endpoints) are still performed via HTTP.`,
         severity: "LOW",
         fixPrompt:
@@ -275,7 +275,7 @@ export async function runHttpScanForApp(appId: string, context: ScanContext = {}
     // Fetch JS assets from HTTP if not already collected by browser scan
     const jsPayloads = collectedJsPayloads ?? (await fetchJsAssets(app.url, html));
 
-    // Content change detection — compare hash to last recorded value
+    // Content change detection . compare hash to last recorded value
     const contentHash = computeContentHash(html);
     const lastHashLog = await db.auditLog.findFirst({
       where: { orgId: app.orgId, action: "CONTENT_HASH", resource: app.id },
@@ -342,9 +342,9 @@ export async function runHttpScanForApp(appId: string, context: ScanContext = {}
       // Only meaningful on /api/*, /v1/*, /graphql routes.
       ...(urlContext === "api-endpoint" ? checkAPISecurity(html, headers, app.url) : []),
       // ── Future: login-page-only checks ──────────────────────────────────
-      // checkAuthHeaders() — when implemented, only run for login-page context
+      // checkAuthHeaders() . when implemented, only run for login-page context
       // ── Future: admin-page-only checks ──────────────────────────────────
-      // checkAdminSecurity() — when implemented, only run for admin-page context
+      // checkAdminSecurity() . when implemented, only run for admin-page context
       ...exposedEndpointFindings,
       ...perfRegressionFindings,
       ...checkUptimeStatus(statusCode, responseTimeMsSnapshot),
@@ -353,7 +353,7 @@ export async function runHttpScanForApp(appId: string, context: ScanContext = {}
     ];
 
     // Tier 1: Discover and scan auth surface
-    // Wrapped in try/catch — auth scan failure never breaks the main scan
+    // Wrapped in try/catch . auth scan failure never breaks the main scan
     let discoveredEndpointCount = 0;
     try {
       const endpoints = await discoverEndpoints(html, jsPayloads, app.url);
@@ -377,7 +377,7 @@ export async function runHttpScanForApp(appId: string, context: ScanContext = {}
     // After the main security scan, if the app has a probeUrl + probeToken
     // configured, call the target app's /api/scantient-probe endpoint to get
     // structured subsystem health data (database, auth, payments, email, etc.).
-    // This runs independently of the main scan — failure never blocks the run.
+    // This runs independently of the main scan . failure never blocks the run.
     // Note: app.probeUrl/probeToken are ALSO used above for the bot-challenge
     // bypass (HTML fetch). Here we use them for the distinct Tier 2 health probe.
     let probeOutcome: ProbeOutcome | null = null;
@@ -411,7 +411,7 @@ export async function runHttpScanForApp(appId: string, context: ScanContext = {}
     const snapToHourBoundary = intervalHours === 1;
 
     // Atomically write the completed run and the updated app status/timing.
-    // If either write fails the entire scan completion rolls back — preventing
+    // If either write fails the entire scan completion rolls back . preventing
     // a state where the run shows CRITICAL but the app still shows HEALTHY.
     // Note: findings are upserted AFTER this transaction (see below) so that
     // per-finding DB errors don't roll back the whole run record.
@@ -426,7 +426,7 @@ export async function runHttpScanForApp(appId: string, context: ScanContext = {}
           checksRun: findings.length,
           summary: findings.length
             ? `${findings.length} issue(s) detected`
-            : "All checks passed — no issues detected",
+            : "All checks passed . no issues detected",
           completedAt,
           discoveredEndpointCount,
           // Tier 2: store probe result if one was obtained
@@ -471,11 +471,11 @@ export async function runHttpScanForApp(appId: string, context: ScanContext = {}
       });
     });
 
-    // Upsert findings by (appId, code) — prevents duplicate DB rows on repeated
+    // Upsert findings by (appId, code) . prevents duplicate DB rows on repeated
     // scans of the same issue. Each upsert updates runId to the current run so
     // that findings stay linked to the most recent detection, and resets status
     // to OPEN so that previously-resolved findings are re-surfaced if they recur.
-    // Runs outside the transaction — individual upsert failures are non-fatal.
+    // Runs outside the transaction . individual upsert failures are non-fatal.
     await Promise.all(
       findings.map((f) =>
         db.finding.upsert({
@@ -503,7 +503,7 @@ export async function runHttpScanForApp(appId: string, context: ScanContext = {}
     );
 
     // Auto-triage new findings in parallel (was sequential N+1 loop)
-    // Runs outside the transaction — failures are non-fatal (triage is best-effort)
+    // Runs outside the transaction . failures are non-fatal (triage is best-effort)
     const updatedRun = await db.monitorRun.findUnique({
       where: { id: run.id },
       include: { findings: { select: { id: true } } },
@@ -585,7 +585,7 @@ export async function runDueHttpScans(limit = 20, options?: { tiers?: Subscripti
             ? [{
                 OR: [
                   { org: { subscription: { tier: { in: options.tiers } } } },
-                  // Orgs with no subscription default to FREE — include them
+                  // Orgs with no subscription default to FREE . include them
                   // in the non-premium cron so they aren't silently dropped.
                   ...(options.includeNoSubscription
                     ? [{ org: { subscription: null } }]
@@ -602,7 +602,7 @@ export async function runDueHttpScans(limit = 20, options?: { tiers?: Subscripti
     if (apps.length === 0) return [];
 
     // Claim the selected apps immediately by bumping nextCheckAt 1 hour into
-    // the future within the same transaction — concurrent invocations will
+    // the future within the same transaction . concurrent invocations will
     // block on the row locks and see the updated values on retry.
     await tx.monitoredApp.updateMany({
       where: { id: { in: apps.map((a) => a.id) } },

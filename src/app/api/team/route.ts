@@ -160,7 +160,7 @@ export async function POST(req: Request) {
 
   await logAudit(session, "user.invited", invite.id, `Invited ${email} as ${role}`);
 
-  // Send invite email (fire — failures are logged but don't block response)
+  // Send invite email (fire . failures are logged but don't block response)
   try {
     await sendInviteEmail(email, org?.name ?? session.orgName, session.name, role, token);
   } catch (err) {

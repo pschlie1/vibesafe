@@ -17,7 +17,7 @@ import { z } from "zod";
 import { ssrfSafeFetch, isPrivateUrl } from "@/lib/ssrf-guard";
 
 // ────────────────────────────────────────────
-// Zod schema — validates the response from the probe endpoint
+// Zod schema . validates the response from the probe endpoint
 // ────────────────────────────────────────────
 
 const SubsystemSchema = z.object({
@@ -76,7 +76,7 @@ export type ProbeOutcome =
  *
  * @param probeUrl  - URL of the /api/scantient-probe endpoint
  * @param probeToken - Plaintext secret token (already decrypted by caller)
- * @returns ProbeOutcome — always resolves, never throws
+ * @returns ProbeOutcome . always resolves, never throws
  */
 export async function runProbe(probeUrl: string, probeToken: string): Promise<ProbeOutcome> {
   const startMs = Date.now();
@@ -140,7 +140,7 @@ export async function runProbe(probeUrl: string, probeToken: string): Promise<Pr
     );
   }
 
-  // Merge the measured latency — use the probe's self-reported value if present,
+  // Merge the measured latency . use the probe's self-reported value if present,
   // otherwise use our measured round-trip time.
   const result: ProbeResult = {
     ...parsed.data,

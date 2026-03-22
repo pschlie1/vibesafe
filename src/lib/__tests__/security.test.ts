@@ -120,14 +120,14 @@ describe("scanJavaScriptForKeys", () => {
   });
 
   it("does NOT flag a random all-caps string as an AWS AKIA key", () => {
-    // Must match AKIA + exactly 16 uppercase alphanumeric chars — a shorter or
+    // Must match AKIA + exactly 16 uppercase alphanumeric chars . a shorter or
     // lowercase match should NOT trigger
     const findings = scanJavaScriptForKeys([`const x='AKIA_SHORT';`]);
     expect(findings.length).toBe(0);
   });
 
   it("does NOT flag a short sk_ string that is under the minimum length", () => {
-    // sk-xxx (too short — minimum is sk- + 20 chars)
+    // sk-xxx (too short . minimum is sk- + 20 chars)
     const findings = scanJavaScriptForKeys([`const x='sk-abc123';`]);
     expect(findings.length).toBe(0);
   });
@@ -168,7 +168,7 @@ describe("checkInlineScripts", () => {
 
   it("does NOT flag dangerouslySetInnerHTML appearing as plain text in page content (false positive prevention)", () => {
     // Simulates __NEXT_DATA__ or marketing copy that mentions the term as a string.
-    // Should NOT fire — bare mentions without an assignment context are safe.
+    // Should NOT fire . bare mentions without an assignment context are safe.
     const html = `<script id="__NEXT_DATA__" type="application/json">{"props":{"pageProps":{"desc":"Scans for dangerouslySetInnerHTML usage in LLM-generated code"}}}</script>`;
     const findings = checkInlineScripts(html);
     expect(findings.some((f) => f.code === "DANGEROUS_INNER_HTML")).toBe(false);

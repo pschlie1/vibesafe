@@ -2,7 +2,7 @@
  * probe-client.test.ts
  *
  * Unit tests for probe-client.ts runProbe() function.
- * All network calls are mocked — zero real HTTP.
+ * All network calls are mocked . zero real HTTP.
  *
  * Covers:
  *  - Valid ProbeResult → returns ok ProbeOutcome
@@ -58,7 +58,7 @@ function makeJsonResponse(body: unknown, status = 200): Response {
 // Valid probe responses
 // ─────────────────────────────────────────────────────────────────────────────
 
-describe("runProbe — valid responses", () => {
+describe("runProbe . valid responses", () => {
   beforeEach(() => {
     mockIsPrivateUrl.mockResolvedValue(false);
     vi.resetAllMocks();
@@ -134,7 +134,7 @@ describe("runProbe — valid responses", () => {
 // Schema validation failures
 // ─────────────────────────────────────────────────────────────────────────────
 
-describe("runProbe — schema validation failures (Zod)", () => {
+describe("runProbe . schema validation failures (Zod)", () => {
   beforeEach(() => {
     vi.resetAllMocks();
     mockIsPrivateUrl.mockResolvedValue(false);
@@ -196,7 +196,7 @@ describe("runProbe — schema validation failures (Zod)", () => {
 // HTTP error responses
 // ─────────────────────────────────────────────────────────────────────────────
 
-describe("runProbe — HTTP error responses", () => {
+describe("runProbe . HTTP error responses", () => {
   beforeEach(() => {
     vi.resetAllMocks();
     mockIsPrivateUrl.mockResolvedValue(false);
@@ -252,7 +252,7 @@ describe("runProbe — HTTP error responses", () => {
 // Invalid JSON response body
 // ─────────────────────────────────────────────────────────────────────────────
 
-describe("runProbe — invalid JSON body", () => {
+describe("runProbe . invalid JSON body", () => {
   beforeEach(() => {
     vi.resetAllMocks();
     mockIsPrivateUrl.mockResolvedValue(false);
@@ -290,7 +290,7 @@ describe("runProbe — invalid JSON body", () => {
 // Network timeout
 // ─────────────────────────────────────────────────────────────────────────────
 
-describe("runProbe — network timeout", () => {
+describe("runProbe . network timeout", () => {
   beforeEach(() => {
     vi.resetAllMocks();
     mockIsPrivateUrl.mockResolvedValue(false);
@@ -318,7 +318,7 @@ describe("runProbe — network timeout", () => {
     }
   });
 
-  it("never throws — always returns a ProbeOutcome", async () => {
+  it("never throws . always returns a ProbeOutcome", async () => {
     mockSsrfSafeFetch.mockRejectedValue(new Error("Unexpected catastrophic failure"));
 
     await expect(
@@ -331,7 +331,7 @@ describe("runProbe — network timeout", () => {
 // SSRF protection
 // ─────────────────────────────────────────────────────────────────────────────
 
-describe("runProbe — SSRF protection", () => {
+describe("runProbe . SSRF protection", () => {
   beforeEach(() => {
     vi.resetAllMocks();
   });
@@ -376,10 +376,10 @@ describe("runProbe — SSRF protection", () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// ProbeResultSchema — direct Zod schema tests
+// ProbeResultSchema . direct Zod schema tests
 // ─────────────────────────────────────────────────────────────────────────────
 
-describe("ProbeResultSchema — Zod schema validation", () => {
+describe("ProbeResultSchema . Zod schema validation", () => {
   it("accepts valid minimal payload", () => {
     const result = ProbeResultSchema.safeParse({
       ok: true,
@@ -403,7 +403,7 @@ describe("ProbeResultSchema — Zod schema validation", () => {
     expect(result.success).toBe(false);
   });
 
-  it("accepts zero latencyMs (valid — extremely fast local response)", () => {
+  it("accepts zero latencyMs (valid . extremely fast local response)", () => {
     // Note: ProbeResultSchema uses z.number() without minimum constraint
     // so negative and zero values are accepted by the schema.
     // This test documents the current schema behavior.

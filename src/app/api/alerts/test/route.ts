@@ -44,7 +44,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: true, message: "Test notification sent" });
   } catch (error) {
     // audit-24: Log full error internally but do NOT echo raw exception messages
-    // to the client — they may contain internal URLs, IPs, or webhook secrets.
+    // to the client . they may contain internal URLs, IPs, or webhook secrets.
     console.error("[alerts/test] Test notification failed:", error);
     return NextResponse.json(
       { error: "Failed to send test notification. Check your alert configuration." },

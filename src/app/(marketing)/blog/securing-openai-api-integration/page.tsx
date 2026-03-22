@@ -4,7 +4,7 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "How to Secure Your OpenAI API Integration (And Not Get Charged $10,000 by Bots) | Scantient Blog",
   description:
-    "OpenAI API abuse can generate thousands in unexpected charges within hours. How to secure your OpenAI integration — key management, rate limiting, input validation, monitoring — before bots find it.",
+    "OpenAI API abuse can generate thousands in unexpected charges within hours. How to secure your OpenAI integration . key management, rate limiting, input validation, monitoring . before bots find it.",
   keywords: "secure OpenAI API, OpenAI API security, prevent OpenAI API abuse, OpenAI API key stolen, OpenAI bill thousands, AI API security",
   openGraph: {
     title: "How to Secure Your OpenAI API Integration (And Not Get Charged $10,000 by Bots)",
@@ -28,7 +28,7 @@ const articleSchema = {
   "@type": "Article",
   headline: "How to Secure Your OpenAI API Integration (And Not Get Charged $10,000 by Bots)",
   description:
-    "OpenAI API abuse can generate thousands in unexpected charges within hours. How to secure your OpenAI integration — key management, rate limiting, input validation, monitoring — before bots find it.",
+    "OpenAI API abuse can generate thousands in unexpected charges within hours. How to secure your OpenAI integration . key management, rate limiting, input validation, monitoring . before bots find it.",
   datePublished: "2026-03-03T00:00:00Z",
   dateModified: "2026-03-03T00:00:00Z",
   author: { "@type": "Organization", name: "Scantient" },
@@ -105,13 +105,13 @@ export default function SecuringOpenAiApiIntegrationPage() {
             developer pushes code with an OpenAI API key hardcoded in a config file, a bot picks
             it up within minutes, and by morning their billing dashboard shows $4,000 to $15,000
             in compute charges from someone else&apos;s LLM inference jobs. OpenAI&apos;s fraud team may
-            eventually reverse the charges — but they&apos;re not obligated to, and the process is
+            eventually reverse the charges . but they&apos;re not obligated to, and the process is
             painful.
           </p>
           <p>
             This isn&apos;t a fringe risk. Automated scanning tools index GitHub&apos;s public commits
             continuously, looking for exactly this pattern. A key that&apos;s public for 30 seconds can
-            be compromised before you notice the commit. And it&apos;s not just careless developers —
+            be compromised before you notice the commit. And it&apos;s not just careless developers .
             even experienced teams make this mistake during fast iteration.
           </p>
           <p>
@@ -125,7 +125,7 @@ export default function SecuringOpenAiApiIntegrationPage() {
           </p>
           <ol>
             <li>
-              <strong>Key exposure:</strong> An OpenAI API key appears in a public place — a git
+              <strong>Key exposure:</strong> An OpenAI API key appears in a public place . a git
               commit, a public Gist, a pasted screenshot, a publicly accessible .env file, or a
               client-side JavaScript bundle.
             </li>
@@ -136,7 +136,7 @@ export default function SecuringOpenAiApiIntegrationPage() {
             </li>
             <li>
               <strong>Automated exploitation:</strong> The key is immediately used to generate
-              inference requests — often to run expensive models (GPT-4, DALL-E) or to resell
+              inference requests . often to run expensive models (GPT-4, DALL-E) or to resell
               access to the key to other bad actors.
             </li>
             <li>
@@ -147,13 +147,13 @@ export default function SecuringOpenAiApiIntegrationPage() {
           </ol>
           <p>
             OpenAI now has automated scanning that can detect and alert when keys appear in public
-            repos — but this is a secondary defense, not a primary one. You can&apos;t rely on it.
+            repos . but this is a secondary defense, not a primary one. You can&apos;t rely on it.
           </p>
 
           <h2>Defense Layer 1: Never Expose the Key</h2>
           <p>
             The most important defense is making sure your OpenAI API key is never accessible to
-            anyone who shouldn&apos;t have it. This sounds obvious — and yet.
+            anyone who shouldn&apos;t have it. This sounds obvious . and yet.
           </p>
 
           <h3>Don&apos;t call OpenAI from the frontend</h3>
@@ -220,7 +220,7 @@ repos:
               Is your AI API endpoint exposed or misconfigured?
             </p>
             <p className="mt-1 text-sm text-dusty-denim-700 dark:text-dusty-denim-400">
-              Scantient scans your deployed API from the outside — catching unauthenticated endpoints,
+              Scantient scans your deployed API from the outside . catching unauthenticated endpoints,
               CORS misconfigurations, and missing rate limiting on AI routes. Free scan, no signup.
             </p>
             <Link
@@ -249,18 +249,18 @@ repos:
             </li>
             <li>
               <strong>Hard limit:</strong> Requests stop when this amount is reached. Set this
-              at 2–3x your expected monthly spend — high enough not to interrupt legitimate usage,
+              at 2–3x your expected monthly spend . high enough not to interrupt legitimate usage,
               low enough to cap abuse damage.
             </li>
           </ul>
           <p>
             A hard limit of $200/month means a leaked key can cost you at most $200 before
-            shutting off — not $10,000.
+            shutting off . not $10,000.
           </p>
 
           <h3>Implement rate limiting on your AI endpoints</h3>
           <p>
-            Your backend proxy to OpenAI should enforce per-user rate limits — not just global
+            Your backend proxy to OpenAI should enforce per-user rate limits . not just global
             limits. A user hammering your chat endpoint 500 times in a minute is either a bot
             or a badly behaved client. Rate limit by:
           </p>
@@ -277,7 +277,7 @@ repos:
 
           <h2>Defense Layer 3: Input Validation and Prompt Injection Defense</h2>
           <p>
-            Once your key is secured, the next threat to your AI integration is prompt injection —
+            Once your key is secured, the next threat to your AI integration is prompt injection .
             malicious users crafting inputs designed to hijack your LLM&apos;s behavior.
           </p>
           <p>
@@ -300,7 +300,7 @@ repos:
             </li>
             <li>
               <strong>Never include sensitive data</strong> (API keys, database contents, user PII)
-              in LLM context windows — models can be manipulated into leaking context.
+              in LLM context windows . models can be manipulated into leaking context.
             </li>
           </ul>
 
@@ -315,23 +315,23 @@ repos:
               model used. Store these in your database or a logging service.
             </li>
             <li>
-              <strong>Alert on usage spikes</strong> — if a single user generates 10x their normal
+              <strong>Alert on usage spikes</strong> . if a single user generates 10x their normal
               token usage in an hour, investigate. Set up alerts in Datadog, Grafana, or even
               a simple Slack webhook triggered by a cron job.
             </li>
             <li>
-              <strong>Track cost per user</strong> — attribution helps you identify who&apos;s burning
+              <strong>Track cost per user</strong> . attribution helps you identify who&apos;s burning
               your budget and whether it&apos;s legitimate use or abuse.
             </li>
             <li>
-              <strong>Rotate keys on any suspected exposure</strong> — don&apos;t wait for confirmation.
+              <strong>Rotate keys on any suspected exposure</strong> . don&apos;t wait for confirmation.
               Revoke and reissue. OpenAI key rotation takes seconds.
             </li>
           </ul>
 
           <h2>Defense Layer 5: External API Security Scanning</h2>
           <p>
-            Your AI integration adds new endpoints to your API surface — typically routes like
+            Your AI integration adds new endpoints to your API surface . typically routes like
             <code>/api/ai/chat</code>, <code>/api/generate</code>, or <code>/api/completion</code>.
             These endpoints need the same external security review as the rest of your API.
           </p>
@@ -360,7 +360,7 @@ repos:
           <h2>The OpenAI Integration Security Checklist</h2>
           <ul>
             <li>✅ OpenAI API key stored as server-side environment variable only</li>
-            <li>✅ All OpenAI calls proxied through backend — key never in frontend</li>
+            <li>✅ All OpenAI calls proxied through backend . key never in frontend</li>
             <li>✅ Pre-commit hooks scanning for secret patterns</li>
             <li>✅ Spending hard limit set in OpenAI dashboard</li>
             <li>✅ Per-user rate limiting on AI endpoints</li>
@@ -373,7 +373,7 @@ repos:
 
           <p>
             The $10,000 horror story is avoidable. Most of the developers who experience it
-            made one mistake — usually a key in client-side code or an accidental commit. The
+            made one mistake . usually a key in client-side code or an accidental commit. The
             checklist above eliminates every known path to that outcome.
           </p>
 
@@ -382,10 +382,10 @@ repos:
         {/* CTA */}
         <div className="mt-12 rounded-2xl border border-prussian-blue-200 dark:border-prussian-blue-800 bg-prussian-blue-50 dark:bg-prussian-blue-950/30 p-8 text-center">
           <h3 className="text-xl font-bold text-ink-black-950 dark:text-alabaster-grey-50">
-            Scan Your AI API Free — 60 Seconds
+            Scan Your AI API Free . 60 Seconds
           </h3>
           <p className="mt-2 text-sm text-dusty-denim-700 dark:text-dusty-denim-400">
-            Find out if your AI endpoints are exposed, unprotected, or misconfigured — before
+            Find out if your AI endpoints are exposed, unprotected, or misconfigured . before
             bots find out for you. No signup. No SDK.
           </p>
           <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">

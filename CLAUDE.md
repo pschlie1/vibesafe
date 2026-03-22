@@ -30,7 +30,7 @@ npm run db:generate            # Regenerate Prisma client after schema changes
 ## Architecture
 
 ### Multi-Tenant Model
-- `Organization` is the tenant boundary — all data queries are scoped by organization
+- `Organization` is the tenant boundary . all data queries are scoped by organization
 - MSP support: organizations can manage client organizations via parent/client relationships
 - RBAC roles: Owner > Admin > Member > Viewer
 

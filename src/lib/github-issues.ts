@@ -37,7 +37,7 @@ export async function createGitHubIssue(
     "---",
     `[View in Scantient Dashboard](${dashboardUrl})`,
     "",
-    `*Reported by [Scantient](https://scantient.com) — automated security monitoring*`,
+    `*Reported by [Scantient](https://scantient.com) . automated security monitoring*`,
   ].join("\n");
 
   const labels = ["security", "scantient", severityLower];

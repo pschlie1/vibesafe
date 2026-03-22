@@ -1,4 +1,4 @@
-# MSP / Agency Mode — Architecture Spec
+# MSP / Agency Mode . Architecture Spec
 
 *Status: Proposed. Not yet built. Requires PR #27 to merge first.*
 
@@ -88,7 +88,7 @@ Add `MSP` to the SubscriptionTier enum:
 ### Client Isolation
 - MSP staff see client data but clients do NOT see MSP internal data
 - Client users see their own dashboard normally (they may not even know they're managed by an MSP)
-- MSP staff are not added to client orgs — they access via the MSP parent relationship
+- MSP staff are not added to client orgs . they access via the MSP parent relationship
 
 ---
 
@@ -150,6 +150,6 @@ MSPs need to know about apps their clients are running that were NOT registered 
 Implementation:
 - DNS lookup via `dns.resolveCname`, `dns.resolve` for common subdomain prefixes (app, api, admin, portal, internal, staging, beta, dev, test, dashboard, hr, finance)
 - Store discovered URLs in new `DiscoveredApp` model
-- Surface in dashboard as "Potential apps found — add to monitoring?"
+- Surface in dashboard as "Potential apps found . add to monitoring?"
 
 This feature makes the MSP value proposition complete: "We found 12 apps in your clients' infrastructure they didn't know existed."

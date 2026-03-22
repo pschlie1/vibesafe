@@ -4,12 +4,12 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "SaaS Launch Security Checklist: 15 Things to Check Before Going Live | Scantient Blog",
   description:
-    "The pre-launch security checklist for SaaS founders and indie devs. 15 security items to verify before your first user signs up — from SSL to CORS to rate limiting to API key exposure.",
+    "The pre-launch security checklist for SaaS founders and indie devs. 15 security items to verify before your first user signs up . from SSL to CORS to rate limiting to API key exposure.",
   keywords: "SaaS security checklist, pre-launch security audit, startup security before launch, SaaS launch checklist, API security checklist",
   openGraph: {
     title: "SaaS Launch Security Checklist: 15 Things to Check Before Going Live",
     description:
-      "15 security items to verify before your SaaS goes live. SSL, headers, CORS, auth, rate limiting, secrets — everything a startup needs to check before the first user arrives.",
+      "15 security items to verify before your SaaS goes live. SSL, headers, CORS, auth, rate limiting, secrets . everything a startup needs to check before the first user arrives.",
     url: "https://scantient.com/blog/saas-launch-security-checklist",
     siteName: "Scantient",
     type: "article",
@@ -102,7 +102,7 @@ export default function SaasLaunchSecurityChecklistPage() {
 
           <p>
             New domains get probed by automated scanners within hours of DNS registration. Your
-            app doesn&apos;t need to be famous to be targeted — it just needs to be on the internet.
+            app doesn&apos;t need to be famous to be targeted . it just needs to be on the internet.
             The good news: the most critical pre-launch security checks take less time than writing
             your Product Hunt description.
           </p>
@@ -132,7 +132,7 @@ export default function SaasLaunchSecurityChecklistPage() {
           <h3>✅ 1. SSL Certificate Is Valid and Not Expiring Soon</h3>
           <p>
             Check your certificate&apos;s expiry date right now. Most hosting platforms (Vercel,
-            Netlify, Railway) handle Let&apos;s Encrypt auto-renewal — but managed certificates and
+            Netlify, Railway) handle Let&apos;s Encrypt auto-renewal . but managed certificates and
             custom domain setups can and do expire. A common scenario: you set up your custom
             domain, the certificate was issued, and it expires 90 days later. If auto-renewal
             failed silently, users see a browser security warning on your launch day.
@@ -178,7 +178,7 @@ export default function SaasLaunchSecurityChecklistPage() {
           <h3>✅ 5. X-Frame-Options Set</h3>
           <p>
             Without <code>X-Frame-Options: DENY</code> or <code>SAMEORIGIN</code>, your app can
-            be embedded in an iframe on any site. Attackers use this for clickjacking — overlaying
+            be embedded in an iframe on any site. Attackers use this for clickjacking . overlaying
             invisible buttons on your app to trick users into clicking things they didn&apos;t intend
             to. One line of config, zero cost, eliminates the entire attack surface.
           </p>
@@ -228,7 +228,7 @@ export default function SaasLaunchSecurityChecklistPage() {
           <h3>✅ 9. All Auth-Protected Routes Verify Auth Server-Side</h3>
           <p>
             For every API route that returns user-specific or sensitive data, verify that the auth
-            check happens server-side — not just in the frontend component. Test this manually
+            check happens server-side . not just in the frontend component. Test this manually
             with <code>curl</code>: call your API routes without any auth headers or cookies.
             If they return data, your auth is frontend-only.
           </p>
@@ -260,27 +260,27 @@ export default function SaasLaunchSecurityChecklistPage() {
             Test for common dangerous paths that attackers probe automatically:
           </p>
           <ul>
-            <li><code>/.env</code> — environment variables</li>
-            <li><code>/.git/HEAD</code> — git repository access</li>
-            <li><code>/api/admin</code>, <code>/admin</code> — admin panels</li>
-            <li><code>/phpinfo.php</code> — PHP configuration</li>
-            <li><code>/actuator/health</code>, <code>/actuator/env</code> — Spring Boot actuators</li>
+            <li><code>/.env</code> . environment variables</li>
+            <li><code>/.git/HEAD</code> . git repository access</li>
+            <li><code>/api/admin</code>, <code>/admin</code> . admin panels</li>
+            <li><code>/phpinfo.php</code> . PHP configuration</li>
+            <li><code>/actuator/health</code>, <code>/actuator/env</code> . Spring Boot actuators</li>
           </ul>
           <p>
-            Each should return 404 (not 403 — 403 confirms the path exists). Scantient checks all
+            Each should return 404 (not 403 . 403 confirms the path exists). Scantient checks all
             of these automatically in a free scan.
           </p>
 
           <h3>✅ 13. Error Messages Don&apos;t Leak Internal Details</h3>
           <p>
             Trigger an error in your API (bad request, missing param, invalid ID) and examine the
-            response. It should return a user-friendly error message and a status code — not a
+            response. It should return a user-friendly error message and a status code . not a
             stack trace, database error message, ORM query, or internal file path.
           </p>
           <p>
             In Next.js, make sure you&apos;re not returning caught errors directly:{" "}
             <code>return NextResponse.json({"{ error: 'Internal server error' }"}, {"{ status: 500 }"})</code>{" "}
-            — not <code>return NextResponse.json(error)</code>.
+            . not <code>return NextResponse.json(error)</code>.
           </p>
 
           <h2>Dependencies &amp; Supply Chain</h2>
@@ -289,7 +289,7 @@ export default function SaasLaunchSecurityChecklistPage() {
           <p>
             Run <code>npm audit</code> (or your package manager&apos;s equivalent) and check for
             critical or high-severity vulnerabilities. You don&apos;t need to fix every low-severity
-            finding before launch — but critical CVEs in dependencies you actively use should be
+            finding before launch . but critical CVEs in dependencies you actively use should be
             addressed.
           </p>
           <p>
@@ -300,13 +300,13 @@ export default function SaasLaunchSecurityChecklistPage() {
           <h3>✅ 15. No Secrets Committed to Git</h3>
           <p>
             Run a secrets scan against your entire git history before your first public launch.
-            Secrets committed and then deleted are still in git history — visible to anyone who
+            Secrets committed and then deleted are still in git history . visible to anyone who
             clones your repo if it&apos;s ever made public, and visible to everyone right now if the
             repo is already public.
           </p>
           <p>
             Quick scan: <code>npx trufflehog git file://. --only-verified</code>. If it finds
-            anything, rotate the exposed credentials immediately — then remove them from git
+            anything, rotate the exposed credentials immediately . then remove them from git
             history with <code>git filter-repo</code>.
           </p>
 
@@ -317,7 +317,7 @@ export default function SaasLaunchSecurityChecklistPage() {
             <Link href="/score" className="text-prussian-blue-600 hover:underline">
               Scantient&apos;s free scanner
             </Link>{" "}
-            and get a security score covering all of them — before you announce your launch.
+            and get a security score covering all of them . before you announce your launch.
           </p>
           <p>
             Items 9, 11, 13, 14, and 15 require a few minutes of manual testing or your CI
@@ -382,7 +382,7 @@ export default function SaasLaunchSecurityChecklistPage() {
         {/* CTA */}
         <div className="mt-12 rounded-2xl border border-prussian-blue-200 dark:border-prussian-blue-800 bg-prussian-blue-50 dark:bg-prussian-blue-950/30 p-8 text-center">
           <h3 className="text-xl font-bold text-ink-black-950 dark:text-alabaster-grey-50">
-            Scan Your API Before You Launch — Free
+            Scan Your API Before You Launch . Free
           </h3>
           <p className="mt-2 text-sm text-dusty-denim-700 dark:text-dusty-denim-400">
             External security scan covering SSL, headers, CORS, exposed endpoints, and API key exposure. 60 seconds. No signup.

@@ -1,4 +1,4 @@
-# Phase 3 Outreach Execution — Dual Motion (Builder + IT/Security Buyers)
+# Phase 3 Outreach Execution . Dual Motion (Builder + IT/Security Buyers)
 
 Purpose: outreach-ready list and copy snippets to run a two-track motion immediately.
 
@@ -62,24 +62,24 @@ Purpose: outreach-ready list and copy snippets to run a two-track motion immedia
 
 ### A) Builder segment (DM/email/post reply)
 
-**Template A1 — direct**
-> You’re shipping fast — respect. Quick win: run your URL through Scantient and get a security score + top findings in ~2 minutes (no SDK, no code changes). Want me to send the 5-point hardening checklist we use after every launch?
+**Template A1 . direct**
+> You’re shipping fast . respect. Quick win: run your URL through Scantient and get a security score + top findings in ~2 minutes (no SDK, no code changes). Want me to send the 5-point hardening checklist we use after every launch?
 
-**Template A2 — launch reply**
+**Template A2 . launch reply**
 > Congrats on the launch. Most new apps leak something small in week 1 (headers, keys, auth shortcuts). Scantient does an external scan and gives plain-English fixes. If helpful, I can share a sample report format.
 
-**Template A3 — value-first**
+**Template A3 . value-first**
 > If you share your stack (Next.js/React/no-code), I can send the most common security misses for that stack + how to catch them automatically with one recurring scan.
 
 ### B) IT/Security buyer segment (DM/email)
 
-**Template B1 — governance angle**
+**Template B1 . governance angle**
 > Many teams now have AI-built apps in production with no continuous external monitoring. Scantient gives portfolio-level visibility (security + uptime), weekly governance reports, and auditor-ready evidence without adding SDKs. Open to a 20-minute walkthrough?
 
-**Template B2 — risk/compliance angle**
+**Template B2 . risk/compliance angle**
 > If you’re responsible for SOC 2 / ISO readiness, the challenge is proving ongoing control effectiveness across fast-changing apps. Scantient continuously scans public attack surface and packages findings into compliance-ready reporting. Interested in a pilot on 3 apps?
 
-**Template B3 — cost/control angle**
+**Template B3 . cost/control angle**
 > Instead of periodic point-in-time tests only, Scantient runs recurring checks across your app portfolio and flags regressions early. Teams use it to cut surprise incidents and reduce audit prep time. Worth testing on one business-critical app?
 
 ---

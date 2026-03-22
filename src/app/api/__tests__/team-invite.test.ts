@@ -132,7 +132,7 @@ describe("POST /api/team (invite flow)", () => {
     expect(inviteCreate).toHaveBeenCalled();
     // Response should be 201
     expect(res.status).toBe(201);
-    // The db.user mock has no 'create' method defined — any attempt to call it would throw.
+    // The db.user mock has no 'create' method defined . any attempt to call it would throw.
     // The fact that the test succeeds confirms no db.user.create was called.
   });
 

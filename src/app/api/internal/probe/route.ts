@@ -1,17 +1,17 @@
 /**
- * Scantient's own probe endpoint — reference implementation of the probe spec.
+ * Scantient's own probe endpoint . reference implementation of the probe spec.
  *
  * This is Scantient's own /api/internal/probe endpoint. It demonstrates the
  * probe protocol defined in docs/probe-spec.md and provides a health check
  * for Scantient's own subsystems (database, auth, payments, email).
  *
  * Authentication: X-Scan-Token header must match SCANTIENT_PROBE_TOKEN (or INTERNAL_PROBE_TOKEN)
- * Returns: ProbeResult JSON — see docs/probe-spec.md for full schema
+ * Returns: ProbeResult JSON . see docs/probe-spec.md for full schema
  *
  * Complies with all security guidelines:
  *  - Token verified with constant-time comparison before any work
  *  - All outbound fetches use ssrfSafeFetch
- *  - Generic errors only — no stack traces in responses
+ *  - Generic errors only . no stack traces in responses
  */
 
 import { NextRequest, NextResponse } from "next/server";
@@ -67,7 +67,7 @@ function checkAuth(): SubsystemResult {
 
 async function checkPayments(): Promise<SubsystemResult | null> {
   const key = process.env.STRIPE_SECRET_KEY;
-  if (!key) return null; // Not configured — skip
+  if (!key) return null; // Not configured . skip
 
   try {
     const res = await ssrfSafeFetch(
@@ -103,7 +103,7 @@ async function checkPayments(): Promise<SubsystemResult | null> {
 
 async function checkEmail(): Promise<SubsystemResult | null> {
   const key = process.env.RESEND_API_KEY;
-  if (!key) return null; // Not configured — skip
+  if (!key) return null; // Not configured . skip
 
   try {
     const res = await ssrfSafeFetch(
@@ -148,7 +148,7 @@ export async function GET(request: NextRequest) {
 
   const probeStart = Date.now();
 
-  // Run subsystem checks — all in parallel for speed
+  // Run subsystem checks . all in parallel for speed
   const [dbResult, paymentsResult, emailResult] = await Promise.all([
     checkDatabase(),
     checkPayments(),
@@ -189,7 +189,7 @@ export async function GET(request: NextRequest) {
   return NextResponse.json(body, {
     status: 200,
     headers: {
-      // Probe responses must not be cached — they represent live health state
+      // Probe responses must not be cached . they represent live health state
       "Cache-Control": "no-store",
     },
   });

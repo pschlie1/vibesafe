@@ -52,7 +52,7 @@ async function resolveAppFromBearer(authHeader: string | null) {
   return app;
 }
 
-/** POST — agent pushes scan results */
+/** POST . agent pushes scan results */
 export async function POST(req: Request) {
   const app = await resolveAppFromBearer(req.headers.get("authorization"));
   if (!app) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -91,7 +91,7 @@ export async function POST(req: Request) {
       appId: app.id,
       status,
       responseTimeMs: responseTimeMs ?? null,
-      summary: `Agent scan: ${findings.length} finding(s) — status ${statusCode ?? "N/A"}`,
+      summary: `Agent scan: ${findings.length} finding(s) . status ${statusCode ?? "N/A"}`,
       checksRun: findings.length,
       completedAt: new Date(),
       findings: {

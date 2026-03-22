@@ -8,10 +8,10 @@
  * of code AI_TOOL_DETECTED (severity MEDIUM) is created.
  *
  * Detection vectors:
- *   1. CSP header — connect-src / script-src domains mentioning AI providers
- *   2. HTML/JS script src — <script src="..."> pointing to AI CDN domains
- *   3. JS bundle content — fetch/XHR calls to AI API endpoints
- *   4. Response headers — x-powered-by or via headers revealing AI proxies
+ *   1. CSP header . connect-src / script-src domains mentioning AI providers
+ *   2. HTML/JS script src . <script src="..."> pointing to AI CDN domains
+ *   3. JS bundle content . fetch/XHR calls to AI API endpoints
+ *   4. Response headers . x-powered-by or via headers revealing AI proxies
  */
 
 import type { SecurityFinding } from "@/lib/types";
@@ -173,7 +173,7 @@ function buildAiToolFinding(detection: Detection): SecurityFinding {
     }),
     severity: "MEDIUM",
     fixPrompt:
-      `AI Tool Policy Gap — ${detection.tool.name}\n\n` +
+      `AI Tool Policy Gap . ${detection.tool.name}\n\n` +
       `Detected via: ${vectorLabel[detection.vector]}\n` +
       `Evidence: ${detection.evidence}\n\n` +
       `Recommended actions:\n` +

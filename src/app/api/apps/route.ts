@@ -126,7 +126,7 @@ export async function POST(req: Request) {
       data: {
         orgId: session.orgId,
         ...restData,
-        // Encrypt probe token at rest — decrypted only inside the scanner
+        // Encrypt probe token at rest . decrypted only inside the scanner
         ...(probeToken ? { probeToken: encrypt(probeToken) } : {}),
         nextCheckAt: new Date(),
       },

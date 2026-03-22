@@ -167,14 +167,14 @@ Attribution:
 ### TASK 4: Add Performance Monitoring 📈
 **Objective:** Baseline Core Web Vitals and API latency  
 **Time Estimate:** 1 hour  
-**Dependencies:** Task 2 (Sentry) — will integrate with it  
+**Dependencies:** Task 2 (Sentry) . will integrate with it  
 
 **Steps:**
 1. Add Web Vitals library: `npm install web-vitals`
 2. Create `src/lib/performance.ts` to capture:
-   - **LCP** (Largest Contentful Paint) — track in Sentry
-   - **CLS** (Cumulative Layout Shift) — track in Sentry
-   - **FCP** (First Contentful Paint) — track in Sentry
+   - **LCP** (Largest Contentful Paint) . track in Sentry
+   - **CLS** (Cumulative Layout Shift) . track in Sentry
+   - **FCP** (First Contentful Paint) . track in Sentry
 3. Wrap Sentry init to send vitals as breadcrumbs:
    ```ts
    onCLS(metric => Sentry.captureMessage(`CLS: ${metric.value}`))
@@ -307,12 +307,12 @@ git commit -m "docs(phase4): Complete deployment documentation
 
 | Task | Est. Time | Actual | Status |
 |------|-----------|--------|--------|
-| 1. Deploy | 15 min | — | ⏳ To Do |
-| 2. Sentry | 30 min | — | ⏳ To Do |
-| 3. Analytics | 1.5 hrs | — | ⏳ To Do |
-| 4. Performance | 1 hr | — | ⏳ To Do |
-| 5. Docs | 30 min | — | ⏳ To Do |
-| **TOTAL** | **~4 hours** | — | — |
+| 1. Deploy | 15 min |  | ⏳ To Do |
+| 2. Sentry | 30 min |  | ⏳ To Do |
+| 3. Analytics | 1.5 hrs |  | ⏳ To Do |
+| 4. Performance | 1 hr |  | ⏳ To Do |
+| 5. Docs | 30 min |  | ⏳ To Do |
+| **TOTAL** | **~4 hours** |  | . |
 
 ---
 

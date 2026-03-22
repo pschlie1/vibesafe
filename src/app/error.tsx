@@ -22,7 +22,7 @@ interface ErrorBoundaryProps {
 
 export default function GlobalError({ error, reset }: ErrorBoundaryProps) {
   useEffect(() => {
-    // Report to Sentry — only fires if NEXT_PUBLIC_SENTRY_DSN is set
+    // Report to Sentry . only fires if NEXT_PUBLIC_SENTRY_DSN is set
     Sentry.captureException(error);
     console.error("[GlobalError]", error.digest ?? error.name);
   }, [error]);

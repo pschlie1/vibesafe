@@ -2,7 +2,7 @@
  * Sentry client-side initialization.
  * audit-14: Added missing client config (server + edge existed, client was absent).
  *
- * This file runs in the browser. Keep it lightweight — no Node.js imports.
+ * This file runs in the browser. Keep it lightweight . no Node.js imports.
  */
 import * as Sentry from "@sentry/nextjs";
 

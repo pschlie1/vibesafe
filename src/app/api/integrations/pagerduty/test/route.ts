@@ -31,7 +31,7 @@ export async function POST() {
     const routingKey = deobfuscate(cfg.routingKey);
 
     const result = await createPagerDutyIncident(routingKey, {
-      summary: "Scantient test incident — verify your PagerDuty integration is working.",
+      summary: "Scantient test incident . verify your PagerDuty integration is working.",
       severity: "info",
       source: "scantient.com",
       component: "Scantient",

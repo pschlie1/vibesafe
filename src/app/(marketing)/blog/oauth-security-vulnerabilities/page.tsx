@@ -4,7 +4,7 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "OAuth 2.0 Security Vulnerabilities Every Developer Should Know (And How to Fix Them) | Scantient Blog",
   description:
-    "The most dangerous OAuth 2.0 security vulnerabilities — CSRF attacks, open redirects, authorization code interception, token leakage — explained with practical fixes for each.",
+    "The most dangerous OAuth 2.0 security vulnerabilities . CSRF attacks, open redirects, authorization code interception, token leakage . explained with practical fixes for each.",
   keywords: "OAuth security vulnerabilities, OAuth 2.0 security issues, OAuth CSRF, OAuth open redirect, authorization code interception, OAuth security best practices",
   openGraph: {
     title: "OAuth 2.0 Security Vulnerabilities Every Developer Should Know (And How to Fix Them)",
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "OAuth 2.0 Security Vulnerabilities Every Developer Should Know (And How to Fix Them)",
     description:
-      "OAuth 2.0 is powerful but easy to implement insecurely. CSRF, open redirects, PKCE bypass, token leakage — here's what goes wrong and how to fix it.",
+      "OAuth 2.0 is powerful but easy to implement insecurely. CSRF, open redirects, PKCE bypass, token leakage . here's what goes wrong and how to fix it.",
   },
 };
 
@@ -28,7 +28,7 @@ const articleSchema = {
   "@type": "Article",
   headline: "OAuth 2.0 Security Vulnerabilities Every Developer Should Know (And How to Fix Them)",
   description:
-    "The most dangerous OAuth 2.0 security vulnerabilities — CSRF, open redirects, authorization code interception, token leakage — with practical fixes.",
+    "The most dangerous OAuth 2.0 security vulnerabilities . CSRF, open redirects, authorization code interception, token leakage . with practical fixes.",
   datePublished: "2026-03-12T00:00:00Z",
   dateModified: "2026-03-12T00:00:00Z",
   author: { "@type": "Organization", name: "Scantient" },
@@ -86,7 +86,7 @@ export default function OauthSecurityVulnerabilitiesPage() {
             OAuth 2.0 Security Vulnerabilities Every Developer Should Know (And How to Fix Them)
           </h1>
           <p className="mt-4 text-lg text-dusty-denim-700 dark:text-dusty-denim-400">
-            OAuth 2.0 is the backbone of modern API authorization — and one of the most
+            OAuth 2.0 is the backbone of modern API authorization . and one of the most
             frequently misimplemented security protocols in production. These vulnerabilities
             are subtle enough to pass code review and dangerous enough to cause account takeover.
           </p>
@@ -101,7 +101,7 @@ export default function OauthSecurityVulnerabilitiesPage() {
         <div className="prose prose-slate dark:prose-invert max-w-none">
 
           <p>
-            OAuth 2.0 is not a simple protocol. It&apos;s a framework — deliberately flexible, with
+            OAuth 2.0 is not a simple protocol. It&apos;s a framework . deliberately flexible, with
             multiple grant types, optional security parameters, and significant implementation
             responsibility left to developers. That flexibility is also why OAuth implementations
             are a reliable source of high-severity vulnerabilities.
@@ -109,15 +109,15 @@ export default function OauthSecurityVulnerabilitiesPage() {
           <p>
             These aren&apos;t theoretical attack classes from academic papers. They&apos;re vulnerabilities
             found regularly in production APIs, OAuth libraries, and even well-known identity
-            providers. If you&apos;ve implemented OAuth — either as a client or as an authorization
-            server — this applies to you.
+            providers. If you&apos;ve implemented OAuth . either as a client or as an authorization
+            server . this applies to you.
           </p>
 
           <h2>Vulnerability 1: Missing State Parameter (CSRF on OAuth Flow)</h2>
           <p>
             The <code>state</code> parameter in OAuth 2.0 exists specifically to prevent CSRF
             attacks against the authorization callback. Without it, an attacker can trick a
-            victim&apos;s browser into completing an authorization flow that the attacker initiated —
+            victim&apos;s browser into completing an authorization flow that the attacker initiated .
             linking the victim&apos;s account to the attacker&apos;s identity provider account, or
             completing other account-linking flows.
           </p>
@@ -156,7 +156,7 @@ export default function OauthSecurityVulnerabilitiesPage() {
           <h2>Vulnerability 3: Authorization Code Interception (Missing PKCE)</h2>
           <p>
             PKCE (Proof Key for Code Exchange, pronounced &quot;pixy&quot;) was designed to prevent
-            authorization code interception attacks in public clients — native apps and SPAs
+            authorization code interception attacks in public clients . native apps and SPAs
             where you can&apos;t safely store a client secret. Without PKCE, if an attacker can
             intercept an authorization code (through a malicious app on the same device, a
             redirect URI misconfiguration, or referrer header leakage), they can exchange it
@@ -217,7 +217,7 @@ export default function OauthSecurityVulnerabilitiesPage() {
             resource might grant access to all resources.
           </p>
           <p>
-            This is the OAuth equivalent of broken object-level authorization — it&apos;s one of the{" "}
+            This is the OAuth equivalent of broken object-level authorization . it&apos;s one of the{" "}
             <Link href="/blog/7-api-security-mistakes" className="text-prussian-blue-600 hover:underline">
               most common API security mistakes
             </Link>{" "}
@@ -226,13 +226,13 @@ export default function OauthSecurityVulnerabilitiesPage() {
           <p>
             <strong>Fix:</strong> Enforce scope checks in every route handler, not just at the
             authentication middleware level. Use a clear scope naming convention. When issuing
-            tokens, apply least-privilege — only include scopes the application actually needs.
+            tokens, apply least-privilege . only include scopes the application actually needs.
           </p>
 
           <h2>Vulnerability 6: Implicit Grant Type Usage</h2>
           <p>
             The implicit grant type was designed for SPAs when cross-origin requests were a
-            limitation. It returns access tokens directly in the URL fragment — no code exchange,
+            limitation. It returns access tokens directly in the URL fragment . no code exchange,
             no client secret. It was deprecated in OAuth 2.0 Security Best Current Practice
             (RFC 9700) and should not be used in new implementations.
           </p>
@@ -248,7 +248,7 @@ export default function OauthSecurityVulnerabilitiesPage() {
 
           <h2>Vulnerability 7: Client Credential Exposure</h2>
           <p>
-            OAuth client secrets in public clients (SPAs, mobile apps) are not secret — they&apos;re
+            OAuth client secrets in public clients (SPAs, mobile apps) are not secret . they&apos;re
             embedded in code that users can inspect. Using client secrets in these contexts
             provides no security benefit and creates a false sense of security.
           </p>
@@ -262,7 +262,7 @@ export default function OauthSecurityVulnerabilitiesPage() {
             covers credential management in detail.
           </p>
           <p>
-            <strong>Fix:</strong> Don&apos;t use client secrets in public clients — use PKCE instead.
+            <strong>Fix:</strong> Don&apos;t use client secrets in public clients . use PKCE instead.
             For confidential clients, pass client credentials via the Authorization header (HTTP
             Basic auth), not as query parameters. Store client secrets with the same rigor as
             any other credential.
@@ -270,7 +270,7 @@ export default function OauthSecurityVulnerabilitiesPage() {
 
           <h2>Vulnerability 8: Missing Token Binding / Audience Validation</h2>
           <p>
-            Access tokens are often treated as bearer tokens — whoever has the token can use it.
+            Access tokens are often treated as bearer tokens . whoever has the token can use it.
             If a token issued for one API is accepted by another API without audience validation,
             a compromised token for a low-privilege service can be replayed against a
             high-privilege one.
@@ -306,7 +306,7 @@ export default function OauthSecurityVulnerabilitiesPage() {
         {/* CTA */}
         <div className="mt-12 rounded-2xl border border-prussian-blue-200 dark:border-prussian-blue-800 bg-prussian-blue-50 dark:bg-prussian-blue-950/30 p-8 text-center">
           <h3 className="text-xl font-bold text-ink-black-950 dark:text-alabaster-grey-50">
-            Scan Your API Free — 60 Seconds
+            Scan Your API Free . 60 Seconds
           </h3>
           <p className="mt-2 text-sm text-dusty-denim-700 dark:text-dusty-denim-400">
             External security scan catches authentication issues, misconfigured headers, and exposed endpoints.

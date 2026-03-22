@@ -4,12 +4,12 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "JWT Security Best Practices: 8 Mistakes That Expose Your API | Scantient Blog",
   description:
-    "JSON Web Token vulnerabilities that developers miss. Eight JWT security mistakes — weak algorithms, no expiry, secrets in payloads, the none algorithm bypass — with practical fixes for each.",
+    "JSON Web Token vulnerabilities that developers miss. Eight JWT security mistakes . weak algorithms, no expiry, secrets in payloads, the none algorithm bypass . with practical fixes for each.",
   keywords: "JWT security, JSON web token vulnerabilities, JWT authentication security, JWT best practices, JWT security mistakes",
   openGraph: {
     title: "JWT Security Best Practices: 8 Mistakes That Expose Your API",
     description:
-      "The eight most common JWT security mistakes — weak algorithms, missing expiry, secrets in payloads, the none algorithm bypass — and how to fix each one.",
+      "The eight most common JWT security mistakes . weak algorithms, missing expiry, secrets in payloads, the none algorithm bypass . and how to fix each one.",
     url: "https://scantient.com/blog/jwt-security-best-practices",
     siteName: "Scantient",
     type: "article",
@@ -86,7 +86,7 @@ export default function JwtSecurityBestPracticesPage() {
             JWT Security Best Practices: 8 Mistakes That Expose Your API
           </h1>
           <p className="mt-4 text-lg text-dusty-denim-700 dark:text-dusty-denim-400">
-            JWTs are everywhere — and so are JWT vulnerabilities. Most of these mistakes are
+            JWTs are everywhere . and so are JWT vulnerabilities. Most of these mistakes are
             invisible in code review and only exploitable at runtime. Here&apos;s what to avoid, and
             what to do instead.
           </p>
@@ -103,7 +103,7 @@ export default function JwtSecurityBestPracticesPage() {
           <p>
             JSON Web Tokens are the dominant authentication mechanism for modern APIs. Libraries
             like <code>jsonwebtoken</code>, <code>jose</code>, and <code>next-auth</code> make them
-            trivially easy to implement. Which is exactly the problem — it&apos;s easy to implement
+            trivially easy to implement. Which is exactly the problem . it&apos;s easy to implement
             JWT auth in a way that looks correct but is fundamentally broken from a security
             standpoint.
           </p>
@@ -148,14 +148,14 @@ export default function JwtSecurityBestPracticesPage() {
             <strong>Fix:</strong> Generate a cryptographically random secret of at least 256 bits
             (32 bytes). In Node.js: <code>crypto.randomBytes(32).toString(&apos;hex&apos;)</code>. Store
             it in an environment variable, never in code. For new apps, prefer RS256 (asymmetric)
-            over HS256 — the private key stays on your server and can&apos;t be brute-forced from a
+            over HS256 . the private key stays on your server and can&apos;t be brute-forced from a
             captured token.
           </p>
 
           <h2>Mistake 3: No Token Expiry</h2>
           <p>
-            A JWT with no <code>exp</code> claim is valid forever. If it&apos;s ever stolen — through
-            XSS, log scraping, an insecure third-party service — there&apos;s no automatic expiry to
+            A JWT with no <code>exp</code> claim is valid forever. If it&apos;s ever stolen . through
+            XSS, log scraping, an insecure third-party service . there&apos;s no automatic expiry to
             limit the damage. The stolen token grants access indefinitely.
           </p>
           <p>
@@ -168,7 +168,7 @@ export default function JwtSecurityBestPracticesPage() {
           <h2>Mistake 4: Storing Sensitive Data in the Payload</h2>
           <p>
             The JWT payload is base64-encoded, not encrypted. Anyone who has your token can decode
-            it and read the payload — no secret needed. This is by design: JWTs are signed (for
+            it and read the payload . no secret needed. This is by design: JWTs are signed (for
             integrity), not encrypted (for confidentiality).
           </p>
           <p>
@@ -185,14 +185,14 @@ export default function JwtSecurityBestPracticesPage() {
 
           <h2>Mistake 5: Not Validating the Token Signature at All</h2>
           <p>
-            This sounds like something that couldn&apos;t happen, but it does — particularly when
+            This sounds like something that couldn&apos;t happen, but it does . particularly when
             developers implement JWT handling manually, use the wrong library method, or decode a
             token for payload inspection and forget to also verify it.
           </p>
           <p>
             The pattern looks like: <code>const payload = jwt.decode(token)</code> instead of{" "}
             <code>const payload = jwt.verify(token, secret)</code>. The{" "}
-            <code>decode()</code> method in most JWT libraries does not verify the signature — it
+            <code>decode()</code> method in most JWT libraries does not verify the signature . it
             just reads the payload. An attacker can forge any payload they want.
           </p>
           <p>
@@ -211,7 +211,7 @@ export default function JwtSecurityBestPracticesPage() {
           </p>
           <p>
             Your library thinks it&apos;s verifying an HS256 token with the (known) public key as the
-            secret — and it succeeds. The attacker has created a validly-signed token without
+            secret . and it succeeds. The attacker has created a validly-signed token without
             knowing your private key.
           </p>
           <p>
@@ -223,7 +223,7 @@ export default function JwtSecurityBestPracticesPage() {
           <h2>Mistake 7: Storing JWTs in localStorage</h2>
           <p>
             JWTs stored in <code>localStorage</code> are accessible to any JavaScript running on
-            your page — including injected scripts from XSS vulnerabilities. This makes{" "}
+            your page . including injected scripts from XSS vulnerabilities. This makes{" "}
             <code>localStorage</code> token storage incompatible with Content Security Policy and
             creates a standing risk: if you ever have a single XSS vulnerability anywhere in your
             app, every user&apos;s tokens are exposed.
@@ -249,7 +249,7 @@ export default function JwtSecurityBestPracticesPage() {
             strategy.
           </p>
           <p>
-            <strong>Fix:</strong> Implement a token blocklist (Redis is ideal — fast lookups,
+            <strong>Fix:</strong> Implement a token blocklist (Redis is ideal . fast lookups,
             automatic TTL-based cleanup) or use short-lived tokens with a refresh token rotation
             scheme. On every request, check the blocklist against the token&apos;s JTI (JWT ID) claim.
             On logout or compromise, add the JTI to the blocklist until the token&apos;s natural expiry.
@@ -261,8 +261,8 @@ export default function JwtSecurityBestPracticesPage() {
             <li>✅ Signing secret is cryptographically random, ≥32 bytes, stored in env vars</li>
             <li>✅ <code>exp</code> claim set on all tokens; access tokens expire in &lt;60 minutes</li>
             <li>✅ No sensitive data (passwords, keys, PII) in JWT payload</li>
-            <li>✅ <code>verify()</code> used everywhere — never <code>decode()</code> for auth decisions</li>
-            <li>✅ Allowed algorithms explicitly specified — no algorithm confusion risk</li>
+            <li>✅ <code>verify()</code> used everywhere . never <code>decode()</code> for auth decisions</li>
+            <li>✅ Allowed algorithms explicitly specified . no algorithm confusion risk</li>
             <li>✅ Tokens stored in httpOnly Secure SameSite cookies, not localStorage</li>
             <li>✅ Revocation strategy: token blocklist or short-lived tokens + refresh rotation</li>
           </ul>
@@ -273,7 +273,7 @@ export default function JwtSecurityBestPracticesPage() {
               Check your API for authentication and security issues
             </p>
             <p className="mt-1 text-sm text-dusty-denim-700 dark:text-dusty-denim-400">
-              Free external scan — headers, CORS, SSL, exposed endpoints, API key exposure. 60 seconds.
+              Free external scan . headers, CORS, SSL, exposed endpoints, API key exposure. 60 seconds.
             </p>
             <Link
               href="/score"
@@ -288,7 +288,7 @@ export default function JwtSecurityBestPracticesPage() {
         {/* CTA */}
         <div className="mt-12 rounded-2xl border border-prussian-blue-200 dark:border-prussian-blue-800 bg-prussian-blue-50 dark:bg-prussian-blue-950/30 p-8 text-center">
           <h3 className="text-xl font-bold text-ink-black-950 dark:text-alabaster-grey-50">
-            Scan Your API Free — 60 Seconds
+            Scan Your API Free . 60 Seconds
           </h3>
           <p className="mt-2 text-sm text-dusty-denim-700 dark:text-dusty-denim-400">
             External security scan catches what code review misses. No signup. No SDK.

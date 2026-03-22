@@ -10,11 +10,11 @@
 - New deploy caused P0/P1 incident
 - Error rate spikes >5% in Sentry after deploy
 - Key API endpoints returning 5xx after deploy
-- Rollback is **always safe** — prefer it over hot-patching in production
+- Rollback is **always safe** . prefer it over hot-patching in production
 
 ---
 
-## Rollback via Vercel (Preferred — ~2 min)
+## Rollback via Vercel (Preferred . ~2 min)
 
 1. Go to https://vercel.com/peter-schliesmanns-projects/scantient/deployments
 2. Find the last **good** deployment (before the bad one)
@@ -52,7 +52,7 @@ If the bad deploy included a schema migration:
 3. If schema rollback is needed → see `database-restore.md`
 4. Re-enable writes (`MAINTENANCE_MODE=false`)
 
-> ⚠️ **Never run `prisma db push` in production** — use `prisma migrate deploy` only.
+> ⚠️ **Never run `prisma db push` in production** . use `prisma migrate deploy` only.
 
 ---
 

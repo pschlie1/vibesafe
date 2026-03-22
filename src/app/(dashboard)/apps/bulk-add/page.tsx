@@ -332,7 +332,7 @@ export default function BulkAddPage() {
             {csvRows.length > 0 && (
               <div>
                 <p className="mb-2 text-xs font-medium text-heading">
-                  Preview — {csvRows.length} row{csvRows.length !== 1 ? "s" : ""} found
+                  Preview . {csvRows.length} row{csvRows.length !== 1 ? "s" : ""} found
                   {csvRows.length > 10 && " (showing first 10)"}
                 </p>
                 <div className="overflow-x-auto rounded-md border">
@@ -351,8 +351,8 @@ export default function BulkAddPage() {
                           <td className="max-w-40 truncate px-3 py-2 font-mono text-heading">
                             {row.url}
                           </td>
-                          <td className="px-3 py-2 text-body">{row.name || "—"}</td>
-                          <td className="px-3 py-2 text-body">{row.owner_email || "—"}</td>
+                          <td className="px-3 py-2 text-body">{row.name || "."}</td>
+                          <td className="px-3 py-2 text-body">{row.owner_email || "."}</td>
                           <td className="px-3 py-2 capitalize text-body">
                             {row.criticality || "medium"}
                           </td>

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "About Scantient — Security Monitoring for AI-Built Apps",
+  title: "About Scantient . Security Monitoring for AI-Built Apps",
   description:
     "Scantient helps IT Directors and CISOs maintain visibility and control over AI-generated applications deployed across their organizations.",
 };

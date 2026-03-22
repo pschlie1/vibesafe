@@ -2,22 +2,22 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "AI Policy Compliance Scanner — Detect Shadow AI & Enforce Usage Policies | Scantient",
+  title: "AI Policy Compliance Scanner . Detect Shadow AI & Enforce Usage Policies | Scantient",
   description:
     "Scan your organization for shadow AI tools, policy gaps, and compliance risks. Scantient detects every AI tool in use, maps it to your policy, and generates audit-ready reports. Free scan.",
   keywords:
     "AI tool compliance scanner, shadow AI detection, AI usage policy enforcement, AI compliance audit",
   openGraph: {
-    title: "AI Policy Compliance Scanner — Detect Shadow AI & Enforce Usage Policies | Scantient",
+    title: "AI Policy Compliance Scanner . Detect Shadow AI & Enforce Usage Policies | Scantient",
     description:
-      "Scan your organization for shadow AI tools, policy gaps, and compliance risks. Free scan — results in minutes.",
+      "Scan your organization for shadow AI tools, policy gaps, and compliance risks. Free scan . results in minutes.",
     url: "https://scantient.com/ai-policy-compliance",
     siteName: "Scantient",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "AI Policy Compliance Scanner — Detect Shadow AI & Enforce Usage Policies",
+    title: "AI Policy Compliance Scanner . Detect Shadow AI & Enforce Usage Policies",
     description:
       "Scan your organization for shadow AI tools, policy gaps, and compliance risks. Free scan.",
   },
@@ -65,7 +65,7 @@ const faqSchema = {
       name: "What is a shadow AI detection scan?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "A shadow AI detection scan examines your organization's network traffic, endpoint activity, and application usage logs to identify AI tools being used without official IT approval. Scantient's scanner provides a complete inventory of every AI tool in use — approved or not — so you know exactly where your policy gaps are.",
+        text: "A shadow AI detection scan examines your organization's network traffic, endpoint activity, and application usage logs to identify AI tools being used without official IT approval. Scantient's scanner provides a complete inventory of every AI tool in use . approved or not . so you know exactly where your policy gaps are.",
       },
     },
     {
@@ -112,7 +112,7 @@ const steps = [
   {
     step: "02",
     title: "Detect",
-    desc: "Get a complete inventory of AI tools in use — approved and unapproved. See which tools handle sensitive data, which users are using them, and what data types are involved.",
+    desc: "Get a complete inventory of AI tools in use . approved and unapproved. See which tools handle sensitive data, which users are using them, and what data types are involved.",
   },
   {
     step: "03",
@@ -201,7 +201,7 @@ export default function AIPolicyCompliancePage() {
         </h1>
         <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-muted">
           Scantient scans your organization for shadow AI tools, maps usage against your policy, and
-          generates audit-ready compliance reports. Know exactly where your AI policy gaps are — before
+          generates audit-ready compliance reports. Know exactly where your AI policy gaps are . before
           your auditors do.
         </p>
         <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
@@ -246,13 +246,13 @@ export default function AIPolicyCompliancePage() {
               <p>
                 Engineers use Copilot, ChatGPT, Claude, Cursor, Codeium, and a dozen other AI tools every day.
                 Most of those tools aren&apos;t in your acceptable-use policy. Many of them process customer
-                data, proprietary code, and credentials — without your knowledge, without data processing
+                data, proprietary code, and credentials . without your knowledge, without data processing
                 agreements, and without audit logs.
               </p>
               <p>
                 When your SOC 2 auditor asks how you govern AI tool usage, &ldquo;we have a policy&rdquo; isn&apos;t
                 enough. They want monitoring evidence, incident logs, and demonstrated controls. The organizations
-                that pass audits are the ones with continuous detection — not point-in-time surveys.
+                that pass audits are the ones with continuous detection . not point-in-time surveys.
               </p>
               <p>
                 Shadow AI isn&apos;t a future risk. It&apos;s happening in your organization right now.
@@ -265,7 +265,7 @@ export default function AIPolicyCompliancePage() {
               { risk: "No DPA coverage for AI tool vendors", severity: "High" },
               { risk: "Credentials pasted into public AI tools", severity: "Critical" },
               { risk: "No audit trail for AI-generated code", severity: "High" },
-              { risk: "AI tool sprawl — no approved allowlist", severity: "Medium" },
+              { risk: "AI tool sprawl . no approved allowlist", severity: "Medium" },
               { risk: "IP ownership gaps in AI-assisted work", severity: "Medium" },
             ].map((item, i) => (
               <div key={i} className="flex items-center justify-between rounded-xl border border-border bg-surface-raised px-5 py-3">
@@ -347,7 +347,7 @@ export default function AIPolicyCompliancePage() {
         <div className="rounded-2xl bg-surface-raised p-12 text-center">
           <h2 className="text-3xl font-bold">Stop guessing. Start scanning.</h2>
           <p className="mx-auto mt-4 max-w-xl text-muted">
-            Get a complete picture of AI tool usage across your organization in minutes. Free scan — no
+            Get a complete picture of AI tool usage across your organization in minutes. Free scan . no
             credit card required. Audit-ready reports from day one.
           </p>
           <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">

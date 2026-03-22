@@ -4,12 +4,12 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "Best API Security Scanners in 2026: Compared for Indie Devs and Startups | Scantient Blog",
   description:
-    "Honest comparison of the best API security scanners in 2026 — Scantient, Snyk, GitGuardian, Aikido, HostedScan, and Checkmarx. Pricing, features, and which one fits your startup stage.",
+    "Honest comparison of the best API security scanners in 2026 . Scantient, Snyk, GitGuardian, Aikido, HostedScan, and Checkmarx. Pricing, features, and which one fits your startup stage.",
   keywords: "API security scanner comparison, best API vulnerability scanner, API security tools 2026, security scanner for startups, DAST tool comparison, API security testing tools",
   openGraph: {
     title: "Best API Security Scanners in 2026: Compared for Indie Devs and Startups",
     description:
-      "Six API security scanners compared honestly. What each one scans, what it misses, and who it&apos;s actually for — with pricing and a clear recommendation matrix for indie devs and startup CTOs.",
+      "Six API security scanners compared honestly. What each one scans, what it misses, and who it&apos;s actually for . with pricing and a clear recommendation matrix for indie devs and startup CTOs.",
     url: "https://scantient.com/blog/api-security-scanner-comparison",
     siteName: "Scantient",
     type: "article",
@@ -88,7 +88,7 @@ export default function ApiSecurityScannerComparisonPage() {
           <p className="mt-4 text-lg text-dusty-denim-700 dark:text-dusty-denim-400">
             Not all security scanners scan the same things. Some find secrets in your code. Some
             analyze your dependencies. Some test your running application. The right tool depends
-            on what you&apos;re trying to protect — and your budget.
+            on what you&apos;re trying to protect . and your budget.
           </p>
           <div className="mt-6 flex items-center gap-4 text-sm text-dusty-denim-500">
             <time dateTime="2026-03-09">March 9, 2026</time>
@@ -102,7 +102,7 @@ export default function ApiSecurityScannerComparisonPage() {
 
           <p>
             The API security scanner market has exploded in the last two years. There are now tools
-            for every layer of the security stack — code analysis, dependency scanning, secrets
+            for every layer of the security stack . code analysis, dependency scanning, secrets
             detection, runtime testing, and continuous monitoring. For an indie dev or early-stage
             startup, the options are overwhelming and the pricing is opaque.
           </p>
@@ -119,26 +119,26 @@ export default function ApiSecurityScannerComparisonPage() {
           </p>
           <ul>
             <li>
-              <strong>SAST (Static Application Security Testing)</strong> — analyzes source code
+              <strong>SAST (Static Application Security Testing)</strong> . analyzes source code
               without running it. Finds code-level vulnerabilities like SQL injection patterns,
               hardcoded secrets, and insecure function calls. Requires code access.
             </li>
             <li>
-              <strong>SCA (Software Composition Analysis)</strong> — scans your dependencies for
+              <strong>SCA (Software Composition Analysis)</strong> . scans your dependencies for
               known CVEs. Tells you which npm packages have known vulnerabilities. Requires access
               to your package.json.
             </li>
             <li>
-              <strong>Secrets Detection</strong> — scans code, git history, and CI/CD for leaked
+              <strong>Secrets Detection</strong> . scans code, git history, and CI/CD for leaked
               credentials, API keys, and tokens. Requires code and git access.
             </li>
             <li>
-              <strong>DAST (Dynamic Application Security Testing)</strong> — tests your running
+              <strong>DAST (Dynamic Application Security Testing)</strong> . tests your running
               application by sending requests to it, just like an attacker would. No code access
               required. Finds runtime issues that SAST misses.
             </li>
             <li>
-              <strong>External Security Monitoring</strong> — continuously scans your production
+              <strong>External Security Monitoring</strong> . continuously scans your production
               API from the outside to detect security posture changes. No code access, no setup.
             </li>
           </ul>
@@ -159,7 +159,7 @@ export default function ApiSecurityScannerComparisonPage() {
             platform designed specifically for indie devs, startups, and small teams.
           </p>
           <p>
-            <strong>What it scans:</strong> Your production API from the outside — TLS
+            <strong>What it scans:</strong> Your production API from the outside . TLS
             configuration, security headers, CORS policy, exposed endpoints, authentication
             signals, certificate validity, and API security posture. No code access, no agent,
             no SDK.
@@ -198,7 +198,7 @@ export default function ApiSecurityScannerComparisonPage() {
           </p>
           <p>
             <strong>What it doesn&apos;t scan:</strong> Your running production API. Snyk analyzes code
-            and dependencies — it can&apos;t tell you whether your deployed API is missing a security
+            and dependencies . it can&apos;t tell you whether your deployed API is missing a security
             header or has a misconfigured CORS policy.
           </p>
           <p>
@@ -255,7 +255,7 @@ export default function ApiSecurityScannerComparisonPage() {
             <strong>Pricing:</strong> Free for public repositories. Developer tier at ~$25/dev/month.
           </p>
           <p>
-            <strong>Best for:</strong> Teams where secrets leakage is the primary concern — i.e.,
+            <strong>Best for:</strong> Teams where secrets leakage is the primary concern . i.e.,
             most teams. Exceptional at what it does and the free tier is genuinely useful.
           </p>
           <p>
@@ -279,7 +279,7 @@ export default function ApiSecurityScannerComparisonPage() {
           </p>
           <p>
             <strong>What it doesn&apos;t scan:</strong> Your live production API externally. Like Snyk,
-            Aikido focuses on the &quot;shift left&quot; approach — finding issues in code before deployment.
+            Aikido focuses on the &quot;shift left&quot; approach . finding issues in code before deployment.
           </p>
           <p>
             <strong>Pricing:</strong> Free tier available. Paid plans vary by team size.
@@ -304,7 +304,7 @@ export default function ApiSecurityScannerComparisonPage() {
             established tools (OpenVAS, ZAP, sslyze, Trivy) as a managed service.
           </p>
           <p>
-            <strong>What it scans:</strong> External attack surface — network ports, TLS
+            <strong>What it scans:</strong> External attack surface . network ports, TLS
             configuration, web application vulnerabilities. More similar to Scantient than the
             code-analysis tools above.
           </p>
@@ -366,12 +366,12 @@ export default function ApiSecurityScannerComparisonPage() {
             What each tool covers:
           </p>
           <ul>
-            <li><strong>Scantient</strong> — External API scanning, runtime security posture, continuous monitoring. Zero setup.</li>
-            <li><strong>Snyk</strong> — Dependencies (SCA), source code (SAST), containers. Requires code access.</li>
-            <li><strong>GitGuardian</strong> — Secrets in git history and CI. Requires git access.</li>
-            <li><strong>Aikido</strong> — Dependencies, code, secrets, containers. Single-pane code analysis.</li>
-            <li><strong>HostedScan</strong> — External network and web scanning. Broader surface, higher cost.</li>
-            <li><strong>Checkmarx</strong> — Deep enterprise SAST. Not for startups.</li>
+            <li><strong>Scantient</strong> . External API scanning, runtime security posture, continuous monitoring. Zero setup.</li>
+            <li><strong>Snyk</strong> . Dependencies (SCA), source code (SAST), containers. Requires code access.</li>
+            <li><strong>GitGuardian</strong> . Secrets in git history and CI. Requires git access.</li>
+            <li><strong>Aikido</strong> . Dependencies, code, secrets, containers. Single-pane code analysis.</li>
+            <li><strong>HostedScan</strong> . External network and web scanning. Broader surface, higher cost.</li>
+            <li><strong>Checkmarx</strong> . Deep enterprise SAST. Not for startups.</li>
           </ul>
 
           <h2>Which Scanner Should You Use?</h2>
@@ -402,8 +402,8 @@ export default function ApiSecurityScannerComparisonPage() {
           </ul>
 
           <p>
-            For a detailed breakdown of the internal vs external scanning distinction — and why you
-            need both — see{" "}
+            For a detailed breakdown of the internal vs external scanning distinction . and why you
+            need both . see{" "}
             <Link href="/blog/what-is-external-security-scanning" className="text-prussian-blue-600 hover:underline">
               what external security scanning is and why every production API needs it
             </Link>
@@ -415,7 +415,7 @@ export default function ApiSecurityScannerComparisonPage() {
         {/* CTA */}
         <div className="mt-12 rounded-2xl border border-prussian-blue-200 dark:border-prussian-blue-800 bg-prussian-blue-50 dark:bg-prussian-blue-950/30 p-8 text-center">
           <h3 className="text-xl font-bold text-ink-black-950 dark:text-alabaster-grey-50">
-            Scan Your API Free — 60 Seconds
+            Scan Your API Free . 60 Seconds
           </h3>
           <p className="mt-2 text-sm text-dusty-denim-700 dark:text-dusty-denim-400">
             See your external API security posture right now. No code access, no signup, no setup.

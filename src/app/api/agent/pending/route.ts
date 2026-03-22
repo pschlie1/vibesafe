@@ -24,7 +24,7 @@ async function resolveAppFromBearer(authHeader: string | null) {
   return app;
 }
 
-/** GET — agent polls to check if a manual scan was requested */
+/** GET . agent polls to check if a manual scan was requested */
 export async function GET(req: Request) {
   const app = await resolveAppFromBearer(req.headers.get("authorization"));
   if (!app) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

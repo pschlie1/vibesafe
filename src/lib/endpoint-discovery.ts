@@ -1,5 +1,5 @@
 /**
- * Tier 1 Auth Surface Scanner — Endpoint Discovery
+ * Tier 1 Auth Surface Scanner . Endpoint Discovery
  *
  * Auto-discovers auth and API endpoints from HTML, JS bundles,
  * framework fingerprinting, wordlist fuzzing, and OpenAPI specs.
@@ -36,11 +36,11 @@ const FRAMEWORK_PATTERNS: Record<
   },
   supabase: {
     signals: [/supabase\.co/, /sb-access-token/, /@supabase/],
-    authPaths: [], // Supabase uses client-side SDK — no server auth routes to probe
+    authPaths: [], // Supabase uses client-side SDK . no server auth routes to probe
   },
   clerk: {
     signals: [/clerk\.accounts\.dev/, /clerk\.com/, /__clerk/],
-    authPaths: [], // Clerk is external — no local routes to probe
+    authPaths: [], // Clerk is external . no local routes to probe
   },
   laravel: {
     signals: [/laravel_session/, /XSRF-TOKEN/, /Laravel/],
@@ -350,7 +350,7 @@ async function fuzzWordlist(
               headers: { "User-Agent": "Scantient/1.0 (Security Monitor)" },
               signal: AbortSignal.timeout(8000),
             },
-            0, // no redirects for fuzzing — check the immediate response
+            0, // no redirects for fuzzing . check the immediate response
           );
           return { path, url, status: res.status };
         } catch {
@@ -364,7 +364,7 @@ async function fuzzWordlist(
       const { path, url, status } = settled.value;
       if (status === 0 || status === 404 || status >= 500) continue;
       if (!ENDPOINT_EXISTS_CODES.has(status) && status !== 200 && status !== 301 && status !== 302) continue;
-      // Treat 301/302 as "might exist" — low confidence
+      // Treat 301/302 as "might exist" . low confidence
       const confidence = status === 200 ? "medium" : status === 401 || status === 405 ? "high" : "low";
       found.push({
         url,

@@ -9,7 +9,7 @@ function sha256(input: string): string {
   return createHash("sha256").update(input).digest("hex");
 }
 
-/** POST — generate a new agent key for the app (ADMIN/OWNER only, PRO+ tier) */
+/** POST . generate a new agent key for the app (ADMIN/OWNER only, PRO+ tier) */
 export async function POST(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await getSession();
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -43,7 +43,7 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
   return NextResponse.json({ plainKey: rawKey, prefix: keyPrefix });
 }
 
-/** DELETE — revoke the agent key for the app (ADMIN/OWNER only) */
+/** DELETE . revoke the agent key for the app (ADMIN/OWNER only) */
 export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await getSession();
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

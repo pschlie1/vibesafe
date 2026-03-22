@@ -4,12 +4,12 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "How to Scan Your Production API for Vulnerabilities (Step-by-Step Guide) | Scantient Blog",
   description:
-    "A step-by-step guide to scanning your production API for security vulnerabilities — headers, CORS, exposed endpoints, TLS, and data leakage. No expensive tools required.",
+    "A step-by-step guide to scanning your production API for security vulnerabilities . headers, CORS, exposed endpoints, TLS, and data leakage. No expensive tools required.",
   keywords: "scan production API vulnerabilities, API vulnerability scanner, how to scan API security, production API security test, external API scan",
   openGraph: {
     title: "How to Scan Your Production API for Vulnerabilities (Step-by-Step Guide)",
     description:
-      "Step-by-step: how to scan your live API for security vulnerabilities from the outside. Headers, CORS, endpoints, TLS, data leakage — and how to fix what you find.",
+      "Step-by-step: how to scan your live API for security vulnerabilities from the outside. Headers, CORS, endpoints, TLS, data leakage . and how to fix what you find.",
     url: "https://scantient.com/blog/how-to-scan-production-api",
     siteName: "Scantient",
     type: "article",
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "How to Scan Your Production API for Vulnerabilities (Step-by-Step Guide)",
     description:
-      "How to find vulnerabilities in your live production API — a practical walkthrough from external scan to fixed findings.",
+      "How to find vulnerabilities in your live production API . a practical walkthrough from external scan to fixed findings.",
   },
 };
 
@@ -28,7 +28,7 @@ const articleSchema = {
   "@type": "Article",
   headline: "How to Scan Your Production API for Vulnerabilities (Step-by-Step Guide)",
   description:
-    "A step-by-step guide to scanning your production API for security vulnerabilities — headers, CORS, exposed endpoints, TLS, and data leakage. No expensive tools required.",
+    "A step-by-step guide to scanning your production API for security vulnerabilities . headers, CORS, exposed endpoints, TLS, and data leakage. No expensive tools required.",
   datePublished: "2026-02-08T00:00:00Z",
   dateModified: "2026-02-08T00:00:00Z",
   author: { "@type": "Organization", name: "Scantient" },
@@ -87,7 +87,7 @@ export default function HowToScanProductionApiPage() {
           </h1>
           <p className="mt-4 text-lg text-dusty-denim-700 dark:text-dusty-denim-400">
             Your code looks clean in review. Your tests pass. But what does your live API look like
-            to someone probing it from the internet? This guide walks through how to find out —
+            to someone probing it from the internet? This guide walks through how to find out .
             step by step.
           </p>
           <div className="mt-6 flex items-center gap-4 text-sm text-dusty-denim-500">
@@ -101,13 +101,13 @@ export default function HowToScanProductionApiPage() {
         <div className="prose prose-slate dark:prose-invert max-w-none">
 
           <p>
-            Most API security problems aren&apos;t in the code — they&apos;re in the configuration. Missing
+            Most API security problems aren&apos;t in the code . they&apos;re in the configuration. Missing
             headers. Overpermissive CORS. Endpoints that respond to unauthenticated requests.
             These issues are invisible to static analysis tools and unit tests because they only
             appear when your API is actually running in production, handling real HTTP traffic.
           </p>
           <p>
-            The only way to find them is to scan your live API from the outside — the same
+            The only way to find them is to scan your live API from the outside . the same
             perspective an attacker has. This guide walks through exactly how to do that, step
             by step.
           </p>
@@ -122,34 +122,34 @@ export default function HowToScanProductionApiPage() {
           <h2>What You&apos;re Looking For</h2>
           <p>
             A production API vulnerability scan is looking for things that are wrong in the
-            deployed state of your application — not in your source code. The main categories:
+            deployed state of your application . not in your source code. The main categories:
           </p>
           <ul>
             <li>
-              <strong>Missing security headers</strong> — Content-Security-Policy, HSTS,
+              <strong>Missing security headers</strong> . Content-Security-Policy, HSTS,
               X-Frame-Options, X-Content-Type-Options, Referrer-Policy. These control browser
               behavior and prevent a range of client-side attacks.
             </li>
             <li>
-              <strong>Overpermissive CORS</strong> — APIs that return <code>Access-Control-Allow-Origin: *</code>
+              <strong>Overpermissive CORS</strong> . APIs that return <code>Access-Control-Allow-Origin: *</code>
               on authenticated endpoints, or that reflect arbitrary origins without validation.
             </li>
             <li>
-              <strong>Exposed endpoints</strong> — Routes that respond with data or accept
+              <strong>Exposed endpoints</strong> . Routes that respond with data or accept
               mutations without requiring authentication. Debug routes, admin endpoints, and
               health checks that return sensitive system information.
             </li>
             <li>
-              <strong>TLS/SSL issues</strong> — Expired certificates, weak cipher suites, missing
+              <strong>TLS/SSL issues</strong> . Expired certificates, weak cipher suites, missing
               HSTS headers, or HTTP-to-HTTPS redirect failures.
             </li>
             <li>
-              <strong>Response data leakage</strong> — API responses that include sensitive fields
+              <strong>Response data leakage</strong> . API responses that include sensitive fields
               (internal IDs, stack traces, environment names, database details) that should be
               stripped before returning to clients.
             </li>
             <li>
-              <strong>Missing rate limiting</strong> — Authentication endpoints that accept
+              <strong>Missing rate limiting</strong> . Authentication endpoints that accept
               unlimited requests, enabling credential stuffing and brute force attacks.
             </li>
           </ul>
@@ -158,7 +158,7 @@ export default function HowToScanProductionApiPage() {
           <p>
             The fastest way to get an external perspective on your production API is to run an
             automated external scan. You&apos;re looking for a tool that sends real HTTP requests to
-            your live endpoints — not one that analyzes your source code.
+            your live endpoints . not one that analyzes your source code.
           </p>
           <p>
             Go to{" "}
@@ -176,7 +176,7 @@ export default function HowToScanProductionApiPage() {
             <li>Response data field analysis</li>
           </ul>
           <p>
-            The whole process takes under 60 seconds. No signup. No SDK or agent to install —
+            The whole process takes under 60 seconds. No signup. No SDK or agent to install .
             the scanner operates entirely from the network, seeing exactly what an external
             attacker would see.
           </p>
@@ -201,7 +201,7 @@ export default function HowToScanProductionApiPage() {
           <h2>Step 2: Review the Security Headers Report</h2>
           <p>
             Once your scan completes, start with the security headers section. This is typically
-            where most APIs have the most findings — and most are fixable in under 30 minutes.
+            where most APIs have the most findings . and most are fixable in under 30 minutes.
           </p>
           <p>
             For each failing header, the fix is usually adding a line to your server configuration
@@ -222,7 +222,7 @@ export default function HowToScanProductionApiPage() {
               prevent your app from being embedded in iframes (clickjacking protection).
             </li>
             <li>
-              <strong>Missing CSP:</strong> Content-Security-Policy is more complex — start with a
+              <strong>Missing CSP:</strong> Content-Security-Policy is more complex . start with a
               restrictive policy and loosen as needed. Even a basic <code>default-src &apos;self&apos;</code>
               is better than nothing.
             </li>
@@ -247,11 +247,11 @@ export default function HowToScanProductionApiPage() {
             </li>
             <li>
               APIs that reflect the <code>Origin</code> request header directly back in
-              <code>Access-Control-Allow-Origin</code> without validation — this effectively
+              <code>Access-Control-Allow-Origin</code> without validation . this effectively
               allows any origin.
             </li>
             <li>
-              Missing <code>Vary: Origin</code> header when CORS responses vary by origin —
+              Missing <code>Vary: Origin</code> header when CORS responses vary by origin .
               this can cause cache poisoning.
             </li>
           </ul>
@@ -271,18 +271,18 @@ export default function HowToScanProductionApiPage() {
           </p>
           <ul>
             <li>
-              <strong><code>/api/health</code> or <code>/healthz</code></strong> — These are
-              expected to be public. But check what they return — some health endpoints expose
+              <strong><code>/api/health</code> or <code>/healthz</code></strong> . These are
+              expected to be public. But check what they return . some health endpoints expose
               version numbers, environment names, database connection status, or dependency
               versions. Trim the response to just <code>&#123;"status": "ok"&#125;</code>.
             </li>
             <li>
-              <strong>Admin or internal routes</strong> — If <code>/api/admin/*</code> or
+              <strong>Admin or internal routes</strong> . If <code>/api/admin/*</code> or
               <code>/api/internal/*</code> responds to unauthenticated requests, this is a
               critical finding. Add authentication middleware immediately.
             </li>
             <li>
-              <strong>Debug or development routes</strong> — Routes added during development
+              <strong>Debug or development routes</strong> . Routes added during development
               and never removed. Common examples: <code>/api/debug</code>,
               <code>/api/test</code>, <code>/api/seed</code>. Delete them.
             </li>
@@ -295,16 +295,16 @@ export default function HowToScanProductionApiPage() {
           </p>
           <ul>
             <li>
-              <strong>Certificate expiry</strong> — Set up automated renewal (Let&apos;s Encrypt
+              <strong>Certificate expiry</strong> . Set up automated renewal (Let&apos;s Encrypt
               certbot, or your platform&apos;s managed certificates). An expired cert breaks your
               app for all users.
             </li>
             <li>
-              <strong>HTTP to HTTPS redirect</strong> — Ensure requests to <code>http://</code>
+              <strong>HTTP to HTTPS redirect</strong> . Ensure requests to <code>http://</code>
               redirect to <code>https://</code> with a 301 or 308 response. Not a 200.
             </li>
             <li>
-              <strong>HSTS preloading</strong> — For high-value APIs, submit your domain to the
+              <strong>HSTS preloading</strong> . For high-value APIs, submit your domain to the
               HSTS preload list so browsers never make an insecure connection, even for first
               visits.
             </li>
@@ -313,7 +313,7 @@ export default function HowToScanProductionApiPage() {
           <h2>Step 6: Review the Security Score and Prioritize</h2>
           <p>
             Your scan produces a score reflecting overall API security posture. Use it as a
-            baseline — not a final grade. The goal isn&apos;t a perfect number; it&apos;s tracking
+            baseline . not a final grade. The goal isn&apos;t a perfect number; it&apos;s tracking
             meaningful improvement over time.
           </p>
           <p>
@@ -321,19 +321,19 @@ export default function HowToScanProductionApiPage() {
           </p>
           <ol>
             <li>
-              <strong>Fix critical findings first</strong> — Unauthenticated access to admin
+              <strong>Fix critical findings first</strong> . Unauthenticated access to admin
               endpoints, wildcard CORS on authenticated routes, expired TLS certificates.
             </li>
             <li>
-              <strong>Fix header findings next</strong> — These are low effort, high impact,
+              <strong>Fix header findings next</strong> . These are low effort, high impact,
               and often require only a configuration change.
             </li>
             <li>
-              <strong>Schedule data leakage remediation</strong> — Stripping sensitive fields
+              <strong>Schedule data leakage remediation</strong> . Stripping sensitive fields
               from API responses may require code changes and testing.
             </li>
             <li>
-              <strong>Set up continuous scanning</strong> — A one-time scan is better than nothing,
+              <strong>Set up continuous scanning</strong> . A one-time scan is better than nothing,
               but continuous external monitoring catches new vulnerabilities introduced with each
               deploy.
             </li>
@@ -352,14 +352,14 @@ export default function HowToScanProductionApiPage() {
           <p>
             External scanning catches the configuration-layer vulnerabilities. Code-level
             vulnerabilities require a combination of SAST tools, dependency scanning, and manual
-            review. Both perspectives are necessary — they don&apos;t overlap, they complement each
+            review. Both perspectives are necessary . they don&apos;t overlap, they complement each
             other.
           </p>
 
           <h2>Making Scanning a Habit</h2>
           <p>
             The most valuable thing you can do after your first scan is make it a recurring
-            practice. Your API changes with every deploy — new endpoints, updated dependencies,
+            practice. Your API changes with every deploy . new endpoints, updated dependencies,
             modified configurations. A scan that was green last month may have new findings today.
           </p>
           <p>
@@ -367,7 +367,7 @@ export default function HowToScanProductionApiPage() {
             <Link href="/pricing" className="text-prussian-blue-600 hover:underline">
               Scantient&apos;s LTD plan
             </Link>
-            , you get continuous external monitoring — scans run automatically and you get
+            , you get continuous external monitoring . scans run automatically and you get
             notified when new findings appear. It&apos;s the difference between a security snapshot
             and a security posture.
           </p>
@@ -377,7 +377,7 @@ export default function HowToScanProductionApiPage() {
         {/* CTA */}
         <div className="mt-12 rounded-2xl border border-prussian-blue-200 dark:border-prussian-blue-800 bg-prussian-blue-50 dark:bg-prussian-blue-950/30 p-8 text-center">
           <h3 className="text-xl font-bold text-ink-black-950 dark:text-alabaster-grey-50">
-            Scan Your API Free — 60 Seconds
+            Scan Your API Free . 60 Seconds
           </h3>
           <p className="mt-2 text-sm text-dusty-denim-700 dark:text-dusty-denim-400">
             Start with Step 1 right now. Paste your production API URL and get a scored external

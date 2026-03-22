@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "How to Run a Security Audit When You Don't Have a Security Team",
     description:
-      "You don't need a $50K penetration test to know if your app is secure. Here's how solo founders and small startups can run an effective security audit — systematically, without a security team.",
+      "You don't need a $50K penetration test to know if your app is secure. Here's how solo founders and small startups can run an effective security audit . systematically, without a security team.",
     url: "https://scantient.com/blog/security-audit-no-security-team",
     siteName: "Scantient",
     type: "article",
@@ -87,7 +87,7 @@ export default function SecurityAuditNoSecurityTeamPage() {
           </h1>
           <p className="mt-4 text-lg text-dusty-denim-700 dark:text-dusty-denim-400">
             You don&apos;t need a $50,000 penetration test to know whether your app is secure. Here&apos;s
-            how to run a systematic security audit as a solo founder or small team — and actually
+            how to run a systematic security audit as a solo founder or small team . and actually
             fix what you find.
           </p>
           <div className="mt-6 flex items-center gap-4 text-sm text-dusty-denim-500">
@@ -102,14 +102,14 @@ export default function SecurityAuditNoSecurityTeamPage() {
 
           <p>
             Most security advice is written for companies that already have a security team. Threat
-            modeling workshops, red team exercises, formal penetration tests — these are genuinely
+            modeling workshops, red team exercises, formal penetration tests . these are genuinely
             useful, but they&apos;re not accessible to a solo founder shipping a SaaS product between
             customer calls.
           </p>
           <p>
             The good news: the vulnerabilities most likely to sink a startup aren&apos;t sophisticated.
             They&apos;re basic misconfigurations and omissions that show up on every security checklist.
-            You don&apos;t need a security expert to find them — you need a systematic process and the
+            You don&apos;t need a security expert to find them . you need a systematic process and the
             right tools.
           </p>
 
@@ -123,7 +123,7 @@ export default function SecurityAuditNoSecurityTeamPage() {
             A DIY security audit is different. It&apos;s a structured review of your most likely
             attack surface using automated tools, checklists, and a methodical approach. It won&apos;t
             catch every vulnerability, but it will catch the low-hanging fruit that attackers
-            target first — and that&apos;s where most breaches actually happen.
+            target first . and that&apos;s where most breaches actually happen.
           </p>
           <p>
             The goal isn&apos;t perfection. It&apos;s a known, documented security posture that&apos;s
@@ -161,7 +161,7 @@ export default function SecurityAuditNoSecurityTeamPage() {
 
           <h2>Step 2: Secrets and Credential Audit (45 minutes)</h2>
           <p>
-            Leaked credentials are the most common cause of startup security incidents — and
+            Leaked credentials are the most common cause of startup security incidents . and
             they&apos;re completely preventable. This step involves auditing everywhere secrets might
             have been accidentally exposed.
           </p>
@@ -179,7 +179,7 @@ export default function SecurityAuditNoSecurityTeamPage() {
             </li>
             <li>
               <strong>Hardcoded credential check:</strong> Search your codebase for common secret
-              patterns — API keys, passwords, connection strings. Your IDE&apos;s global search is
+              patterns . API keys, passwords, connection strings. Your IDE&apos;s global search is
               sufficient for small codebases.
             </li>
             <li>
@@ -189,7 +189,7 @@ export default function SecurityAuditNoSecurityTeamPage() {
             </li>
           </ul>
           <p>
-            If you find any secrets in git history, rotate them immediately — then clean the
+            If you find any secrets in git history, rotate them immediately . then clean the
             history (though rotation is more urgent than the cleanup).
           </p>
 
@@ -225,11 +225,11 @@ export default function SecurityAuditNoSecurityTeamPage() {
           {/* Inline CTA */}
           <div className="not-prose my-8 rounded-2xl border border-prussian-blue-200 dark:border-prussian-blue-800 bg-prussian-blue-50 dark:bg-prussian-blue-950/30 p-6 text-center">
             <p className="font-semibold text-ink-black-950 dark:text-alabaster-grey-50">
-              Start with the external scan — it takes 60 seconds
+              Start with the external scan . it takes 60 seconds
             </p>
             <p className="mt-1 text-sm text-dusty-denim-700 dark:text-dusty-denim-400">
               Scantient scans your production API from the outside, just like an attacker would.
-              Get a security score and prioritized findings — free, no signup.
+              Get a security score and prioritized findings . free, no signup.
             </p>
             <Link
               href="/score"
@@ -248,7 +248,7 @@ export default function SecurityAuditNoSecurityTeamPage() {
           <ul>
             <li>
               Run <code>npm audit</code> (or <code>yarn audit</code>) and review the output.
-              Critical and high severity findings need immediate action — they typically have
+              Critical and high severity findings need immediate action . they typically have
               known exploits.
             </li>
             <li>
@@ -264,8 +264,8 @@ export default function SecurityAuditNoSecurityTeamPage() {
 
           <h2>Step 5: Input Validation and Injection Testing (45 minutes)</h2>
           <p>
-            Injection vulnerabilities — SQL injection, command injection, and their modern variants
-            — are preventable but still common. Test your API&apos;s input handling by:
+            Injection vulnerabilities . SQL injection, command injection, and their modern variants
+            . are preventable but still common. Test your API&apos;s input handling by:
           </p>
           <ul>
             <li>
@@ -313,11 +313,11 @@ export default function SecurityAuditNoSecurityTeamPage() {
             <li>Create a GitHub issue (or linear/notion ticket) for every finding</li>
             <li>Label by severity: Critical, High, Medium, Low</li>
             <li>Assign Critical and High findings to the current sprint</li>
-            <li>Document what you tested and what the results were — this is your audit evidence</li>
+            <li>Document what you tested and what the results were . this is your audit evidence</li>
           </ul>
           <p>
             This documentation matters beyond the immediate fixes. If you&apos;re ever asked by a
-            customer, investor, or regulator about your security posture, you want receipts — not
+            customer, investor, or regulator about your security posture, you want receipts . not
             just verbal assurances.
           </p>
 
@@ -331,7 +331,7 @@ export default function SecurityAuditNoSecurityTeamPage() {
               <Link href="/security-checklist" className="text-prussian-blue-600 hover:underline">
                 security checklist
               </Link>
-              {" "}— it takes 30 minutes once you&apos;ve done it once
+              {" "}. it takes 30 minutes once you&apos;ve done it once
             </li>
             <li>Set up automated external scanning so you&apos;re alerted when your security posture degrades</li>
             <li>Add dependency scanning to your CI/CD pipeline for continuous coverage</li>
@@ -374,11 +374,11 @@ export default function SecurityAuditNoSecurityTeamPage() {
         {/* CTA */}
         <div className="mt-12 rounded-2xl border border-prussian-blue-200 dark:border-prussian-blue-800 bg-prussian-blue-50 dark:bg-prussian-blue-950/30 p-8 text-center">
           <h3 className="text-xl font-bold text-ink-black-950 dark:text-alabaster-grey-50">
-            Scan Your API Free — 60 Seconds
+            Scan Your API Free . 60 Seconds
           </h3>
           <p className="mt-2 text-sm text-dusty-denim-700 dark:text-dusty-denim-400">
             Start your audit with an external scan. Scantient checks your live API for security
-            misconfigurations — no setup, no code access, no security team required.
+            misconfigurations . no setup, no code access, no security team required.
           </p>
           <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link

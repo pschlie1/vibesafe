@@ -31,7 +31,7 @@ Or clone it from the repository:
 curl -o scan-agent.mjs https://raw.githubusercontent.com/pschlie1/scantient/main/scripts/scan-agent.mjs
 ```
 
-No `npm install` needed — the script uses **only Node.js built-ins**.
+No `npm install` needed . the script uses **only Node.js built-ins**.
 
 ---
 
@@ -41,8 +41,8 @@ Set these environment variables before running:
 
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
-| `SCANTIENT_AGENT_KEY` | ✅ Yes | — | Agent key from your dashboard (`sa_...`) |
-| `SCANTIENT_APP_URL` | ✅ Yes | — | Internal URL to scan (e.g. `https://internal.corp.example`) |
+| `SCANTIENT_AGENT_KEY` | ✅ Yes |  | Agent key from your dashboard (`sa_...`) |
+| `SCANTIENT_APP_URL` | ✅ Yes |  | Internal URL to scan (e.g. `https://internal.corp.example`) |
 | `SCANTIENT_API_URL` | No | `https://scantient.com` | Scantient API base URL (change for self-hosted) |
 
 ---
@@ -59,13 +59,13 @@ Expected output:
 
 ```
 [scantient-agent] Starting scan of https://internal.corp.example
-[scantient-agent] Fetched https://internal.corp.example — HTTP 200 in 342ms
+[scantient-agent] Fetched https://internal.corp.example . HTTP 200 in 342ms
 [scantient-agent] Found 3 finding(s):
   🟡 [MEDIUM] X-Frame-Options header missing (MISSING_X_FRAME_OPTIONS)
   🔵 [LOW] X-Content-Type-Options header missing (MISSING_X_CONTENT_TYPE_OPTIONS)
   🔵 [LOW] Server header reveals version information (SERVER_VERSION_DISCLOSED)
 [scantient-agent] Posting results to https://scantient.com/api/agent/scan
-[scantient-agent] ✅ Scan submitted — runId: clx..., status: HEALTHY, findings: 3
+[scantient-agent] ✅ Scan submitted . runId: clx..., status: HEALTHY, findings: 3
 ```
 
 Exit code `0` = success, `1` = failure.

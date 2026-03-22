@@ -30,7 +30,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Viewers have read-only access" }, { status: 403 });
   }
 
-  // audit-23: Rate limit bulk add — 5 requests per hour per org (each can add up to 50 apps).
+  // audit-23: Rate limit bulk add . 5 requests per hour per org (each can add up to 50 apps).
   // Without this limit the endpoint could be used to exhaust storage or create thousands of
   // scan jobs in rapid succession by bypassing the per-request app-count checks.
   const rl = await checkRateLimit(`apps-bulk:${session.orgId}`, {
@@ -98,7 +98,7 @@ export async function POST(req: Request) {
         continue;
       }
 
-      // audit-23: SSRF guard — reject private/internal URLs per-entry.
+      // audit-23: SSRF guard . reject private/internal URLs per-entry.
       // The single-app POST /api/apps correctly blocks these, but the bulk endpoint
       // previously skipped this check, letting attackers register internal addresses
       // (e.g. 169.254.169.254, 10.x.x.x) that would then be fetched by the scanner.
@@ -143,7 +143,7 @@ export async function POST(req: Request) {
       }
     }
 
-    // audit-23: Audit log for bulk add operations — ensures compliance trail matches
+    // audit-23: Audit log for bulk add operations . ensures compliance trail matches
     // single-app create behaviour (which always calls logAudit).
     if (created > 0) {
       await logAudit(

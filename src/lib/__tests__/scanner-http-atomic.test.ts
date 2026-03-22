@@ -1,7 +1,7 @@
 /**
  * scanner-http-atomic.test.ts
  * Audit 18: Verify that runDueHttpScans() uses a single $transaction to
- * atomically claim due apps — preventing the TOCTOU race where two concurrent
+ * atomically claim due apps . preventing the TOCTOU race where two concurrent
  * cron invocations both read the same due apps before either bumps nextCheckAt.
  */
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -110,7 +110,7 @@ beforeEach(() => {
   auditLogCreateMany.mockResolvedValue({ count: 0 });
 });
 
-describe("runDueHttpScans — atomic claim via $transaction (Audit 18)", () => {
+describe("runDueHttpScans . atomic claim via $transaction (Audit 18)", () => {
   it("calls db.$transaction to claim due apps atomically", async () => {
     const { runDueHttpScans } = await import("@/lib/scanner-http");
     await runDueHttpScans(10);
@@ -144,7 +144,7 @@ describe("runDueHttpScans — atomic claim via $transaction (Audit 18)", () => {
     txFindMany.mockResolvedValueOnce(apps);
     txUpdateMany.mockResolvedValueOnce({ count: 2 });
 
-    // runHttpScanForApp will try to fetch app details — return null so scans fail gracefully
+    // runHttpScanForApp will try to fetch app details . return null so scans fail gracefully
     monitoredAppFindUnique.mockResolvedValue(null);
 
     const { runDueHttpScans } = await import("@/lib/scanner-http");
@@ -159,7 +159,7 @@ describe("runDueHttpScans — atomic claim via $transaction (Audit 18)", () => {
   });
 
   it("does NOT call the outer db.monitoredApp.findMany (no TOCTOU path)", async () => {
-    // The top-level db.monitoredApp.findMany must not be called — only tx.monitoredApp.findMany
+    // The top-level db.monitoredApp.findMany must not be called . only tx.monitoredApp.findMany
     const dbFindMany = vi.fn();
     // Patch the db mock to expose a top-level findMany that should remain uncalled
     const { db } = await import("@/lib/db");
@@ -174,7 +174,7 @@ describe("runDueHttpScans — atomic claim via $transaction (Audit 18)", () => {
   });
 });
 
-describe("runDueHttpScans — tier filtering", () => {
+describe("runDueHttpScans . tier filtering", () => {
   it("includes tier filter in findMany query when tiers option is provided", async () => {
     txFindMany.mockResolvedValueOnce([]);
     const { runDueHttpScans } = await import("@/lib/scanner-http");

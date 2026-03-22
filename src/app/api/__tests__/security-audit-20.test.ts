@@ -2,11 +2,11 @@
  * security-audit-20.test.ts
  *
  * Tests for Audit-20 security fixes:
- *  1. Reserved org slug blocklist — "api"/"admin"/etc. get a random suffix
- *  2. Password complexity — min 12 + uppercase + lowercase + digit + special char
- *  3. Cache-Control exemption — /api/public/ routes excluded from no-store
- *  4. Audit log completeness — logAudit called on key create/delete + org creation
- *  5. Input length limits — orgName max 64, name max 100
+ *  1. Reserved org slug blocklist . "api"/"admin"/etc. get a random suffix
+ *  2. Password complexity . min 12 + uppercase + lowercase + digit + special char
+ *  3. Cache-Control exemption . /api/public/ routes excluded from no-store
+ *  4. Audit log completeness . logAudit called on key create/delete + org creation
+ *  5. Input length limits . orgName max 64, name max 100
  */
 
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -123,7 +123,7 @@ function makeReq(body: unknown, method = "POST") {
 }
 
 // =============================================================================
-// 1. Reserved Org Slug Blocklist — unit tests on isReservedSlug + passwordSchema
+// 1. Reserved Org Slug Blocklist . unit tests on isReservedSlug + passwordSchema
 // =============================================================================
 describe("A20-1: isReservedSlug (unit)", () => {
   it("is exported from @/lib/validation", async () => {
@@ -198,7 +198,7 @@ describe("A20-1: RESERVED_SLUGS set (unit)", () => {
   });
 });
 
-describe("A20-1: Signup route — reserved slug handling (source inspection)", () => {
+describe("A20-1: Signup route . reserved slug handling (source inspection)", () => {
   it("signup/route.ts imports isReservedSlug from @/lib/validation", () => {
     const src = readFileSync(resolve(__dir, "../auth/signup/route.ts"), "utf8");
     expect(src).toContain("isReservedSlug");
@@ -218,7 +218,7 @@ describe("A20-1: Signup route — reserved slug handling (source inspection)", (
   });
 });
 
-describe("A20-1: Signup route — reserved slug behavioral test", () => {
+describe("A20-1: Signup route . reserved slug behavioral test", () => {
   function makeSignupOrg(org: object) {
     return {
       id: "org-1",
@@ -286,7 +286,7 @@ describe("A20-1: Signup route — reserved slug behavioral test", () => {
 });
 
 // =============================================================================
-// 2. Password Complexity — passwordSchema unit tests
+// 2. Password Complexity . passwordSchema unit tests
 // =============================================================================
 describe("A20-2: passwordSchema (unit)", () => {
   it("is exported from @/lib/validation", async () => {
@@ -341,7 +341,7 @@ describe("A20-2: passwordSchema (unit)", () => {
 });
 
 // ─── Signup route: password complexity ────────────────────────────────────────
-describe("A20-2: Signup route — password complexity enforcement", () => {
+describe("A20-2: Signup route . password complexity enforcement", () => {
   it("returns 400 for password with no uppercase letter", async () => {
     const { POST } = await import("@/app/api/auth/signup/route");
     const res = await POST(
@@ -381,7 +381,7 @@ describe("A20-2: Signup route — password complexity enforcement", () => {
 });
 
 // ─── Reset-password route: password complexity ────────────────────────────────
-describe("A20-2: Reset-password route — password complexity enforcement", () => {
+describe("A20-2: Reset-password route . password complexity enforcement", () => {
   it("returns 400 for password with no uppercase letter", async () => {
     const { POST } = await import("@/app/api/auth/reset-password/route");
     const res = await POST(makeReq({ token: "sometoken", password: "alllowercase123!" }));
@@ -415,7 +415,7 @@ describe("A20-2: Reset-password route — password complexity enforcement", () =
 });
 
 // ─── Invite route: password complexity ────────────────────────────────────────
-describe("A20-2: Invite route — password complexity enforcement", () => {
+describe("A20-2: Invite route . password complexity enforcement", () => {
   function validInvite() {
     return {
       token: "tok",
@@ -504,7 +504,7 @@ describe("A20-3: Cache-Control exemption for /api/public/ routes (source inspect
 // =============================================================================
 // 4. Audit Log Completeness
 // =============================================================================
-describe("A20-4: Audit log — keys/route.ts (source inspection)", () => {
+describe("A20-4: Audit log . keys/route.ts (source inspection)", () => {
   it("keys/route.ts imports logAudit", () => {
     const src = readFileSync(resolve(__dir, "../keys/route.ts"), "utf8");
     expect(src).toContain("logAudit");
@@ -517,7 +517,7 @@ describe("A20-4: Audit log — keys/route.ts (source inspection)", () => {
   });
 });
 
-describe("A20-4: Audit log — keys/[id]/route.ts (source inspection)", () => {
+describe("A20-4: Audit log . keys/[id]/route.ts (source inspection)", () => {
   it("keys/[id]/route.ts imports logAudit", () => {
     const src = readFileSync(resolve(__dir, "../keys/[id]/route.ts"), "utf8");
     expect(src).toContain("logAudit");
@@ -525,13 +525,13 @@ describe("A20-4: Audit log — keys/[id]/route.ts (source inspection)", () => {
 
   it("keys/[id]/route.ts calls logAudit after API key deletion", () => {
     const src = readFileSync(resolve(__dir, "../keys/[id]/route.ts"), "utf8");
-    // Action may be "api_key.revoked" or "key.deleted" — check one is present
+    // Action may be "api_key.revoked" or "key.deleted" . check one is present
     expect(src).toMatch(/api_key\.(revoked|deleted)|key\.(deleted|revoked)/);
     expect(src).toMatch(/await logAudit\(/);
   });
 });
 
-describe("A20-4: Audit log — signup/route.ts org.created (source inspection)", () => {
+describe("A20-4: Audit log . signup/route.ts org.created (source inspection)", () => {
   it("signup/route.ts imports logAudit", () => {
     const src = readFileSync(resolve(__dir, "../auth/signup/route.ts"), "utf8");
     expect(src).toContain("logAudit");
@@ -545,7 +545,7 @@ describe("A20-4: Audit log — signup/route.ts org.created (source inspection)",
   });
 });
 
-describe("A20-4: Audit log — signup behavioral", () => {
+describe("A20-4: Audit log . signup behavioral", () => {
   it("logAudit is called with org.created after successful signup", async () => {
     userFindFirst.mockResolvedValueOnce(null);
     orgCreate.mockResolvedValueOnce({
@@ -573,7 +573,7 @@ describe("A20-4: Audit log — signup behavioral", () => {
 // =============================================================================
 // 5. Input Length Limits
 // =============================================================================
-describe("A20-5: Input length limits — signup route", () => {
+describe("A20-5: Input length limits . signup route", () => {
   it("returns 400 when orgName exceeds 64 characters", async () => {
     const { POST } = await import("@/app/api/auth/signup/route");
     const res = await POST(
@@ -651,7 +651,7 @@ describe("A20-5: Input length limits — signup route", () => {
   });
 });
 
-describe("A20-5: Input length limits — invite acceptance route", () => {
+describe("A20-5: Input length limits . invite acceptance route", () => {
   function validInvite() {
     return {
       token: "tok",

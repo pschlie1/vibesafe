@@ -2,13 +2,13 @@
  * security-audit-19.test.ts
  *
  * Tests for Audit-19 security fixes:
- *  1. Email enumeration in forgot-password — always returns 200 (already fixed, now tested)
- *  2. HTML injection in alert email templates — escapeHtml() applied to buildAlertHtml()
- *  3. Session invalidation after password reset — getSession() returns null when
+ *  1. Email enumeration in forgot-password . always returns 200 (already fixed, now tested)
+ *  2. HTML injection in alert email templates . escapeHtml() applied to buildAlertHtml()
+ *  3. Session invalidation after password reset . getSession() returns null when
  *     user.updatedAt > token.iat (in the DB-refresh path)
- *  4. Invite token expiry enforcement — GET /invite/[token] returns 410 for expired invites
- *  5. Cache-Control: no-store on sensitive API routes — set by middleware
- *  6. Unverified email login — login returns 403 if emailVerified is false
+ *  4. Invite token expiry enforcement . GET /invite/[token] returns 410 for expired invites
+ *  5. Cache-Control: no-store on sensitive API routes . set by middleware
+ *  6. Unverified email login . login returns 403 if emailVerified is false
  */
 
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -121,7 +121,7 @@ function makeOldToken(
 }
 
 // =============================================================================
-// 1. Email Enumeration — forgot-password always returns 200
+// 1. Email Enumeration . forgot-password always returns 200
 // =============================================================================
 describe("A19-1: Forgot-password email enumeration prevention", () => {
   it("returns 200 { ok: true } when email does NOT exist in DB", async () => {
@@ -161,7 +161,7 @@ describe("A19-1: Forgot-password email enumeration prevention", () => {
 });
 
 // =============================================================================
-// 2. HTML Injection in Alert Email Templates — escapeHtml + buildAlertHtml
+// 2. HTML Injection in Alert Email Templates . escapeHtml + buildAlertHtml
 // =============================================================================
 describe("A19-2: escapeHtml utility", () => {
   it("is exported from @/lib/alerts", async () => {
@@ -247,7 +247,7 @@ describe("A19-3: reset-password route touches updatedAt", () => {
   });
 });
 
-describe("A19-3: auth.ts source — session invalidation logic present", () => {
+describe("A19-3: auth.ts source . session invalidation logic present", () => {
   it("contains the updatedAt > tokenIssuedAt comparison", () => {
     const src = readFileSync(resolve(__dir, "../../../lib/auth.ts"), "utf8");
     expect(src).toContain("user.updatedAt > tokenIssuedAt");
@@ -268,7 +268,7 @@ describe("A19-3: auth.ts source — session invalidation logic present", () => {
   });
 });
 
-describe("A19-3: getSession() behavioral — invalidation when user.updatedAt > token.iat", () => {
+describe("A19-3: getSession() behavioral . invalidation when user.updatedAt > token.iat", () => {
   it("returns null when user was updated after token was issued (password reset scenario)", async () => {
     // Create a token issued 10 minutes ago → triggers DB-refresh path (age > 5min REFRESH_THRESHOLD)
     const token = makeOldToken("user_1", "org_1", 10);
@@ -323,7 +323,7 @@ describe("A19-3: getSession() behavioral — invalidation when user.updatedAt > 
 });
 
 // =============================================================================
-// 4. Invite Token Expiry Enforcement — GET /invite/[token]
+// 4. Invite Token Expiry Enforcement . GET /invite/[token]
 // =============================================================================
 describe("A19-4: Invite token expiry enforcement (GET)", () => {
   it("GET returns 404 when invite not found", async () => {
@@ -447,7 +447,7 @@ describe("A19-6: Login blocks unverified email accounts", () => {
     expect(body.error).toMatch(/verify.*email|email.*verify/i);
   });
 
-  it("returns 401 (not 403) when user is not found — no info leak about verification status", async () => {
+  it("returns 401 (not 403) when user is not found . no info leak about verification status", async () => {
     userFindFirst.mockResolvedValueOnce(null);
     const { POST } = await import("@/app/api/auth/login/route");
     const res = await POST(makeReq({ email: "ghost@example.com", password: "password123!" }));

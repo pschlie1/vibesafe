@@ -151,7 +151,7 @@ async function verifyAppOwnership(appId: string, orgId: string) {
 
 // --- Get severity counts for open findings of an app ---
 async function getSeverityCounts(appId: string) {
-  // Cap at 2 000 — sufficient for accurate scoring; prevents OOM on large apps.
+  // Cap at 2 000 . sufficient for accurate scoring; prevents OOM on large apps.
   const findings = await db.finding.findMany({
     where: {
       run: { appId },
@@ -320,7 +320,7 @@ async function executeTool(name: string, args: Record<string, unknown>, orgId: s
       });
       const appIdList = appIds.map((a) => a.id);
 
-      // Cap at 5000 findings — sufficient for metrics; prevents OOM on large orgs
+      // Cap at 5000 findings . sufficient for metrics; prevents OOM on large orgs
       const allFindings = await db.finding.findMany({
         where: { run: { appId: { in: appIdList } } },
         select: { status: true, createdAt: true, resolvedAt: true, acknowledgedAt: true },

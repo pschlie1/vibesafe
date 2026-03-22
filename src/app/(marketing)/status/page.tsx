@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "System Status — Scantient",
+  title: "System Status . Scantient",
   description: "Current operational status of Scantient services.",
 };
 

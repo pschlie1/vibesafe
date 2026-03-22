@@ -116,7 +116,7 @@ async function handler(req: Request): Promise<NextResponse> {
     );
   }
 
-  // Run lite checks (sync only — fast)
+  // Run lite checks (sync only . fast)
   const allFindings: SecurityFinding[] = [
     ...checkSecurityHeaders(headers),
     ...checkMetaAndConfig(html, headers),

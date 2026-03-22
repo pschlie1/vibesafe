@@ -4,12 +4,12 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "GraphQL Security: The Unique Vulnerabilities API Builders Miss | Scantient Blog",
   description:
-    "GraphQL introduces unique security risks REST APIs don't have. Introspection attacks, batching abuse, depth limiting, query complexity — what they are and how to fix them before launch.",
+    "GraphQL introduces unique security risks REST APIs don't have. Introspection attacks, batching abuse, depth limiting, query complexity . what they are and how to fix them before launch.",
   keywords: "GraphQL security, GraphQL API vulnerabilities, GraphQL introspection attack, GraphQL rate limiting, GraphQL depth limiting, secure GraphQL API",
   openGraph: {
     title: "GraphQL Security: The Unique Vulnerabilities API Builders Miss",
     description:
-      "GraphQL's flexibility is its biggest feature and its biggest security risk. Introspection attacks, batching abuse, unbounded queries, and query complexity — the vulnerabilities REST developers overlook.",
+      "GraphQL's flexibility is its biggest feature and its biggest security risk. Introspection attacks, batching abuse, unbounded queries, and query complexity . the vulnerabilities REST developers overlook.",
     url: "https://scantient.com/blog/graphql-security-guide",
     siteName: "Scantient",
     type: "article",
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "GraphQL Security: The Unique Vulnerabilities API Builders Miss",
     description:
-      "GraphQL security guide: introspection attacks, batching abuse, depth limiting, and query complexity — the vulnerabilities REST developers miss when switching to GraphQL.",
+      "GraphQL security guide: introspection attacks, batching abuse, depth limiting, and query complexity . the vulnerabilities REST developers miss when switching to GraphQL.",
   },
 };
 
@@ -28,7 +28,7 @@ const articleSchema = {
   "@type": "Article",
   headline: "GraphQL Security: The Unique Vulnerabilities API Builders Miss",
   description:
-    "GraphQL introduces unique security risks REST APIs don't have. Introspection attacks, batching abuse, depth limiting, and query complexity — what they are and how to fix them.",
+    "GraphQL introduces unique security risks REST APIs don't have. Introspection attacks, batching abuse, depth limiting, and query complexity . what they are and how to fix them.",
   datePublished: "2025-11-20T00:00:00Z",
   dateModified: "2025-11-20T00:00:00Z",
   author: { "@type": "Organization", name: "Scantient" },
@@ -86,7 +86,7 @@ export default function GraphqlSecurityGuidePage() {
             GraphQL Security: The Unique Vulnerabilities API Builders Miss
           </h1>
           <p className="mt-4 text-lg text-dusty-denim-700 dark:text-dusty-denim-400">
-            GraphQL&apos;s flexibility is its biggest feature — and its biggest security risk. Developers
+            GraphQL&apos;s flexibility is its biggest feature . and its biggest security risk. Developers
             who switch from REST often carry over REST-era assumptions that leave their GraphQL APIs
             wide open to attacks that simply don&apos;t exist in REST.
           </p>
@@ -102,7 +102,7 @@ export default function GraphqlSecurityGuidePage() {
 
           <p>
             GraphQL gives clients unprecedented flexibility to query exactly the data they need.
-            That flexibility is the entire point — and it&apos;s also why GraphQL security requires a
+            That flexibility is the entire point . and it&apos;s also why GraphQL security requires a
             fundamentally different approach than securing a REST API. The same features that make
             GraphQL powerful create attack surfaces that REST never had.
           </p>
@@ -119,20 +119,20 @@ export default function GraphqlSecurityGuidePage() {
           </p>
           <p>
             In GraphQL, a single endpoint (<code>/graphql</code>) handles all queries. The schema
-            defines every possible query, mutation, and type — and by default, GraphQL is designed
+            defines every possible query, mutation, and type . and by default, GraphQL is designed
             to tell you exactly what that schema contains. A single query can traverse multiple
             relationships, request any combination of fields, and retrieve far more data than any
             individual REST endpoint would return.
           </p>
           <p>
-            This design philosophy — powerful, self-describing, flexible — is what makes GraphQL
+            This design philosophy . powerful, self-describing, flexible . is what makes GraphQL
             great and what makes it dangerous when default configurations are left in place.
           </p>
 
           <h2>1. Introspection Attacks</h2>
           <p>
             GraphQL introspection is a built-in feature that allows clients to query the API&apos;s
-            schema — every type, every field, every query, and every mutation — in a single request.
+            schema . every type, every field, every query, and every mutation . in a single request.
             It&apos;s essential for developer tooling and API documentation.
           </p>
           <p>
@@ -156,19 +156,19 @@ export default function GraphqlSecurityGuidePage() {
             This returns every type and field in your schema, including admin mutations,
             internal types, deprecated fields that still work, and relationships between objects
             that reveal your data model. It&apos;s the equivalent of a REST API returning a complete
-            route listing with parameters — except it&apos;s a feature, not a bug, and it&apos;s enabled by
+            route listing with parameters . except it&apos;s a feature, not a bug, and it&apos;s enabled by
             default in virtually every GraphQL server.
           </p>
           <p><strong>Defense:</strong></p>
           <ul>
             <li>Disable introspection in production. Apollo Server: <code>introspection: false</code>. This is one line of configuration.</li>
             <li>If you need introspection for internal tooling, restrict it by IP or authenticated role.</li>
-            <li>Consider disabling field suggestions (the &quot;Did you mean X?&quot; error messages) — they leak schema information even without introspection.</li>
+            <li>Consider disabling field suggestions (the &quot;Did you mean X?&quot; error messages) . they leak schema information even without introspection.</li>
           </ul>
 
           <h2>2. Batching Attacks</h2>
           <p>
-            GraphQL supports query batching — sending multiple queries in a single HTTP request.
+            GraphQL supports query batching . sending multiple queries in a single HTTP request.
             This is a legitimate performance optimization for clients that need to fetch multiple
             resources simultaneously.
           </p>
@@ -183,7 +183,7 @@ export default function GraphqlSecurityGuidePage() {
           </p>
           <p><strong>Defense:</strong></p>
           <ul>
-            <li>Limit batch size at the server level — reject batches larger than a defined threshold (e.g., 10 operations).</li>
+            <li>Limit batch size at the server level . reject batches larger than a defined threshold (e.g., 10 operations).</li>
             <li>Apply rate limiting at the GraphQL operation level, not just the HTTP request level.</li>
             <li>Consider disabling batching entirely if your clients don&apos;t need it.</li>
             <li>Implement per-field rate limiting on sensitive operations like authentication mutations.</li>
@@ -196,7 +196,7 @@ export default function GraphqlSecurityGuidePage() {
             </p>
             <p className="mt-1 text-sm text-dusty-denim-700 dark:text-dusty-denim-400">
               Scantient scans your live API for exposed headers, TLS misconfiguration, and other
-              security gaps — no code access required.
+              security gaps . no code access required.
             </p>
             <Link
               href="/score"
@@ -239,11 +239,11 @@ export default function GraphqlSecurityGuidePage() {
               that exceed it.
             </li>
             <li>
-              Set a hard limit appropriate to your schema — most legitimate client queries
+              Set a hard limit appropriate to your schema . most legitimate client queries
               don&apos;t need more than 5–7 levels of nesting.
             </li>
             <li>
-              Log and alert on queries that hit the depth limit — they&apos;re almost always either
+              Log and alert on queries that hit the depth limit . they&apos;re almost always either
               attacks or bugs.
             </li>
           </ul>
@@ -276,18 +276,18 @@ export default function GraphqlSecurityGuidePage() {
               automatically with configurable field cost definitions.
             </li>
             <li>
-              Set pagination limits on all list fields — never allow{" "}
+              Set pagination limits on all list fields . never allow{" "}
               <code>first: 10000</code> without a cap.
             </li>
             <li>
-              Consider query timeouts as a backstop — reject any query that takes longer
+              Consider query timeouts as a backstop . reject any query that takes longer
               than a defined threshold to execute.
             </li>
           </ul>
 
           <h2>5. Authorization at the Resolver Level</h2>
           <p>
-            REST APIs typically enforce authorization at the route level — a middleware checks
+            REST APIs typically enforce authorization at the route level . a middleware checks
             whether the authenticated user can access this endpoint. In GraphQL, the same endpoint
             handles all queries, which means authorization must be enforced at the resolver level
             for each field.
@@ -317,7 +317,7 @@ export default function GraphqlSecurityGuidePage() {
 
           <h2>6. Mutation Rate Limiting and CSRF</h2>
           <p>
-            Mutations — GraphQL&apos;s equivalent of POST/PUT/DELETE — can be vulnerable to CSRF if
+            Mutations . GraphQL&apos;s equivalent of POST/PUT/DELETE . can be vulnerable to CSRF if
             your API accepts simple content types or cookies for authentication. While most modern
             GraphQL APIs use token-based auth that naturally prevents CSRF, any API that accepts
             <code>application/x-www-form-urlencoded</code> or <code>text/plain</code> content
@@ -363,10 +363,10 @@ export default function GraphqlSecurityGuidePage() {
         {/* CTA */}
         <div className="mt-12 rounded-2xl border border-prussian-blue-200 dark:border-prussian-blue-800 bg-prussian-blue-50 dark:bg-prussian-blue-950/30 p-8 text-center">
           <h3 className="text-xl font-bold text-ink-black-950 dark:text-alabaster-grey-50">
-            Scan Your API Free — 60 Seconds
+            Scan Your API Free . 60 Seconds
           </h3>
           <p className="mt-2 text-sm text-dusty-denim-700 dark:text-dusty-denim-400">
-            Scantient scans your production API externally — no code access, no SDK, no setup.
+            Scantient scans your production API externally . no code access, no SDK, no setup.
             Get a security score and actionable findings in under a minute.
           </p>
           <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">

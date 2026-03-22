@@ -142,7 +142,7 @@ const tools: Tool[] = [
     description:
       'Scan any public URL for security vulnerabilities. Returns a security score (0-100), ' +
       'grade (A-F), and a list of findings with severity levels and fix recommendations. ' +
-      'No authentication required — use this for quick, one-off scans. ' +
+      'No authentication required . use this for quick, one-off scans. ' +
       'Rate limited to 5 requests/hour per IP.',
     inputSchema: {
       type: 'object',

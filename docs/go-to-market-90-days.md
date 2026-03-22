@@ -1,4 +1,4 @@
-# Scantient — First 90 Days Go-to-Market Plan
+# Scantient . First 90 Days Go-to-Market Plan
 
 *This is the path from $0 to first $10k MRR.*
 
@@ -6,7 +6,7 @@
 
 ## The Founding Insight
 
-IT leaders at mid-market companies are personally accountable for apps their developers ship using AI tools — but have zero visibility into whether those apps are safe. They feel this pain acutely during audits, insurance renewals, and security reviews. They do not yet know Scantient exists.
+IT leaders at mid-market companies are personally accountable for apps their developers ship using AI tools . but have zero visibility into whether those apps are safe. They feel this pain acutely during audits, insurance renewals, and security reviews. They do not yet know Scantient exists.
 
 The job of the first 90 days: find 20-30 of these people, give them the product, and convert 10-15 to paying customers.
 
@@ -20,11 +20,11 @@ The job of the first 90 days: find 20-30 of these people, give them the product,
 ### Channels
 
 **1. Hacker News**
-The Cursor compliance thread (https://news.ycombinator.com/item?id=47043484) has your exact buyer commenting in real time. Post the draft comment in `docs/hn-comment-draft.md`. Engage authentically. Do not pitch — answer the question. People who upvote or reply are warm leads.
+The Cursor compliance thread (https://news.ycombinator.com/item?id=47043484) has your exact buyer commenting in real time. Post the draft comment in `docs/hn-comment-draft.md`. Engage authentically. Do not pitch . answer the question. People who upvote or reply are warm leads.
 
 **2. Reddit**
-- r/sysadmin — post "How are you handling security reviews for AI-generated internal tools?" — genuine question, genuine answer, mention Scantient at the end with disclosure
-- r/msp — "Any MSPs monitoring AI-generated apps across client orgs?" — direct pitch to MSPs, who have the most acute pain
+- r/sysadmin . post "How are you handling security reviews for AI-generated internal tools?" . genuine question, genuine answer, mention Scantient at the end with disclosure
+- r/msp . "Any MSPs monitoring AI-generated apps across client orgs?" . direct pitch to MSPs, who have the most acute pain
 
 **3. LinkedIn**
 Search: "IT Director" OR "CISO" + "Cursor" OR "Lovable" OR "vibe coding". Connect with a personalized note referencing their post or company. Use Template 1 from `docs/outreach/design-partner-email.md`.
@@ -60,13 +60,13 @@ Share `https://scantient.com/score?url=YOUR_APP_URL` in relevant communities. Le
 Any organization that has scanned 5+ apps and seen findings is a conversion candidate. Schedule a 30-minute call. Walk through their findings. Show the compliance score. Ask: "If you had to do a SOC2 audit today, would you want this evidence?"
 
 **The compliance close**
-The strongest close for $399-$1,500/mo: "Your auditor will ask for continuous monitoring evidence. This gives you that evidence automatically, without asking your developers to do anything." Compliance budget is different from IT budget — it is easier to approve.
+The strongest close for $399-$1,500/mo: "Your auditor will ask for continuous monitoring evidence. This gives you that evidence automatically, without asking your developers to do anything." Compliance budget is different from IT budget . it is easier to approve.
 
 **The PagerDuty close (ENTERPRISE)**
 For organizations with an on-call rotation: "When one of these apps goes critical at 2am, who finds out? Right now the answer is no one." PagerDuty integration + $1,500/mo is an easy approval for a CISO who has been paged about an unrelated incident recently.
 
 **Ask for referrals**
-Every person you talk to knows 5 more IT Directors. After any positive conversation — paid or not — ask: "Who else do you know managing AI app sprawl like this?"
+Every person you talk to knows 5 more IT Directors. After any positive conversation . paid or not . ask: "Who else do you know managing AI app sprawl like this?"
 
 ### Metrics for Days 31-60
 - 3 paying customers (target mix: 2 Pro, 1 Enterprise)

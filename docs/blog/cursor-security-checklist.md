@@ -60,9 +60,9 @@ Add `gitleaks` or `trufflehog` to your GitHub Actions pipeline. They scan every 
 
 **Cookie flags**
 If your app sets cookies, check that every cookie has:
-- `Secure` — only sent over HTTPS
-- `HttpOnly` — not accessible via JavaScript
-- `SameSite=Lax` or `SameSite=Strict` — prevents CSRF
+- `Secure` . only sent over HTTPS
+- `HttpOnly` . not accessible via JavaScript
+- `SameSite=Lax` or `SameSite=Strict` . prevents CSRF
 
 AI-generated auth code frequently omits these flags.
 
@@ -77,7 +77,7 @@ Check your API routes. If you see `Access-Control-Allow-Origin: *` on endpoints 
 ## SSL and HTTPS
 
 **Certificate validity**
-Check your SSL certificate expiry date. Most monitoring tools alert 30 days before expiry. AI-generated apps often get deployed once and forgotten — certificates expire without anyone noticing.
+Check your SSL certificate expiry date. Most monitoring tools alert 30 days before expiry. AI-generated apps often get deployed once and forgotten . certificates expire without anyone noticing.
 
 **Mixed content**
 If your page loads any resources (images, scripts, fonts) over HTTP while the page itself is HTTPS, browsers will block them. Search your HTML for `http://` in src attributes.
@@ -123,8 +123,8 @@ Record your app's average response time. Set an alert if it degrades significant
 
 Running this checklist once before launch is not enough. Apps change. Dependencies get updated. Certificates expire. New vulnerabilities get discovered.
 
-Set up automated scanning that runs on a schedule and alerts your team when anything falls below baseline. The scan should be external — it should check your app the same way a user or attacker would, without requiring access to your codebase or infrastructure.
+Set up automated scanning that runs on a schedule and alerts your team when anything falls below baseline. The scan should be external . it should check your app the same way a user or attacker would, without requiring access to your codebase or infrastructure.
 
 ---
 
-*Scantient runs all of these checks automatically against every app in your portfolio. No SDK required — just a URL.*
+*Scantient runs all of these checks automatically against every app in your portfolio. No SDK required . just a URL.*

@@ -1,5 +1,5 @@
 /**
- * Tier 1 Auth Surface Scanner — Security Checks
+ * Tier 1 Auth Surface Scanner . Security Checks
  *
  * Runs 10 auth security checks against discovered endpoints.
  *
@@ -7,9 +7,9 @@
  * - All fetches use ssrfSafeFetch
  * - Max 5 probe requests per endpoint (rate limit / brute force tests)
  * - 200ms minimum delay between repeated requests to same endpoint
- * - Never sends real credentials — only obviously fake test data
+ * - Never sends real credentials . only obviously fake test data
  * - Total timeout: 60 seconds for entire auth scan
- * - Wrapped in try/catch at call site — never breaks main scan
+ * - Wrapped in try/catch at call site . never breaks main scan
  */
 
 import { ssrfSafeFetch } from "@/lib/ssrf-guard";
@@ -24,7 +24,7 @@ const SCAN_TIMEOUT_MS = 60_000;
 const PROBE_DELAY_MS = 200;
 const USER_AGENT = "Scantient/1.0 (Security Monitor)";
 
-// Dummy credentials — obviously fake, never real
+// Dummy credentials . obviously fake, never real
 const DUMMY_EMAIL_NONEXISTENT = "scantient-probe-nonexistent-12345@example.com";
 const DUMMY_EMAIL_ADMIN = "admin@example.com";
 const DUMMY_PASSWORD = "wrong-password-scantient-probe";
@@ -69,7 +69,7 @@ async function postJson(
         body: JSON.stringify(body),
         signal: AbortSignal.timeout(10_000),
       },
-      0, // no redirects — check immediate response
+      0, // no redirects . check immediate response
     );
     const text = await res.text();
     return { status: res.status, text, headers: res.headers };
@@ -253,7 +253,7 @@ async function checkAuthCookieSecurity(ep: DiscoveredEndpoint): Promise<Security
   return authCookieFindings.map((f) => ({
     ...f,
     code: "AUTH_COOKIE_MISSING_FLAGS",
-    title: `Auth endpoint cookie missing security flags: ${ep.path} — ${f.title}`,
+    title: `Auth endpoint cookie missing security flags: ${ep.path} . ${f.title}`,
     description: `${f.description} (Detected on auth endpoint: ${ep.url})`,
   }));
 }
@@ -278,7 +278,7 @@ async function checkPasswordInResponse(ep: DiscoveredEndpoint): Promise<Security
         severity: "CRITICAL",
         fixPrompt: buildFixPrompt(
           `Password echoed in response at ${ep.path}`,
-          "Never include passwords in API responses:\n1. Audit all auth endpoint response serializers.\n2. Strip password fields from user objects before returning.\n3. Add automated tests that assert passwords are not in responses.\n4. Consider using an allowlist approach — only return specific fields.",
+          "Never include passwords in API responses:\n1. Audit all auth endpoint response serializers.\n2. Strip password fields from user objects before returning.\n3. Add automated tests that assert passwords are not in responses.\n4. Consider using an allowlist approach . only return specific fields.",
         ),
       },
     ];
@@ -299,7 +299,7 @@ function checkTokenInUrl(html: string, jsPayloads: string[]): SecurityFinding[] 
         code: "AUTH_TOKEN_IN_URL",
         title: "Authentication token appears in URL query string",
         description:
-          "Found patterns suggesting tokens (token, jwt, auth, session, access_token, id_token) are passed as URL query parameters. Tokens in URLs are logged by servers, proxies, and browser history — a significant credential exposure risk.",
+          "Found patterns suggesting tokens (token, jwt, auth, session, access_token, id_token) are passed as URL query parameters. Tokens in URLs are logged by servers, proxies, and browser history . a significant credential exposure risk.",
         severity: "HIGH",
         fixPrompt: buildFixPrompt(
           "Auth token in URL query string",
@@ -494,9 +494,9 @@ async function checkBruteForceProtection(ep: DiscoveredEndpoint): Promise<Securi
 
     if (!result) break;
 
-    if (result.status === 429) return []; // Already rate-limited — good
+    if (result.status === 429) return []; // Already rate-limited . good
 
-    if (hasRateLimitHeaders(result.headers)) return []; // Rate limiting present — good
+    if (hasRateLimitHeaders(result.headers)) return []; // Rate limiting present . good
 
     results.push({ status: result.status, body: result.text });
 

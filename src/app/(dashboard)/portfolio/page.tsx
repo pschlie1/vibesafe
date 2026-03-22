@@ -246,7 +246,7 @@ export default async function PortfolioPage() {
               </div>
             </div>
 
-            {/* Top-left: High crit, low score — URGENT */}
+            {/* Top-left: High crit, low score . URGENT */}
             <RiskQuadrant
               title="⚠️ High Risk"
               sub="High criticality · Low score"
@@ -254,7 +254,7 @@ export default async function PortfolioPage() {
               className="border-r border-b bg-error/10"
             />
 
-            {/* Top-right: High crit, high score — PROTECTED */}
+            {/* Top-right: High crit, high score . PROTECTED */}
             <RiskQuadrant
               title="✅ Well Protected"
               sub="High criticality · High score"
@@ -262,7 +262,7 @@ export default async function PortfolioPage() {
               className="border-b bg-success/10"
             />
 
-            {/* Bottom-left: Low crit, low score — MONITOR */}
+            {/* Bottom-left: Low crit, low score . MONITOR */}
             <RiskQuadrant
               title="🔍 Monitor"
               sub="Low criticality · Low score"
@@ -270,7 +270,7 @@ export default async function PortfolioPage() {
               className="border-r bg-warning/10"
             />
 
-            {/* Bottom-right: Low crit, high score — HEALTHY */}
+            {/* Bottom-right: Low crit, high score . HEALTHY */}
             <RiskQuadrant
               title="💚 Healthy"
               sub="Low criticality · High score"
@@ -351,13 +351,13 @@ export default async function PortfolioPage() {
                             <span className="text-muted"> total</span>
                           </span>
                         ) : (
-                          <span className="text-xs text-muted">—</span>
+                          <span className="text-xs text-muted">.</span>
                         )}
                       </td>
                       <td className="px-4 py-3 text-xs text-body">
                         {app.uptimePercent !== null && app.uptimePercent !== undefined
                           ? `${app.uptimePercent.toFixed(1)}%`
-                          : "—"}
+                          : "."}
                       </td>
                       <td className="px-4 py-3 text-xs text-muted">
                         {app.lastScan

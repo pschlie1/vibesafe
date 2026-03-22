@@ -153,28 +153,28 @@ Then measure trial-to-paid conversion baseline, then ship medium-term wins.
 ## Phase 2: Build & Ship (NEXT) 🚀
 
 ### Quick Wins (2.5 hours, ship as single PR)
-1. **QW-1: Fix Jira integration (CB-3)** — 20 min
+1. **QW-1: Fix Jira integration (CB-3)** . 20 min
    - Remove `https://` prefix in URL construction
    - Test: `src/app/api/integrations/jira/ticket/route.ts`
    - File: `src/app/api/integrations/jira/test/route.ts`
 
-2. **QW-2: Fix ENTERPRISE_PLUS tier gate (CB-1 + CB-2)** — 1.5 hours
+2. **QW-2: Fix ENTERPRISE_PLUS tier gate (CB-1 + CB-2)** . 1.5 hours
    - Add ENTERPRISE_PLUS to Prisma SubscriptionTier enum
    - Update scan interval maps in `src/lib/scanner-http.ts` and `src/app/api/agent/scan/route.ts`
    - Migrate existing ENTERPRISE_PLUS rows if any
    - Test: Create ENTERPRISE_PLUS org, verify 1-hour scan interval
 
-3. **QW-3: Fix CI Scan API limit bypass (CB-4)** — 30 min
+3. **QW-3: Fix CI Scan API limit bypass (CB-4)** . 30 min
    - Add `canAddApp(orgId)` check in `src/app/api/public/ci-scan/route.ts`
    - Return 403 with upgrade prompt if at limit
    - Test: Try to add 6th app as BUILDER user, verify rejection
 
-4. **QW-4: Fix trends endpoint tier gate (HP-1)** — 20 min
+4. **QW-4: Fix trends endpoint tier gate (HP-1)** . 20 min
    - Add `getOrgLimits()` check to `src/app/api/metrics/trends/route.ts`
    - Only allow PRO, ENTERPRISE, ENTERPRISE_PLUS
    - Test: Try as FREE user, verify 403
 
-5. **QW-5: Fix Jira test endpoint tier gate (HP-5)** — 10 min
+5. **QW-5: Fix Jira test endpoint tier gate (HP-5)** . 10 min
    - Copy tier gate from main Jira CRUD endpoint
    - Add to `src/app/api/integrations/jira/test/route.ts`
 
@@ -219,8 +219,8 @@ Then measure trial-to-paid conversion baseline, then ship medium-term wins.
 - [ ] Trial-to-paid baseline measured
 
 ### Expected Timeline
-- **Quick wins:** Thu-Fri (2026-03-06/07) — 2.5 hours
-- **Medium-term:** Mon-Fri (2026-03-10/14) — ~2 weeks
+- **Quick wins:** Thu-Fri (2026-03-06/07) . 2.5 hours
+- **Medium-term:** Mon-Fri (2026-03-10/14) . ~2 weeks
 - **Go-live:** By end of week (2026-03-14)
 
 ---
@@ -234,10 +234,10 @@ Then measure trial-to-paid conversion baseline, then ship medium-term wins.
 ---
 
 ## Notes
-- STARTER tier is confusing and unused — consider removing after fixing quick wins
+- STARTER tier is confusing and unused . consider removing after fixing quick wins
 - Landing page claims "20 checks" but shows only 12 (not in critical bugs, but worth fixing)
 - Marketing copy has em-dash violations (fixable in 2 hours)
-- Design tokens are well-enforced — no visual inconsistencies
+- Design tokens are well-enforced . no visual inconsistencies
 - Design is Apple-like simplicity; no major redesign needed
 
 ---

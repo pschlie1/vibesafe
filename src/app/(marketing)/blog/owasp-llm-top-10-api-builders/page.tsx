@@ -78,6 +78,7 @@ export default function OwaspLlmTop10ApiBuildersPage() {
               ← Blog
             </Link>
             <span className="text-sm text-dusty-denim-400">/</span>
+            {/* eslint-disable-next-line design-system/color-token */}
             <span className="rounded-full bg-violet-100 dark:bg-violet-900/30 px-2.5 py-0.5 text-xs font-semibold text-violet-700 dark:text-violet-300 border border-violet-200 dark:border-violet-700">
               AI Security
             </span>

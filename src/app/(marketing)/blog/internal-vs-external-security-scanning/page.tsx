@@ -200,7 +200,7 @@ export default function InternalVsExternalSecurityScanningPage() {
                   <td className="p-3 text-dusty-denim-700 dark:text-dusty-denim-400">Yes</td>
                   <td className="p-3 text-dusty-denim-700 dark:text-dusty-denim-400">No</td>
                 </tr>
-                <tr className="border-t border-border bg-slate-50 dark:bg-slate-900/20">
+                <tr className="border-t border-border bg-surface-raised">
                   <td className="p-3 text-dusty-denim-700 dark:text-dusty-denim-400 font-medium">Runs on live production</td>
                   <td className="p-3 text-dusty-denim-700 dark:text-dusty-denim-400">No</td>
                   <td className="p-3 text-dusty-denim-700 dark:text-dusty-denim-400">Yes</td>
@@ -210,7 +210,7 @@ export default function InternalVsExternalSecurityScanningPage() {
                   <td className="p-3 text-dusty-denim-700 dark:text-dusty-denim-400">High (CI integration)</td>
                   <td className="p-3 text-dusty-denim-700 dark:text-dusty-denim-400">Low (URL + run)</td>
                 </tr>
-                <tr className="border-t border-border bg-slate-50 dark:bg-slate-900/20">
+                <tr className="border-t border-border bg-surface-raised">
                   <td className="p-3 text-dusty-denim-700 dark:text-dusty-denim-400 font-medium">False positives</td>
                   <td className="p-3 text-dusty-denim-700 dark:text-dusty-denim-400">High</td>
                   <td className="p-3 text-dusty-denim-700 dark:text-dusty-denim-400">Lower</td>
@@ -220,7 +220,7 @@ export default function InternalVsExternalSecurityScanningPage() {
                   <td className="p-3 text-dusty-denim-700 dark:text-dusty-denim-400">Rarely</td>
                   <td className="p-3 text-dusty-denim-700 dark:text-dusty-denim-400">Often</td>
                 </tr>
-                <tr className="border-t border-border bg-slate-50 dark:bg-slate-900/20">
+                <tr className="border-t border-border bg-surface-raised">
                   <td className="p-3 text-dusty-denim-700 dark:text-dusty-denim-400 font-medium">Attacker perspective</td>
                   <td className="p-3 text-dusty-denim-700 dark:text-dusty-denim-400">No</td>
                   <td className="p-3 text-dusty-denim-700 dark:text-dusty-denim-400">Yes</td>

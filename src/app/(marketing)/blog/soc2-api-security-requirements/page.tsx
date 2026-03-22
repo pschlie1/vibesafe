@@ -78,7 +78,7 @@ export default function Soc2ApiSecurityRequirementsPage() {
               ← Blog
             </Link>
             <span className="text-sm text-dusty-denim-400">/</span>
-            <span className="rounded-full bg-amber-100 dark:bg-amber-900/30 px-2.5 py-0.5 text-xs font-semibold text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-700">
+            <span className="rounded-full bg-warning/10 dark:bg-warning/20 px-2.5 py-0.5 text-xs font-semibold text-warning dark:text-warning border border-warning/30 dark:border-warning/40">
               Compliance
             </span>
           </div>

@@ -265,7 +265,7 @@ export default function OwaspTop10ApiChecklistPage() {
                 <span className="mt-0.5 shrink-0 text-xs font-bold text-prussian-blue-600 w-12">{item.id}</span>
                 <span className="flex-1 text-sm text-dusty-denim-700 dark:text-dusty-denim-400">{item.check}</span>
                 {item.automated ? (
-                  <span className="shrink-0 rounded-full bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 px-2.5 py-0.5 text-xs font-semibold text-emerald-700 dark:text-emerald-400">
+                  <span className="shrink-0 rounded-full bg-success/10 dark:bg-success/20 border border-success/30 dark:border-success/40 px-2.5 py-0.5 text-xs font-semibold text-success dark:text-success">
                     Auto-checked
                   </span>
                 ) : (

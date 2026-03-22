@@ -78,6 +78,7 @@ export default function SecuringOpenAiApiIntegrationPage() {
               ← Blog
             </Link>
             <span className="text-sm text-dusty-denim-400">/</span>
+            {/* eslint-disable-next-line design-system/color-token */}
             <span className="rounded-full bg-purple-100 dark:bg-purple-900/30 px-2.5 py-0.5 text-xs font-semibold text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800">
               AI Security
             </span>

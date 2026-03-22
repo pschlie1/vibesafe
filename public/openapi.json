@@ -1,0 +1,127 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Scantient API",
+    "description": "External API security scanner. Scan production URLs for vulnerabilities in 60 seconds.",
+    "version": "1.0.0",
+    "contact": { "url": "https://scantient.com" }
+  },
+  "servers": [{ "url": "https://scantient.com" }],
+  "paths": {
+    "/api/public/score": {
+      "post": {
+        "operationId": "quickScan",
+        "summary": "Quick security scan (no auth required)",
+        "description": "Scan any URL for security vulnerabilities. Returns score (0-100), grade (A-F), and findings. Rate limited to 5/hour per IP.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["url"],
+                "properties": {
+                  "url": { "type": "string", "format": "uri", "description": "URL to scan" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Scan results",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ScoreResult" }
+              }
+            }
+          },
+          "429": { "description": "Rate limit exceeded" }
+        }
+      }
+    },
+    "/api/v1/scan": {
+      "post": {
+        "operationId": "authenticatedScan",
+        "summary": "Full security scan (API key required)",
+        "description": "Scan a URL or monitored app. Requires API key. Higher rate limits based on tier.",
+        "security": [{ "ApiKeyAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  { "type": "object", "required": ["url"], "properties": { "url": { "type": "string", "format": "uri" } } },
+                  { "type": "object", "required": ["appId"], "properties": { "appId": { "type": "string" } } }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Scan results" },
+          "401": { "description": "Invalid API key" },
+          "429": { "description": "Rate limit exceeded" }
+        }
+      }
+    },
+    "/api/public/ci-scan": {
+      "post": {
+        "operationId": "ciScan",
+        "summary": "CI/CD security scan",
+        "description": "Designed for CI/CD pipelines. Returns exit-code-friendly results.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["url"],
+                "properties": {
+                  "url": { "type": "string", "format": "uri" },
+                  "minScore": { "type": "integer", "minimum": 0, "maximum": 100, "description": "Minimum passing score" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Scan passed" },
+          "422": { "description": "Scan failed threshold" }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "API key from your Scantient dashboard"
+      }
+    },
+    "schemas": {
+      "ScoreResult": {
+        "type": "object",
+        "properties": {
+          "score": { "type": "integer", "minimum": 0, "maximum": 100 },
+          "grade": { "type": "string", "enum": ["A", "B", "C", "D", "F"] },
+          "findings": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Finding" }
+          }
+        }
+      },
+      "Finding": {
+        "type": "object",
+        "properties": {
+          "title": { "type": "string" },
+          "severity": { "type": "string", "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW"] },
+          "description": { "type": "string" },
+          "recommendation": { "type": "string" }
+        }
+      }
+    }
+  }
+}

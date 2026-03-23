@@ -164,30 +164,36 @@ export default function LandingPage() {
       />
     <div>
       {/* Hero */}
-      <section className="relative overflow-hidden px-6 pb-24 pt-24 sm:pb-32 sm:pt-32" style={{ background: "radial-gradient(ellipse at 50% 0%, #1b263b 0%, #0d1b2a 70%)" }}>
+      <section className="relative overflow-hidden px-6 pb-24 pt-24 sm:pb-32 sm:pt-32" style={{ background: "radial-gradient(ellipse at 50% 0%, #243347 0%, #1b263b 35%, #0d1b2a 70%)" }}>
         <div className="mx-auto max-w-[1200px] text-center">
           <h1 className="mx-auto max-w-4xl text-4xl font-extrabold leading-[1.1] tracking-[-0.02em] text-heading sm:text-6xl lg:text-[3.75rem]">
-            Built your app with Cursor or Lovable?<br />
-            <span className="text-primary-hover">It probably has security holes.</span>
+            Build your app with Cursor or Lovable?
           </h1>
-          <p className="mx-auto mt-8 max-w-[600px] text-lg leading-relaxed text-muted">
+          <p className="text-2xl sm:text-3xl font-bold text-[#f87171] mt-2 mx-auto max-w-3xl">
+            It probably has security holes.
+          </p>
+          <p className="mx-auto mt-8 max-w-[600px] text-lg leading-loose text-muted">
             AI coding tools ship fast and ship vulnerable. Scantient finds exposed API keys, broken auth, and missing security headers in 60 seconds. No SDK. No code access. No setup.
           </p>
-          <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
+          <div className="mt-12 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link
               href="/score"
-              className="rounded-lg bg-primary px-8 py-3.5 text-sm font-semibold text-heading shadow-lg shadow-primary/25 transition-all hover:bg-primary-hover hover:shadow-xl hover:shadow-primary-hover/25"
+              className="rounded-lg bg-[#10b981] hover:bg-[#059669] text-white shadow-lg px-8 py-3.5 text-sm font-semibold transition-all"
             >
               Scan My App Free
             </Link>
             <Link
               href="/pricing"
-              className="rounded-lg border border-border bg-surface px-8 py-3.5 text-sm font-semibold text-heading transition-colors hover:border-border hover:bg-surface-raised"
+              className="rounded-lg border border-[#415a77] bg-transparent px-8 py-3.5 text-sm font-semibold text-[#8a9bb5] transition-colors hover:border-[#5b7da4] hover:text-heading"
             >
               See pricing plans
             </Link>
           </div>
-          <p className="mt-5 text-xs text-muted">Trusted by founders using Cursor, Lovable, Bolt, and Replit. Results in 60 seconds.</p>
+          <p className="mt-3 text-xs text-muted">No credit card required. Scan takes under 1 minute.</p>
+          <p className="mt-5 text-xs text-muted">
+            Trusted by founders using Cursor, Lovable, Bolt, and Replit.{" "}
+            <span className="text-[#10b981] font-semibold">⚡ Results in 60 seconds.</span>
+          </p>
         </div>
 
         {/* Dashboard mockup frame */}
@@ -263,7 +269,7 @@ export default function LandingPage() {
       </section>
 
       {/* Feature cards - Bento Grid */}
-      <section id="features" className="mx-auto max-w-[1200px] px-6 py-24 sm:py-32">
+      <section id="features" className="mx-auto max-w-[1200px] px-6 py-24 sm:py-32" style={{ background: "var(--color-surface-band)" }}>
         <h2 className="mb-3 text-center text-3xl font-extrabold tracking-[-0.02em] text-heading sm:text-4xl">20 Security Checks That Keep Your Users Safe</h2>
         <p className="mb-16 text-center text-muted">
           20 essential security checks. Every scan. Zero setup. No developer required.

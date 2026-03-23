@@ -46,15 +46,9 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  // Fetch MSP org name for branding
-  const mspOrg = await db.organization.findUnique({
-    where: { id: session.orgId },
-    select: { name: true },
-  });
-
   try {
     // generateComplianceReport accepts orgId + optional options (from/to/framework)
-    // MSP branding is embedded via the cover title in the options future parameter.
+    // MSP branding will be added when the PDF builder supports a brandingHeader option.
     // For now we generate the standard report for the client org.
     const pdfBuffer = await generateComplianceReport(clientOrgId);
 

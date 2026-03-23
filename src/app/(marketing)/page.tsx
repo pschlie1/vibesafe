@@ -167,27 +167,27 @@ export default function LandingPage() {
       <section className="relative overflow-hidden px-6 pb-24 pt-24 sm:pb-32 sm:pt-32" style={{ background: "radial-gradient(ellipse at 50% 0%, #1b263b 0%, #0d1b2a 70%)" }}>
         <div className="mx-auto max-w-[1200px] text-center">
           <h1 className="mx-auto max-w-4xl text-4xl font-extrabold leading-[1.1] tracking-[-0.02em] text-heading sm:text-6xl lg:text-[3.75rem]">
-            Ship with confidence. <br />
-            <span className="text-primary-hover">Find security holes before your users do.</span>
+            Built your app with Cursor or Lovable?<br />
+            <span className="text-primary-hover">It probably has security holes.</span>
           </h1>
           <p className="mx-auto mt-8 max-w-[600px] text-lg leading-relaxed text-muted">
-            Find exposed API keys and security holes in your app. 60 seconds.
+            AI coding tools ship fast and ship vulnerable. Scantient finds exposed API keys, broken auth, and missing security headers in 60 seconds. No SDK. No code access. No setup.
           </p>
           <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link
-              href="/signup"
+              href="/score"
               className="rounded-lg bg-primary px-8 py-3.5 text-sm font-semibold text-heading shadow-lg shadow-primary/25 transition-all hover:bg-primary-hover hover:shadow-xl hover:shadow-primary-hover/25"
             >
-              Start free scan
+              Scan My App Free
             </Link>
             <Link
-              href="#pricing"
+              href="/pricing"
               className="rounded-lg border border-border bg-surface px-8 py-3.5 text-sm font-semibold text-heading transition-colors hover:border-border hover:bg-surface-raised"
             >
               See pricing plans
             </Link>
           </div>
-          <p className="mt-5 text-xs text-muted">60-second security audit · No credit card · No setup required</p>
+          <p className="mt-5 text-xs text-muted">Trusted by founders using Cursor, Lovable, Bolt, and Replit. Results in 60 seconds.</p>
         </div>
 
         {/* Dashboard mockup frame */}

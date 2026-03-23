@@ -9,22 +9,22 @@ import Footer from "@/components/footer";
  * layout.tsx or export metadata directly (server components like blog posts).
  */
 export const metadata: Metadata = {
-  title: "Scantient . Free API Security Scanner | Find Vulnerabilities in 60 Seconds",
+  title: "Security Scanner for AI-Built Apps | Scantient",
   description:
-    "Scantient is a free API security scanner and website security checker. Paste your URL and get a full security audit in 60 seconds . no signup, no SDK, no setup required.",
+    "Built with Cursor, Lovable, or Bolt? Find exposed API keys, broken auth, and security holes in 60 seconds. No SDK. No setup.",
   openGraph: {
-    title: "Scantient . Free API Security Scanner | Find Vulnerabilities in 60 Seconds",
+    title: "Security Scanner for AI-Built Apps | Scantient",
     description:
-      "Free api security scanner and website security checker. Paste your URL and get a full security audit in 60 seconds . no signup, no SDK, no setup required.",
+      "Built with Cursor, Lovable, or Bolt? Find exposed API keys, broken auth, and security holes in 60 seconds. No SDK. No setup.",
     url: "https://scantient.com",
     siteName: "Scantient",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Scantient . Free API Security Scanner | Find Vulnerabilities in 60 Seconds",
+    title: "Security Scanner for AI-Built Apps | Scantient",
     description:
-      "Free api security scanner and website security checker. Paste your URL and get a full security audit in 60 seconds.",
+      "Built with Cursor, Lovable, or Bolt? Find exposed API keys, broken auth, and security holes in 60 seconds. No SDK. No setup.",
   },
 };
 

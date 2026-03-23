@@ -78,7 +78,7 @@ export default function VibeCodingSecurityRisksPage() {
               ← Blog
             </Link>
             <span className="text-sm text-dusty-denim-400">/</span>
-            <span className="rounded-full bg-orange-100 dark:bg-orange-900/30 px-2.5 py-0.5 text-xs font-semibold text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-700">
+            <span className="rounded-full bg-error/10 dark:bg-error/20 px-2.5 py-0.5 text-xs font-semibold text-error dark:text-error border border-error/30 dark:border-error/40">
               AI Security
             </span>
           </div>

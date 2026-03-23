@@ -78,7 +78,7 @@ export default function SecurityAuditNoSecurityTeamPage() {
               ← Blog
             </Link>
             <span className="text-sm text-dusty-denim-400">/</span>
-            <span className="rounded-full bg-green-100 dark:bg-green-900/30 px-2.5 py-0.5 text-xs font-semibold text-green-700 dark:text-green-300 border border-green-200 dark:border-green-700">
+            <span className="rounded-full bg-success/10 dark:bg-success/20 px-2.5 py-0.5 text-xs font-semibold text-success dark:text-success border border-success/30 dark:border-success/40">
               Security
             </span>
           </div>

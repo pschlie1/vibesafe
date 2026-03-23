@@ -78,7 +78,7 @@ export default function ApiSecurityScannerComparisonPage() {
               ← Blog
             </Link>
             <span className="text-sm text-dusty-denim-400">/</span>
-            <span className="rounded-full bg-blue-100 dark:bg-blue-900/30 px-2.5 py-0.5 text-xs font-semibold text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-700">
+            <span className="rounded-full bg-info/10 dark:bg-info/20 px-2.5 py-0.5 text-xs font-semibold text-info dark:text-info border border-info/30 dark:border-info/40">
               Comparisons
             </span>
           </div>

@@ -1,0 +1,54 @@
+name: "Scantient Security Gate"
+description: "Scans your app for security findings and blocks the merge when critical issues are detected."
+author: "Scantient"
+
+branding:
+  icon: "shield"
+  color: "red"
+
+inputs:
+  api-key:
+    description: "Your Scantient API key (starts with vs_). Store this as a GitHub secret."
+    required: true
+
+  url:
+    description: "The URL of the deployed application to scan."
+    required: true
+
+  fail-on:
+    description: "Minimum severity that triggers a failure. Options: critical, high, medium."
+    required: false
+    default: "critical"
+
+  timeout:
+    description: "Maximum seconds to wait for the scan to complete."
+    required: false
+    default: "60"
+
+  api-base-url:
+    description: "Override the Scantient API base URL. Used for self-hosted instances."
+    required: false
+    default: "https://scantient.com"
+
+outputs:
+  passed:
+    description: "Whether the scan passed the configured threshold (true/false)."
+
+  score:
+    description: "Overall security score from 0 to 100."
+
+  report-url:
+    description: "URL to the full scan report in the Scantient dashboard."
+
+  critical-count:
+    description: "Number of critical findings detected."
+
+  high-count:
+    description: "Number of high findings detected."
+
+  total-findings:
+    description: "Total number of findings detected."
+
+runs:
+  using: "node20"
+  main: "dist/index.js"

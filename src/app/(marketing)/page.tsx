@@ -171,12 +171,12 @@ export default function LandingPage() {
       />
     <div>
       {/* Hero */}
-      <section className="relative overflow-hidden px-6 pb-24 pt-24 sm:pb-32 sm:pt-32" style={{ background: "radial-gradient(circle, #161D2C 0%, #0B101B 100%)" }}>
+      <section className="relative overflow-hidden px-6 pb-24 pt-24 sm:pb-32 sm:pt-32" style={{ background: "radial-gradient(ellipse at 50% 0%, var(--color-hero-center) 0%, var(--color-hero-edge) 60%, var(--color-hero-edge) 100%)" }}>
         <div className="mx-auto max-w-[1200px] text-center">
           <h1 className="mx-auto max-w-4xl text-4xl font-extrabold leading-[1.1] tracking-[-0.02em] text-heading sm:text-6xl lg:text-[3.75rem]">
             Build your app with Cursor or Lovable?
           </h1>
-          <p className="text-2xl sm:text-3xl font-bold text-[#FCA5A5] mt-2 mx-auto max-w-3xl">
+          <p className="text-2xl sm:text-3xl font-bold mt-2 mx-auto max-w-3xl" style={{ color: "var(--color-warning-soft)" }}>
             It probably has security holes.
           </p>
           <p className="mx-auto mt-8 max-w-[600px] text-lg leading-loose text-muted">
@@ -290,7 +290,7 @@ export default function LandingPage() {
       </section>
 
       {/* Feature cards - Bento Grid */}
-      <section id="features" className="px-6 py-24 sm:py-32" style={{ background: "var(--color-findings-bg)" }}>
+      <section id="features" className="px-6 py-24 sm:py-32" style={{ background: "linear-gradient(to bottom, var(--color-hero-edge) 0%, var(--color-findings-bg) 8%, var(--color-findings-bg) 100%)" }}>
         <div className="mx-auto max-w-[1200px]">
           <h2 className="mb-3 text-center text-3xl font-extrabold tracking-[-0.02em] text-heading sm:text-4xl">20 Security Checks That Keep Your Users Safe</h2>
           <p className="mb-16 text-center text-muted">
@@ -421,7 +421,7 @@ export default function LandingPage() {
       </section>
 
       {/* Final CTA Band */}
-      <section className="px-6 py-24 sm:py-32 text-center" style={{ background: "linear-gradient(135deg, #0d1b2a 0%, #1a1040 50%, #0d1b2a 100%)" }}>
+      <section className="px-6 py-24 sm:py-32 text-center" style={{ background: "linear-gradient(to bottom, var(--color-how-it-works-bg) 0%, var(--color-cta-deep) 30%)" }}>
         <div className="mx-auto max-w-[600px]">
           <h2 className="text-3xl font-extrabold tracking-[-0.02em] text-heading sm:text-4xl mb-4">
             Secure your AI-built app in 60 seconds.

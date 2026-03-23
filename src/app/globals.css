@@ -76,6 +76,20 @@
   --color-hero-edge: #0F172A;
   --color-cta-deep: #020617;
   --color-warning-soft: #FDA4AF;
+
+  /* Footer palette */
+  --color-footer-bg: #0B1222;
+  --color-footer-text-secondary: #94A3B8;
+  --color-footer-text-tertiary: #475569;
+  --color-footer-border: #1E293B;
+  --color-footer-badge-bg: rgba(30,41,59,0.5);
+  --color-footer-input-bg: rgba(255,255,255,0.05);
+  --color-footer-input-border: rgba(255,255,255,0.08);
+  --color-cta-green: #22C55E;
+  --color-cta-green-dark: #16A34A;
+  --color-cta-green-glow: rgba(34,197,94,0.35);
+  --color-badge-new-bg: rgba(34,197,94,0.08);
+  --color-badge-new-border: rgba(34,197,94,0.33);
   --color-info: #3b82f6;
 
   /* Layout */

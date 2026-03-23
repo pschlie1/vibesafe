@@ -341,13 +341,157 @@ export default function ForMSPsPage() {
         </div>
       </section>
 
-      {/* CTA */}
+      {/* MSP Pricing */}
       <section className="mx-auto max-w-6xl px-4 py-20">
-        <div className="rounded-2xl bg-surface-raised p-12 text-center">
-          <h2 className="text-3xl font-bold">Ready to scale compliance across your client portfolio?</h2>
+        <div className="text-center">
+          <h2 className="text-3xl font-bold text-heading">MSP Pricing</h2>
           <p className="mx-auto mt-4 max-w-xl text-muted">
-            Ready to get started? Our MSP partnerships team is
-            available to discuss volume pricing, white-label options, and onboarding support.
+            Flat per-MSP pricing. No per-finding fees, no hidden costs.
+            Scale to your full client base on one plan.
+          </p>
+        </div>
+
+        <div className="mt-12 grid gap-8 sm:grid-cols-3">
+          {/* MSP Starter */}
+          <div className="rounded-2xl border border-border bg-surface-raised p-8">
+            <p className="text-xs font-semibold uppercase tracking-widest text-muted">MSP Starter</p>
+            <div className="mt-4 flex items-end gap-1">
+              <span className="text-4xl font-bold text-heading">$999</span>
+              <span className="mb-1 text-sm text-muted">/mo</span>
+            </div>
+            <p className="mt-2 text-sm text-muted">Up to 10 client organizations.</p>
+            <ul className="mt-6 space-y-3 text-sm text-muted">
+              <li className="flex items-start gap-2">
+                <span className="mt-0.5 shrink-0 text-success">✓</span>
+                <span>10 client org slots</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="mt-0.5 shrink-0 text-success">✓</span>
+                <span>Centralized MSP dashboard</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="mt-0.5 shrink-0 text-success">✓</span>
+                <span>Co-branded PDF reports</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="mt-0.5 shrink-0 text-success">✓</span>
+                <span>OWASP + NIST CSF compliance mapping</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="mt-0.5 shrink-0 text-success">✓</span>
+                <span>Email support</span>
+              </li>
+            </ul>
+            <Link
+              href="/contact?plan=msp-starter"
+              className="mt-8 block rounded-lg border border-border py-2.5 text-center text-sm font-medium text-heading transition hover:bg-surface"
+            >
+              Contact Us
+            </Link>
+          </div>
+
+          {/* MSP Pro — Featured */}
+          <div className="rounded-2xl border-2 border-primary bg-surface-raised p-8 shadow-lg">
+            <div className="flex items-center justify-between">
+              <p className="text-xs font-semibold uppercase tracking-widest text-primary">MSP Pro</p>
+              <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-semibold text-primary">
+                Most popular
+              </span>
+            </div>
+            <div className="mt-4 flex items-end gap-1">
+              <span className="text-4xl font-bold text-heading">$2,500</span>
+              <span className="mb-1 text-sm text-muted">/mo</span>
+            </div>
+            <p className="mt-2 text-sm text-muted">Up to 30 client organizations.</p>
+            <ul className="mt-6 space-y-3 text-sm text-muted">
+              <li className="flex items-start gap-2">
+                <span className="mt-0.5 shrink-0 text-success">✓</span>
+                <span>30 client org slots</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="mt-0.5 shrink-0 text-success">✓</span>
+                <span>Everything in MSP Starter</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="mt-0.5 shrink-0 text-success">✓</span>
+                <span>SOC 2 evidence packages</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="mt-0.5 shrink-0 text-success">✓</span>
+                <span>CI/CD security gate (GitHub Action)</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="mt-0.5 shrink-0 text-success">✓</span>
+                <span>Auditor share links</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="mt-0.5 shrink-0 text-success">✓</span>
+                <span>Priority support</span>
+              </li>
+            </ul>
+            <Link
+              href="/contact?plan=msp-pro"
+              className="mt-8 block rounded-lg bg-primary py-2.5 text-center text-sm font-semibold text-white transition hover:bg-primary-hover"
+            >
+              Contact Us
+            </Link>
+          </div>
+
+          {/* MSP Enterprise */}
+          <div className="rounded-2xl border border-border bg-surface-raised p-8">
+            <p className="text-xs font-semibold uppercase tracking-widest text-muted">MSP Enterprise</p>
+            <div className="mt-4 flex items-end gap-1">
+              <span className="text-4xl font-bold text-heading">$5,000</span>
+              <span className="mb-1 text-sm text-muted">/mo</span>
+            </div>
+            <p className="mt-2 text-sm text-muted">Unlimited client organizations.</p>
+            <ul className="mt-6 space-y-3 text-sm text-muted">
+              <li className="flex items-start gap-2">
+                <span className="mt-0.5 shrink-0 text-success">✓</span>
+                <span>Unlimited client org slots</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="mt-0.5 shrink-0 text-success">✓</span>
+                <span>Everything in MSP Pro</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="mt-0.5 shrink-0 text-success">✓</span>
+                <span>Custom white-label branding</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="mt-0.5 shrink-0 text-success">✓</span>
+                <span>Dedicated account manager</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="mt-0.5 shrink-0 text-success">✓</span>
+                <span>SLA guarantees</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="mt-0.5 shrink-0 text-success">✓</span>
+                <span>Custom contract and invoicing</span>
+              </li>
+            </ul>
+            <Link
+              href="/contact?plan=msp-enterprise"
+              className="mt-8 block rounded-lg border border-border py-2.5 text-center text-sm font-medium text-heading transition hover:bg-surface"
+            >
+              Contact Us
+            </Link>
+          </div>
+        </div>
+
+        <p className="mt-8 text-center text-xs text-muted">
+          All MSP plans billed annually. Monthly billing available at a 15% premium. No per-finding fees.
+        </p>
+      </section>
+
+      {/* CTA */}
+      <section className="mx-auto max-w-6xl px-4 pb-20">
+        <div className="rounded-2xl bg-surface-raised p-12 text-center">
+          <h2 className="text-3xl font-bold text-heading">Ready to scale compliance across your client portfolio?</h2>
+          <p className="mx-auto mt-4 max-w-xl text-muted">
+            Our MSP partnerships team is available to discuss volume pricing, white-label options,
+            and onboarding support.
           </p>
           <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
             <Link

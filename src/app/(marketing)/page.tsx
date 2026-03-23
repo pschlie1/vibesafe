@@ -171,7 +171,7 @@ export default function LandingPage() {
       />
     <div>
       {/* Hero */}
-      <section className="relative overflow-hidden px-6 pb-24 pt-24 sm:pb-32 sm:pt-32" style={{ background: "radial-gradient(ellipse at 50% 0%, var(--color-hero-center) 0%, var(--color-hero-edge) 60%, var(--color-hero-edge) 100%)" }}>
+      <section className="relative overflow-hidden px-6 pb-24 pt-24 sm:pb-32 sm:pt-32" style={{ background: "radial-gradient(ellipse at 50% 0%, var(--color-section-lift) 0%, var(--color-section-base) 60%)" }}>
         <div className="mx-auto max-w-[1200px] text-center">
           <h1 className="mx-auto max-w-4xl text-4xl font-extrabold leading-[1.1] tracking-[-0.02em] text-heading sm:text-6xl lg:text-[3.75rem]">
             Build your app with Cursor or Lovable?
@@ -262,8 +262,13 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Social Proof Band - light */}
-      <section className="border-y border-alabaster-grey-200 bg-alabaster-grey-50 py-10 px-6">
+      {/* Laser divider */}
+      <div className="relative h-px w-full overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(to right, transparent 0%, var(--color-cta-green) 50%, transparent 100%)", opacity: 0.4 }} />
+      </div>
+
+      {/* Social Proof Band */}
+      <section className="border-y px-6 py-12" style={{ borderColor: "var(--color-stroke-subtle)", background: "var(--color-section-base)" }}>
         <div className="mx-auto max-w-[1200px] text-center">
           <p className="text-xs font-semibold uppercase tracking-widest text-alabaster-grey-600 mb-6">Trusted by founders shipping with</p>
           <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-10">

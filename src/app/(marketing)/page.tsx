@@ -12,24 +12,24 @@ type Check = {
 const checks: Check[] = [
   { icon: "🔑", title: "Exposed API Keys", outcome: "Your outcome: Stop stolen credentials.", desc: "We found $50K in exposed Stripe keys in 30 seconds. Scans OpenAI, Stripe, Supabase, Twilio, SendGrid, AWS keys, and 20+ other services." },
   { icon: "🛡️", title: "Missing Security Headers", outcome: "Your outcome: Protect users from XSS, clickjacking, injection attacks.", desc: "One missing header exposes your data to attackers. We verify CSP, HSTS, X-Frame-Options, X-Content-Type, Referrer-Policy." },
-  { icon: "🔓", title: "Auth Bypass Vulnerabilities", outcome: "Your outcome: No $500K breach from a 'check role on frontend' mistake.", desc: "We detect hardcoded admin checks, fake auth gates, and role checks visible in client code." },
+  { icon: "🔓", title: "Auth Bypass Vulnerabilities", outcome: "Your outcome: No $500K breach from a check role on frontend mistake.", desc: "We detect hardcoded admin checks, fake auth gates, and role checks visible in client code." },
   { icon: "📦", title: "Hardcoded Secrets in JavaScript", outcome: "Your outcome: Database passwords not in your JavaScript bundle.", desc: "Scantient finds secrets hardcoded in JS chunks, config files, git history, and comments. A common mistake when using AI coding tools." },
   { icon: "⚙️", title: "Exposed Debug Endpoints", outcome: "Your outcome: Attackers don't find .env, .git/HEAD, /api/admin, phpinfo.", desc: "Attackers check for debug endpoints within 2 minutes of finding your site. We check first." },
-  { icon: "🚀", title: "Performance & Uptime Alerts", outcome: "Your outcome: Know about outages before your CEO calls.", desc: "We baseline your response time and alert if load time jumps to 8 seconds. Get notified of 500 errors within hours, before customers report them." },
+  { icon: "🚀", title: "Performance and Uptime Alerts", outcome: "Your outcome: Know about outages before your CEO calls.", desc: "We baseline your response time and alert if load time jumps to 8 seconds. Get notified of 500 errors within hours, before customers report them." },
   { icon: "🔗", title: "Malicious External Scripts", outcome: "Your outcome: No backdoors from compromised CDNs.", desc: "Every third-party script is a potential breach. We detect unencrypted loads, suspicious data URIs, and supply chain compromises." },
-  { icon: "📋", title: "Form & API Security Flaws", outcome: "Your outcome: Forms submit to YOUR domain, not attacker's.", desc: "We catch forms submitting to wrong domains, missing CSRF tokens, unencrypted API calls . the stuff compliance auditors find." },
-  { icon: "🌐", title: "CORS & API Exposure Issues", outcome: "Your outcome: Competitors can't read your customer data via API.", desc: "One misconfigured CORS header = your API exposed. We detect overpermissive access." },
+  { icon: "📋", title: "Form and API Security Flaws", outcome: "Your outcome: Forms submit to YOUR domain, not attacker's.", desc: "We catch forms submitting to wrong domains, missing CSRF tokens, and unencrypted API calls. The stuff compliance auditors find." },
+  { icon: "🌐", title: "CORS and API Exposure Issues", outcome: "Your outcome: Competitors can't read your customer data via API.", desc: "One misconfigured CORS header = your API exposed. We detect overpermissive access." },
   { icon: "🔐", title: "SSL Certificate Expiry", outcome: "Your outcome: Your site never goes dark due to expired SSL.", desc: "A lapsed certificate = 100% downtime. We alert 30, 14, and 7 days before expiry." },
   { icon: "📡", title: "Subdomain Takeover Risks", outcome: "Your outcome: Forgotten DNS records aren't free subdomains for attackers.", desc: "We detect DNS misconfigurations, orphaned CNAME records, and unused subdomains." },
   { icon: "⏱️", title: "Load Time Regression Detection", outcome: "Your outcome: Catch performance degradation before users bounce.", desc: "Baseline your app's speed. If it suddenly takes 8 seconds to load, you know before your users do." },
   { icon: "🍪", title: "Cookie Security Issues", outcome: "Your outcome: Session cookies protected from theft and XSS.", desc: "We verify HttpOnly, Secure, SameSite flags on all cookies." },
   { icon: "🔄", title: "Content Change Detection", outcome: "Your outcome: Know when your site's HTML changed unexpectedly.", desc: "Baseline your app. If an attacker injects content or modifiers change things, we alert you." },
-  { icon: "🛡️", title: "Dependency Vulnerability Scanning", outcome: "Your outcome: No known vulnerable libraries in your app.", desc: "We scan package.json, npm/yarn lock files for outdated / vulnerable dependencies." },
+  { icon: "🛡️", title: "Dependency Vulnerability Scanning", outcome: "Your outcome: No known vulnerable libraries in your app.", desc: "We scan package.json, npm/yarn lock files for outdated and vulnerable dependencies." },
   { icon: "📊", title: "Unencrypted Data Transmission", outcome: "Your outcome: All data in transit is encrypted (HTTPS).", desc: "We verify no HTTP resources are mixed with HTTPS." },
-  { icon: "🤖", title: "Bot Detection & Abuse Protection", outcome: "Your outcome: Know if your APIs are being scraped or abused.", desc: "We detect unusual request patterns that indicate bot activity." },
-  { icon: "🎯", title: "Pixel Tracking & Privacy Violations", outcome: "Your outcome: Track all third-party pixels and analytics tools.", desc: "Know which tracking tools are on your site, ensure GDPR/privacy compliance." },
+  { icon: "🤖", title: "Bot Detection and Abuse Protection", outcome: "Your outcome: Know if your APIs are being scraped or abused.", desc: "We detect unusual request patterns that indicate bot activity." },
+  { icon: "🎯", title: "Pixel Tracking and Privacy Violations", outcome: "Your outcome: Track all third-party pixels and analytics tools.", desc: "Know which tracking tools are on your site, ensure GDPR/privacy compliance." },
   { icon: "🔧", title: "Infrastructure Misconfiguration", outcome: "Your outcome: S3 buckets, databases, storage not open to the internet.", desc: "We detect public S3 buckets, exposed database ports, and cloud storage misconfigurations." },
-  { icon: "📱", title: "Mobile & Responsive Security", outcome: "Your outcome: Your app is secure on mobile, tablet, and desktop.", desc: "We scan security across all device breakpoints." },
+  { icon: "📱", title: "Mobile and Responsive Security", outcome: "Your outcome: Your app is secure on mobile, tablet, and desktop.", desc: "We scan security across all device breakpoints." },
 ];
 
 const socialProof = [
@@ -37,14 +37,14 @@ const socialProof = [
     icon: "🛡️",
     stat: "$50K+",
     label: "In leaked credentials found",
-    detail: "Real founding story: We found $50K in stolen API keys before the attacker could use them.",
+    detail: "Real founding story: We found $50K in stolen API keys before the attacker used them.",
     href: "#features",
   },
   {
     icon: "⚡",
     stat: "<60 sec",
     label: "From URL to security audit",
-    detail: "Paste your site URL and get results faster than you can make coffee. No waiting, no setup.",
+    detail: "Paste your site URL and get results faster than you make coffee. No waiting, no setup.",
     href: "/score",
   },
   {
@@ -103,7 +103,7 @@ const faqs = [
   },
   {
     q: "Does Scantient monitor SSL certificate expiry?",
-    a: "Yes. We verify your SSL certificate status on every scan and alerts you at 30, 14, and 7 days before expiry. A lapsed certificate takes your site offline for every user.",
+    a: "Yes. We verify your SSL certificate status on every scan and alert you at 30, 14, and 7 days before expiry. A lapsed certificate takes your site offline for every user.",
   },
   {
     q: "How quickly can I get started?",
@@ -131,7 +131,7 @@ const organizationSchema = {
   name: "Scantient",
   url: "https://scantient.com",
   logo: "https://scantient.com/logo.png",
-  description: "Scantient provides automated security scanning and monitoring for AI-generated and indie developer applications . catching vulnerabilities, misconfigurations, and compliance gaps before attackers do.",
+  description: "Scantient provides automated security scanning and monitoring for AI-generated and indie developer applications, catching vulnerabilities, misconfigurations, and compliance gaps before attackers do.",
 };
 
 const faqSchema = {
@@ -146,6 +146,13 @@ const faqSchema = {
     },
   })),
 };
+
+const severityBorder: Record<string, string> = {
+  "🔑": "border-l-4 border-l-red-500",
+  "🔓": "border-l-4 border-l-amber-500",
+  "🛡️": "border-l-4 border-l-blue-500",
+};
+const getCardBorder = (icon: string) => severityBorder[icon] ?? "border-l-4 border-l-border";
 
 export default function LandingPage() {
   return (
@@ -164,12 +171,12 @@ export default function LandingPage() {
       />
     <div>
       {/* Hero */}
-      <section className="relative overflow-hidden px-6 pb-24 pt-24 sm:pb-32 sm:pt-32" style={{ background: "radial-gradient(ellipse at 50% 0%, #243347 0%, #1b263b 35%, #0d1b2a 70%)" }}>
+      <section className="relative overflow-hidden px-6 pb-24 pt-24 sm:pb-32 sm:pt-32" style={{ background: "radial-gradient(circle, #161D2C 0%, #0B101B 100%)" }}>
         <div className="mx-auto max-w-[1200px] text-center">
           <h1 className="mx-auto max-w-4xl text-4xl font-extrabold leading-[1.1] tracking-[-0.02em] text-heading sm:text-6xl lg:text-[3.75rem]">
             Build your app with Cursor or Lovable?
           </h1>
-          <p className="text-2xl sm:text-3xl font-bold text-[#f87171] mt-2 mx-auto max-w-3xl">
+          <p className="text-2xl sm:text-3xl font-bold text-[#FCA5A5] mt-2 mx-auto max-w-3xl">
             It probably has security holes.
           </p>
           <p className="mx-auto mt-8 max-w-[600px] text-lg leading-loose text-muted">
@@ -178,13 +185,13 @@ export default function LandingPage() {
           <div className="mt-12 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link
               href="/score"
-              className="rounded-lg bg-[#10b981] hover:bg-[#059669] text-white shadow-lg px-8 py-3.5 text-sm font-semibold transition-all"
+              className="rounded-lg bg-[#22C55E] hover:bg-[#16A34A] text-white shadow-lg px-8 py-3.5 text-sm font-semibold transition-all"
             >
               Scan My App Free
             </Link>
             <Link
               href="/pricing"
-              className="rounded-lg border border-[#415a77] bg-transparent px-8 py-3.5 text-sm font-semibold text-[#8a9bb5] transition-colors hover:border-[#5b7da4] hover:text-heading"
+              className="rounded-lg border-2 border-[#3B82F6] bg-transparent px-8 py-3.5 text-sm font-semibold text-[#3B82F6] transition-colors hover:bg-[#3B82F6] hover:text-white"
             >
               See pricing plans
             </Link>
@@ -246,120 +253,103 @@ export default function LandingPage() {
             </div>
           </div>
         </div>
+
+        {/* Scroll invitation chevron */}
+        <div className="mt-16 flex justify-center">
+          <svg className="h-8 w-8 animate-bounce text-muted opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          </svg>
+        </div>
       </section>
 
-      {/* Stats / Metrics bar */}
-      <section className="border-b border-border bg-surface py-16">
-        <div className="mx-auto flex max-w-[1200px] flex-wrap items-center justify-center gap-6 sm:gap-12 px-6 text-center">
-          {[
-            { value: "20", label: "essential security checks per scan" },
-            { value: "<1 min", label: "from paste URL to first results" },
-            { value: "$4.88M", label: "avg. cost of one data breach (IBM 2024)" },
-            { value: "0", label: "developers or SDK required" },
-          ].map((stat, i) => (
-            <div key={stat.value} className="flex items-center gap-12">
-              <div>
-                <p className="text-5xl font-bold text-primary-hover">{stat.value}</p>
-                <p className="mt-1 text-sm uppercase tracking-wide text-muted">{stat.label}</p>
+      {/* Social Proof Band - light */}
+      <section className="border-y border-alabaster-grey-200 bg-alabaster-grey-50 py-10 px-6">
+        <div className="mx-auto max-w-[1200px] text-center">
+          <p className="text-xs font-semibold uppercase tracking-widest text-alabaster-grey-600 mb-6">Trusted by founders shipping with</p>
+          <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-10">
+            {["Cursor", "Lovable", "Bolt", "Replit", "v0"].map((tool) => (
+              <span key={tool} className="rounded-md border border-alabaster-grey-200 bg-white px-4 py-2 text-sm font-semibold text-alabaster-grey-600 shadow-sm">
+                {tool}
+              </span>
+            ))}
+          </div>
+          <div className="mt-8 flex flex-wrap justify-center gap-10 sm:gap-16">
+            {[
+              { value: "20", label: "security checks per scan" },
+              { value: "<1 min", label: "URL to first results" },
+              { value: "$4.88M", label: "avg. breach cost (IBM 2024)" },
+              { value: "0", label: "SDK or setup required" },
+            ].map((stat) => (
+              <div key={stat.value} className="text-center">
+                <p className="text-3xl font-bold text-ink-black-900">{stat.value}</p>
+                <p className="mt-1 text-xs uppercase tracking-wide text-alabaster-grey-600">{stat.label}</p>
               </div>
-              {i < 3 && <div className="hidden h-10 w-px bg-border sm:block" />}
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </section>
 
       {/* Feature cards - Bento Grid */}
-      <section id="features" className="mx-auto max-w-[1200px] px-6 py-24 sm:py-32" style={{ background: "var(--color-surface-band)" }}>
-        <h2 className="mb-3 text-center text-3xl font-extrabold tracking-[-0.02em] text-heading sm:text-4xl">20 Security Checks That Keep Your Users Safe</h2>
-        <p className="mb-16 text-center text-muted">
-          20 essential security checks. Every scan. Zero setup. No developer required.
-        </p>
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {checks.map((check) => (
-            <div key={check.title} className="rounded-2xl border border-border bg-surface p-8 transition-all hover:shadow-lg" style={{ boxShadow: "0 1px 3px rgba(12,25,39,0.05)" }}>
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-surface-raised">
-                <span className="text-xl">{check.icon}</span>
+      <section id="features" className="px-6 py-24 sm:py-32" style={{ background: "var(--color-findings-bg)" }}>
+        <div className="mx-auto max-w-[1200px]">
+          <h2 className="mb-3 text-center text-3xl font-extrabold tracking-[-0.02em] text-heading sm:text-4xl">20 Security Checks That Keep Your Users Safe</h2>
+          <p className="mb-16 text-center text-muted">
+            20 essential security checks. Every scan. Zero setup. No developer required.
+          </p>
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {checks.map((check) => (
+              <div key={check.title} className={`rounded-2xl border border-border bg-surface p-8 transition-all hover:shadow-lg ${getCardBorder(check.icon)}`} style={{ boxShadow: "0 1px 3px rgba(12,25,39,0.05)" }}>
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-surface-raised">
+                  <span className="text-xl">{check.icon}</span>
+                </div>
+                <h3 className="mt-5 text-lg font-bold text-heading">{check.icon} {check.title}</h3>
+                {check.outcome && (
+                  <p className="mt-2 text-xs font-semibold text-primary">{check.outcome}</p>
+                )}
+                <p className="mt-2 text-sm leading-relaxed text-muted">{check.desc}</p>
               </div>
-              <h3 className="mt-5 text-lg font-bold text-heading">{check.icon} {check.title}</h3>
-              {check.outcome && (
-                <p className="mt-2 text-xs font-semibold text-primary">{check.outcome}</p>
-              )}
-              <p className="mt-2 text-sm leading-relaxed text-muted">{check.desc}</p>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* How it works */}
-      <section className="border-y border-border bg-surface px-6 py-24 sm:py-32">
-        <div className="mx-auto max-w-[1000px]">
-          <h2 className="mb-16 text-center text-3xl font-extrabold tracking-[-0.02em] text-heading sm:text-4xl">How Scantient works</h2>
-
-          {/* Zigzag timeline . desktop */}
-          <div className="hidden md:block relative">
-            {/* Center vertical line */}
-            <div className="absolute left-1/2 top-0 bottom-0 w-px bg-border" />
-
-            <div className="space-y-16">
-              {[
-                { step: "1", title: "Register your apps", desc: "Paste your app URL. No code changes, no SDK, no developer involvement required. Setup takes 30 seconds." },
-                { step: "2", title: "We scan continuously", desc: "Scantient runs 12 essential security checks every hour. API leaks, broken auth, missing headers, and more. Automatically." },
-                { step: "3", title: "Get alerts when issues appear", desc: "When we find a problem, you get an instant alert via email or Slack. No noise, no false positives." },
-                { step: "4", title: "Review and remediate in minutes", desc: "See your security score, open findings, and ready-to-use fix suggestions on your dashboard." },
-              ].map((item, idx) => {
-                const isOdd = idx % 2 === 0; // 0-indexed: step 1 (idx=0) → left, step 2 (idx=1) → right
-                return (
-                  <div key={item.step} className="relative flex items-center">
-                    {/* Step number circle . centered on the line */}
-                    <div className="absolute left-1/2 -translate-x-1/2 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-primary text-sm font-bold text-white shadow-md">
-                      {item.step}
-                    </div>
-
-                    {isOdd ? (
-                      /* Odd steps: content on LEFT */
-                      <>
-                        <div className="w-5/12 pr-16 text-right">
-                          <div className="rounded-xl border border-border bg-surface p-8 shadow-sm">
-                            <h3 className="text-lg font-bold text-heading">{item.title}</h3>
-                            <p className="mt-2 text-sm leading-relaxed text-muted">{item.desc}</p>
-                          </div>
-                        </div>
-                        <div className="w-7/12" />
-                      </>
-                    ) : (
-                      /* Even steps: content on RIGHT */
-                      <>
-                        <div className="w-7/12" />
-                        <div className="w-5/12 pl-16 text-left">
-                          <div className="rounded-xl border border-border bg-surface p-8 shadow-sm">
-                            <h3 className="text-lg font-bold text-heading">{item.title}</h3>
-                            <p className="mt-2 text-sm leading-relaxed text-muted">{item.desc}</p>
-                          </div>
-                        </div>
-                      </>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Mobile fallback . single column vertical stack */}
-          <div className="md:hidden space-y-12">
+      {/* How It Works Band */}
+      <section className="px-6 py-24 sm:py-32" style={{ background: "var(--color-how-it-works-bg)" }}>
+        <div className="mx-auto max-w-[1200px]">
+          <h2 className="mb-4 text-center text-3xl font-extrabold tracking-[-0.02em] text-heading sm:text-4xl">
+            No SDK. No setup. No developer ticket.
+          </h2>
+          <p className="mb-16 text-center text-muted max-w-xl mx-auto">
+            Paste a URL. Get results in 60 seconds. That is the entire setup process.
+          </p>
+          <div className="grid gap-8 sm:grid-cols-3">
             {[
-              { step: "1", title: "Register your apps", desc: "Paste your app URL. No code changes, no SDK, no developer involvement required. Setup takes 30 seconds." },
-              { step: "2", title: "We scan continuously", desc: "Scantient runs 12 essential security checks every hour. API leaks, broken auth, missing headers, and more. Automatically." },
-              { step: "3", title: "Get alerts when issues appear", desc: "When we find a problem, you get an instant alert via email or Slack. No noise, no false positives." },
-              { step: "4", title: "Review and remediate in minutes", desc: "See your security score, open findings, and ready-to-use fix suggestions on your dashboard." },
+              {
+                step: "01",
+                title: "Paste your URL",
+                desc: "Drop in your app URL. No code changes, no SDK, no developer required. Takes 10 seconds.",
+                icon: "🔗",
+              },
+              {
+                step: "02",
+                title: "60-second scan",
+                desc: "We run 20 external security checks. The same probes an attacker would run. Results appear before your coffee is ready.",
+                icon: "⚡",
+              },
+              {
+                step: "03",
+                title: "Instant security report",
+                desc: "See exactly what is exposed, what to fix, and how urgent each issue is. Share with your team or export for compliance.",
+                icon: "📋",
+              },
             ].map((item) => (
-              <div key={item.step} className="flex gap-6">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-bold text-white">
-                  {item.step}
+              <div key={item.step} className="rounded-2xl border border-border bg-surface p-8">
+                <div className="mb-4 flex items-center gap-3">
+                  <span className="text-3xl">{item.icon}</span>
+                  <span className="text-xs font-bold tracking-widest text-muted uppercase">{item.step}</span>
                 </div>
-                <div>
-                  <h3 className="text-lg font-bold text-heading">{item.title}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-muted">{item.desc}</p>
-                </div>
+                <h3 className="text-xl font-bold text-heading mb-3">{item.title}</h3>
+                <p className="text-sm leading-loose text-muted">{item.desc}</p>
               </div>
             ))}
           </div>
@@ -407,11 +397,11 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Social Proof . radical transparency */}
+      {/* Social Proof - radical transparency */}
       <section className="border-y border-border bg-surface px-6 py-24 sm:py-32">
         <div className="mx-auto max-w-[1200px]">
           <h2 className="mb-4 text-center text-3xl font-extrabold tracking-[-0.02em] text-heading sm:text-4xl">Results that speak for themselves</h2>
-          <p className="mb-16 text-center text-muted">We walk the walk. Scantient scans itself on every deploy. Here's what we actually find.</p>
+          <p className="mb-16 text-center text-muted">We walk the walk. Scantient scans itself on every deploy. Here is what we find.</p>
           <div className="grid gap-8 md:grid-cols-3">
             {socialProof.map((item) => (
               <a
@@ -430,18 +420,23 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Ready to get started CTA */}
-      <section className="mx-auto max-w-[1200px] px-6 py-24 text-center sm:py-32">
-        <h2 className="text-3xl font-extrabold tracking-[-0.02em] text-heading sm:text-4xl">Ready to get started?</h2>
-        <p className="mx-auto mt-4 max-w-xl text-muted">
-          See all three pricing tiers and find the right fit for your team.
-        </p>
-        <Link
-          href="/pricing"
-          className="mt-8 inline-block rounded-lg bg-primary px-8 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-primary-hover"
-        >
-          View pricing
-        </Link>
+      {/* Final CTA Band */}
+      <section className="px-6 py-24 sm:py-32 text-center" style={{ background: "linear-gradient(135deg, #0d1b2a 0%, #1a1040 50%, #0d1b2a 100%)" }}>
+        <div className="mx-auto max-w-[600px]">
+          <h2 className="text-3xl font-extrabold tracking-[-0.02em] text-heading sm:text-4xl mb-4">
+            Secure your AI-built app in 60 seconds.
+          </h2>
+          <p className="text-muted mb-10 leading-relaxed">
+            Find exposed API keys, broken auth, and security holes before attackers do. No SDK. No setup. Results in 60 seconds.
+          </p>
+          <Link
+            href="/score"
+            className="inline-block rounded-lg bg-[#22C55E] px-10 py-4 text-base font-bold text-white shadow-lg transition-all hover:bg-[#16A34A]"
+          >
+            Scan My App Free
+          </Link>
+          <p className="mt-4 text-xs text-muted">No credit card required. Scan takes under 1 minute.</p>
+        </div>
       </section>
 
       {/* FAQ */}
@@ -467,7 +462,7 @@ export default function LandingPage() {
         </p>
         <Link
           href="/signup"
-          className="mt-10 inline-block rounded-lg bg-surface px-8 py-3.5 text-sm font-semibold text-heading transition-colors hover:bg-surface-raised"
+          className="mt-10 inline-block rounded-lg bg-[#22C55E] px-8 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-[#16A34A]"
         >
           Get started
         </Link>

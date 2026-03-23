@@ -88,8 +88,8 @@ export default function SecretScanningGuidePage() {
           </h1>
           <p className="mt-4 text-lg text-dusty-denim-700 dark:text-dusty-denim-400">
             API keys. Database passwords. Private encryption keys. OAuth tokens. One exposed
-            credential can give an attacker full access to your infrastructure. Learn how they leak,
-            how to find them before they&apos;re exploited, and which tools actually work.
+            credential gives an attacker full access to your infrastructure. Learn how they leak,
+            how to find them before they&apos;re exploited, and which tools work.
           </p>
           <div className="mt-6 flex items-center gap-4 text-sm text-dusty-denim-500">
             <time dateTime="2026-03-22">March 22, 2026</time>
@@ -106,12 +106,12 @@ export default function SecretScanningGuidePage() {
             Secret scanning is automated detection of leaked credentials in source code, git
             history, CI/CD logs, and configuration files. It looks for patterns that match API
             keys, database passwords, private keys, OAuth tokens, and other sensitive strings that
-            should never be committed to version control.
+            must never be committed to version control.
           </p>
 
           <p>
-            The scope sounds simple. The impact is massive. A single exposed AWS secret key can
-            cost $10,000+ in cryptomining charges on your account before you notice. A leaked
+            The scope sounds simple. The impact is massive. A single exposed AWS secret key costs
+            $10,000+ in cryptomining charges on your account before you notice. A leaked
             database password gives an attacker direct access to your customer data. A Stripe API
             key in git history is an open door to refunding transactions or accessing payment data.
           </p>
@@ -126,7 +126,7 @@ export default function SecretScanningGuidePage() {
 
           <p>
             CircleCI experienced a 2023 breach where attackers accessed customer API tokens stored
-            in environment variables. The tokens were never committed to git—but they were logged
+            in environment variables. The tokens were never committed to git, but they were logged
             during CI/CD failures, and those logs were accessible to anyone with a CircleCI account.
           </p>
 
@@ -156,7 +156,7 @@ export default function SecretScanningGuidePage() {
               updating all systems that reference it, auditing logs to see what was accessed
             </li>
             <li>
-              <strong>Notification and compliance:</strong> If PII was accessed, you may need to
+              <strong>Notification and compliance:</strong> If PII was accessed, you'll need to
               notify affected users, file breach reports, and document incident response
             </li>
             <li>
@@ -176,7 +176,7 @@ export default function SecretScanningGuidePage() {
           <p>
             The most common vector. A developer adds API keys to code while testing, forgets to
             remove them, and pushes to a branch. Even if the commit is deleted later, it lives in
-            git history unless the repo is completely scrubbed (which requires rewriting all refs).
+            git history unless the repo is completely scrubbed (which requires rewriting all refs and removing the branch history).
           </p>
 
           <p>
@@ -195,9 +195,9 @@ const db = {
           <h3>2. CI/CD Pipeline Logs</h3>
 
           <p>
-            Build logs are printed to stdout. Secrets can leak when debugging environment
+            Build logs are printed to stdout. Secrets leak when debugging environment
             variables, printing request payloads, or logging error messages. GitLab, GitHub
-            Actions, and CircleCI all store logs that can be searched and accessed by team members.
+            Actions, and CircleCI all store logs that are searchable and accessible by team members.
           </p>
 
           <p>
@@ -208,7 +208,7 @@ const db = {
           <h3>3. Environment Variable Misconfigurations</h3>
 
           <p>
-            `.env` files should never be committed, but `.env.example` often is. If someone copies
+            `.env` files must never be committed, but `.env.example` often is. If someone copies
             `.env.example` and fills in real secrets, then accidentally commits the result, it's exposed.
             Similarly, Docker builds often bake secrets into Dockerfile ARGs or ENV statements.
           </p>
@@ -248,7 +248,7 @@ const db = {
           <p>
             The tool searches for known patterns: strings that look like AWS keys (start with
             `AKIA`), GitHub tokens (ghp_), Stripe keys (sk_live_, pk_live_), etc. Modern scanners
-            also check entropy—if a string has high randomness and appears in contexts where secrets
+            also check entropy. If a string has high randomness and appears in contexts where secrets
             typically appear, it's flagged.
           </p>
 
@@ -268,13 +268,13 @@ const db = {
           <h3>3. Pre-Commit Hooks & CI/CD Integration</h3>
 
           <p>
-            Secrets can be caught before they hit the remote repo. A pre-commit hook runs locally
+            Secrets are caught before they hit the remote repo. A pre-commit hook runs locally
             before `git commit` and blocks the commit if secrets are detected. CI/CD integration
             scans on every push and fails the build if secrets are found.
           </p>
 
           <p>
-            The advantage: catches secrets before they're shared. The disadvantage: developers can
+            The advantage: catches secrets before they're shared. The disadvantage: developers will
             bypass hooks with `git commit --no-verify`, and this requires every developer to have
             the hook installed.
           </p>
@@ -312,8 +312,8 @@ const db = {
           </p>
 
           <p>
-            <strong>Weaknesses:</strong> Doesn't scan running production APIs. Can't see what
-            attackers actually exploited. Some false positives (flags test strings that aren't real
+            <strong>Weaknesses:</strong> Doesn't scan running production APIs. Won't show what
+            attackers exploited. Some false positives (flags test strings that aren't real
             secrets).
           </p>
 
@@ -331,7 +331,7 @@ const db = {
 
           <p>
             <strong>What it does:</strong> Dependency vulnerability scanning (SCA) + source code
-            analysis (SAST). Can detect secrets, but that's not its focus.
+            analysis (SAST). It detects secrets, but its focus is elsewhere.
           </p>
 
           <p>
@@ -485,7 +485,7 @@ npx husky add .husky/pre-commit "detect-secrets scan --all-files"`}</code>
           </pre>
 
           <p>
-            Now developers can't commit secrets locally. Note: they can bypass with
+            Now developers won't commit secrets locally. Note: they will bypass with
             `git commit --no-verify`, so this is a speed bump, not a wall.
           </p>
 
@@ -494,7 +494,7 @@ npx husky add .husky/pre-commit "detect-secrets scan --all-files"`}</code>
           <ol>
             <li>
               <strong>Immediately revoke the secret</strong> . Delete API keys, regenerate
-              passwords, rotate tokens. Do not just remove from code.
+              passwords, rotate tokens. Never remove it from code alone.
             </li>
             <li>
               <strong>Check logs to see if it was used.</strong> If found in git history, assume
@@ -533,7 +533,7 @@ npx husky add .husky/pre-commit "detect-secrets scan --all-files"`}</code>
 
           <h3>1. Use Environment Variables (Never Hardcode)</h3>
 
-          <p>Store secrets in environment variables, not in code:</p>
+          <p>Store secrets in environment variables. Never hardcode them in code:</p>
 
           <pre>
             <code>{`// Good
@@ -546,7 +546,7 @@ const apiKey = "sk_live_abc123..."; // Never do this`}</code>
           <h3>2. Use a Secrets Vault for Production</h3>
 
           <p>
-            For production systems, use a dedicated secrets manager: HashiCorp Vault, AWS Secrets
+            For production systems, use a dedicated secrets manager such as HashiCorp Vault, AWS Secrets
             Manager, Google Secret Manager, or Azure Key Vault. These systems:
           </p>
 
@@ -569,16 +569,15 @@ const apiKey = "sk_live_abc123..."; // Never do this`}</code>
           <h3>4. Principle of Least Privilege</h3>
 
           <p>
-            Each secret should have the minimum permissions needed. A webhook handler doesn't need
-            a database admin password. Use scoped API keys: a payment processing key should only
-            allow charges, not refunds.
+            Each secret will have the minimum permissions needed. A webhook handler doesn't need
+            a database admin password. Use scoped API keys: a payment processing key permits charges only,
+            not refunds.
           </p>
 
           <h3>5. Educate Your Team</h3>
 
           <p>
-            The best tool is useless if developers don't understand why secrets matter. Conduct
-            training on:
+            The best tool is useless if developers don't understand why secrets matter. Conduct training on:
           </p>
 
           <ul>
@@ -596,33 +595,33 @@ const apiKey = "sk_live_abc123..."; // Never do this`}</code>
             for vulnerabilities in third-party libraries. Both are important. Use both.
           </p>
 
-          <h3>2. Can secret scanning prevent false positives?</h3>
+          <h3>2. How to prevent false positives in secret scanning</h3>
           <p>
             Good tools use entropy checks and context analysis to reduce false positives. But some
             false positives are inevitable (test strings that look like secrets). Most tools let you
             allowlist benign patterns or specific files.
           </p>
 
-          <h3>3. If a secret is in git history, is it safe to just remove it from the latest commit?</h3>
+          <h3>3. If a secret is in git history, is it safe to remove it from the latest commit?</h3>
           <p>
             No. Git history is public (usually). Even if you remove it from the latest commit, anyone
             who cloned the repo before the removal has access to the entire history, including the
             secret. You must rewrite git history using `git filter-branch` or `BFG Repo Cleaner`.
           </p>
 
-          <h3>4. Should I scan all branches or just main?</h3>
+          <h3>4. Scan all branches or the main branch only?</h3>
           <p>
-            Scan all branches. Secrets can hide in feature branches for months. Scan on every push,
-            not just PRs.
+            Scan all branches. Secrets hide in feature branches for months. Scan on every push,
+            not only in PRs.
           </p>
 
           <h3>5. What if someone commits a secret by accident, then removes it in the next commit?</h3>
           <p>
-            The secret still exists in git history. The removal doesn't help—history is immutable
+            The secret still exists in git history. The removal doesn't help. History is immutable
             unless rewritten. A pre-commit hook would have prevented the first commit entirely.
           </p>
 
-          <h3>6. How often should I scan for secrets?</h3>
+          <h3>6. How often to scan for secrets</h3>
           <p>
             Continuously. On every commit, on every push, and periodically scan historical commits.
             Most tools do this automatically when integrated with GitHub/GitLab.
@@ -634,7 +633,7 @@ const apiKey = "sk_live_abc123..."; // Never do this`}</code>
             be safe and remove it.
           </p>
 
-          <h3>8. Can I store secrets in GitHub as Secrets?</h3>
+          <h3>8. How do I store secrets in GitHub?</h3>
           <p>
             Yes, GitHub and GitLab both provide secure secret storage for CI/CD. Environment
             variables injected at runtime are not logged or exposed in your code.
@@ -693,7 +692,7 @@ const apiKey = "sk_live_abc123..."; // Never do this`}</code>
           <ul>
             <li>
               <strong>This week:</strong> Run Scantient&apos;s free scan on your production API. See
-              what&apos;s actually exposed. Takes 60 seconds.
+              what's exposed. Takes 60 seconds.
             </li>
             <li>
               <strong>Next week:</strong> Add GitGuardian to your repo if you don&apos;t have secret
@@ -704,7 +703,7 @@ const apiKey = "sk_live_abc123..."; // Never do this`}</code>
             </li>
             <li>
               <strong>Ongoing:</strong> Enable continuous monitoring. Secrets leak incrementally.
-              Detection should be continuous too.
+              Detection must be continuous as well.
             </li>
           </ul>
         </div>

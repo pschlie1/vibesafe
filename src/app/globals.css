@@ -70,8 +70,12 @@
   --color-error: #ef4444;
 
   /* Band backgrounds */
-  --color-findings-bg: #070f18;
-  --color-how-it-works-bg: #1a2233;
+  --color-findings-bg: #1E293B;
+  --color-how-it-works-bg: #1E293B;
+  --color-hero-center: #1E293B;
+  --color-hero-edge: #0F172A;
+  --color-cta-deep: #020617;
+  --color-warning-soft: #FDA4AF;
   --color-info: #3b82f6;
 
   /* Layout */

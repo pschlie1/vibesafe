@@ -49,6 +49,29 @@ const tiers: Tier[] = [
     highlighted: false,
   },
   {
+    name: "Startup",
+    price: "$39",
+    period: "/month",
+    annualPrice: "$374",
+    annualSavings: "save $94/year",
+    desc: "Continuous monitoring for growing teams. Catch issues before they reach production.",
+    outcomeHeading: "Continuous monitoring for growing teams",
+    outcomeSubheading: "Catch issues before they reach production.",
+    features: [
+      "5 monitored apps",
+      "3 team members",
+      "Daily automated scans",
+      "All 20 security checks",
+      "Slack & email alerts",
+      "GitHub Action integration",
+      "Weekly security digest",
+      "Cancel anytime",
+    ],
+    cta: "Start free 7-day trial",
+    ctaHref: "/signup?plan=startup",
+    highlighted: false,
+  },
+  {
     name: "Pro",
     price: "$399",
     period: "/month",
@@ -104,19 +127,19 @@ const tiers: Tier[] = [
 
 const faqs = [
   {
-    q: "Can I switch plans later?",
-    a: "Yes. You can upgrade, downgrade, or cancel your subscription anytime. Annual plans can be adjusted on renewal.",
+    q: "Do you support plan switching?",
+    a: "Yes. Upgrade, downgrade, or cancel your subscription anytime. Annual plans are adjustable on renewal.",
   },
   {
     q: "Is there a free trial?",
-    a: "Pro and Enterprise plans include a free 7-day trial. Lifetime Deal is a one-time purchase with 30-day money-back guarantee.",
+    a: "Startup, Pro, and Enterprise plans include a free 7-day trial. Lifetime Deal is a one-time purchase with a 30-day money-back guarantee.",
   },
   {
     q: "What payment methods do you accept?",
     a: "We accept all major credit cards (Visa, Mastercard, American Express) and wire transfers for Enterprise plans.",
   },
   {
-    q: "Can I get a custom plan?",
+    q: "Need a custom plan?",
     a: "Absolutely. Contact our sales team at sales@scantient.com to discuss custom pricing, volume discounts, or special requirements.",
   },
   {
@@ -133,98 +156,128 @@ const faqs = [
   },
   {
     q: "Who should choose which plan?",
-    a: "Lifetime Deal: For developers shipping fast without compliance requirements. Pro: For growing teams (CTOs, security leads) tracking compliance. Enterprise: For teams needing custom rules and board reporting.",
+    a: "Lifetime Deal: For developers shipping fast without compliance requirements. Startup: For growing teams that need daily monitoring and alerts. Pro: For teams (CTOs, security leads) tracking compliance. Enterprise: For teams needing custom rules and board reporting.",
   },
 ];
 
-const featureMatrix = [
+type FeatureRow = {
+  name: string;
+  ltd: string;
+  startup: string;
+  pro: string;
+  enterprise: string;
+};
+
+const featureMatrix: FeatureRow[] = [
   {
     name: "Monitored Apps",
     ltd: "Unlimited",
+    startup: "5",
     pro: "15",
     enterprise: "Unlimited",
   },
   {
     name: "Team Members",
     ltd: "Unlimited",
+    startup: "3",
     pro: "5",
     enterprise: "Unlimited",
   },
   {
     name: "Scan Frequency",
     ltd: "Manual / pre-deploy",
+    startup: "Daily",
     pro: "Hourly",
     enterprise: "Hourly + custom schedules",
   },
   {
     name: "Security Checks",
     ltd: "All 20",
+    startup: "All 20",
     pro: "All 20",
     enterprise: "All 20 + custom rules",
   },
   {
     name: "CLI / GitHub Action",
     ltd: "✓",
+    startup: "✓",
     pro: "✓",
     enterprise: "✓",
   },
   {
     name: "Slack & Email Alerts",
     ltd: "✓",
+    startup: "✓",
+    pro: "✓",
+    enterprise: "✓",
+  },
+  {
+    name: "Weekly Security Digest",
+    ltd: ".",
+    startup: "✓",
     pro: "✓",
     enterprise: "✓",
   },
   {
     name: "Jira Integration",
     ltd: ".",
+    startup: ".",
     pro: "✓ (auto-tickets)",
     enterprise: "✓ (auto-tickets + custom workflows)",
   },
   {
     name: "Monthly Compliance Reports",
     ltd: ".",
+    startup: ".",
     pro: "✓",
     enterprise: "✓ (board-ready quarterly)",
   },
   {
     name: "Auto-Suppress Known-Safe",
     ltd: ".",
+    startup: ".",
     pro: "✓",
     enterprise: "✓",
   },
   {
     name: "Custom Rule Engine",
     ltd: ".",
+    startup: ".",
     pro: ".",
     enterprise: "✓",
   },
   {
     name: "Incident Escalation",
     ltd: ".",
+    startup: ".",
     pro: ".",
     enterprise: "✓",
   },
   {
     name: "Audit Logs",
     ltd: ".",
+    startup: ".",
     pro: "✓",
     enterprise: "✓ (full decision tracking)",
   },
   {
     name: "SLA Guarantee",
     ltd: ".",
+    startup: ".",
     pro: ".",
     enterprise: "✓",
   },
   {
     name: "Support",
     ltd: "Community",
+    startup: "Email",
     pro: "Email",
     enterprise: "White-glove + quarterly reviews",
   },
   {
     name: "Custom Integrations",
     ltd: ".",
+    startup: ".",
     pro: ".",
     enterprise: "✓",
   },
@@ -271,7 +324,7 @@ export default function PricingPage() {
             {isAnnual && <span className="ml-2 inline-block rounded-full bg-success/10 px-3 py-1 text-xs font-semibold text-success">Save up to 20%</span>}
           </div>
 
-          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
             {tiers.map((tier) => (
               <div
                 key={tier.name}
@@ -343,6 +396,7 @@ export default function PricingPage() {
                   <tr className="border-b border-border">
                     <th className="px-4 py-4 text-left font-semibold text-heading">Feature</th>
                     <th className="px-4 py-4 text-center font-semibold text-heading">Lifetime Deal</th>
+                    <th className="px-4 py-4 text-center font-semibold text-heading">Startup</th>
                     <th className="px-4 py-4 text-center font-semibold text-heading">Pro</th>
                     <th className="px-4 py-4 text-center font-semibold text-heading">Enterprise</th>
                   </tr>
@@ -352,6 +406,7 @@ export default function PricingPage() {
                     <tr key={row.name} className={`border-b border-border ${idx % 2 === 1 ? "bg-surface-raised" : ""}`}>
                       <td className="px-4 py-4 font-medium text-heading">{row.name}</td>
                       <td className="px-4 py-4 text-center text-muted">{row.ltd}</td>
+                      <td className="px-4 py-4 text-center text-muted">{row.startup}</td>
                       <td className="px-4 py-4 text-center text-muted">{row.pro}</td>
                       <td className="px-4 py-4 text-center text-muted">{row.enterprise}</td>
                     </tr>

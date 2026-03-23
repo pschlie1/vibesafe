@@ -68,6 +68,10 @@
   --color-success: #10b981;
   --color-warning: #f59e0b;
   --color-error: #ef4444;
+
+  /* Band backgrounds */
+  --color-findings-bg: #070f18;
+  --color-how-it-works-bg: #1a2233;
   --color-info: #3b82f6;
 
   /* Layout */

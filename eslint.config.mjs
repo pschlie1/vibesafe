@@ -17,6 +17,8 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     "coverage/**",
     "src/generated/**",
+    // GitHub Action (separate Node project with its own node_modules)
+    "github-action/**",
   ]),
   // Design system enforcement rules
   {

@@ -2,10 +2,16 @@ import jsPDF from "jspdf";
 import { db } from "@/lib/db";
 import { v4 as uuidv4 } from "uuid";
 import crypto from "crypto";
+import {
+  getSOC2Controls,
+  getOWASPMapping,
+  getNISTMapping,
+} from "@/lib/compliance-frameworks";
 
 /* ── Types ── */
 
 interface ReportFinding {
+  code: string;
   severity: string;
   status: string;
   title: string;
@@ -228,6 +234,7 @@ async function loadReportData(orgId: string, from?: Date, to?: Date) {
       status: app.status,
       score: calcScore(allFindings),
       findings: allFindings.map((f) => ({
+        code: f.code,
         severity: f.severity,
         status: f.status,
         title: f.title,
@@ -412,6 +419,51 @@ export async function generateComplianceReport(
     }
     rb.gap(6);
   }
+
+  // ── OWASP Top 10 Section ──
+  rb.newPage();
+  rb.heading("OWASP Top 10 (2021) Mapping", 18);
+  rb.gap(4);
+  rb.body("Each finding is mapped to the relevant OWASP Top 10 2021 risk category.");
+  rb.gap(4);
+
+  const allOpenFindings = reportApps.flatMap((a) =>
+    a.findings
+      .filter((f) => f.status === "OPEN")
+      .map((f) => ({ code: f.code, title: f.title, severity: f.severity })),
+  );
+  const owaspResults = getOWASPMapping(allOpenFindings);
+  const owaspWidths = [15, 70, 50, 42];
+  rb.tableRow(["ID", "Category", "Description", "Status"], owaspWidths, true);
+  for (const cat of owaspResults) {
+    const desc = cat.category.description.substring(0, 45);
+    rb.tableRow([cat.categoryId, cat.category.name, desc, cat.status === "pass" ? "Compliant" : `${cat.violatingFindings.length} finding(s)`], owaspWidths);
+  }
+  rb.gap(8);
+
+  // ── NIST CSF Section ──
+  rb.heading("NIST CSF 2.0 Mapping", 18);
+  rb.gap(4);
+  rb.body("Findings mapped to NIST Cybersecurity Framework 2.0 functions.");
+  rb.gap(4);
+  const nistResults = getNISTMapping(allOpenFindings);
+  const nistWidths = [15, 35, 100, 37];
+  rb.tableRow(["ID", "Function", "Description", "Status"], nistWidths, true);
+  for (const fn of nistResults) {
+    rb.tableRow([fn.functionId, fn.function.name, fn.function.description.substring(0, 55), fn.status === "pass" ? "Compliant" : `${fn.violatingFindings.length} finding(s)`], nistWidths);
+  }
+  rb.gap(8);
+
+  // ── SOC 2 Summary ──
+  rb.heading("SOC 2 Trust Services Criteria Summary", 18);
+  rb.gap(4);
+  const soc2Results = getSOC2Controls(allOpenFindings);
+  const soc2Widths = [20, 75, 42, 50];
+  rb.tableRow(["Control", "Name", "Category", "Status"], soc2Widths, true);
+  for (const ctrl of soc2Results) {
+    rb.tableRow([ctrl.controlId, ctrl.control.name, ctrl.control.category, ctrl.status === "pass" ? "Compliant" : `${ctrl.violatingFindings.length} finding(s)`], soc2Widths);
+  }
+  rb.gap(8);
 
   // ── Evidence Section ──
   rb.newPage();

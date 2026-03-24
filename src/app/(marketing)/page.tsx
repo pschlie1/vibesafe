@@ -319,7 +319,11 @@ export default function LandingPage() {
       </section>
 
       {/* How It Works Band */}
-      <section className="px-6 py-24 sm:py-32" style={{ background: "var(--color-how-it-works-bg)" }}>
+      <section className="relative overflow-hidden px-6 py-24 sm:py-32" style={{ background: "var(--color-section-lift)", borderTop: "1px solid var(--color-stroke-subtle)" }}>
+        {/* Background glow */}
+        <div className="pointer-events-none absolute inset-0 flex items-start justify-center overflow-hidden">
+          <div className="h-[400px] w-[600px] rounded-full opacity-[0.04]" style={{ background: "var(--color-cta-green)", filter: "blur(80px)", transform: "translateY(-50%)" }} />
+        </div>
         <div className="mx-auto max-w-[1200px]">
           <h2 className="mb-4 text-center text-3xl font-extrabold tracking-[-0.02em] text-heading sm:text-4xl">
             No SDK. No setup. No developer ticket.
@@ -348,10 +352,10 @@ export default function LandingPage() {
                 icon: "📋",
               },
             ].map((item) => (
-              <div key={item.step} className="rounded-2xl border border-border bg-surface p-8">
+              <div key={item.step} className="rounded-2xl border p-8" style={{ background: "var(--color-card-bg)", borderColor: "var(--color-stroke)" }}>
                 <div className="mb-4 flex items-center gap-3">
                   <span className="text-3xl">{item.icon}</span>
-                  <span className="text-xs font-bold tracking-widest text-muted uppercase">{item.step}</span>
+                  <span className="text-xs font-bold tracking-widest uppercase" style={{ color: "var(--color-cta-green)" }}>{item.step}</span>
                 </div>
                 <h3 className="text-xl font-bold text-heading mb-3">{item.title}</h3>
                 <p className="text-sm leading-loose text-muted">{item.desc}</p>
@@ -361,8 +365,13 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Laser divider */}
+      <div className="relative h-px w-full overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(to right, transparent 0%, var(--color-cta-green) 50%, transparent 100%)", opacity: 0.4 }} />
+      </div>
+
       {/* Integrations */}
-      <section className="mx-auto max-w-[1200px] px-6 py-24 text-center sm:py-32">
+      <section className="mx-auto max-w-[1200px] px-6 py-24 text-center sm:py-32" style={{ background: "var(--color-section-base)" }}>
         <h2 className="mb-3 text-3xl font-extrabold tracking-[-0.02em] text-heading sm:text-4xl">Works with your stack</h2>
         <p className="mb-12 text-muted">Integrates with the tools your team already uses</p>
 
@@ -403,7 +412,7 @@ export default function LandingPage() {
       </section>
 
       {/* Social Proof - radical transparency */}
-      <section className="border-y border-border bg-surface px-6 py-24 sm:py-32">
+      <section className="border-y px-6 py-24 sm:py-32" style={{ borderColor: "var(--color-stroke-subtle)", background: "var(--color-section-lift)" }}>
         <div className="mx-auto max-w-[1200px]">
           <h2 className="mb-4 text-center text-3xl font-extrabold tracking-[-0.02em] text-heading sm:text-4xl">Results that speak for themselves</h2>
           <p className="mb-16 text-center text-muted">We walk the walk. Scantient scans itself on every deploy. Here is what we find.</p>
@@ -426,7 +435,7 @@ export default function LandingPage() {
       </section>
 
       {/* Final CTA Band */}
-      <section className="px-6 py-24 sm:py-32 text-center" style={{ background: "linear-gradient(to bottom, var(--color-how-it-works-bg) 0%, var(--color-cta-deep) 30%)" }}>
+      <section className="px-6 py-24 sm:py-32 text-center" style={{ background: "radial-gradient(ellipse at 50% 0%, var(--color-cta-green-faint) 0%, var(--color-section-base) 60%)" }}>
         <div className="mx-auto max-w-[600px]">
           <h2 className="text-3xl font-extrabold tracking-[-0.02em] text-heading sm:text-4xl mb-4">
             Secure your AI-built app in 60 seconds.
@@ -445,7 +454,7 @@ export default function LandingPage() {
       </section>
 
       {/* FAQ */}
-      <section className="border-t border-border bg-surface px-6 py-24 sm:py-32">
+      <section className="border-t px-6 py-24 sm:py-32" style={{ background: "var(--color-section-base)", borderColor: "var(--color-stroke-subtle)" }}>
         <div className="mx-auto max-w-[800px]">
           <h2 className="mb-16 text-center text-3xl font-extrabold tracking-[-0.02em] text-heading sm:text-4xl">Frequently asked questions</h2>
           <div className="space-y-10">
@@ -460,7 +469,7 @@ export default function LandingPage() {
       </section>
 
       {/* Footer CTA */}
-      <section className="bg-page px-6 py-24 text-center sm:py-32">
+      <section className="px-6 py-24 text-center sm:py-32" style={{ background: "var(--color-section-base)" }}>
         <h2 className="text-3xl font-extrabold tracking-[-0.02em] text-white sm:text-4xl">Stop finding out about breaches<br />from your CEO.</h2>
         <p className="mx-auto mt-6 max-w-xl text-muted">
           Add your first app URL. We start scanning in 60 seconds.

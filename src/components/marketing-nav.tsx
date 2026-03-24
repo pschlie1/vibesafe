@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ScantientLogo } from "@/components/scantient-logo";
 
 export default function MarketingNav() {
   return (
@@ -11,13 +12,9 @@ export default function MarketingNav() {
       }}
     >
       <div className="mx-auto flex max-w-[1200px] items-center justify-between px-6 py-4">
-        <Link href="/" className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-surface">
-            <span className="text-sm font-bold text-heading">V</span>
-          </div>
-          <span className="font-bold tracking-tight text-heading">
-            Scantient
-          </span>
+        <Link href="/" className="flex items-center">
+          <ScantientLogo iconOnly height={32} />
+          <span className="ml-2 font-bold tracking-tight text-heading">Scantient</span>
         </Link>
         <div className="flex items-center gap-6">
           <Link

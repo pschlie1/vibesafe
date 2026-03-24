@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useState } from "react";
+import { ScantientLogo } from "@/components/scantient-logo";
 
 const footerColumns = [
   {
@@ -97,12 +98,7 @@ export default function Footer() {
           <div className="lg:col-span-2">
             {/* Logo + wordmark */}
             <div className="flex items-center gap-2.5">
-              <div
-                className="flex h-9 w-9 items-center justify-center rounded-xl"
-                style={{ background: "linear-gradient(135deg, var(--color-cta-green) 0%, var(--color-cta-green-dark) 100%)" }}
-              >
-                <span className="text-sm font-bold text-white">S</span>
-              </div>
+              <ScantientLogo iconOnly height={36} />
               <span className="text-lg font-bold text-white tracking-tight">Scantient</span>
             </div>
 

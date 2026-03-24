@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import type { SessionUser } from "@/lib/auth";
+import { ScantientLogo } from "@/components/scantient-logo";
 
 const baseNavItems = [
   { href: "/dashboard", label: "Dashboard" },
@@ -50,11 +51,9 @@ export function Nav() {
     <nav className="border-b border-border-subtle bg-surface">
       <div className="mx-auto flex max-w-[1200px] items-center justify-between px-6 py-3">
         <div className="flex items-center gap-6">
-          <Link href="/dashboard" className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-surface-raised">
-              <span className="text-sm font-bold text-heading">V</span>
-            </div>
-            <span className="text-sm font-bold text-heading">Scantient</span>
+          <Link href="/dashboard" className="flex items-center">
+            <ScantientLogo iconOnly height={28} />
+            <span className="ml-2 text-sm font-bold text-heading">Scantient</span>
           </Link>
 
           <div className="hidden items-center gap-1 sm:flex">

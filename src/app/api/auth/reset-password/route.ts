@@ -5,6 +5,7 @@ import { db } from "@/lib/db";
 import { hashPassword } from "@/lib/auth";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 import { passwordSchema } from "@/lib/validation";
+import { errorResponse, zodFieldErrors } from "@/lib/api-response";
 
 const schema = z.object({
   token: z.string().min(1),
@@ -32,13 +33,13 @@ export async function POST(req: Request) {
     fallbackMode: "fail-closed",
   });
   if (!limit.allowed) {
-    return NextResponse.json({ error: "Too many attempts. Please try again later." }, { status: 429 });
+    return errorResponse("RATE_LIMITED", "Too many attempts. Please try again later.", undefined, 429);
   }
 
   const body = await req.json();
   const parsed = schema.safeParse(body);
   if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+    return errorResponse("VALIDATION_ERROR", "Validation failed", zodFieldErrors(parsed.error.flatten().fieldErrors), 400);
   }
 
   const { token, password } = parsed.data;
@@ -47,22 +48,22 @@ export async function POST(req: Request) {
   try {
     payload = jwt.verify(token, getJwtSecret()) as ResetTokenPayload;
   } catch {
-    return NextResponse.json({ error: "Invalid or expired reset token" }, { status: 400 });
+    return errorResponse("BAD_REQUEST", "Invalid or expired reset token", undefined, 400);
   }
 
   if (payload.purpose !== "password-reset") {
-    return NextResponse.json({ error: "Invalid token purpose" }, { status: 400 });
+    return errorResponse("BAD_REQUEST", "Invalid token purpose", undefined, 400);
   }
 
   const user = await db.user.findUnique({ where: { id: payload.sub } });
   if (!user) {
-    return NextResponse.json({ error: "User not found" }, { status: 404 });
+    return errorResponse("NOT_FOUND", "User not found", undefined, 404);
   }
 
   // Check if token has already been used: updatedAt > iat means the user was updated after token issue
   const tokenIssuedAt = new Date(payload.iat * 1000);
   if (user.updatedAt > tokenIssuedAt) {
-    return NextResponse.json({ error: "Reset token has already been used" }, { status: 400 });
+    return errorResponse("BAD_REQUEST", "Reset token has already been used", undefined, 400);
   }
 
   const passwordHash = await hashPassword(password);

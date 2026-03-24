@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { deobfuscate } from "@/lib/crypto-util";
+import { decrypt } from "@/lib/crypto-util";
 import { createGitHubIssue } from "@/lib/github-issues";
 import { getOrgLimits } from "@/lib/tenant";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { errorResponse } from "@/lib/api-response";
 
 export async function POST(
   _req: Request,
@@ -14,14 +15,11 @@ export async function POST(
     const session = await requireRole(["ADMIN", "OWNER"]);
     const rl = await checkRateLimit(`github-issue:${session.orgId}`, { maxAttempts: 5, windowMs: 60_000 });
     if (!rl.allowed) {
-      return NextResponse.json({ error: "Too many requests" }, {
-        status: 429,
-        headers: { "Retry-After": String(rl.retryAfterSeconds ?? 60) },
-      });
+      return errorResponse("RATE_LIMITED", "Too many requests", undefined, 429, { "Retry-After": String(rl.retryAfterSeconds ?? 60) });
     }
     const limits = await getOrgLimits(session.orgId);
     if (!["PRO", "ENTERPRISE", "ENTERPRISE_PLUS"].includes(limits.tier)) {
-      return NextResponse.json({ error: "GitHub integration requires a Pro plan or higher." }, { status: 403 });
+      return errorResponse("FORBIDDEN", "GitHub integration requires a Pro plan or higher.", undefined, 403);
     }
     const { id } = await params;
 
@@ -34,7 +32,7 @@ export async function POST(
     });
 
     if (!finding) {
-      return NextResponse.json({ error: "Finding not found." }, { status: 404 });
+      return errorResponse("NOT_FOUND", "Finding not found.", undefined, 404);
     }
 
     // Get GitHub integration config
@@ -53,7 +51,7 @@ export async function POST(
     const config = {
       owner: cfg.owner,
       repo: cfg.repo,
-      token: deobfuscate(cfg.token),
+      token: decrypt(cfg.token),
     };
 
     const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://scantient.com";
@@ -97,6 +95,6 @@ export async function POST(
     return NextResponse.json({ issueUrl: result.issueUrl, issueNumber: result.issueNumber });
   } catch (err) {
     const msg = err instanceof Error ? err.message : "Unauthorized";
-    return NextResponse.json({ error: msg }, { status: msg === "Forbidden" ? 403 : 401 });
+    return errorResponse(msg === "Forbidden" ? "FORBIDDEN" : "UNAUTHORIZED", msg, undefined, msg === "Forbidden" ? 403 : 401);
   }
 }

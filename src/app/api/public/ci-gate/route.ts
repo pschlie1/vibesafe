@@ -29,6 +29,7 @@ import { getOrgLimits } from "@/lib/tenant";
 import { runHttpScanForApp } from "@/lib/scanner-http";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { applyCors, corsPreflightResponse, CORS_HEADERS_PUBLIC } from "@/lib/cors";
+import { errorResponse, zodFieldErrors } from "@/lib/api-response";
 
 export function OPTIONS() {
   return corsPreflightResponse(CORS_HEADERS_PUBLIC);
@@ -62,12 +63,12 @@ async function handler(req: Request): Promise<NextResponse> {
   try {
     body = await req.json();
   } catch {
-    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
+    return errorResponse("BAD_REQUEST", "Invalid JSON body", undefined, 400);
   }
 
   const parsed = bodySchema.safeParse(body);
   if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+    return errorResponse("VALIDATION_ERROR", "Validation failed", zodFieldErrors(parsed.error.flatten().fieldErrors), 400);
   }
 
   const { apiKey, url, failOn } = parsed.data;
@@ -75,15 +76,15 @@ async function handler(req: Request): Promise<NextResponse> {
   // Authenticate via API key in body (same hashing logic as authenticateApiKeyHeader)
   const API_KEY_PREFIX = "vs_";
   if (!apiKey.startsWith(API_KEY_PREFIX) || apiKey.length < 10 || apiKey.length > 60) {
-    return NextResponse.json({ error: "Invalid API key format" }, { status: 401 });
+    return errorResponse("UNAUTHORIZED", "Invalid API key format", undefined, 401);
   }
   const keyHash = crypto.createHash("sha256").update(apiKey).digest("hex");
   const keyRecord = await db.apiKey.findFirst({ where: { keyHash } });
   if (!keyRecord) {
-    return NextResponse.json({ error: "Invalid API key" }, { status: 401 });
+    return errorResponse("UNAUTHORIZED", "Invalid API key", undefined, 401);
   }
   if (keyRecord.expiresAt && keyRecord.expiresAt < new Date()) {
-    return NextResponse.json({ error: "API key has expired" }, { status: 401 });
+    return errorResponse("UNAUTHORIZED", "API key has expired", undefined, 401);
   }
   const orgId = keyRecord.orgId;
   // Update last used

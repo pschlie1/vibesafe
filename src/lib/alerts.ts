@@ -298,14 +298,14 @@ async function firePagerDutyIntegration(
   orgName: string,
 ) {
   try {
-    const { deobfuscate } = await import("@/lib/crypto-util");
+    const { decrypt } = await import("@/lib/crypto-util");
     const pdIntegration = await db.integrationConfig.findUnique({
       where: { orgId_type: { orgId, type: "pagerduty" } },
     });
     if (!pdIntegration || !pdIntegration.enabled) return;
 
     const cfg = pdIntegration.config as Record<string, string>;
-    const routingKey = deobfuscate(cfg.routingKey);
+    const routingKey = decrypt(cfg.routingKey);
 
     const summary = `[Scantient] ${criticals.length} CRITICAL finding(s) on ${appName}: ${criticals[0]?.title ?? "Security issue detected"}`;
     await createPagerDutyIncident(routingKey, {
@@ -334,14 +334,14 @@ async function fireTeamsIntegration(
   findings: SecurityFinding[],
 ) {
   try {
-    const { deobfuscate } = await import("@/lib/crypto-util");
+    const { decrypt } = await import("@/lib/crypto-util");
     const teamsIntegration = await db.integrationConfig.findUnique({
       where: { orgId_type: { orgId, type: "teams" } },
     });
     if (!teamsIntegration || !teamsIntegration.enabled) return;
 
     const cfg = teamsIntegration.config as Record<string, string>;
-    const webhookUrl = deobfuscate(cfg.webhookUrl);
+    const webhookUrl = decrypt(cfg.webhookUrl);
 
     const criticals = findings.filter((f) => f.severity === "CRITICAL");
     const highs = findings.filter((f) => f.severity === "HIGH");

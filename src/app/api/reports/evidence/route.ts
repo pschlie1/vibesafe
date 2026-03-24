@@ -4,6 +4,7 @@ import { generateEvidencePack } from "@/lib/pdf-report";
 import { getOrgLimits } from "@/lib/tenant";
 import { logApiError } from "@/lib/observability";
 import { atLeast } from "@/lib/tier-capabilities";
+import { errorResponse } from "@/lib/api-response";
 
 export const dynamic = "force-dynamic";
 
@@ -13,7 +14,7 @@ type Framework = (typeof VALID_FRAMEWORKS)[number];
 export async function GET(req: NextRequest) {
   const session = await getSession();
   if (!session) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return errorResponse("UNAUTHORIZED", "Unauthorized", undefined, 401);
   }
 
   const limits = await getOrgLimits(session.orgId);
@@ -47,16 +48,16 @@ export async function GET(req: NextRequest) {
   const to = new Date(toStr);
 
   if (isNaN(from.getTime()) || isNaN(to.getTime())) {
-    return NextResponse.json({ error: "Invalid date format" }, { status: 400 });
+    return errorResponse("BAD_REQUEST", "Invalid date format", undefined, 400);
   }
 
   if (to <= from) {
-    return NextResponse.json({ error: "'to' date must be after 'from' date" }, { status: 400 });
+    return errorResponse("BAD_REQUEST", "'to' date must be after 'from' date", undefined, 400);
   }
 
   const MAX_RANGE_MS = 365 * 24 * 60 * 60 * 1000; // 1 year
   if (to.getTime() - from.getTime() > MAX_RANGE_MS) {
-    return NextResponse.json({ error: "Date range cannot exceed 1 year" }, { status: 400 });
+    return errorResponse("BAD_REQUEST", "Date range cannot exceed 1 year", undefined, 400);
   }
 
   try {
@@ -89,6 +90,6 @@ export async function GET(req: NextRequest) {
       userId: session.id,
       statusCode: 500,
     });
-    return NextResponse.json({ error: "Failed to generate evidence pack" }, { status: 500 });
+    return errorResponse("INTERNAL_ERROR", "Failed to generate evidence pack", undefined, 500);
   }
 }

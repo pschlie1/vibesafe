@@ -6,6 +6,7 @@ import { runHttpScanForApp } from "@/lib/scanner-http";
 import { getOrgLimits } from "@/lib/tenant";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { applyCors, corsPreflightResponse, CORS_HEADERS_PUBLIC } from "@/lib/cors";
+import { errorResponse, zodFieldErrors } from "@/lib/api-response";
 
 export function OPTIONS() {
   return corsPreflightResponse(CORS_HEADERS_PUBLIC);
@@ -49,7 +50,7 @@ function scoreToGrade(score: number): string {
 
 async function handler(req: Request): Promise<NextResponse> {
   const orgId = await authenticateApiKeyHeader(req);
-  if (!orgId) return NextResponse.json({ error: "Invalid API key" }, { status: 401 });
+  if (!orgId) return errorResponse("UNAUTHORIZED", "Invalid API key", undefined, 401);
 
   // Tier-based rate limit . shared bucket with manual-scan to prevent bypass
   const orgLimits = await getOrgLimits(orgId);
@@ -66,20 +67,17 @@ async function handler(req: Request): Promise<NextResponse> {
   }
 
   let body: unknown;
-  try { body = await req.json(); } catch { return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 }); }
+  try { body = await req.json(); } catch { return errorResponse("BAD_REQUEST", "Invalid JSON body", undefined, 400); }
 
   const parsed = bodySchema.safeParse(body);
-  if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+  if (!parsed.success) return errorResponse("VALIDATION_ERROR", "Validation failed", zodFieldErrors(parsed.error.flatten().fieldErrors), 400);
 
   const { url, failOn } = parsed.data;
   let app = await db.monitoredApp.findFirst({ where: { url, orgId } });
   if (!app) {
     const existingCount = await db.monitoredApp.count({ where: { orgId } });
     if (existingCount >= orgLimits.maxApps) {
-      return NextResponse.json(
-        { error: "App limit reached for your plan. Upgrade to add more apps." },
-        { status: 403 }
-      );
+      return errorResponse("FORBIDDEN", "App limit reached for your plan. Upgrade to add more apps.", undefined, 403);
     }
     app = await db.monitoredApp.create({ data: { orgId, name: new URL(url).hostname, url, ownerEmail: "ci@scantient", criticality: "medium" } });
   }
@@ -88,7 +86,7 @@ async function handler(req: Request): Promise<NextResponse> {
   try {
     runResult = await runHttpScanForApp(app.id, { source: "api" });
   } catch (err) {
-    return NextResponse.json({ error: err instanceof Error ? err.message : "Scan failed" }, { status: 500 });
+    return errorResponse("INTERNAL_ERROR", err instanceof Error ? err.message : "Scan failed", undefined, 500);
   }
 
   const findings = await db.finding.findMany({

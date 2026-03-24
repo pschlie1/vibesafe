@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { db } from "@/lib/db";
 import { getSession } from "@/lib/auth";
+import { errorResponse, zodFieldErrors } from "@/lib/api-response";
 
 const updateAlertSchema = z.object({
   enabled: z.boolean().optional(),
@@ -9,23 +10,23 @@ const updateAlertSchema = z.object({
 
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await getSession();
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session) return errorResponse("UNAUTHORIZED", "Unauthorized", undefined, 401);
 
   if (["VIEWER", "MEMBER"].includes(session.role)) {
-    return NextResponse.json({ error: "Viewers have read-only access" }, { status: 403 });
+    return errorResponse("FORBIDDEN", "Viewers have read-only access", undefined, 403);
   }
 
   const { id } = await params;
   const body = await req.json();
   const parsed = updateAlertSchema.safeParse(body);
   if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+    return errorResponse("VALIDATION_ERROR", "Validation failed", zodFieldErrors(parsed.error.flatten().fieldErrors), 400);
   }
 
   const config = await db.alertConfig.findFirst({
     where: { id, orgId: session.orgId },
   });
-  if (!config) return NextResponse.json({ error: "Not found" }, { status: 404 });
+  if (!config) return errorResponse("NOT_FOUND", "Not found", undefined, 404);
 
   const updated = await db.alertConfig.update({
     where: { id },
@@ -37,17 +38,17 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
 
 export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await getSession();
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session) return errorResponse("UNAUTHORIZED", "Unauthorized", undefined, 401);
 
   if (["VIEWER", "MEMBER"].includes(session.role)) {
-    return NextResponse.json({ error: "Viewers have read-only access" }, { status: 403 });
+    return errorResponse("FORBIDDEN", "Viewers have read-only access", undefined, 403);
   }
 
   const { id } = await params;
   const config = await db.alertConfig.findFirst({
     where: { id, orgId: session.orgId },
   });
-  if (!config) return NextResponse.json({ error: "Not found" }, { status: 404 });
+  if (!config) return errorResponse("NOT_FOUND", "Not found", undefined, 404);
 
   await db.alertConfig.delete({ where: { id } });
   return NextResponse.json({ ok: true });

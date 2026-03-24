@@ -5,6 +5,7 @@ import { getSession } from "@/lib/auth";
 import { getStripe, PLANS } from "@/lib/stripe";
 import type { PlanKey } from "@/lib/stripe";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { errorResponse } from "@/lib/api-response";
 
 const checkoutSchema = z.object({
   // Keep ENTERPRISE_PLUS accepted for backward compatibility, even if not shown in customer-facing pricing UI.
@@ -14,30 +15,27 @@ const checkoutSchema = z.object({
 
 export async function POST(req: Request) {
   const session = await getSession();
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session) return errorResponse("UNAUTHORIZED", "Unauthorized", undefined, 401);
 
   const rl = await checkRateLimit(`stripe-checkout:${session.id}`, { maxAttempts: 5, windowMs: 60_000 });
   if (!rl.allowed) {
-    return NextResponse.json({ error: "Too many requests" }, {
-      status: 429,
-      headers: { "Retry-After": String(rl.retryAfterSeconds ?? 60) },
-    });
+    return errorResponse("RATE_LIMITED", "Too many requests", undefined, 429, { "Retry-After": String(rl.retryAfterSeconds ?? 60) });
   }
 
   const body = await req.json();
   const parsed = checkoutSchema.safeParse(body);
   if (!parsed.success) {
-    return NextResponse.json({ error: "Invalid plan" }, { status: 400 });
+    return errorResponse("BAD_REQUEST", "Invalid plan", undefined, 400);
   }
 
   const plan = PLANS[parsed.data.plan as PlanKey];
   if (!plan.priceId) {
-    return NextResponse.json({ error: "Stripe not configured for this plan" }, { status: 500 });
+    return errorResponse("INTERNAL_ERROR", "Stripe not configured for this plan", undefined, 500);
   }
 
   // Get or create Stripe customer
   const org = await db.organization.findUnique({ where: { id: session.orgId } });
-  if (!org) return NextResponse.json({ error: "Org not found" }, { status: 404 });
+  if (!org) return errorResponse("NOT_FOUND", "Org not found", undefined, 404);
 
   let customerId = org.stripeCustomerId;
   if (!customerId) {

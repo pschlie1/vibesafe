@@ -18,6 +18,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { timingSafeEqual } from "crypto";
 import { db } from "@/lib/db";
 import { ssrfSafeFetch } from "@/lib/ssrf-guard";
+import { errorResponse } from "@/lib/api-response";
 
 // ─── Token validation ─────────────────────────────────────────────────────────
 
@@ -143,7 +144,7 @@ export async function GET(request: NextRequest) {
   const token = request.headers.get("x-scan-token");
 
   if (!tokenValid(token)) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return errorResponse("UNAUTHORIZED", "Unauthorized", undefined, 401);
   }
 
   const probeStart = Date.now();

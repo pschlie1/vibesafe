@@ -2,10 +2,11 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { requireRole } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { deobfuscate } from "@/lib/crypto-util";
+import { decrypt } from "@/lib/crypto-util";
 import { getOrgLimits } from "@/lib/tenant";
 import { isPrivateUrl } from "@/lib/ssrf-guard";
 import { atLeast } from "@/lib/tier-capabilities";
+import { errorResponse } from "@/lib/api-response";
 
 const bodySchema = z.object({ findingId: z.string().min(1) });
 
@@ -14,30 +15,30 @@ export async function POST(req: Request) {
     const session = await requireRole(["ADMIN", "OWNER", "MEMBER"]);
     const limits = await getOrgLimits(session.orgId);
     if (!atLeast(limits.tier, "PRO")) {
-      return NextResponse.json({ error: "Jira integration requires a Pro plan or higher." }, { status: 403 });
+      return errorResponse("FORBIDDEN", "Jira integration requires a Pro plan or higher.", undefined, 403);
     }
     const body = await req.json();
     const parsed = bodySchema.safeParse(body);
-    if (!parsed.success) return NextResponse.json({ error: "findingId is required" }, { status: 400 });
+    if (!parsed.success) return errorResponse("BAD_REQUEST", "findingId is required", undefined, 400);
     const { findingId } = parsed.data;
     const finding = await db.finding.findFirst({
       where: { id: findingId },
       include: { run: { include: { app: { select: { orgId: true, name: true, url: true } } } } },
     });
     if (!finding || finding.run.app.orgId !== session.orgId) {
-      return NextResponse.json({ error: "Finding not found" }, { status: 404 });
+      return errorResponse("NOT_FOUND", "Finding not found", undefined, 404);
     }
     const integration = await db.integrationConfig.findUnique({
       where: { orgId_type: { orgId: session.orgId, type: "jira" } },
     });
     if (!integration || !integration.enabled) {
-      return NextResponse.json({ error: "Jira not configured" }, { status: 404 });
+      return errorResponse("NOT_FOUND", "Jira not configured", undefined, 404);
     }
     const cfg = integration.config as Record<string, string>;
     if (await isPrivateUrl(cfg.url)) {
-      return NextResponse.json({ error: "Jira URL must be a public address" }, { status: 400 });
+      return errorResponse("BAD_REQUEST", "Jira URL must be a public address", undefined, 400);
     }
-    const apiToken = deobfuscate(cfg.apiToken);
+    const apiToken = decrypt(cfg.apiToken);
     const credentials = Buffer.from(`${cfg.email}:${apiToken}`).toString("base64");
     const app = finding.run.app;
     const severity = finding.severity;
@@ -60,7 +61,7 @@ export async function POST(req: Request) {
     });
     if (!jiraRes.ok) {
       const text = await jiraRes.text().catch(() => jiraRes.statusText);
-      return NextResponse.json({ error: `Jira API error: ${jiraRes.status} - ${text}` }, { status: 502 });
+      return errorResponse("INTERNAL_ERROR", `Jira API error: ${jiraRes.status} - ${text}`, undefined, 502);
     }
     const jiraData = await jiraRes.json() as { key?: string };
     const ticketKey = jiraData.key ?? "";
@@ -71,8 +72,8 @@ export async function POST(req: Request) {
     return NextResponse.json({ ticketUrl });
   } catch (err) {
     const msg = err instanceof Error ? err.message : "Request failed";
-    if (msg === "Forbidden") return NextResponse.json({ error: msg }, { status: 403 });
-    if (msg === "Unauthorized") return NextResponse.json({ error: msg }, { status: 401 });
-    return NextResponse.json({ error: msg }, { status: 500 });
+    if (msg === "Forbidden") return errorResponse("FORBIDDEN", msg, undefined, 403);
+    if (msg === "Unauthorized") return errorResponse("UNAUTHORIZED", msg, undefined, 401);
+    return errorResponse("INTERNAL_ERROR", msg, undefined, 500);
   }
 }

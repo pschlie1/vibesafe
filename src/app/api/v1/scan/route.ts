@@ -6,6 +6,7 @@ import { runHttpScanForApp } from "@/lib/scanner-http";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { getOrgLimits } from "@/lib/tenant";
 import { applyCors, corsPreflightResponse, CORS_HEADERS_API } from "@/lib/cors";
+import { errorResponse } from "@/lib/api-response";
 
 export function OPTIONS() {
   return corsPreflightResponse(CORS_HEADERS_API);
@@ -27,7 +28,7 @@ const scanSchema = z.union([
 async function handler(req: Request): Promise<NextResponse> {
   const orgId = await authenticateApiKey(req);
   if (!orgId) {
-    return NextResponse.json({ error: "Invalid API key" }, { status: 401 });
+    return errorResponse("UNAUTHORIZED", "Invalid API key", undefined, 401);
   }
 
   // Tier-based rate limit . shared bucket with UI manual scans to prevent bypass
@@ -64,7 +65,7 @@ async function handler(req: Request): Promise<NextResponse> {
       where: { id: parsed.data.appId, orgId },
     });
     if (!app) {
-      return NextResponse.json({ error: "App not found" }, { status: 404 });
+      return errorResponse("NOT_FOUND", "App not found", undefined, 404);
     }
     appId = app.id;
   } else {
@@ -73,7 +74,7 @@ async function handler(req: Request): Promise<NextResponse> {
       where: { url: parsed.data.url, orgId },
     });
     if (!app) {
-      return NextResponse.json({ error: "App not found for the given URL" }, { status: 404 });
+      return errorResponse("NOT_FOUND", "App not found for the given URL", undefined, 404);
     }
     appId = app.id;
   }

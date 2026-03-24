@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { getSession } from "@/lib/auth";
 import { logAudit } from "@/lib/tenant";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { errorResponse, zodFieldErrors } from "@/lib/api-response";
 
 const patchSchema = z.object({
   role: z.enum(["ADMIN", "MEMBER", "VIEWER"]),
@@ -14,10 +15,10 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> },
 ) {
   const session = await getSession();
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session) return errorResponse("UNAUTHORIZED", "Unauthorized", undefined, 401);
 
   if (!["OWNER", "ADMIN"].includes(session.role)) {
-    return NextResponse.json({ error: "Admin access required" }, { status: 403 });
+    return errorResponse("FORBIDDEN", "Admin access required", undefined, 403);
   }
 
   const rl = await checkRateLimit(`team-remove:${session.orgId}`, {
@@ -25,23 +26,20 @@ export async function DELETE(
     windowMs: 60 * 60 * 1000,
   });
   if (!rl.allowed) {
-    return NextResponse.json({ error: "Too many requests. Please try again later." }, {
-      status: 429,
-      headers: { "Retry-After": String(rl.retryAfterSeconds ?? 60) },
-    });
+    return errorResponse("RATE_LIMITED", "Too many requests. Please try again later.", undefined, 429, { "Retry-After": String(rl.retryAfterSeconds ?? 60) });
   }
 
   const { id } = await params;
 
   if (id === session.id) {
-    return NextResponse.json({ error: "You cannot remove yourself" }, { status: 400 });
+    return errorResponse("BAD_REQUEST", "You cannot remove yourself", undefined, 400);
   }
 
   const target = await db.user.findFirst({ where: { id, orgId: session.orgId } });
-  if (!target) return NextResponse.json({ error: "Member not found" }, { status: 404 });
+  if (!target) return errorResponse("NOT_FOUND", "Member not found", undefined, 404);
 
   if (target.role === "OWNER") {
-    return NextResponse.json({ error: "Cannot remove the account owner" }, { status: 403 });
+    return errorResponse("FORBIDDEN", "Cannot remove the account owner", undefined, 403);
   }
 
   // Revoke all API keys created by this user for this org before deleting the user.
@@ -59,10 +57,10 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> },
 ) {
   const session = await getSession();
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session) return errorResponse("UNAUTHORIZED", "Unauthorized", undefined, 401);
 
   if (session.role !== "OWNER") {
-    return NextResponse.json({ error: "Only the account owner is allowed to change roles" }, { status: 403 });
+    return errorResponse("FORBIDDEN", "Only the account owner is allowed to change roles", undefined, 403);
   }
 
   const rl = await checkRateLimit(`team-role-change:${session.orgId}`, {
@@ -70,29 +68,26 @@ export async function PATCH(
     windowMs: 60 * 60 * 1000,
   });
   if (!rl.allowed) {
-    return NextResponse.json({ error: "Too many requests. Please try again later." }, {
-      status: 429,
-      headers: { "Retry-After": String(rl.retryAfterSeconds ?? 60) },
-    });
+    return errorResponse("RATE_LIMITED", "Too many requests. Please try again later.", undefined, 429, { "Retry-After": String(rl.retryAfterSeconds ?? 60) });
   }
 
   const { id } = await params;
 
   if (id === session.id) {
-    return NextResponse.json({ error: "You cannot change your own role" }, { status: 400 });
+    return errorResponse("BAD_REQUEST", "You cannot change your own role", undefined, 400);
   }
 
   const body = await req.json();
   const parsed = patchSchema.safeParse(body);
   if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+    return errorResponse("VALIDATION_ERROR", "Validation failed", zodFieldErrors(parsed.error.flatten().fieldErrors), 400);
   }
 
   const target = await db.user.findFirst({ where: { id, orgId: session.orgId } });
-  if (!target) return NextResponse.json({ error: "Member not found" }, { status: 404 });
+  if (!target) return errorResponse("NOT_FOUND", "Member not found", undefined, 404);
 
   if (target.role === "OWNER") {
-    return NextResponse.json({ error: "Cannot change the owner role" }, { status: 403 });
+    return errorResponse("FORBIDDEN", "Cannot change the owner role", undefined, 403);
   }
 
   const updated = await db.user.update({

@@ -9,6 +9,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createHmac } from "crypto";
 import { db } from "@/lib/db";
+import { errorResponse } from "@/lib/api-response";
 import {
   getSOC2Controls,
   getOWASPMapping,
@@ -51,12 +52,12 @@ function verifyToken(token: string): TokenPayload | null {
 export async function GET(req: NextRequest) {
   const token = req.nextUrl.searchParams.get("token");
   if (!token) {
-    return NextResponse.json({ error: "Missing token" }, { status: 400 });
+    return errorResponse("BAD_REQUEST", "Missing token", undefined, 400);
   }
 
   const payload = verifyToken(token);
   if (!payload) {
-    return NextResponse.json({ error: "Invalid or expired link" }, { status: 401 });
+    return errorResponse("UNAUTHORIZED", "Invalid or expired link", undefined, 401);
   }
 
   const org = await db.organization.findUnique({
@@ -64,7 +65,7 @@ export async function GET(req: NextRequest) {
     select: { id: true, name: true },
   });
   if (!org) {
-    return NextResponse.json({ error: "Organization not found" }, { status: 404 });
+    return errorResponse("NOT_FOUND", "Organization not found", undefined, 404);
   }
 
   const openFindings = await db.finding.findMany({

@@ -124,8 +124,8 @@ describe("Endpoint Security - Tier Gating", () => {
       it("should only return data for user's own orgs", () => {
         // User should not be able to view trends for other org's apps
         // Endpoint should validate app belongs to requesting user's org
-        const userOrgId = "org_123";
-        const appOrgId = "org_456";
+        const userOrgId: string = "org_123";
+        const appOrgId: string = "org_456";
         const hasAccess = userOrgId === appOrgId;
         expect(hasAccess).toBe(false);
       });
@@ -326,24 +326,24 @@ describe("Endpoint Security - Tier Gating", () => {
   describe("Tenant Isolation", () => {
     it("should enforce org-level isolation", () => {
       // User should not access data from other orgs
-      const userOrgId = "org_123";
-      const targetOrgId = "org_456";
+      const userOrgId: string = "org_123";
+      const targetOrgId: string = "org_456";
       const canAccess = userOrgId === targetOrgId;
       expect(canAccess).toBe(false);
     });
 
     it("should prevent cross-org app access", () => {
       // App belongs to org_123, user from org_456 cannot access
-      const appOrgId = "org_123";
-      const userOrgId = "org_456";
+      const appOrgId: string = "org_123";
+      const userOrgId: string = "org_456";
       const hasAccess = appOrgId === userOrgId;
       expect(hasAccess).toBe(false);
     });
 
     it("should prevent cross-org finding access", () => {
       // Finding via app isolation (app is org-specific)
-      const appOrgId = "org_123";
-      const userOrgId = "org_456";
+      const appOrgId: string = "org_123";
+      const userOrgId: string = "org_456";
       const hasAccess = appOrgId === userOrgId;
       expect(hasAccess).toBe(false);
     });

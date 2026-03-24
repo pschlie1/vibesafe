@@ -5,6 +5,7 @@ import { getSession } from "@/lib/auth";
 import { getOrgLimits } from "@/lib/tenant";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { atLeast } from "@/lib/tier-capabilities";
+import { errorResponse, zodFieldErrors } from "@/lib/api-response";
 
 const assignSchema = z.object({
   userId: z.string().nullable(),
@@ -12,10 +13,10 @@ const assignSchema = z.object({
 
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await getSession();
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session) return errorResponse("UNAUTHORIZED", "Unauthorized", undefined, 401);
 
   if (session.role === "VIEWER") {
-    return NextResponse.json({ error: "Viewers have read-only access" }, { status: 403 });
+    return errorResponse("FORBIDDEN", "Viewers have read-only access", undefined, 403);
   }
 
   const rl = await checkRateLimit(`finding-assign:${session.orgId}`, {
@@ -23,22 +24,19 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     windowMs: 60 * 60 * 1000,
   });
   if (!rl.allowed) {
-    return NextResponse.json({ error: "Too many requests. Please try again later." }, {
-      status: 429,
-      headers: { "Retry-After": String(rl.retryAfterSeconds ?? 60) },
-    });
+    return errorResponse("RATE_LIMITED", "Too many requests. Please try again later.", undefined, 429, { "Retry-After": String(rl.retryAfterSeconds ?? 60) });
   }
 
   const limits = await getOrgLimits(session.orgId);
   if (!atLeast(limits.tier, "STARTER")) {
-    return NextResponse.json({ error: "Finding assignment requires a Starter plan or higher." }, { status: 403 });
+    return errorResponse("FORBIDDEN", "Finding assignment requires a Starter plan or higher.", undefined, 403);
   }
 
   const { id } = await params;
   const body = await req.json();
   const parsed = assignSchema.safeParse(body);
   if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+    return errorResponse("VALIDATION_ERROR", "Validation failed", zodFieldErrors(parsed.error.flatten().fieldErrors), 400);
   }
 
   // Verify finding belongs to user's org
@@ -48,7 +46,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   });
 
   if (!finding || finding.run.app.orgId !== session.orgId) {
-    return NextResponse.json({ error: "Not found" }, { status: 404 });
+    return errorResponse("NOT_FOUND", "Not found", undefined, 404);
   }
 
   const { userId } = parsed.data;
@@ -64,7 +62,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     where: { id: userId, orgId: session.orgId },
   });
   if (!user) {
-    return NextResponse.json({ error: "User not found in org" }, { status: 404 });
+    return errorResponse("NOT_FOUND", "User not found in org", undefined, 404);
   }
 
   const assignment = await db.findingAssignment.upsert({

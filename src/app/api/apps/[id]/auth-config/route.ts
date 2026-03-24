@@ -6,6 +6,7 @@ import { encryptAuthHeaders, decryptAuthHeaders, maskAuthHeaders } from "@/lib/a
 import { getOrgLimits } from "@/lib/tenant";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { atLeast } from "@/lib/tier-capabilities";
+import { errorResponse, zodFieldErrors } from "@/lib/api-response";
 
 const authHeaderSchema = z.object({
   name: z.string().min(1),
@@ -19,20 +20,20 @@ const putBodySchema = z
 /** GET . return masked auth headers for the app (OWNER/ADMIN only, PRO+ tier) */
 export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await getSession();
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session) return errorResponse("UNAUTHORIZED", "Unauthorized", undefined, 401);
 
   if (!["OWNER", "ADMIN"].includes(session.role)) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    return errorResponse("FORBIDDEN", "Forbidden", undefined, 403);
   }
 
   const limits = await getOrgLimits(session.orgId);
   if (!atLeast(limits.tier, "PRO")) {
-    return NextResponse.json({ error: "Authenticated scanning requires a Pro plan or higher." }, { status: 403 });
+    return errorResponse("FORBIDDEN", "Authenticated scanning requires a Pro plan or higher.", undefined, 403);
   }
 
   const { id } = await params;
   const app = await db.monitoredApp.findFirst({ where: { id, orgId: session.orgId } });
-  if (!app) return NextResponse.json({ error: "Not found" }, { status: 404 });
+  if (!app) return errorResponse("NOT_FOUND", "Not found", undefined, 404);
 
   if (!app.authHeaders) {
     return NextResponse.json({ headers: [] });
@@ -45,15 +46,15 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
 /** PUT . save/replace auth headers (OWNER/ADMIN only, PRO+ tier) */
 export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await getSession();
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session) return errorResponse("UNAUTHORIZED", "Unauthorized", undefined, 401);
 
   if (!["OWNER", "ADMIN"].includes(session.role)) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    return errorResponse("FORBIDDEN", "Forbidden", undefined, 403);
   }
 
   const limits = await getOrgLimits(session.orgId);
   if (!atLeast(limits.tier, "PRO")) {
-    return NextResponse.json({ error: "Authenticated scanning requires a Pro plan or higher." }, { status: 403 });
+    return errorResponse("FORBIDDEN", "Authenticated scanning requires a Pro plan or higher.", undefined, 403);
   }
 
   const rl = await checkRateLimit(`auth-config:${session.orgId}`, {
@@ -61,26 +62,23 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     windowMs: 60 * 60 * 1000,
   });
   if (!rl.allowed) {
-    return NextResponse.json({ error: "Too many requests. Please try again later." }, {
-      status: 429,
-      headers: { "Retry-After": String(rl.retryAfterSeconds ?? 60) },
-    });
+    return errorResponse("RATE_LIMITED", "Too many requests. Please try again later.", undefined, 429, { "Retry-After": String(rl.retryAfterSeconds ?? 60) });
   }
 
   const { id } = await params;
   const app = await db.monitoredApp.findFirst({ where: { id, orgId: session.orgId } });
-  if (!app) return NextResponse.json({ error: "Not found" }, { status: 404 });
+  if (!app) return errorResponse("NOT_FOUND", "Not found", undefined, 404);
 
   let body: unknown;
   try {
     body = await req.json();
   } catch {
-    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+    return errorResponse("BAD_REQUEST", "Invalid JSON", undefined, 400);
   }
 
   const parsed = putBodySchema.safeParse(body);
   if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+    return errorResponse("VALIDATION_ERROR", "Validation failed", undefined, 400);
   }
 
   const encrypted = encryptAuthHeaders(parsed.data);
@@ -95,15 +93,15 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
 /** DELETE . remove auth headers */
 export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await getSession();
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session) return errorResponse("UNAUTHORIZED", "Unauthorized", undefined, 401);
 
   if (!["OWNER", "ADMIN"].includes(session.role)) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    return errorResponse("FORBIDDEN", "Forbidden", undefined, 403);
   }
 
   const { id } = await params;
   const app = await db.monitoredApp.findFirst({ where: { id, orgId: session.orgId } });
-  if (!app) return NextResponse.json({ error: "Not found" }, { status: 404 });
+  if (!app) return errorResponse("NOT_FOUND", "Not found", undefined, 404);
 
   await db.monitoredApp.update({ where: { id }, data: { authHeaders: null } });
 

@@ -3,9 +3,10 @@ import { z } from "zod";
 import { db } from "@/lib/db";
 import { requireRole } from "@/lib/auth";
 import { getOrgLimits } from "@/lib/tenant";
-import { obfuscate, deobfuscate } from "@/lib/crypto-util";
+import { encrypt, decrypt } from "@/lib/crypto-util";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { hasFeature } from "@/lib/tier-capabilities";
+import { errorResponse, zodFieldErrors } from "@/lib/api-response";
 
 
 const pagerdutyConfigSchema = z.object({
@@ -33,7 +34,7 @@ export async function GET() {
     });
     if (!integration) return NextResponse.json(null);
     const cfg = integration.config as Record<string, string>;
-    const rawKey = deobfuscate(cfg.routingKey);
+    const rawKey = decrypt(cfg.routingKey);
     return NextResponse.json({
       routingKey: maskRoutingKey(rawKey),
       serviceId: cfg.serviceId ?? null,
@@ -41,7 +42,7 @@ export async function GET() {
     });
   } catch (err) {
     const msg = err instanceof Error ? err.message : "Unauthorized";
-    return NextResponse.json({ error: msg }, { status: msg === "Forbidden" ? 403 : 401 });
+    return errorResponse(msg === "Forbidden" ? "FORBIDDEN" : "UNAUTHORIZED", msg, undefined, msg === "Forbidden" ? 403 : 401);
   }
 }
 
@@ -60,19 +61,16 @@ export async function POST(req: Request) {
       windowMs: 60 * 60 * 1000,
     });
     if (!rl.allowed) {
-      return NextResponse.json({ error: "Too many requests. Please try again later." }, {
-        status: 429,
-        headers: { "Retry-After": String(rl.retryAfterSeconds ?? 60) },
-      });
+      return errorResponse("RATE_LIMITED", "Too many requests. Please try again later.", undefined, 429, { "Retry-After": String(rl.retryAfterSeconds ?? 60) });
     }
     const body = await req.json();
     const parsed = pagerdutyConfigSchema.safeParse(body);
     if (!parsed.success) {
-      return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+      return errorResponse("VALIDATION_ERROR", "Validation failed", zodFieldErrors(parsed.error.flatten().fieldErrors), 400);
     }
     const { routingKey, serviceId } = parsed.data;
     const config: Record<string, string> = {
-      routingKey: obfuscate(routingKey),
+      routingKey: encrypt(routingKey),
     };
     if (serviceId) config.serviceId = serviceId;
     const integration = await db.integrationConfig.upsert({
@@ -83,7 +81,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ id: integration.id, ok: true });
   } catch (err) {
     const msg = err instanceof Error ? err.message : "Unauthorized";
-    return NextResponse.json({ error: msg }, { status: msg === "Forbidden" ? 403 : 401 });
+    return errorResponse(msg === "Forbidden" ? "FORBIDDEN" : "UNAUTHORIZED", msg, undefined, msg === "Forbidden" ? 403 : 401);
   }
 }
 
@@ -102,10 +100,7 @@ export async function DELETE() {
       windowMs: 60 * 60 * 1000,
     });
     if (!rl.allowed) {
-      return NextResponse.json({ error: "Too many requests. Please try again later." }, {
-        status: 429,
-        headers: { "Retry-After": String(rl.retryAfterSeconds ?? 60) },
-      });
+      return errorResponse("RATE_LIMITED", "Too many requests. Please try again later.", undefined, 429, { "Retry-After": String(rl.retryAfterSeconds ?? 60) });
     }
     await db.integrationConfig.deleteMany({
       where: { orgId: session.orgId, type: "pagerduty" },
@@ -113,7 +108,7 @@ export async function DELETE() {
     return NextResponse.json({ ok: true });
   } catch (err) {
     const msg = err instanceof Error ? err.message : "Unauthorized";
-    return NextResponse.json({ error: msg }, { status: msg === "Forbidden" ? 403 : 401 });
+    return errorResponse(msg === "Forbidden" ? "FORBIDDEN" : "UNAUTHORIZED", msg, undefined, msg === "Forbidden" ? 403 : 401);
   }
 }
 
@@ -124,5 +119,5 @@ export async function getPagerDutyConfig(orgId: string) {
   });
   if (!integration || !integration.enabled) return null;
   const cfg = integration.config as Record<string, string>;
-  return { routingKey: deobfuscate(cfg.routingKey), serviceId: cfg.serviceId };
+  return { routingKey: decrypt(cfg.routingKey), serviceId: cfg.serviceId };
 }

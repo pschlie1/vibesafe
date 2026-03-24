@@ -5,6 +5,7 @@ import { runHttpScanForApp } from "@/lib/scanner-http";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { getOrgLimits } from "@/lib/tenant";
 import { applyCors, corsPreflightResponse, CORS_HEADERS_API } from "@/lib/cors";
+import { errorResponse } from "@/lib/api-response";
 
 export function OPTIONS() {
   return corsPreflightResponse(CORS_HEADERS_API);
@@ -23,7 +24,7 @@ async function handler(
   params: Promise<{ id: string }>,
 ): Promise<NextResponse> {
   const orgId = await authenticateApiKey(req);
-  if (!orgId) return NextResponse.json({ error: "Invalid API key" }, { status: 401 });
+  if (!orgId) return errorResponse("UNAUTHORIZED", "Invalid API key", undefined, 401);
 
   // Tier-based rate limit (shared with manual-scan bucket)
   const limits = await getOrgLimits(orgId);
@@ -43,7 +44,7 @@ async function handler(
 
   // Verify app belongs to org
   const app = await db.monitoredApp.findFirst({ where: { id, orgId } });
-  if (!app) return NextResponse.json({ error: "App not found" }, { status: 404 });
+  if (!app) return errorResponse("NOT_FOUND", "App not found", undefined, 404);
 
   try {
     const result = await runHttpScanForApp(id, { source: "api" });

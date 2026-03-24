@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { verifyPassword, createSession } from "@/lib/auth";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 import { logAudit } from "@/lib/tenant";
+import { errorResponse } from "@/lib/api-response";
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -19,17 +20,14 @@ export async function POST(req: Request) {
       fallbackMode: "fail-closed",
     });
     if (!limit.allowed) {
-      return NextResponse.json({ error: "Too many login attempts. Please try again later." }, {
-        status: 429,
-        headers: { "Retry-After": String(limit.retryAfterSeconds ?? 60) },
-      });
+      return errorResponse("RATE_LIMITED", "Too many login attempts. Please try again later.", undefined, 429, { "Retry-After": String(limit.retryAfterSeconds ?? 60) });
     }
 
     const body = await req.json();
     const parsed = loginSchema.safeParse(body);
 
     if (!parsed.success) {
-      return NextResponse.json({ error: "Invalid credentials" }, { status: 400 });
+      return errorResponse("BAD_REQUEST", "Invalid credentials", undefined, 400);
     }
 
     const { email, password } = parsed.data;
@@ -41,10 +39,7 @@ export async function POST(req: Request) {
       fallbackMode: "fail-closed",
     });
     if (!emailLimit.allowed) {
-      return NextResponse.json({ error: "Too many login attempts. Please try again later." }, {
-        status: 429,
-        headers: { "Retry-After": String(emailLimit.retryAfterSeconds ?? 3600) },
-      });
+      return errorResponse("RATE_LIMITED", "Too many login attempts. Please try again later.", undefined, 429, { "Retry-After": String(emailLimit.retryAfterSeconds ?? 3600) });
     }
 
     const user = await db.user.findFirst({
@@ -53,7 +48,7 @@ export async function POST(req: Request) {
     });
 
     if (!user || !user.passwordHash) {
-      return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
+      return errorResponse("UNAUTHORIZED", "Invalid credentials", undefined, 401);
     }
 
     if (!user.emailVerified) {
@@ -65,7 +60,7 @@ export async function POST(req: Request) {
 
     const valid = await verifyPassword(password, user.passwordHash);
     if (!valid) {
-      return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
+      return errorResponse("UNAUTHORIZED", "Invalid credentials", undefined, 401);
     }
 
     const session = await createSession(user.id);
@@ -73,6 +68,6 @@ export async function POST(req: Request) {
     logAudit(session, "user.login", "auth").catch(() => { /* non-fatal */ });
     return NextResponse.json({ user: session });
   } catch {
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return errorResponse("INTERNAL_ERROR", "Internal server error", undefined, 500);
   }
 }

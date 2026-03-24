@@ -3,13 +3,14 @@ import { getSession } from "@/lib/auth";
 import { getOrgLimits } from "@/lib/tenant";
 import { db } from "@/lib/db";
 import { calculateComplianceScore } from "@/lib/compliance-score";
+import { errorResponse } from "@/lib/api-response";
 
 const ALLOWED_TIERS = ["PRO", "ENTERPRISE", "ENTERPRISE_PLUS"];
 
 export async function GET() {
   const session = await getSession();
   if (!session) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return errorResponse("UNAUTHORIZED", "Unauthorized", undefined, 401);
   }
 
   const limits = await getOrgLimits(session.orgId);

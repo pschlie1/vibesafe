@@ -28,6 +28,7 @@ import {
   getNISTMapping,
   frameworkPassRate,
 } from "@/lib/compliance-frameworks";
+import { errorResponse } from "@/lib/api-response";
 
 export const dynamic = "force-dynamic";
 
@@ -36,7 +37,7 @@ const ALLOWED_TIERS = ["ENTERPRISE", "ENTERPRISE_PLUS"];
 export async function GET() {
   const session = await getSession();
   if (!session) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return errorResponse("UNAUTHORIZED", "Unauthorized", undefined, 401);
   }
 
   const limits = await getOrgLimits(session.orgId);
@@ -58,7 +59,7 @@ export async function GET() {
   });
 
   if (!org) {
-    return NextResponse.json({ error: "Organization not found" }, { status: 404 });
+    return errorResponse("NOT_FOUND", "Organization not found", undefined, 404);
   }
 
   // Load open findings (all apps in this org)

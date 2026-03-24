@@ -5,6 +5,7 @@ import { hashPassword, createSession } from "@/lib/auth";
 import { canAddUser, logAudit } from "@/lib/tenant";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 import { passwordSchema } from "@/lib/validation";
+import { errorResponse, zodFieldErrors } from "@/lib/api-response";
 
 // GET /api/auth/invite/[token] . return invite details
 export async function GET(
@@ -14,10 +15,7 @@ export async function GET(
   const ip = getClientIp(req);
   const rl = await checkRateLimit(`invite-token:${ip}`, { maxAttempts: 20, windowMs: 60_000 });
   if (!rl.allowed) {
-    return NextResponse.json({ error: "Too many requests" }, {
-      status: 429,
-      headers: { "Retry-After": String(rl.retryAfterSeconds ?? 60) },
-    });
+    return errorResponse("RATE_LIMITED", "Too many requests", undefined, 429, { "Retry-After": String(rl.retryAfterSeconds ?? 60) });
   }
 
   const { token } = await params;
@@ -28,11 +26,11 @@ export async function GET(
   });
 
   if (!invite) {
-    return NextResponse.json({ error: "Invite not found" }, { status: 404 });
+    return errorResponse("NOT_FOUND", "Invite not found", undefined, 404);
   }
 
   if (invite.expiresAt < new Date()) {
-    return NextResponse.json({ error: "Invite has expired" }, { status: 410 });
+    return errorResponse("NOT_FOUND", "Invite has expired", undefined, 410);
   }
 
   return NextResponse.json({
@@ -55,10 +53,7 @@ export async function POST(
   const ip = getClientIp(req);
   const rl = await checkRateLimit(`invite-token:${ip}`, { maxAttempts: 20, windowMs: 60_000 });
   if (!rl.allowed) {
-    return NextResponse.json({ error: "Too many requests" }, {
-      status: 429,
-      headers: { "Retry-After": String(rl.retryAfterSeconds ?? 60) },
-    });
+    return errorResponse("RATE_LIMITED", "Too many requests", undefined, 429, { "Retry-After": String(rl.retryAfterSeconds ?? 60) });
   }
 
   const { token } = await params;
@@ -69,17 +64,17 @@ export async function POST(
   });
 
   if (!invite) {
-    return NextResponse.json({ error: "Invite not found" }, { status: 404 });
+    return errorResponse("NOT_FOUND", "Invite not found", undefined, 404);
   }
 
   if (invite.expiresAt < new Date()) {
-    return NextResponse.json({ error: "Invite has expired" }, { status: 410 });
+    return errorResponse("NOT_FOUND", "Invite has expired", undefined, 410);
   }
 
   const body = await req.json();
   const parsed = acceptSchema.safeParse(body);
   if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+    return errorResponse("VALIDATION_ERROR", "Validation failed", zodFieldErrors(parsed.error.flatten().fieldErrors), 400);
   }
 
   const { name, password } = parsed.data;

@@ -28,6 +28,7 @@
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { errorResponse } from "@/lib/api-response";
 
 export const dynamic = "force-dynamic";
 
@@ -64,11 +65,11 @@ function computeComplianceScore(findings: { severity: string }[]): number {
 export async function GET() {
   const session = await getSession();
   if (!session) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return errorResponse("UNAUTHORIZED", "Unauthorized", undefined, 401);
   }
 
   if (session.role !== "OWNER" && session.role !== "ADMIN") {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    return errorResponse("FORBIDDEN", "Forbidden", undefined, 403);
   }
 
   // Fetch all client orgs where this org is the parent (MSP)

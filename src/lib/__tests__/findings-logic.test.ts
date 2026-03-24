@@ -378,7 +378,7 @@ describe("Finding Suppression Logic", () => {
 
     it("should allow snooze + re-detection workflow", () => {
       // Finding detected
-      const finding = {
+      const finding: { id: string; code: string; appId: string; status: string; snoozedUntil?: Date } = {
         id: "f1",
         code: "XSS",
         appId: "app_123",

@@ -3,6 +3,7 @@ import crypto from "node:crypto";
 import { db } from "@/lib/db";
 import { applyCors, corsPreflightResponse, CORS_HEADERS_PUBLIC } from "@/lib/cors";
 import { escapeSvg } from "@/lib/security";
+import { errorResponse } from "@/lib/api-response";
 
 export function OPTIONS() {
   return corsPreflightResponse(CORS_HEADERS_PUBLIC);
@@ -101,7 +102,7 @@ async function handler(req: Request): Promise<NextResponse> {
 
   if (!url || !key) {
     if (format === "json") {
-      return NextResponse.json({ error: "Missing url or key" }, { status: 400 });
+      return errorResponse("BAD_REQUEST", "Missing url or key", undefined, 400);
     }
     if (format === "shield") {
       return NextResponse.json({ schemaVersion: 1, label: "Scantient", message: "unknown", color: "grey" }, { headers: jsonHeaders });
@@ -113,7 +114,7 @@ async function handler(req: Request): Promise<NextResponse> {
   const apiKey = await db.apiKey.findFirst({ where: { keyHash: hash } });
   if (!apiKey || (apiKey.expiresAt && apiKey.expiresAt < new Date())) {
     if (format === "json") {
-      return NextResponse.json({ error: "Invalid API key" }, { status: 401 });
+      return errorResponse("UNAUTHORIZED", "Invalid API key", undefined, 401);
     }
     if (format === "shield") {
       return NextResponse.json({ schemaVersion: 1, label: "Scantient", message: "invalid key", color: "red" }, { headers: jsonHeaders });
@@ -134,7 +135,7 @@ async function handler(req: Request): Promise<NextResponse> {
 
   if (!app || app.monitorRuns.length === 0) {
     if (format === "json") {
-      return NextResponse.json({ error: "No scan data found" }, { status: 404 });
+      return errorResponse("NOT_FOUND", "No scan data found", undefined, 404);
     }
     if (format === "shield") {
       return NextResponse.json({ schemaVersion: 1, label: "Scantient", message: "no data", color: "grey" }, { headers: jsonHeaders });

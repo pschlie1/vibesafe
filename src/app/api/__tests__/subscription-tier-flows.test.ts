@@ -111,8 +111,8 @@ vi.mock("@/lib/ssrf-guard", () => ({
 vi.mock("@/lib/observability", () => ({ logApiError: vi.fn() }));
 vi.mock("@/lib/analytics", () => ({ trackEvent: vi.fn() }));
 vi.mock("@/lib/crypto-util", () => ({
-  obfuscate: vi.fn().mockReturnValue("encrypted-secret"),
-  deobfuscate: vi.fn().mockReturnValue("raw-secret"),
+  encrypt: vi.fn().mockReturnValue("encrypted-secret"),
+  decrypt: vi.fn().mockReturnValue("raw-secret"),
 }));
 vi.mock("@/lib/pdf-report", () => ({
   generateComplianceReport: vi.fn().mockResolvedValue(Buffer.from("pdf-content")),

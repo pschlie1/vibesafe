@@ -4,10 +4,11 @@ import { db } from "@/lib/db";
 import { getSession } from "@/lib/auth";
 import { getOrgLimits } from "@/lib/tenant";
 import { isPrivateUrl } from "@/lib/ssrf-guard";
+import { errorResponse, zodFieldErrors } from "@/lib/api-response";
 
 export async function GET() {
   const session = await getSession();
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session) return errorResponse("UNAUTHORIZED", "Unauthorized", undefined, 401);
 
   const configs = await db.alertConfig.findMany({
     where: { orgId: session.orgId },
@@ -35,10 +36,10 @@ const createSchema = z.object({
 
 export async function POST(req: Request) {
   const session = await getSession();
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session) return errorResponse("UNAUTHORIZED", "Unauthorized", undefined, 401);
 
   if (["VIEWER", "MEMBER"].includes(session.role)) {
-    return NextResponse.json({ error: "Viewers have read-only access" }, { status: 403 });
+    return errorResponse("FORBIDDEN", "Viewers have read-only access", undefined, 403);
   }
 
   const limits = await getOrgLimits(session.orgId);
@@ -47,7 +48,7 @@ export async function POST(req: Request) {
   const body = await req.json();
   const parsed = createSchema.safeParse(body);
   if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+    return errorResponse("VALIDATION_ERROR", "Validation failed", zodFieldErrors(parsed.error.flatten().fieldErrors), 400);
   }
 
   if (!allowedChannels.includes(parsed.data.channel)) {

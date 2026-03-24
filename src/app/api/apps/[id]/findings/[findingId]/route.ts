@@ -12,6 +12,7 @@ import { getSession } from "@/lib/auth";
 import { trackEvent } from "@/lib/analytics";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { addTimelineEvent } from "@/lib/remediation-lifecycle";
+import { errorResponse, zodFieldErrors } from "@/lib/api-response";
 
 const updateFindingSchema = z.object({
   status: z.enum(["OPEN", "ACKNOWLEDGED", "IN_PROGRESS", "RESOLVED", "IGNORED"]),
@@ -48,10 +49,10 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string; findingId: string }> },
 ) {
   const session = await getSession();
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session) return errorResponse("UNAUTHORIZED", "Unauthorized", undefined, 401);
 
   if (session.role === "VIEWER") {
-    return NextResponse.json({ error: "Viewers have read-only access" }, { status: 403 });
+    return errorResponse("FORBIDDEN", "Viewers have read-only access", undefined, 403);
   }
 
   const rl = await checkRateLimit(`finding-update:${session.orgId}`, {
@@ -59,10 +60,7 @@ export async function PATCH(
     windowMs: 60 * 60 * 1000,
   });
   if (!rl.allowed) {
-    return NextResponse.json({ error: "Too many requests. Please try again later." }, {
-      status: 429,
-      headers: { "Retry-After": String(rl.retryAfterSeconds ?? 60) },
-    });
+    return errorResponse("RATE_LIMITED", "Too many requests. Please try again later.", undefined, 429, { "Retry-After": String(rl.retryAfterSeconds ?? 60) });
   }
 
   const { id: appId, findingId } = await params;
@@ -70,7 +68,7 @@ export async function PATCH(
   const parsed = updateFindingSchema.safeParse(body);
 
   if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+    return errorResponse("VALIDATION_ERROR", "Validation failed", zodFieldErrors(parsed.error.flatten().fieldErrors), 400);
   }
 
   // Verify the finding belongs to this org AND this app
@@ -82,7 +80,7 @@ export async function PATCH(
     },
   });
 
-  if (!finding) return NextResponse.json({ error: "Not found" }, { status: 404 });
+  if (!finding) return errorResponse("NOT_FOUND", "Not found", undefined, 404);
 
   const { userNotes, history } = parseStatusHistory(finding.notes);
   if (finding.status !== parsed.data.status) {

@@ -3,9 +3,10 @@ import { z } from "zod";
 import { db } from "@/lib/db";
 import { requireRole } from "@/lib/auth";
 import { getOrgLimits } from "@/lib/tenant";
-import { obfuscate, deobfuscate } from "@/lib/crypto-util";
+import { encrypt, decrypt } from "@/lib/crypto-util";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { hasFeature } from "@/lib/tier-capabilities";
+import { errorResponse, zodFieldErrors } from "@/lib/api-response";
 
 
 const githubConfigSchema = z.object({
@@ -34,7 +35,7 @@ export async function GET() {
     });
     if (!integration) return NextResponse.json(null);
     const cfg = integration.config as Record<string, string>;
-    const rawToken = deobfuscate(cfg.token);
+    const rawToken = decrypt(cfg.token);
     return NextResponse.json({
       owner: cfg.owner,
       repo: cfg.repo,
@@ -43,7 +44,7 @@ export async function GET() {
     });
   } catch (err) {
     const msg = err instanceof Error ? err.message : "Unauthorized";
-    return NextResponse.json({ error: msg }, { status: msg === "Forbidden" ? 403 : 401 });
+    return errorResponse(msg === "Forbidden" ? "FORBIDDEN" : "UNAUTHORIZED", msg, undefined, msg === "Forbidden" ? 403 : 401);
   }
 }
 
@@ -62,18 +63,15 @@ export async function POST(req: Request) {
       windowMs: 60 * 60 * 1000,
     });
     if (!rl.allowed) {
-      return NextResponse.json({ error: "Too many requests. Please try again later." }, {
-        status: 429,
-        headers: { "Retry-After": String(rl.retryAfterSeconds ?? 60) },
-      });
+      return errorResponse("RATE_LIMITED", "Too many requests. Please try again later.", undefined, 429, { "Retry-After": String(rl.retryAfterSeconds ?? 60) });
     }
     const body = await req.json();
     const parsed = githubConfigSchema.safeParse(body);
     if (!parsed.success) {
-      return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+      return errorResponse("VALIDATION_ERROR", "Validation failed", zodFieldErrors(parsed.error.flatten().fieldErrors), 400);
     }
     const { owner, repo, token } = parsed.data;
-    const config = { owner, repo, token: obfuscate(token) };
+    const config = { owner, repo, token: encrypt(token) };
     const integration = await db.integrationConfig.upsert({
       where: { orgId_type: { orgId: session.orgId, type: "github" } },
       create: { orgId: session.orgId, type: "github", config, enabled: true },
@@ -82,7 +80,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ id: integration.id, ok: true });
   } catch (err) {
     const msg = err instanceof Error ? err.message : "Unauthorized";
-    return NextResponse.json({ error: msg }, { status: msg === "Forbidden" ? 403 : 401 });
+    return errorResponse(msg === "Forbidden" ? "FORBIDDEN" : "UNAUTHORIZED", msg, undefined, msg === "Forbidden" ? 403 : 401);
   }
 }
 
@@ -101,10 +99,7 @@ export async function DELETE() {
       windowMs: 60 * 60 * 1000,
     });
     if (!rl.allowed) {
-      return NextResponse.json({ error: "Too many requests. Please try again later." }, {
-        status: 429,
-        headers: { "Retry-After": String(rl.retryAfterSeconds ?? 60) },
-      });
+      return errorResponse("RATE_LIMITED", "Too many requests. Please try again later.", undefined, 429, { "Retry-After": String(rl.retryAfterSeconds ?? 60) });
     }
     await db.integrationConfig.deleteMany({
       where: { orgId: session.orgId, type: "github" },
@@ -112,7 +107,7 @@ export async function DELETE() {
     return NextResponse.json({ ok: true });
   } catch (err) {
     const msg = err instanceof Error ? err.message : "Unauthorized";
-    return NextResponse.json({ error: msg }, { status: msg === "Forbidden" ? 403 : 401 });
+    return errorResponse(msg === "Forbidden" ? "FORBIDDEN" : "UNAUTHORIZED", msg, undefined, msg === "Forbidden" ? 403 : 401);
   }
 }
 
@@ -123,5 +118,5 @@ export async function getGitHubConfig(orgId: string) {
   });
   if (!integration || !integration.enabled) return null;
   const cfg = integration.config as Record<string, string>;
-  return { owner: cfg.owner, repo: cfg.repo, token: deobfuscate(cfg.token) };
+  return { owner: cfg.owner, repo: cfg.repo, token: decrypt(cfg.token) };
 }

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
+import { errorResponse, zodFieldErrors } from "@/lib/api-response";
 
 const subscribeSchema = z.object({
   email: z.string().email(),
@@ -29,7 +30,7 @@ export async function POST(req: Request) {
   const parsed = subscribeSchema.safeParse(body);
 
   if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+    return errorResponse("VALIDATION_ERROR", "Validation failed", zodFieldErrors(parsed.error.flatten().fieldErrors), 400);
   }
 
   const { email } = parsed.data;

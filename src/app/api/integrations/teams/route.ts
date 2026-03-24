@@ -3,10 +3,11 @@ import { z } from "zod";
 import { db } from "@/lib/db";
 import { requireRole } from "@/lib/auth";
 import { getOrgLimits } from "@/lib/tenant";
-import { obfuscate } from "@/lib/crypto-util";
+import { encrypt } from "@/lib/crypto-util";
 import { isPrivateUrl } from "@/lib/ssrf-guard";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { hasFeature } from "@/lib/tier-capabilities";
+import { errorResponse, zodFieldErrors } from "@/lib/api-response";
 
 
 const TEAMS_URL_PATTERN = /https:\/\/.+(webhook|office|teams|logic)/i;
@@ -51,7 +52,7 @@ export async function GET() {
     });
   } catch (err) {
     const msg = err instanceof Error ? err.message : "Unauthorized";
-    return NextResponse.json({ error: msg }, { status: msg === "Forbidden" ? 403 : 401 });
+    return errorResponse(msg === "Forbidden" ? "FORBIDDEN" : "UNAUTHORIZED", msg, undefined, msg === "Forbidden" ? 403 : 401);
   }
 }
 
@@ -70,15 +71,12 @@ export async function POST(req: Request) {
       windowMs: 60 * 60 * 1000,
     });
     if (!rl.allowed) {
-      return NextResponse.json({ error: "Too many requests. Please try again later." }, {
-        status: 429,
-        headers: { "Retry-After": String(rl.retryAfterSeconds ?? 60) },
-      });
+      return errorResponse("RATE_LIMITED", "Too many requests. Please try again later.", undefined, 429, { "Retry-After": String(rl.retryAfterSeconds ?? 60) });
     }
     const body = await req.json();
     const parsed = teamsConfigSchema.safeParse(body);
     if (!parsed.success) {
-      return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+      return errorResponse("VALIDATION_ERROR", "Validation failed", zodFieldErrors(parsed.error.flatten().fieldErrors), 400);
     }
     const { webhookUrl } = parsed.data;
     if (await isPrivateUrl(webhookUrl)) {
@@ -87,7 +85,7 @@ export async function POST(req: Request) {
         { status: 400 },
       );
     }
-    const config = { webhookUrl: obfuscate(webhookUrl) };
+    const config = { webhookUrl: encrypt(webhookUrl) };
     const integration = await db.integrationConfig.upsert({
       where: { orgId_type: { orgId: session.orgId, type: "teams" } },
       create: { orgId: session.orgId, type: "teams", config, enabled: true },
@@ -96,7 +94,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ id: integration.id, ok: true });
   } catch (err) {
     const msg = err instanceof Error ? err.message : "Unauthorized";
-    return NextResponse.json({ error: msg }, { status: msg === "Forbidden" ? 403 : 401 });
+    return errorResponse(msg === "Forbidden" ? "FORBIDDEN" : "UNAUTHORIZED", msg, undefined, msg === "Forbidden" ? 403 : 401);
   }
 }
 
@@ -115,10 +113,7 @@ export async function DELETE() {
       windowMs: 60 * 60 * 1000,
     });
     if (!rl.allowed) {
-      return NextResponse.json({ error: "Too many requests. Please try again later." }, {
-        status: 429,
-        headers: { "Retry-After": String(rl.retryAfterSeconds ?? 60) },
-      });
+      return errorResponse("RATE_LIMITED", "Too many requests. Please try again later.", undefined, 429, { "Retry-After": String(rl.retryAfterSeconds ?? 60) });
     }
     await db.integrationConfig.deleteMany({
       where: { orgId: session.orgId, type: "teams" },
@@ -126,17 +121,17 @@ export async function DELETE() {
     return NextResponse.json({ ok: true });
   } catch (err) {
     const msg = err instanceof Error ? err.message : "Unauthorized";
-    return NextResponse.json({ error: msg }, { status: msg === "Forbidden" ? 403 : 401 });
+    return errorResponse(msg === "Forbidden" ? "FORBIDDEN" : "UNAUTHORIZED", msg, undefined, msg === "Forbidden" ? 403 : 401);
   }
 }
 
 /** Internal: get Teams config (decrypted) for a given org */
 export async function getTeamsConfig(orgId: string) {
-  const { deobfuscate } = await import("@/lib/crypto-util");
+  const { decrypt } = await import("@/lib/crypto-util");
   const integration = await db.integrationConfig.findUnique({
     where: { orgId_type: { orgId, type: "teams" } },
   });
   if (!integration || !integration.enabled) return null;
   const cfg = integration.config as Record<string, string>;
-  return { webhookUrl: deobfuscate(cfg.webhookUrl) };
+  return { webhookUrl: decrypt(cfg.webhookUrl) };
 }

@@ -3,14 +3,15 @@ import { getSession } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { getOrgLimits } from "@/lib/tenant";
 import { atLeast } from "@/lib/tier-capabilities";
+import { errorResponse } from "@/lib/api-response";
 
 export async function GET() {
   const session = await getSession();
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session) return errorResponse("UNAUTHORIZED", "Unauthorized", undefined, 401);
 
   const limits = await getOrgLimits(session.orgId);
   if (!atLeast(limits.tier, "PRO")) {
-    return NextResponse.json({ error: "Agent metrics require a Pro plan or higher." }, { status: 403 });
+    return errorResponse("FORBIDDEN", "Agent metrics require a Pro plan or higher.", undefined, 403);
   }
 
   const now = new Date();

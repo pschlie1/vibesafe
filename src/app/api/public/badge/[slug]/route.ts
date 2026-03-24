@@ -9,6 +9,7 @@ import { db } from "@/lib/db";
 import { calcScore, scoreToGrade, scoreToColor, makeBadgeSvg } from "@/app/api/public/badge/route";
 import { applyCors, corsPreflightResponse, CORS_HEADERS_PUBLIC } from "@/lib/cors";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
+import { errorResponse } from "@/lib/api-response";
 
 export function OPTIONS() {
   return corsPreflightResponse(CORS_HEADERS_PUBLIC);
@@ -56,7 +57,7 @@ async function handler(
 
   if (!org) {
     if (format === "json") {
-      return NextResponse.json({ error: "Organization not found" }, { status: 404 });
+      return errorResponse("NOT_FOUND", "Organization not found", undefined, 404);
     }
     if (format === "shield") {
       return NextResponse.json(
@@ -86,7 +87,7 @@ async function handler(
 
   if (scores.length === 0) {
     if (format === "json") {
-      return NextResponse.json({ error: "No scan data available" }, { status: 404 });
+      return errorResponse("NOT_FOUND", "No scan data available", undefined, 404);
     }
     if (format === "shield") {
       return NextResponse.json(

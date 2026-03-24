@@ -15,7 +15,7 @@ process.env.JWT_SECRET = "test-jwt-secret-for-audit-5";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // ─── SSRF guard mock ─────────────────────────────────────────────────────────
-const isPrivateUrl = vi.fn<[string], Promise<boolean>>();
+const isPrivateUrl = vi.fn<(url: string) => Promise<boolean>>();
 vi.mock("@/lib/ssrf-guard", () => ({ isPrivateUrl, isPrivateIp: vi.fn() }));
 
 // ─── Auth mock ────────────────────────────────────────────────────────────────
@@ -110,8 +110,10 @@ vi.mock("@/lib/types", async () => {
 vi.mock("@/lib/observability", () => ({ logApiError: vi.fn() }));
 vi.mock("@/lib/scanner-http", () => ({ runHttpScanForApp: vi.fn() }));
 vi.mock("@/lib/crypto-util", () => ({
-  obfuscate: vi.fn((v: string) => Buffer.from(v).toString("base64")),
-  deobfuscate: vi.fn((v: string) => Buffer.from(v, "base64").toString("utf8")),
+  encrypt: vi.fn((v: string) => `enc:${v}`),
+  decrypt: vi.fn((v: string) => v.replace("enc:", "")),
+  obfuscate: vi.fn((v: string) => `enc:${v}`),
+  deobfuscate: vi.fn((v: string) => v.replace("enc:", "")),
 }));
 vi.mock("next/headers", () => ({
   cookies: vi.fn().mockResolvedValue({ get: vi.fn(), set: vi.fn(), delete: vi.fn() }),

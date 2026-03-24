@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { getSession } from "@/lib/auth";
 import { getOrgLimits } from "@/lib/tenant";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { errorResponse } from "@/lib/api-response";
 
 function buildReport(apps: Array<{ name: string; ownerEmail: string | null; status: string; lastCheckedAt: Date | null; monitorRuns: Array<{ findings: Array<{ severity: string }> }> }>) {
   return apps.map((app) => {
@@ -27,12 +28,12 @@ export async function GET(_req: Request) {
   // Authenticated user path: always scope by session orgId (no cross-tenant leakage)
   const session = await getSession();
   if (!session) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return errorResponse("UNAUTHORIZED", "Unauthorized", undefined, 401);
   }
 
   const limits = await getOrgLimits(session.orgId);
   if (!["STARTER", "PRO", "ENTERPRISE", "ENTERPRISE_PLUS"].includes(limits.tier)) {
-    return NextResponse.json({ error: "Weekly reports require a Starter plan or higher." }, { status: 403 });
+    return errorResponse("FORBIDDEN", "Weekly reports require a Starter plan or higher.", undefined, 403);
   }
 
   // Rate limit: max 5 report generations per minute per org (report generation is expensive)

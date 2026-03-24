@@ -9,6 +9,7 @@ import { trackEvent } from "@/lib/analytics";
 import { extractSuggestedDomain } from "@/lib/onboarding";
 import { logAudit } from "@/lib/tenant";
 import { passwordSchema, isReservedSlug } from "@/lib/validation";
+import { errorResponse, zodFieldErrors } from "@/lib/api-response";
 
 /** 4-character alphanumeric suffix to disambiguate reserved org slugs. */
 function slugSuffix(): string {
@@ -64,17 +65,14 @@ export async function POST(req: Request) {
     fallbackMode: "fail-closed",
   });
   if (!limit.allowed) {
-    return NextResponse.json({ error: "Too many signup attempts. Please try again later." }, {
-      status: 429,
-      headers: { "Retry-After": String(limit.retryAfterSeconds ?? 60) },
-    });
+    return errorResponse("RATE_LIMITED", "Too many signup attempts. Please try again later.", undefined, 429, { "Retry-After": String(limit.retryAfterSeconds ?? 60) });
   }
 
   const body = await req.json();
   const parsed = signupSchema.safeParse(body);
 
   if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+    return errorResponse("VALIDATION_ERROR", "Validation failed", zodFieldErrors(parsed.error.flatten().fieldErrors), 400);
   }
 
   const { email, password, name, orgName } = parsed.data;
@@ -82,7 +80,7 @@ export async function POST(req: Request) {
   // Check if user already exists
   const existing = await db.user.findFirst({ where: { email } });
   if (existing) {
-    return NextResponse.json({ error: "An account with this email already exists" }, { status: 409 });
+    return errorResponse("CONFLICT", "An account with this email already exists", undefined, 409);
   }
 
   // Create org + user + free subscription in a transaction

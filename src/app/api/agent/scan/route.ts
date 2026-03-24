@@ -8,6 +8,7 @@ import { sendCriticalFindingsAlert } from "@/lib/alerts";
 import { VALID_FINDING_CODES } from "@/lib/finding-codes";
 import type { SecurityFinding } from "@/lib/types";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { errorResponse, zodFieldErrors } from "@/lib/api-response";
 
 function sha256(input: string): string {
   return createHash("sha256").update(input).digest("hex");
@@ -55,7 +56,7 @@ async function resolveAppFromBearer(authHeader: string | null) {
 /** POST . agent pushes scan results */
 export async function POST(req: Request) {
   const app = await resolveAppFromBearer(req.headers.get("authorization"));
-  if (!app) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!app) return errorResponse("UNAUTHORIZED", "Unauthorized", undefined, 401);
 
   // audit-24: Rate-limit scan submissions per app to prevent DB flooding.
   // 120 per hour = one every 30 seconds; well above real-world agent cadence.
@@ -74,12 +75,12 @@ export async function POST(req: Request) {
   try {
     rawBody = await req.json();
   } catch {
-    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+    return errorResponse("BAD_REQUEST", "Invalid JSON", undefined, 400);
   }
 
   const parsed = bodySchema.safeParse(rawBody);
   if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+    return errorResponse("VALIDATION_ERROR", "Validation failed", zodFieldErrors(parsed.error.flatten().fieldErrors), 400);
   }
 
   const { findings, responseTimeMs, statusCode } = parsed.data;

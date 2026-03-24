@@ -12,7 +12,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // ─── SSRF guard mock ──────────────────────────────────────────────────────────
-const isPrivateUrl = vi.fn<[string], Promise<boolean>>();
+const isPrivateUrl = vi.fn<(url: string) => Promise<boolean>>();
 vi.mock("@/lib/ssrf-guard", () => ({ isPrivateUrl, isPrivateIp: vi.fn() }));
 
 // ─── Auth mock ────────────────────────────────────────────────────────────────
@@ -28,6 +28,8 @@ vi.mock("@/lib/tenant", () => ({ getOrgLimits, logAudit, canAddApp }));
 
 // ─── Crypto mock ──────────────────────────────────────────────────────────────
 vi.mock("@/lib/crypto-util", () => ({
+  encrypt: vi.fn((v: string) => `enc:${v}`),
+  decrypt: vi.fn((v: string) => v.replace("enc:", "")),
   obfuscate: vi.fn((v: string) => `enc:${v}`),
   deobfuscate: vi.fn((v: string) => v.replace("enc:", "")),
 }));

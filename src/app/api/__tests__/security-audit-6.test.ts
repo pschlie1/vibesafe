@@ -45,8 +45,10 @@ vi.mock("openid-client", () => ({
 
 // ─── Crypto util mock ─────────────────────────────────────────────────────────
 vi.mock("@/lib/crypto-util", () => ({
-  obfuscate: vi.fn((v: string) => Buffer.from(v).toString("base64")),
-  deobfuscate: vi.fn((v: string) => Buffer.from(v, "base64").toString("utf8")),
+  encrypt: vi.fn((v: string) => `enc:${v}`),
+  decrypt: vi.fn((v: string) => v.replace("enc:", "")),
+  obfuscate: vi.fn((v: string) => `enc:${v}`),
+  deobfuscate: vi.fn((v: string) => v.replace("enc:", "")),
 }));
 
 // ─── Cookies mock ─────────────────────────────────────────────────────────────
@@ -463,7 +465,7 @@ describe("Fix 6: Password reset throttled per email address", () => {
 
     const calls = (checkRateLimit as ReturnType<typeof vi.fn>).mock.calls;
     const emailLimitCall = calls.find(
-      ([key]: [string]) => key === "forgot-password-email:victim@example.com",
+      (args: unknown[]) => (args[0] as string) === "forgot-password-email:victim@example.com",
     );
     expect(emailLimitCall).toBeDefined();
 

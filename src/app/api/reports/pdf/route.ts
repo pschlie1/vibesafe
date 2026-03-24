@@ -3,12 +3,13 @@ import { getSession } from "@/lib/auth";
 import { generateComplianceReport } from "@/lib/pdf-report";
 import { getOrgLimits } from "@/lib/tenant";
 import { atLeast } from "@/lib/tier-capabilities";
+import { errorResponse } from "@/lib/api-response";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
   const session = await getSession();
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session) return errorResponse("UNAUTHORIZED", "Unauthorized", undefined, 401);
 
   const limits = await getOrgLimits(session.orgId);
   if (!atLeast(limits.tier, "PRO")) {
@@ -28,6 +29,6 @@ export async function GET() {
     });
   } catch (err) {
     console.error("PDF generation error:", err);
-    return NextResponse.json({ error: "Failed to generate report" }, { status: 500 });
+    return errorResponse("INTERNAL_ERROR", "Failed to generate report", undefined, 500);
   }
 }

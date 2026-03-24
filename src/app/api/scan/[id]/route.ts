@@ -5,6 +5,7 @@ import { runHttpScanForApp } from "@/lib/scanner-http";
 import { trackEvent } from "@/lib/analytics";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { getOrgLimits } from "@/lib/tenant";
+import { errorResponse } from "@/lib/api-response";
 
 const SCAN_RATE_LIMITS: Record<string, number> = {
   FREE: 3,
@@ -16,17 +17,17 @@ const SCAN_RATE_LIMITS: Record<string, number> = {
 
 export async function POST(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await getSession();
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session) return errorResponse("UNAUTHORIZED", "Unauthorized", undefined, 401);
 
   if (session.role === "VIEWER") {
-    return NextResponse.json({ error: "Viewers have read-only access" }, { status: 403 });
+    return errorResponse("FORBIDDEN", "Viewers have read-only access", undefined, 403);
   }
 
   const { id } = await params;
 
   // Verify app belongs to org
   const app = await db.monitoredApp.findFirst({ where: { id, orgId: session.orgId } });
-  if (!app) return NextResponse.json({ error: "App not found" }, { status: 404 });
+  if (!app) return errorResponse("NOT_FOUND", "App not found", undefined, 404);
 
   // Per-tier rate limit on manual scans
   const limits = await getOrgLimits(session.orgId);

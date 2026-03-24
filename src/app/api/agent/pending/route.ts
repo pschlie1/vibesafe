@@ -3,6 +3,7 @@ import { createHash } from "crypto";
 import { db } from "@/lib/db";
 import { getOrgLimits } from "@/lib/tenant";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { errorResponse } from "@/lib/api-response";
 
 function sha256(input: string): string {
   return createHash("sha256").update(input).digest("hex");
@@ -27,7 +28,7 @@ async function resolveAppFromBearer(authHeader: string | null) {
 /** GET . agent polls to check if a manual scan was requested */
 export async function GET(req: Request) {
   const app = await resolveAppFromBearer(req.headers.get("authorization"));
-  if (!app) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!app) return errorResponse("UNAUTHORIZED", "Unauthorized", undefined, 401);
 
   // Rate limit: max 60 polls/hour per app (one per minute is plenty for agents)
   const rl = await checkRateLimit(`agent-pending:${app.id}`, {

@@ -121,10 +121,12 @@ vi.mock("@/lib/stripe", () => ({
   },
 }));
 
-// ─── Crypto / deobfuscate mock ────────────────────────────────────────────────
+// ─── Crypto / decrypt mock ────────────────────────────────────────────────
 vi.mock("@/lib/crypto-util", () => ({
-  deobfuscate: vi.fn((v: string) => v),
-  obfuscate: vi.fn((v: string) => v),
+  encrypt: vi.fn((v: string) => `enc:${v}`),
+  decrypt: vi.fn((v: string) => v.replace("enc:", "")),
+  obfuscate: vi.fn((v: string) => `enc:${v}`),
+  deobfuscate: vi.fn((v: string) => v.replace("enc:", "")),
 }));
 
 // ─── SSRF guard mock ─────────────────────────────────────────────────────────

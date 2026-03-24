@@ -5,6 +5,7 @@ import { getStripe, PLANS } from "@/lib/stripe";
 import type { PlanKey } from "@/lib/stripe";
 import { trackEvent } from "@/lib/analytics";
 import type { SubscriptionTier } from "@prisma/client";
+import { errorResponse } from "@/lib/api-response";
 
 /**
  * Map a Stripe PlanKey to a DB SubscriptionTier.
@@ -55,7 +56,7 @@ export async function POST(req: Request) {
   const sig = req.headers.get("stripe-signature");
 
   if (!sig || !process.env.STRIPE_WEBHOOK_SECRET) {
-    return NextResponse.json({ error: "Missing signature" }, { status: 400 });
+    return errorResponse("BAD_REQUEST", "Missing signature", undefined, 400);
   }
 
   let event;
@@ -64,7 +65,7 @@ export async function POST(req: Request) {
     // from Stripe will throw and return 400 before any DB writes occur.
     event = getStripe().webhooks.constructEvent(body, sig, process.env.STRIPE_WEBHOOK_SECRET);
   } catch {
-    return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
+    return errorResponse("BAD_REQUEST", "Invalid signature", undefined, 400);
   }
 
   // Idempotency: all DB writes below use `upsert` keyed on orgId/stripeSubscriptionId,

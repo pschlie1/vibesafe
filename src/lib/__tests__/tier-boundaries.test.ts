@@ -180,10 +180,7 @@ describe("Tier Capabilities", () => {
     describe("PRO tier", () => {
       it("should have all PRO features", () => {
         proFeatures.forEach((feature) => {
-          expect(hasFeature("PRO", feature as any)).toBe(
-            true,
-            `PRO should have ${feature}`
-          );
+          expect(hasFeature("PRO", feature as any), `PRO should have ${feature}`).toBe(true);
         });
       });
 
@@ -199,10 +196,7 @@ describe("Tier Capabilities", () => {
     describe("ENTERPRISE tier", () => {
       it("should have all ENTERPRISE features", () => {
         enterpriseFeatures.forEach((feature) => {
-          expect(hasFeature("ENTERPRISE", feature as any)).toBe(
-            true,
-            `ENTERPRISE should have ${feature}`
-          );
+          expect(hasFeature("ENTERPRISE", feature as any), `ENTERPRISE should have ${feature}`).toBe(true);
         });
       });
     });
@@ -210,10 +204,7 @@ describe("Tier Capabilities", () => {
     describe("ENTERPRISE_PLUS tier", () => {
       it("should have all ENTERPRISE_PLUS features", () => {
         enterprisePlusFeatures.forEach((feature) => {
-          expect(hasFeature("ENTERPRISE_PLUS", feature as any)).toBe(
-            true,
-            `ENTERPRISE_PLUS should have ${feature}`
-          );
+          expect(hasFeature("ENTERPRISE_PLUS", feature as any), `ENTERPRISE_PLUS should have ${feature}`).toBe(true);
         });
       });
     });
@@ -240,8 +231,8 @@ describe("Tier Capabilities", () => {
     it("should handle feature feature names consistently", () => {
       const tier = "PRO";
       expect(hasFeature(tier, "jira")).toBe(true);
-      expect(hasFeature(tier, "Jira")).toBe(false); // case-sensitive
-      expect(hasFeature(tier, "JIRA")).toBe(false); // case-sensitive
+      expect(hasFeature(tier, "Jira" as any)).toBe(false); // case-sensitive
+      expect(hasFeature(tier, "JIRA" as any)).toBe(false); // case-sensitive
     });
   });
 });
@@ -276,10 +267,7 @@ describe("Tier Limits", () => {
       for (let i = 0; i < tiers.length - 1; i++) {
         const current = tierLimits[tiers[i]].apps;
         const next = tierLimits[tiers[i + 1]].apps;
-        expect(next).toBeGreaterThanOrEqual(
-          current,
-          `${tiers[i + 1]} should allow at least as many apps as ${tiers[i]}`
-        );
+        expect(next, `${tiers[i + 1]} should allow at least as many apps as ${tiers[i]}`).toBeGreaterThanOrEqual(current);
       }
     });
   });
@@ -296,10 +284,7 @@ describe("Tier Limits", () => {
       for (let i = 0; i < tiers.length - 1; i++) {
         const current = tierLimits[tiers[i]].users;
         const next = tierLimits[tiers[i + 1]].users;
-        expect(next).toBeGreaterThanOrEqual(
-          current,
-          `${tiers[i + 1]} should allow at least as many users as ${tiers[i]}`
-        );
+        expect(next, `${tiers[i + 1]} should allow at least as many users as ${tiers[i]}`).toBeGreaterThanOrEqual(current);
       }
     });
   });
@@ -326,10 +311,7 @@ describe("Tier Limits", () => {
       for (let i = 0; i < tiers.length - 1; i++) {
         const current = scanFrequency[tiers[i]];
         const next = scanFrequency[tiers[i + 1]];
-        expect(next).toBeLessThanOrEqual(
-          current,
-          `${tiers[i + 1]} should support faster scans than ${tiers[i]}`
-        );
+        expect(next, `${tiers[i + 1]} should support faster scans than ${tiers[i]}`).toBeLessThanOrEqual(current);
       }
     });
   });

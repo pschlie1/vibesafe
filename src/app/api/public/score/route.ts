@@ -11,6 +11,7 @@ import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 import { isPrivateUrl } from "@/lib/ssrf-guard";
 import type { SecurityFinding } from "@/lib/types";
 import { applyCors, corsPreflightResponse, CORS_HEADERS_PUBLIC } from "@/lib/cors";
+import { errorResponse, zodFieldErrors } from "@/lib/api-response";
 
 export function OPTIONS() {
   return corsPreflightResponse(CORS_HEADERS_PUBLIC);
@@ -65,19 +66,19 @@ async function handler(req: Request): Promise<NextResponse> {
   try {
     body = await req.json();
   } catch {
-    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+    return errorResponse("BAD_REQUEST", "Invalid JSON", undefined, 400);
   }
 
   const parsed = requestSchema.safeParse(body);
   if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+    return errorResponse("VALIDATION_ERROR", "Validation failed", zodFieldErrors(parsed.error.flatten().fieldErrors), 400);
   }
 
   const { url } = parsed.data;
 
   // SSRF guard: block private and internal addresses
   if (await isPrivateUrl(url)) {
-    return NextResponse.json({ error: "URL not allowed" }, { status: 400 });
+    return errorResponse("BAD_REQUEST", "URL not allowed", undefined, 400);
   }
 
   // Fetch the URL with 30s timeout

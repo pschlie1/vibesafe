@@ -12,22 +12,23 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { generateComplianceReport } from "@/lib/pdf-report";
+import { errorResponse } from "@/lib/api-response";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest) {
   const session = await getSession();
   if (!session) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return errorResponse("UNAUTHORIZED", "Unauthorized", undefined, 401);
   }
 
   if (session.role !== "OWNER" && session.role !== "ADMIN") {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    return errorResponse("FORBIDDEN", "Forbidden", undefined, 403);
   }
 
   const clientOrgId = req.nextUrl.searchParams.get("clientOrgId");
   if (!clientOrgId) {
-    return NextResponse.json({ error: "clientOrgId query parameter is required" }, { status: 400 });
+    return errorResponse("BAD_REQUEST", "clientOrgId query parameter is required", undefined, 400);
   }
 
   // Verify the requested org is a child of the session org (MSP auth check)
@@ -64,6 +65,6 @@ export async function GET(req: NextRequest) {
     });
   } catch (err) {
     console.error("[msp/report] PDF generation error:", err);
-    return NextResponse.json({ error: "Failed to generate report" }, { status: 500 });
+    return errorResponse("INTERNAL_ERROR", "Failed to generate report", undefined, 500);
   }
 }

@@ -32,6 +32,8 @@ vi.mock("@/lib/db", () => ({
 
 // ─── Crypto mocks ─────────────────────────────────────────────────────────────
 vi.mock("@/lib/crypto-util", () => ({
+  encrypt: vi.fn((v: string) => `enc:${v}`),
+  decrypt: vi.fn((v: string) => v.replace("enc:", "")),
   obfuscate: vi.fn((v: string) => `enc:${v}`),
   deobfuscate: vi.fn((v: string) => v.replace("enc:", "")),
 }));

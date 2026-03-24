@@ -47,8 +47,8 @@ export async function GET(req: Request) {
       return NextResponse.redirect(new URL("/login?error=sso_failed", requestUrl.origin));
     }
 
-    const { deobfuscate } = await import("@/lib/crypto-util");
-    const clientSecret = ssoConfig.clientSecret ? deobfuscate(ssoConfig.clientSecret) : undefined;
+    const { decrypt } = await import("@/lib/crypto-util");
+    const clientSecret = ssoConfig.clientSecret ? decrypt(ssoConfig.clientSecret) : undefined;
     const oidcConfig = await client.discovery(new URL(ssoConfig.discoveryUrl), ssoConfig.clientId, clientSecret);
     const tokens = await client.authorizationCodeGrant(oidcConfig, requestUrl, {
       pkceCodeVerifier: codeVerifier,

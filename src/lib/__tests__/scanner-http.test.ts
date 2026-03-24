@@ -313,7 +313,7 @@ describe("runDueHttpScans", () => {
 
     // Simulate bot challenge so the probe path is exercised
     const { detectBotChallenge } = await import("@/lib/bot-challenge-detector");
-    vi.mocked(detectBotChallenge).mockReturnValueOnce({ challenged: true, provider: "Cloudflare" });
+    vi.mocked(detectBotChallenge).mockReturnValueOnce({ challenged: true, provider: "cloudflare", confidence: "high" });
 
     // ssrfSafeFetch returns successfully (main fetch)
     mockIsPrivateUrl.mockResolvedValue(false);

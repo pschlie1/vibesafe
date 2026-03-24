@@ -79,10 +79,7 @@ describe("Remediation Guides", () => {
     majorCategories.forEach((code) => {
       const guide = getRemediationGuide(code);
       expect(guide.steps.length).toBeGreaterThan(0);
-      expect(guide.title).toMatch(
-        /^[A-Z]/,
-        `Title for ${code} should start with a capital letter`,
-      );
+      expect(guide.title, `Title for ${code} should start with a capital letter`).toMatch(/^[A-Z]/);
     });
   });
 
@@ -112,10 +109,7 @@ describe("Remediation Guides", () => {
       const hasActionVerb = actionVerbs.some((verb) =>
         step.slice(3).match(new RegExp(`^${verb}`)),
       );
-      expect(startsWithNumber || hasActionVerb).toBe(
-        true,
-        `Step "${step.slice(0, 50)}" should start with a number or action verb`,
-      );
+      expect(startsWithNumber || hasActionVerb, `Step "${step.slice(0, 50)}" should start with a number or action verb`).toBe(true);
     });
   });
 

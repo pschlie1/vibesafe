@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { runDueHttpScans } from "@/lib/scanner-http";
 import { logApiError } from "@/lib/observability";
 import { validateCronAuth, logCronHeartbeat, NON_PREMIUM_TIERS } from "@/lib/cron-auth";
+import { errorResponse } from "@/lib/api-response";
 
 export async function GET(req: Request) {
   const authResult = validateCronAuth(req);
@@ -23,6 +24,6 @@ export async function GET(req: Request) {
       details: { requestedLimit: 50 },
     });
 
-    return NextResponse.json({ error: "Failed to execute scheduled scans" }, { status: 500 });
+    return errorResponse("INTERNAL_ERROR", "Failed to execute scheduled scans", undefined, 500);
   }
 }

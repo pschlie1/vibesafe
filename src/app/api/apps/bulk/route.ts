@@ -7,6 +7,7 @@ import { logApiError } from "@/lib/observability";
 import { urlSchema } from "@/lib/validation";
 import { isPrivateUrl } from "@/lib/ssrf-guard";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { errorResponse, zodFieldErrors } from "@/lib/api-response";
 
 const bulkAppSchema = z.object({
   apps: z
@@ -24,10 +25,10 @@ const bulkAppSchema = z.object({
 
 export async function POST(req: Request) {
   const session = await getSession();
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session) return errorResponse("UNAUTHORIZED", "Unauthorized", undefined, 401);
 
   if (["VIEWER", "MEMBER"].includes(session.role)) {
-    return NextResponse.json({ error: "Viewers have read-only access" }, { status: 403 });
+    return errorResponse("FORBIDDEN", "Viewers have read-only access", undefined, 403);
   }
 
   // audit-23: Rate limit bulk add . 5 requests per hour per org (each can add up to 50 apps).
@@ -52,7 +53,7 @@ export async function POST(req: Request) {
     const parsed = bulkAppSchema.safeParse(body);
 
     if (!parsed.success) {
-      return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+      return errorResponse("VALIDATION_ERROR", "Validation failed", zodFieldErrors(parsed.error.flatten().fieldErrors), 400);
     }
 
     const { apps } = parsed.data;
@@ -164,6 +165,6 @@ export async function POST(req: Request) {
       statusCode: 500,
     });
 
-    return NextResponse.json({ error: "Failed to process bulk add" }, { status: 500 });
+    return errorResponse("INTERNAL_ERROR", "Failed to process bulk add", undefined, 500);
   }
 }

@@ -6,6 +6,7 @@ import { logAudit } from "@/lib/tenant";
 import { isPrivateUrl } from "@/lib/ssrf-guard";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { encrypt } from "@/lib/crypto-util";
+import { errorResponse, zodFieldErrors } from "@/lib/api-response";
 
 const updateAppSchema = z.object({
   name: z.string().min(1).optional(),
@@ -18,7 +19,7 @@ const updateAppSchema = z.object({
 
 export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await getSession();
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session) return errorResponse("UNAUTHORIZED", "Unauthorized", undefined, 401);
 
   const { id } = await params;
   const app = await db.monitoredApp.findFirst({
@@ -32,16 +33,16 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
     },
   });
 
-  if (!app) return NextResponse.json({ error: "Not found" }, { status: 404 });
+  if (!app) return errorResponse("NOT_FOUND", "Not found", undefined, 404);
   return NextResponse.json({ app });
 }
 
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await getSession();
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session) return errorResponse("UNAUTHORIZED", "Unauthorized", undefined, 401);
 
   if (["VIEWER", "MEMBER"].includes(session.role)) {
-    return NextResponse.json({ error: "Viewers have read-only access" }, { status: 403 });
+    return errorResponse("FORBIDDEN", "Viewers have read-only access", undefined, 403);
   }
 
   const rl = await checkRateLimit(`app-update:${session.orgId}`, {
@@ -49,17 +50,14 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
     windowMs: 60 * 60 * 1000,
   });
   if (!rl.allowed) {
-    return NextResponse.json({ error: "Too many requests. Please try again later." }, {
-      status: 429,
-      headers: { "Retry-After": String(rl.retryAfterSeconds ?? 60) },
-    });
+    return errorResponse("RATE_LIMITED", "Too many requests. Please try again later.", undefined, 429, { "Retry-After": String(rl.retryAfterSeconds ?? 60) });
   }
 
   const { id } = await params;
   const body = await req.json();
   const parsed = updateAppSchema.safeParse(body);
   if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+    return errorResponse("VALIDATION_ERROR", "Validation failed", zodFieldErrors(parsed.error.flatten().fieldErrors), 400);
   }
 
   // SSRF guard: reject private/internal URLs at save time
@@ -73,7 +71,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
   const app = await db.monitoredApp.findFirst({
     where: { id, orgId: session.orgId },
   });
-  if (!app) return NextResponse.json({ error: "Not found" }, { status: 404 });
+  if (!app) return errorResponse("NOT_FOUND", "Not found", undefined, 404);
 
   const { probeToken, ...restData } = parsed.data;
   const updated = await db.monitoredApp.update({
@@ -93,10 +91,10 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
 
 export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await getSession();
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session) return errorResponse("UNAUTHORIZED", "Unauthorized", undefined, 401);
 
   if (["VIEWER", "MEMBER"].includes(session.role)) {
-    return NextResponse.json({ error: "Viewers have read-only access" }, { status: 403 });
+    return errorResponse("FORBIDDEN", "Viewers have read-only access", undefined, 403);
   }
 
   const rl = await checkRateLimit(`app-delete:${session.orgId}`, {
@@ -104,10 +102,7 @@ export async function DELETE(_req: Request, { params }: { params: Promise<{ id: 
     windowMs: 60 * 60 * 1000,
   });
   if (!rl.allowed) {
-    return NextResponse.json({ error: "Too many requests. Please try again later." }, {
-      status: 429,
-      headers: { "Retry-After": String(rl.retryAfterSeconds ?? 60) },
-    });
+    return errorResponse("RATE_LIMITED", "Too many requests. Please try again later.", undefined, 429, { "Retry-After": String(rl.retryAfterSeconds ?? 60) });
   }
 
   const { id } = await params;
@@ -117,7 +112,7 @@ export async function DELETE(_req: Request, { params }: { params: Promise<{ id: 
     where: { id, orgId: session.orgId },
   });
 
-  if (!app) return NextResponse.json({ error: "Not found" }, { status: 404 });
+  if (!app) return errorResponse("NOT_FOUND", "Not found", undefined, 404);
 
   await db.monitoredApp.delete({ where: { id } });
   await logAudit(session, "app.deleted", id, `Removed ${app.name}`);

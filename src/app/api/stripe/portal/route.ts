@@ -3,22 +3,20 @@ import { db } from "@/lib/db";
 import { getSession } from "@/lib/auth";
 import { getStripe } from "@/lib/stripe";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { errorResponse } from "@/lib/api-response";
 
 export async function POST() {
   const session = await getSession();
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session) return errorResponse("UNAUTHORIZED", "Unauthorized", undefined, 401);
 
   const rl = await checkRateLimit(`stripe-portal:${session.id}`, { maxAttempts: 5, windowMs: 60_000 });
   if (!rl.allowed) {
-    return NextResponse.json({ error: "Too many requests" }, {
-      status: 429,
-      headers: { "Retry-After": String(rl.retryAfterSeconds ?? 60) },
-    });
+    return errorResponse("RATE_LIMITED", "Too many requests", undefined, 429, { "Retry-After": String(rl.retryAfterSeconds ?? 60) });
   }
 
   const org = await db.organization.findUnique({ where: { id: session.orgId } });
   if (!org?.stripeCustomerId) {
-    return NextResponse.json({ error: "No billing account found" }, { status: 404 });
+    return errorResponse("NOT_FOUND", "No billing account found", undefined, 404);
   }
 
   const portalSession = await getStripe().billingPortal.sessions.create({

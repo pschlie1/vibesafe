@@ -6,6 +6,7 @@ import { getSession } from "@/lib/auth";
 import { logAudit, getOrgLimits } from "@/lib/tenant";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { atLeast } from "@/lib/tier-capabilities";
+import { errorResponse } from "@/lib/api-response";
 
 function generateApiKey(): { plain: string; hash: string; prefix: string } {
   const raw = crypto.randomBytes(32).toString("base64url");
@@ -17,7 +18,7 @@ function generateApiKey(): { plain: string; hash: string; prefix: string } {
 
 export async function GET() {
   const session = await getSession();
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session) return errorResponse("UNAUTHORIZED", "Unauthorized", undefined, 401);
 
   const keys = await db.apiKey.findMany({
     where: { orgId: session.orgId },
@@ -33,10 +34,10 @@ const createSchema = z.object({ name: z.string().min(1) });
 
 export async function POST(req: Request) {
   const session = await getSession();
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session) return errorResponse("UNAUTHORIZED", "Unauthorized", undefined, 401);
 
   if (!["OWNER", "ADMIN"].includes(session.role)) {
-    return NextResponse.json({ error: "Admin access required to create API keys" }, { status: 403 });
+    return errorResponse("FORBIDDEN", "Admin access required to create API keys", undefined, 403);
   }
 
   const rl = await checkRateLimit(`api-key-create:${session.orgId}`, {
@@ -44,10 +45,7 @@ export async function POST(req: Request) {
     windowMs: 60 * 60 * 1000,
   });
   if (!rl.allowed) {
-    return NextResponse.json({ error: "Too many requests. Please try again later." }, {
-      status: 429,
-      headers: { "Retry-After": String(rl.retryAfterSeconds ?? 60) },
-    });
+    return errorResponse("RATE_LIMITED", "Too many requests. Please try again later.", undefined, 429, { "Retry-After": String(rl.retryAfterSeconds ?? 60) });
   }
 
   const limits = await getOrgLimits(session.orgId);
@@ -78,7 +76,7 @@ export async function POST(req: Request) {
 
   const body = await req.json();
   const parsed = createSchema.safeParse(body);
-  if (!parsed.success) return NextResponse.json({ error: "Name required" }, { status: 400 });
+  if (!parsed.success) return errorResponse("BAD_REQUEST", "Name required", undefined, 400);
 
   const { plain, hash, prefix } = generateApiKey();
 

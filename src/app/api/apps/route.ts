@@ -9,6 +9,7 @@ import { encrypt } from "@/lib/crypto-util";
 import { logApiError } from "@/lib/observability";
 import { trackEvent } from "@/lib/analytics";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { errorResponse, zodFieldErrors } from "@/lib/api-response";
 
 const appsQuerySchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
@@ -17,7 +18,7 @@ const appsQuerySchema = z.object({
 
 export async function GET(req: Request) {
   const session = await getSession();
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session) return errorResponse("UNAUTHORIZED", "Unauthorized", undefined, 401);
 
   try {
     const { searchParams } = new URL(req.url);
@@ -26,7 +27,7 @@ export async function GET(req: Request) {
       limit: searchParams.get("limit") ?? undefined,
     });
     if (!queryParsed.success) {
-      return NextResponse.json({ error: queryParsed.error.flatten() }, { status: 400 });
+      return errorResponse("VALIDATION_ERROR", "Validation failed", zodFieldErrors(queryParsed.error.flatten().fieldErrors), 400);
     }
     const { page, limit } = queryParsed.data;
     const skip = (page - 1) * limit;
@@ -64,16 +65,16 @@ export async function GET(req: Request) {
       statusCode: 500,
     });
 
-    return NextResponse.json({ error: "Failed to load apps" }, { status: 500 });
+    return errorResponse("INTERNAL_ERROR", "Failed to load apps", undefined, 500);
   }
 }
 
 export async function POST(req: Request) {
   const session = await getSession();
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session) return errorResponse("UNAUTHORIZED", "Unauthorized", undefined, 401);
 
   if (session.role === "VIEWER") {
-    return NextResponse.json({ error: "Viewers have read-only access" }, { status: 403 });
+    return errorResponse("FORBIDDEN", "Viewers have read-only access", undefined, 403);
   }
 
   const rl = await checkRateLimit(`apps-create:${session.orgId}`, {
@@ -81,10 +82,7 @@ export async function POST(req: Request) {
     windowMs: 60 * 60 * 1000,
   });
   if (!rl.allowed) {
-    return NextResponse.json({ error: "Too many requests. Please try again later." }, {
-      status: 429,
-      headers: { "Retry-After": String(rl.retryAfterSeconds ?? 60) },
-    });
+    return errorResponse("RATE_LIMITED", "Too many requests. Please try again later.", undefined, 429, { "Retry-After": String(rl.retryAfterSeconds ?? 60) });
   }
 
   try {
@@ -92,13 +90,13 @@ export async function POST(req: Request) {
     const parsed = createAppSchema.safeParse(body);
 
     if (!parsed.success) {
-      return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+      return errorResponse("VALIDATION_ERROR", "Validation failed", zodFieldErrors(parsed.error.flatten().fieldErrors), 400);
     }
 
     // Check plan limits
     const { allowed, reason } = await canAddApp(session.orgId);
     if (!allowed) {
-      return NextResponse.json({ error: reason }, { status: 403 });
+      return errorResponse("FORBIDDEN", reason ?? "Plan limit reached", undefined, 403);
     }
 
     // SSRF guard: reject private/internal URLs
@@ -150,6 +148,6 @@ export async function POST(req: Request) {
       statusCode: 500,
     });
 
-    return NextResponse.json({ error: "Failed to register app" }, { status: 500 });
+    return errorResponse("INTERNAL_ERROR", "Failed to register app", undefined, 500);
   }
 }

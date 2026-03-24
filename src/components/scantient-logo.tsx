@@ -13,49 +13,83 @@ interface ScantientLogoProps {
  * - iconOnly=true: square icon mark only (use in tight spaces)
  */
 export function ScantientLogo({ iconOnly = false, height = 36, className = "" }: ScantientLogoProps) {
+  const iconSize = height;
+
+  const icon = (
+    <svg
+      width={iconSize}
+      height={iconSize}
+      viewBox="0 0 40 40"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={iconOnly ? className : undefined}
+      aria-label={iconOnly ? "Scantient" : undefined}
+    >
+      <defs>
+        <linearGradient id="scantient-grad" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#3B82F6" />
+          <stop offset="100%" stopColor="#06B6D4" />
+        </linearGradient>
+      </defs>
+
+      <rect width="40" height="40" rx="10" fill="url(#scantient-grad)" fillOpacity="0.1" />
+
+      <path
+        d="M26 12C26 10.8954 25.1046 10 24 10H14C12.8954 10 12 10.8954 12 12V18C12 19.1046 12.8954 20 14 20H26C27.1046 20 28 20.8954 28 22V28C28 29.1046 27.1046 30 26 30H16C14.8954 30 14 29.1046 14 28"
+        stroke="url(#scantient-grad)"
+        strokeWidth="4.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+
+      <circle cx="20" cy="20" r="2.5" fill="white" />
+    </svg>
+  );
+
   if (iconOnly) {
-    // Icon only — preserves 100x100 viewBox aspect ratio
-    const w = height;
-    return (
-      <svg
-        width={w}
-        height={height}
-        viewBox="0 0 100 100"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        className={className}
-        aria-label="Scantient"
-      >
-        <path d="M45 0C30 0 20 12 20 28V52C20 68 30 80 45 80H55C70 80 80 68 80 52V28C80 12 70 0 55 0H45Z" fill="#0066FF" />
-        <path d="M40 20H60V30H45C42.2 30 40 32.2 40 35V45C40 47.8 42.2 50 45 50H60V60H40C34.5 60 30 55.5 30 50V30C30 24.5 34.5 20 40 20Z" fill="white" />
-        <path d="M60 20C65.5 20 70 24.5 70 30V50C70 55.5 65.5 60 60 60H55V50H60C62.8 50 65 47.8 65 45V35C65 32.2 62.8 30 60 30H55V20H60Z" fill="white" fillOpacity="0.8" />
-        <circle cx="50" cy="40" r="4" fill="#00C2FF" />
-      </svg>
-    );
+    return icon;
   }
 
-  // Full logo — 500×120 viewBox, scaled by height
-  const aspectRatio = 500 / 120;
-  const w = Math.round(height * aspectRatio);
+  // Full logo: icon + wordmark
+  const textScale = height / 36;
+  const wordmarkFontSize = Math.round(22 * textScale);
+  const taglineFontSize = Math.round(9 * textScale);
+  const gap = Math.round(10 * textScale);
+  const totalWidth = iconSize + gap + Math.round(120 * textScale);
 
   return (
     <svg
-      width={w}
+      width={totalWidth}
       height={height}
-      viewBox="0 0 500 120"
+      viewBox={`0 0 ${totalWidth} ${height}`}
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className={className}
       aria-label="Scantient — Security Intelligence"
     >
-      <g>
-        <path d="M45 20C30 20 20 32 20 48V72C20 88 30 100 45 100H55C70 100 80 88 80 72V48C80 32 70 20 55 20H45Z" fill="#0066FF" />
-        <path d="M40 40H60V50H45C42.2 50 40 52.2 40 55V65C40 67.8 42.2 70 45 70H60V80H40C34.5 80 30 75.5 30 70V50C30 44.5 34.5 40 40 40Z" fill="white" />
-        <path d="M60 40C65.5 40 70 44.5 70 50V70C70 75.5 65.5 80 60 80H55V70H60C62.8 70 65 67.8 65 65V55C65 52.2 62.8 50 60 50H55V40H60Z" fill="white" fillOpacity="0.8" />
-        <circle cx="50" cy="60" r="4" fill="#00C2FF" />
-      </g>
-      <text x="100" y="78" fontFamily="Inter, system-ui, sans-serif" fontWeight="800" fontSize="52" fill="#1E293B" letterSpacing="-2">Scantient</text>
-      <text x="102" y="98" fontFamily="Inter, system-ui, sans-serif" fontWeight="600" fontSize="14" fill="#64748B" letterSpacing="4">Security Intelligence</text>
+      <g>{icon}</g>
+      <text
+        x={iconSize + gap}
+        y={Math.round(height * 0.62)}
+        fontFamily="Inter, system-ui, sans-serif"
+        fontWeight="700"
+        fontSize={wordmarkFontSize}
+        fill="#1E293B"
+        letterSpacing="-0.5"
+      >
+        Scantient
+      </text>
+      <text
+        x={iconSize + gap + 1}
+        y={height - 2}
+        fontFamily="Inter, system-ui, sans-serif"
+        fontWeight="500"
+        fontSize={taglineFontSize}
+        fill="#64748B"
+        letterSpacing="2"
+      >
+        SECURITY INTELLIGENCE
+      </text>
     </svg>
   );
 }

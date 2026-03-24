@@ -1,6 +1,7 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 type Check = {
   icon: string;
@@ -99,7 +100,7 @@ const faqs = [
   },
   {
     q: "Does Scantient test for exposed admin and debug endpoints?",
-    a: "Yes. Every scan probes 15 common dangerous paths: .env files, .git/HEAD, /api/admin, /api/debug, phpinfo.php, Spring Boot actuators, and more. These are the first paths attackers check. We detect exposed admin and debug endpoints.",
+    a: "Yes. Every scan probes 15 common dangerous paths: .env files, .git/HEAD, /api/admin, /api/debug, phpinfo.php, Spring Boot actuators, and more. These are the first paths attackers check.",
   },
   {
     q: "Does Scantient monitor SSL certificate expiry?",
@@ -140,10 +141,7 @@ const faqSchema = {
   mainEntity: faqs.map((item) => ({
     "@type": "Question",
     name: item.q,
-    acceptedAnswer: {
-      "@type": "Answer",
-      text: item.a,
-    },
+    acceptedAnswer: { "@type": "Answer", text: item.a },
   })),
 };
 
@@ -154,335 +152,346 @@ const severityBorder: Record<string, string> = {
 };
 const getCardBorder = (icon: string) => severityBorder[icon] ?? "border-l-4 border-l-border";
 
+// Animated terminal component
+function TerminalDemo() {
+  const [phase, setPhase] = useState(0);
+
+  useEffect(() => {
+    const timings = [800, 1400, 2000, 2600, 3200, 3800, 4600];
+    const timers = timings.map((ms, i) => setTimeout(() => setPhase(i + 1), ms));
+    return () => timers.forEach(clearTimeout);
+  }, []);
+
+  return (
+    <div className="rounded-2xl overflow-hidden shadow-2xl border border-white/8" style={{ background: "rgba(255,255,255,0.025)" }}>
+      {/* Title bar */}
+      <div className="flex items-center px-5 py-3.5 border-b border-white/5" style={{ background: "rgba(255,255,255,0.02)" }}>
+        <div className="flex space-x-1.5">
+          <div className="w-3 h-3 rounded-full bg-white/10" />
+          <div className="w-3 h-3 rounded-full bg-white/10" />
+          <div className="w-3 h-3 rounded-full bg-white/10" />
+        </div>
+        <span className="text-xs text-muted mx-auto font-mono tracking-wide">scantient — api.myapp.com</span>
+        {phase >= 6 && (
+          <span className="text-xs font-semibold text-severity-critical animate-pulse">3 critical</span>
+        )}
+      </div>
+      {/* Terminal body */}
+      <div className="p-6 font-mono text-sm leading-7 text-left min-h-[240px]">
+        <p className="text-muted">$ scantient scan https://api.myapp.com</p>
+        {phase >= 1 && <p className="text-info">→ Discovering endpoints...</p>}
+        {phase >= 2 && (
+          <div className="my-2 h-px w-full overflow-hidden relative" style={{ background: "rgba(255,255,255,0.05)" }}>
+            <div className="h-full absolute top-0 left-0" style={{ background: "linear-gradient(to right, transparent, var(--color-info), transparent)", width: phase >= 3 ? "100%" : "0", transition: "width 1.2s ease-out", opacity: phase >= 3 ? 0.4 : 1 }} />
+          </div>
+        )}
+        {phase >= 3 && <p className="text-success">✓ 47 endpoints discovered <span className="text-muted ml-2">1.2s</span></p>}
+        {phase >= 3 && <p className="text-success">✓ Auth headers verified <span className="text-muted ml-2">0.8s</span></p>}
+        {phase >= 4 && <p className="text-warning">⚠ CORS misconfiguration <span className="text-muted ml-2">/api/users, /api/export</span></p>}
+        {phase >= 5 && <p className="text-severity-critical">✗ API key in response body <span className="text-muted ml-2">sk_live_4xK9… (Stripe)</span></p>}
+        {phase >= 5 && <p className="text-severity-critical">✗ No rate limiting on auth <span className="text-muted ml-2">/api/auth/login</span></p>}
+        {phase >= 6 && (
+          <div className="border-t mt-3 pt-3" style={{ borderColor: "rgba(255,255,255,0.05)" }}>
+            <p className="text-heading font-semibold">
+              Complete in <span className="text-success">48s</span>
+              <span className="text-muted mx-2">·</span>
+              Score: <span className="text-severity-critical">43/100</span>
+              <span className="text-muted mx-2">·</span>
+              <span className="text-severity-critical">3 critical findings</span>
+            </p>
+          </div>
+        )}
+        {phase < 6 && <p className="text-muted mt-1">$ <span className="animate-pulse text-muted">▋</span></p>}
+      </div>
+    </div>
+  );
+}
+
 export default function LandingPage() {
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareAppSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
-      />
-    <div>
-      {/* Hero */}
-      <section className="relative overflow-hidden px-6 pb-24 pt-24 sm:pb-32 sm:pt-32" style={{ background: "radial-gradient(ellipse at 50% 0%, var(--color-section-lift) 0%, var(--color-section-base) 60%)" }}>
-        <div className="mx-auto max-w-[1200px] text-center">
-          <h1 className="mx-auto max-w-4xl text-4xl font-extrabold leading-[1.1] tracking-[-0.02em] text-heading sm:text-6xl lg:text-[3.75rem]">
-            Build your app with Cursor or Lovable?
-          </h1>
-          <p className="text-2xl sm:text-3xl font-bold mt-2 mx-auto max-w-3xl" style={{ color: "var(--color-warning-soft)" }}>
-            It probably has security holes.
-          </p>
-          <p className="mx-auto mt-8 max-w-[600px] text-lg leading-loose text-muted">
-            AI coding tools ship fast and ship vulnerable. Scantient finds exposed API keys, broken auth, and missing security headers in 60 seconds. No SDK. No code access. No setup.
-          </p>
-          <div className="mt-12 flex flex-col items-center justify-center gap-3 sm:flex-row">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareAppSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }} />
+      <div>
+
+        {/* ── HERO ── */}
+        <section className="relative overflow-hidden pt-24 pb-20 px-6" style={{ background: "radial-gradient(ellipse 80% 50% at 50% -5%, rgba(59,130,246,0.13) 0%, var(--color-section-base) 70%)" }}>
+          <div className="mx-auto max-w-[1200px] text-center">
+
+            {/* Badge */}
+            <div className="inline-flex items-center space-x-2 rounded-full border px-4 py-1.5 mb-10" style={{ borderColor: "rgba(59,130,246,0.2)", background: "rgba(59,130,246,0.08)" }}>
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ background: "var(--color-info)" }} />
+                <span className="relative inline-flex rounded-full h-2 w-2" style={{ background: "var(--color-info)" }} />
+              </span>
+              <span className="text-xs font-bold uppercase tracking-widest text-info">New: Agentic Vulnerability Scanning</span>
+            </div>
+
+            {/* Headline */}
+            <h1 className="mx-auto max-w-4xl text-5xl font-extrabold leading-[1.05] tracking-tight sm:text-[72px] mb-7"
+              style={{ color: "var(--color-heading)" }}>
+              Ship AI-Generated Code<br />
+              <span style={{ background: "linear-gradient(135deg, #3B82F6 0%, #06B6D4 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
+                With Zero Security Debt.
+              </span>
+            </h1>
+
+            {/* Subhead */}
+            <p className="mx-auto max-w-2xl text-xl leading-relaxed mb-12" style={{ color: "var(--color-muted)" }}>
+              AI coding tools ship fast and ship vulnerable. Scantient finds exposed API keys, broken auth, and missing security headers in 60 seconds. No SDK. No code access. No setup.
+            </p>
+
+            {/* CTAs */}
+            <div className="flex flex-col items-center justify-center gap-4 sm:flex-row mb-5">
+              <Link
+                href="/score"
+                className="w-full sm:w-auto rounded-xl bg-[#22C55E] px-8 py-4 text-base font-bold text-white shadow-lg transition-all hover:bg-[#16A34A]"
+              >
+                Scan My App Free
+              </Link>
+              <Link
+                href="/pricing"
+                className="w-full sm:w-auto rounded-xl border border-white/10 bg-white/5 px-8 py-4 text-base font-bold text-white transition-all hover:bg-white/10"
+              >
+                See pricing plans
+              </Link>
+            </div>
+            <p className="text-sm" style={{ color: "var(--color-muted)" }}>
+              No credit card required. Scan takes under 1 minute.
+            </p>
+          </div>
+
+          {/* Terminal mockup */}
+          <div className="max-w-3xl mx-auto mt-16 relative">
+            <TerminalDemo />
+            <div className="pointer-events-none absolute -bottom-4 left-1/2 -translate-x-1/2 h-10 w-1/2 rounded-full blur-2xl" style={{ background: "rgba(59,130,246,0.08)" }} />
+          </div>
+
+          {/* Scroll chevron */}
+          <div className="mt-14 flex justify-center">
+            <svg className="h-7 w-7 animate-bounce opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ color: "var(--color-muted)" }}>
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </div>
+        </section>
+
+        {/* ── AI TOOLS BAND ── */}
+        <section className="border-y px-6 py-12" style={{ borderColor: "var(--color-stroke-subtle)", background: "var(--color-section-base)" }}>
+          <div className="mx-auto max-w-[1200px] text-center">
+            <p className="text-xs font-semibold uppercase tracking-widest mb-8" style={{ color: "var(--color-muted)" }}>
+              Built for apps shipped with
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-10">
+              {["Cursor", "Lovable", "Bolt", "Replit", "v0"].map((tool) => (
+                <span
+                  key={tool}
+                  className="rounded-lg border px-5 py-2 text-sm font-semibold transition-colors"
+                  style={{ borderColor: "var(--color-stroke)", color: "var(--color-muted)", background: "var(--color-surface)" }}
+                >
+                  {tool}
+                </span>
+              ))}
+            </div>
+            <div className="mt-10 flex flex-wrap justify-center gap-10 sm:gap-16">
+              {[
+                { value: "20", label: "security checks per scan" },
+                { value: "<1 min", label: "URL to first results" },
+                { value: "$4.88M", label: "avg. breach cost (IBM 2024)" },
+                { value: "0", label: "SDK or setup required" },
+              ].map((stat) => (
+                <div key={stat.value} className="text-center">
+                  <p className="text-3xl font-bold" style={{ color: "var(--color-heading)" }}>{stat.value}</p>
+                  <p className="mt-1 text-xs uppercase tracking-wide" style={{ color: "var(--color-muted)" }}>{stat.label}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Laser divider */}
+        <div className="relative h-px w-full overflow-hidden">
+          <div className="absolute inset-0 opacity-40" style={{ background: "linear-gradient(to right, transparent 0%, #22C55E 50%, transparent 100%)" }} />
+        </div>
+
+        {/* ── FEATURE CARDS ── */}
+        <section id="features" className="px-6 py-24 sm:py-32" style={{ background: "linear-gradient(to bottom, var(--color-hero-edge) 0%, var(--color-findings-bg) 8%, var(--color-findings-bg) 100%)" }}>
+          <div className="mx-auto max-w-[1200px]">
+            <h2 className="mb-3 text-center text-3xl font-extrabold tracking-tight sm:text-4xl" style={{ color: "var(--color-heading)" }}>
+              20 Security Checks That Keep Your Users Safe
+            </h2>
+            <p className="mb-16 text-center" style={{ color: "var(--color-muted)" }}>
+              20 essential security checks. Every scan. Zero setup. No developer required.
+            </p>
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {checks.map((check) => (
+                <div
+                  key={check.title}
+                  className={`rounded-2xl border p-8 transition-all hover:shadow-lg ${getCardBorder(check.icon)}`}
+                  style={{ background: "var(--color-surface)", borderColor: "var(--color-border)" }}
+                >
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full" style={{ background: "var(--color-surface-raised)" }}>
+                    <span className="text-xl">{check.icon}</span>
+                  </div>
+                  <h3 className="mt-5 text-lg font-bold" style={{ color: "var(--color-heading)" }}>{check.icon} {check.title}</h3>
+                  {check.outcome && (
+                    <p className="mt-2 text-xs font-semibold" style={{ color: "var(--color-primary)" }}>{check.outcome}</p>
+                  )}
+                  <p className="mt-2 text-sm leading-relaxed" style={{ color: "var(--color-muted)" }}>{check.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── HOW IT WORKS ── */}
+        <section className="relative overflow-hidden px-6 py-24 sm:py-32 border-t" style={{ background: "var(--color-section-lift)", borderColor: "var(--color-stroke-subtle)" }}>
+          <div className="mx-auto max-w-[1200px]">
+            <h2 className="mb-4 text-center text-3xl font-extrabold tracking-tight sm:text-4xl" style={{ color: "var(--color-heading)" }}>
+              No SDK. No setup. No developer ticket.
+            </h2>
+            <p className="mb-16 text-center max-w-xl mx-auto" style={{ color: "var(--color-muted)" }}>
+              Paste a URL. Get results in 60 seconds. That is the entire setup process.
+            </p>
+            <div className="grid gap-8 sm:grid-cols-3">
+              {[
+                { step: "01", title: "Paste your URL", desc: "Drop in your app URL. No code changes, no SDK, no developer required. Takes 10 seconds.", icon: "🔗" },
+                { step: "02", title: "60-second scan", desc: "We run 20 external security checks — the same probes an attacker would run. Results appear before your coffee is ready.", icon: "⚡" },
+                { step: "03", title: "Instant security report", desc: "See exactly what is exposed, what to fix, and how urgent each issue is. Share with your team or export for compliance.", icon: "📋" },
+              ].map((item) => (
+                <div key={item.step} className="rounded-2xl border p-8" style={{ background: "var(--color-card-bg)", borderColor: "var(--color-stroke)" }}>
+                  <div className="mb-4 flex items-center gap-3">
+                    <span className="text-3xl">{item.icon}</span>
+                    <span className="text-xs font-bold uppercase tracking-widest text-success">{item.step}</span>
+                  </div>
+                  <h3 className="text-xl font-bold mb-3" style={{ color: "var(--color-heading)" }}>{item.title}</h3>
+                  <p className="text-sm leading-loose" style={{ color: "var(--color-muted)" }}>{item.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Laser divider */}
+        <div className="relative h-px w-full overflow-hidden">
+          <div className="absolute inset-0 opacity-40" style={{ background: "linear-gradient(to right, transparent 0%, #22C55E 50%, transparent 100%)" }} />
+        </div>
+
+        {/* ── INTEGRATIONS ── */}
+        <section className="mx-auto max-w-[1200px] px-6 py-24 text-center sm:py-32" style={{ background: "var(--color-section-base)" }}>
+          <h2 className="mb-3 text-3xl font-extrabold tracking-tight sm:text-4xl" style={{ color: "var(--color-heading)" }}>Works with your stack</h2>
+          <p className="mb-12" style={{ color: "var(--color-muted)" }}>Integrates with the tools your team already uses</p>
+
+          <div className="mb-4 flex items-center justify-center">
+            <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold text-success" style={{ background: "rgba(16,185,129,0.1)" }}>
+              <span className="h-1.5 w-1.5 rounded-full bg-success" />
+              Live
+            </span>
+          </div>
+          <div className="mb-14 flex flex-wrap items-center justify-center gap-6">
+            {integrations.live.map((i) => (
+              <div key={i.name} className="flex flex-col items-center gap-2.5">
+                <div className="flex h-16 w-16 items-center justify-center rounded-xl border p-3 shadow-sm" style={{ background: "var(--color-surface)", borderColor: "var(--color-border)" }}>
+                  <Image src={i.logo} alt={i.name} width={40} height={40} unoptimized className="h-full w-full object-contain" />
+                </div>
+                <span className="text-xs font-medium" style={{ color: "var(--color-muted)" }}>{i.name}</span>
+              </div>
+            ))}
+          </div>
+
+          <div className="mb-4 flex items-center justify-center">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-white/5 px-3 py-1 text-xs font-semibold" style={{ color: "var(--color-muted)" }}>
+              Coming soon
+            </span>
+          </div>
+          <div className="flex flex-wrap items-center justify-center gap-6">
+            {integrations.soon.map((i) => (
+              <div key={i.name} className="flex flex-col items-center gap-2.5 opacity-40">
+                <div className="flex h-16 w-16 items-center justify-center rounded-xl border p-3 shadow-sm grayscale" style={{ background: "var(--color-surface)", borderColor: "var(--color-border)" }}>
+                  <Image src={i.logo} alt={i.name} width={40} height={40} unoptimized className="h-full w-full object-contain" />
+                </div>
+                <span className="text-xs font-medium" style={{ color: "var(--color-muted)" }}>{i.name}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* ── SOCIAL PROOF ── */}
+        <section className="border-y px-6 py-24 sm:py-32" style={{ borderColor: "var(--color-stroke-subtle)", background: "var(--color-section-lift)" }}>
+          <div className="mx-auto max-w-[1200px]">
+            <h2 className="mb-4 text-center text-3xl font-extrabold tracking-tight sm:text-4xl" style={{ color: "var(--color-heading)" }}>Results that speak for themselves</h2>
+            <p className="mb-16 text-center" style={{ color: "var(--color-muted)" }}>We walk the walk. Scantient scans itself on every deploy. Here is what we find.</p>
+            <div className="grid gap-8 md:grid-cols-3">
+              {socialProof.map((item) => (
+                <a
+                  key={item.stat}
+                  href={item.href}
+                  className="group relative rounded-2xl border p-8 transition-all hover:shadow-lg hover:-translate-y-0.5"
+                  style={{ background: "var(--color-surface)", borderColor: "var(--color-border)" }}
+                >
+                  <div className="mb-4 text-3xl">{item.icon}</div>
+                  <p className="text-4xl font-extrabold tracking-tight" style={{ color: "var(--color-heading)" }}>{item.stat}</p>
+                  <p className="mt-1 text-sm font-semibold" style={{ color: "var(--color-primary)" }}>{item.label}</p>
+                  <p className="mt-3 text-sm leading-relaxed" style={{ color: "var(--color-muted)" }}>{item.detail}</p>
+                </a>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── BOTTOM CTA ── */}
+        <section className="px-6 py-24 text-center sm:py-32" style={{ background: "radial-gradient(ellipse at 50% 0%, rgba(34,197,94,0.05) 0%, var(--color-section-base) 60%)" }}>
+          <div className="mx-auto max-w-[600px]">
+            <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl mb-5" style={{ color: "var(--color-heading)" }}>
+              Secure your AI-built app in 60 seconds.
+            </h2>
+            <p className="mb-10 leading-relaxed" style={{ color: "var(--color-muted)" }}>
+              Find exposed API keys, broken auth, and security holes before attackers do. No SDK. No setup. Results in 60 seconds.
+            </p>
             <Link
               href="/score"
-              className="rounded-lg bg-[#22C55E] hover:bg-[#16A34A] text-white shadow-lg px-8 py-3.5 text-sm font-semibold transition-all"
+              className="inline-block rounded-xl bg-[#22C55E] px-10 py-4 text-base font-bold text-white shadow-lg transition-all hover:bg-[#16A34A]"
             >
               Scan My App Free
             </Link>
-            <Link
-              href="/pricing"
-              className="rounded-lg border-2 border-[#3B82F6] bg-transparent px-8 py-3.5 text-sm font-semibold text-[#3B82F6] transition-colors hover:bg-[#3B82F6] hover:text-white"
-            >
-              See pricing plans
-            </Link>
+            <p className="mt-4 text-sm" style={{ color: "var(--color-muted)" }}>No credit card required. Scan takes under 1 minute.</p>
           </div>
-          <p className="mt-3 text-xs text-muted">No credit card required. Scan takes under 1 minute.</p>
-          <p className="mt-5 text-xs text-muted">
-            Trusted by founders using Cursor, Lovable, Bolt, and Replit.{" "}
-            <span className="text-[#10b981] font-semibold">⚡ Results in 60 seconds.</span>
-          </p>
-        </div>
+        </section>
 
-        {/* Dashboard mockup frame */}
-        <div className="max-w-5xl mx-auto mt-16">
-          <div className="bg-surface rounded-xl border border-border shadow-2xl p-2">
-            <div className="aspect-video bg-page rounded-lg overflow-hidden relative">
-              {/* Top bar */}
-              <div className="bg-surface border-b border-border px-6 py-3 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="h-2 w-2 rounded-full bg-border" />
-                  <div className="h-2 w-2 rounded-full bg-border" />
-                  <div className="h-2 w-2 rounded-full bg-border" />
+        {/* ── FAQ ── */}
+        <section className="border-t px-6 py-24 sm:py-32" style={{ background: "var(--color-section-base)", borderColor: "var(--color-stroke-subtle)" }}>
+          <div className="mx-auto max-w-[800px]">
+            <h2 className="mb-16 text-center text-3xl font-extrabold tracking-tight sm:text-4xl" style={{ color: "var(--color-heading)" }}>
+              Frequently asked questions
+            </h2>
+            <div className="space-y-10">
+              {faqs.map((faq) => (
+                <div key={faq.q}>
+                  <h3 className="font-bold" style={{ color: "var(--color-heading)" }}>{faq.q}</h3>
+                  <p className="mt-3 text-sm leading-relaxed" style={{ color: "var(--color-muted)" }}>{faq.a}</p>
                 </div>
-                <span className="text-xs font-semibold text-muted">Scantient Dashboard</span>
-                <div className="h-4 w-16 rounded bg-border-subtle" />
-              </div>
-              {/* Stat cards row */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-4">
-                {[
-                  { label: "Apps Monitored", value: "12" },
-                  { label: "Open Findings", value: "4" },
-                  { label: "Last Scan", value: "2m ago" },
-                ].map((card) => (
-                  <div key={card.label} className="bg-surface rounded-lg border border-border p-3">
-                    <p className="text-[10px] uppercase tracking-widest text-muted">{card.label}</p>
-                    <p className="mt-1 text-lg font-bold text-heading">{card.value}</p>
-                    <div className="mt-2 h-1 w-8 rounded-full bg-primary opacity-60" />
-                  </div>
-                ))}
-              </div>
-              {/* Table placeholder */}
-              <div className="mx-4 bg-surface rounded-lg border border-border overflow-hidden">
-                <div className="bg-border-subtle px-4 py-2 grid grid-cols-4 gap-4">
-                  {["App", "Status", "Last Scan", "Findings"].map((h) => (
-                    <div key={h} className="h-2 rounded bg-border w-3/4" />
-                  ))}
-                </div>
-                {[0, 1, 2, 3].map((row) => (
-                  <div key={row} className={`px-4 py-2.5 grid grid-cols-4 gap-4 ${row % 2 === 1 ? "bg-surface-raised" : "bg-surface"}`}>
-                    <div className="h-2 rounded bg-border-subtle w-4/5" />
-                    <div className="flex items-center gap-1">
-                      <div className={`h-1.5 w-1.5 rounded-full ${row === 1 ? "bg-error" : "bg-success"}`} />
-                      <div className="h-2 rounded bg-border-subtle w-3/4" />
-                    </div>
-                    <div className="h-2 rounded bg-border-subtle w-2/3" />
-                    <div className="h-2 rounded bg-border-subtle w-1/2" />
-                  </div>
-                ))}
-              </div>
+              ))}
             </div>
           </div>
-        </div>
+        </section>
 
-        {/* Scroll invitation chevron */}
-        <div className="mt-16 flex justify-center">
-          <svg className="h-8 w-8 animate-bounce text-muted opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-          </svg>
-        </div>
-      </section>
-
-      {/* Laser divider */}
-      <div className="relative h-px w-full overflow-hidden">
-        <div className="absolute inset-0" style={{ background: "linear-gradient(to right, transparent 0%, var(--color-cta-green) 50%, transparent 100%)", opacity: 0.4 }} />
-      </div>
-
-      {/* Social Proof Band */}
-      <section className="border-y px-6 py-12" style={{ borderColor: "var(--color-stroke-subtle)", background: "var(--color-section-base)" }}>
-        <div className="mx-auto max-w-[1200px] text-center">
-          <p className="text-xs font-semibold uppercase tracking-widest text-alabaster-grey-600 mb-6">Trusted by founders shipping with</p>
-          <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-10">
-            {["Cursor", "Lovable", "Bolt", "Replit", "v0"].map((tool) => (
-              <span key={tool} className="rounded-md border border-alabaster-grey-200 bg-white px-4 py-2 text-sm font-semibold text-alabaster-grey-600 shadow-sm">
-                {tool}
-              </span>
-            ))}
-          </div>
-          <div className="mt-8 flex flex-wrap justify-center gap-10 sm:gap-16">
-            {[
-              { value: "20", label: "security checks per scan" },
-              { value: "<1 min", label: "URL to first results" },
-              { value: "$4.88M", label: "avg. breach cost (IBM 2024)" },
-              { value: "0", label: "SDK or setup required" },
-            ].map((stat) => (
-              <div key={stat.value} className="text-center">
-                <p className="text-3xl font-bold text-ink-black-900">{stat.value}</p>
-                <p className="mt-1 text-xs uppercase tracking-wide text-alabaster-grey-600">{stat.label}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Feature cards - Bento Grid */}
-      <section id="features" className="px-6 py-24 sm:py-32" style={{ background: "linear-gradient(to bottom, var(--color-hero-edge) 0%, var(--color-findings-bg) 8%, var(--color-findings-bg) 100%)" }}>
-        <div className="mx-auto max-w-[1200px]">
-          <h2 className="mb-3 text-center text-3xl font-extrabold tracking-[-0.02em] text-heading sm:text-4xl">20 Security Checks That Keep Your Users Safe</h2>
-          <p className="mb-16 text-center text-muted">
-            20 essential security checks. Every scan. Zero setup. No developer required.
-          </p>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {checks.map((check) => (
-              <div key={check.title} className={`rounded-2xl border border-border bg-surface p-8 transition-all hover:shadow-lg ${getCardBorder(check.icon)}`} style={{ boxShadow: "0 1px 3px rgba(12,25,39,0.05)" }}>
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-surface-raised">
-                  <span className="text-xl">{check.icon}</span>
-                </div>
-                <h3 className="mt-5 text-lg font-bold text-heading">{check.icon} {check.title}</h3>
-                {check.outcome && (
-                  <p className="mt-2 text-xs font-semibold text-primary">{check.outcome}</p>
-                )}
-                <p className="mt-2 text-sm leading-relaxed text-muted">{check.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* How It Works Band */}
-      <section className="relative overflow-hidden px-6 py-24 sm:py-32" style={{ background: "var(--color-section-lift)", borderTop: "1px solid var(--color-stroke-subtle)" }}>
-        {/* Background glow */}
-        <div className="pointer-events-none absolute inset-0 flex items-start justify-center overflow-hidden">
-          <div className="h-[400px] w-[600px] rounded-full opacity-[0.04]" style={{ background: "var(--color-cta-green)", filter: "blur(80px)", transform: "translateY(-50%)" }} />
-        </div>
-        <div className="mx-auto max-w-[1200px]">
-          <h2 className="mb-4 text-center text-3xl font-extrabold tracking-[-0.02em] text-heading sm:text-4xl">
-            No SDK. No setup. No developer ticket.
+        {/* ── FOOTER CTA ── */}
+        <section className="px-6 py-24 text-center sm:py-32" style={{ background: "var(--color-section-base)" }}>
+          <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl" style={{ color: "var(--color-heading)" }}>
+            Stop finding out about breaches<br />from your CEO.
           </h2>
-          <p className="mb-16 text-center text-muted max-w-xl mx-auto">
-            Paste a URL. Get results in 60 seconds. That is the entire setup process.
-          </p>
-          <div className="grid gap-8 sm:grid-cols-3">
-            {[
-              {
-                step: "01",
-                title: "Paste your URL",
-                desc: "Drop in your app URL. No code changes, no SDK, no developer required. Takes 10 seconds.",
-                icon: "🔗",
-              },
-              {
-                step: "02",
-                title: "60-second scan",
-                desc: "We run 20 external security checks. The same probes an attacker would run. Results appear before your coffee is ready.",
-                icon: "⚡",
-              },
-              {
-                step: "03",
-                title: "Instant security report",
-                desc: "See exactly what is exposed, what to fix, and how urgent each issue is. Share with your team or export for compliance.",
-                icon: "📋",
-              },
-            ].map((item) => (
-              <div key={item.step} className="rounded-2xl border p-8" style={{ background: "var(--color-card-bg)", borderColor: "var(--color-stroke)" }}>
-                <div className="mb-4 flex items-center gap-3">
-                  <span className="text-3xl">{item.icon}</span>
-                  <span className="text-xs font-bold tracking-widest uppercase" style={{ color: "var(--color-cta-green)" }}>{item.step}</span>
-                </div>
-                <h3 className="text-xl font-bold text-heading mb-3">{item.title}</h3>
-                <p className="text-sm leading-loose text-muted">{item.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Laser divider */}
-      <div className="relative h-px w-full overflow-hidden">
-        <div className="absolute inset-0" style={{ background: "linear-gradient(to right, transparent 0%, var(--color-cta-green) 50%, transparent 100%)", opacity: 0.4 }} />
-      </div>
-
-      {/* Integrations */}
-      <section className="mx-auto max-w-[1200px] px-6 py-24 text-center sm:py-32" style={{ background: "var(--color-section-base)" }}>
-        <h2 className="mb-3 text-3xl font-extrabold tracking-[-0.02em] text-heading sm:text-4xl">Works with your stack</h2>
-        <p className="mb-12 text-muted">Integrates with the tools your team already uses</p>
-
-        {/* Live integrations */}
-        <div className="mb-4 flex items-center justify-center gap-2">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-success/10 px-3 py-1 text-xs font-semibold text-success">
-            <span className="h-1.5 w-1.5 rounded-full bg-success/100" />
-            Live
-          </span>
-        </div>
-        <div className="mb-14 flex flex-wrap items-center justify-center gap-6">
-          {integrations.live.map((i) => (
-            <div key={i.name} className="flex flex-col items-center gap-2.5">
-              <div className="flex h-16 w-16 items-center justify-center rounded-xl border border-border bg-surface p-3 shadow-sm">
-                <Image src={i.logo} alt={i.name} width={40} height={40} unoptimized className="h-full w-full object-contain" />
-              </div>
-              <span className="text-xs font-medium text-muted">{i.name}</span>
-            </div>
-          ))}
-        </div>
-
-        {/* Coming soon */}
-        <div className="mb-4 flex items-center justify-center gap-2">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-surface-raised px-3 py-1 text-xs font-semibold text-muted">
-            Coming soon
-          </span>
-        </div>
-        <div className="flex flex-wrap items-center justify-center gap-6">
-          {integrations.soon.map((i) => (
-            <div key={i.name} className="flex flex-col items-center gap-2.5 opacity-40">
-              <div className="flex h-16 w-16 items-center justify-center rounded-xl border border-border bg-surface p-3 shadow-sm grayscale">
-                <Image src={i.logo} alt={i.name} width={40} height={40} unoptimized className="h-full w-full object-contain" />
-              </div>
-              <span className="text-xs font-medium text-muted">{i.name}</span>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Social Proof - radical transparency */}
-      <section className="border-y px-6 py-24 sm:py-32" style={{ borderColor: "var(--color-stroke-subtle)", background: "var(--color-section-lift)" }}>
-        <div className="mx-auto max-w-[1200px]">
-          <h2 className="mb-4 text-center text-3xl font-extrabold tracking-[-0.02em] text-heading sm:text-4xl">Results that speak for themselves</h2>
-          <p className="mb-16 text-center text-muted">We walk the walk. Scantient scans itself on every deploy. Here is what we find.</p>
-          <div className="grid gap-8 md:grid-cols-3">
-            {socialProof.map((item) => (
-              <a
-                key={item.stat}
-                href={item.href}
-                className="group relative rounded-2xl border border-border bg-surface p-8 transition-all hover:shadow-lg hover:-translate-y-0.5"
-                style={{ boxShadow: "0 1px 3px rgba(12,25,39,0.05)" }}
-              >
-                <div className="mb-4 text-3xl">{item.icon}</div>
-                <p className="text-4xl font-extrabold tracking-tight text-heading">{item.stat}</p>
-                <p className="mt-1 text-sm font-semibold text-primary">{item.label}</p>
-                <p className="mt-3 text-sm leading-relaxed text-muted">{item.detail}</p>
-              </a>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Final CTA Band */}
-      <section className="px-6 py-24 sm:py-32 text-center" style={{ background: "radial-gradient(ellipse at 50% 0%, var(--color-cta-green-faint) 0%, var(--color-section-base) 60%)" }}>
-        <div className="mx-auto max-w-[600px]">
-          <h2 className="text-3xl font-extrabold tracking-[-0.02em] text-heading sm:text-4xl mb-4">
-            Secure your AI-built app in 60 seconds.
-          </h2>
-          <p className="text-muted mb-10 leading-relaxed">
-            Find exposed API keys, broken auth, and security holes before attackers do. No SDK. No setup. Results in 60 seconds.
+          <p className="mx-auto mt-6 max-w-xl" style={{ color: "var(--color-muted)" }}>
+            Add your first app URL. We start scanning in 60 seconds.
           </p>
           <Link
             href="/score"
-            className="inline-block rounded-lg bg-[#22C55E] px-10 py-4 text-base font-bold text-white shadow-lg transition-all hover:bg-[#16A34A]"
+            className="mt-10 inline-block rounded-xl bg-[#22C55E] px-8 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-[#16A34A]"
           >
             Scan My App Free
           </Link>
-          <p className="mt-4 text-xs text-muted">No credit card required. Scan takes under 1 minute.</p>
-        </div>
-      </section>
+        </section>
 
-      {/* FAQ */}
-      <section className="border-t px-6 py-24 sm:py-32" style={{ background: "var(--color-section-base)", borderColor: "var(--color-stroke-subtle)" }}>
-        <div className="mx-auto max-w-[800px]">
-          <h2 className="mb-16 text-center text-3xl font-extrabold tracking-[-0.02em] text-heading sm:text-4xl">Frequently asked questions</h2>
-          <div className="space-y-10">
-            {faqs.map((faq) => (
-              <div key={faq.q}>
-                <h3 className="font-bold text-heading">{faq.q}</h3>
-                <p className="mt-3 text-sm leading-relaxed text-muted">{faq.a}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Footer CTA */}
-      <section className="px-6 py-24 text-center sm:py-32" style={{ background: "var(--color-section-base)" }}>
-        <h2 className="text-3xl font-extrabold tracking-[-0.02em] text-white sm:text-4xl">Stop finding out about breaches<br />from your CEO.</h2>
-        <p className="mx-auto mt-6 max-w-xl text-muted">
-          Add your first app URL. We start scanning in 60 seconds.
-        </p>
-        <Link
-          href="/signup"
-          className="mt-10 inline-block rounded-lg bg-[#22C55E] px-8 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-[#16A34A]"
-        >
-          Get started
-        </Link>
-      </section>
-
-    </div>
+      </div>
     </>
   );
 }

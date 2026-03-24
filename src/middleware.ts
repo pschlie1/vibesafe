@@ -82,18 +82,18 @@ const STATIC_SECURITY_HEADERS: Record<string, string> = {
 function buildCsp(nonce: string): string {
   const scriptSrc =
     process.env.NODE_ENV === "development"
-      ? `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' 'unsafe-inline' 'unsafe-eval'`
-      : `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' 'unsafe-inline'`;
+      ? `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com`
+      : `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' 'unsafe-inline' https://www.googletagmanager.com`;
 
   return [
     "default-src 'self'",
     scriptSrc,
     "style-src 'self' 'unsafe-inline'",
-    // img-src: own origin + data URIs + Stripe (hosted payment elements)
-    "img-src 'self' data: blob: https://q.stripe.com",
+    // img-src: own origin + data URIs + Stripe (hosted payment elements) + GA
+    "img-src 'self' data: blob: https://q.stripe.com https://www.google-analytics.com https://www.googletagmanager.com",
     "font-src 'self' data:",
-    // connect-src: Sentry ingest for client-side error capture
-    "connect-src 'self' https://api.resend.com https://api.stripe.com https://o*.ingest.sentry.io",
+    // connect-src: Sentry ingest for client-side error capture + GA
+    "connect-src 'self' https://api.resend.com https://api.stripe.com https://o*.ingest.sentry.io https://www.google-analytics.com https://analytics.google.com https://stats.g.doubleclick.net",
     "frame-ancestors 'none'",
     "base-uri 'self'",
     "form-action 'self'",

@@ -68,7 +68,7 @@ const tiers: Tier[] = [
       "Cancel anytime",
     ],
     cta: "Start free 7-day trial",
-    ctaHref: "/signup?plan=startup",
+    ctaHref: "/signup?plan=starter",
     highlighted: false,
   },
   {

@@ -66,8 +66,7 @@ export default function BillingPage() {
     sessionStorage.removeItem("pendingCheckoutPlan");
     // Small delay to ensure the billing page is fully mounted
     setTimeout(() => handleUpgrade(pending), 500);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, []); // intentionally empty — runs once on mount only
 
   async function handleUpgrade(plan: string) {
     setUpgradeError(null);

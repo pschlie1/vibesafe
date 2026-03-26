@@ -4,7 +4,7 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "Your Engineering Team Probably Has No AI Usage Policy (And Why That's a Security Problem) | Scantient",
   description:
-    "Most engineering teams use 10+ AI tools with zero formal policy. Learn why shadow AI is a compliance time bomb and what your AI usage policy actually needs to say.",
+    "Most engineering teams use 10+ AI tools with zero formal policy. Learn why shadow AI creates compliance risk and what your AI usage policy needs to cover.",
   keywords: "ai tool usage policy engineering teams, AI compliance for startups, shadow AI detection",
   openGraph: {
     title: "Your Engineering Team Probably Has No AI Usage Policy (And Why That's a Security Problem)",

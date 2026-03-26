@@ -4,7 +4,7 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "How to Secure Your OpenAI API Integration (And Not Get Charged $10,000 by Bots) | Scantient Blog",
   description:
-    "OpenAI API abuse can generate thousands in unexpected charges within hours. How to secure your OpenAI integration . key management, rate limiting, input validation, monitoring . before bots find it.",
+    "OpenAI API abuse generates thousands in unexpected charges within hours. Secure your integration: key management, rate limiting, input validation, and monitoring before bots find it.",
   keywords: "secure OpenAI API, OpenAI API security, prevent OpenAI API abuse, OpenAI API key stolen, OpenAI bill thousands, AI API security",
   openGraph: {
     title: "How to Secure Your OpenAI API Integration (And Not Get Charged $10,000 by Bots)",
@@ -28,7 +28,7 @@ const articleSchema = {
   "@type": "Article",
   headline: "How to Secure Your OpenAI API Integration (And Not Get Charged $10,000 by Bots)",
   description:
-    "OpenAI API abuse can generate thousands in unexpected charges within hours. How to secure your OpenAI integration . key management, rate limiting, input validation, monitoring . before bots find it.",
+    "OpenAI API abuse generates thousands in unexpected charges within hours. Secure your integration: key management, rate limiting, input validation, and monitoring before bots find it.",
   datePublished: "2026-03-03T00:00:00Z",
   dateModified: "2026-03-03T00:00:00Z",
   author: { "@type": "Organization", name: "Scantient" },

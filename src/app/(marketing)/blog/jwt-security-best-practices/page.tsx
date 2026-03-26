@@ -4,7 +4,7 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "JWT Security Best Practices: 8 Mistakes That Expose Your API | Scantient Blog",
   description:
-    "JSON Web Token vulnerabilities that developers miss. Eight JWT security mistakes . weak algorithms, no expiry, secrets in payloads, the none algorithm bypass . with practical fixes for each.",
+    "Eight JWT security mistakes developers miss in production: weak algorithms, no expiry, secrets in payloads, the none algorithm bypass. With practical fixes for each.",
   keywords: "JWT security, JSON web token vulnerabilities, JWT authentication security, JWT best practices, JWT security mistakes",
   openGraph: {
     title: "JWT Security Best Practices: 8 Mistakes That Expose Your API",

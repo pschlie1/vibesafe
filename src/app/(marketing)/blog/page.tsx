@@ -3,9 +3,9 @@ import Link from "next/link";
 import NewsletterForm from "@/components/newsletter-form";
 
 export const metadata: Metadata = {
-  title: "Blog . Scantient",
+  title: "API Security Blog | Scantient",
   description:
-    "Security insights, compliance guides, and practical advice for IT leaders managing AI-generated applications.",
+    "Practical API security guides, JWT best practices, DevSecOps tips, and compliance advice for developers and startup CTOs. No fluff.",
 };
 
 const posts = [
@@ -17,6 +17,16 @@ const posts = [
       "Vibe coding ships product fast . and with predictable security gaps. CORS wildcards, missing rate limits, verbose errors, IDOR vulnerabilities: the systematic issues AI-generated APIs share and how to fix them.",
     date: "March 15, 2026",
     readTime: "9 min read",
+    featured: false,
+  },
+  {
+    slug: "/blog/secret-scanning-guide",
+    category: "Security",
+    title: "The Complete Guide to Secret Scanning and Credential Detection (2026)",
+    excerpt:
+      "How API keys and credentials leak into code. How to detect them before they get exploited. Tool comparison for developers and DevSecOps teams.",
+    date: "March 22, 2026",
+    readTime: "12 min read",
     featured: false,
   },
   {

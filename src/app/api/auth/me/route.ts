@@ -14,15 +14,20 @@ export async function GET() {
   const appCount = await db.monitoredApp.count({ where: { orgId: session.orgId } });
   const userCount = await db.user.count({ where: { orgId: session.orgId } });
 
+  // Fetch subscription once for both currentPeriodEnd and hasSubscription.
+  const sub = await db.subscription.findUnique({
+    where: { orgId: session.orgId },
+    select: { currentPeriodEnd: true, stripeSubscriptionId: true },
+  });
+
   // Return currentPeriodEnd when the subscription is set to cancel — billing page needs it for the warning banner.
-  let currentPeriodEnd: string | null = null;
-  if (limits.cancelAtPeriodEnd) {
-    const sub = await db.subscription.findUnique({
-      where: { orgId: session.orgId },
-      select: { currentPeriodEnd: true },
-    });
-    currentPeriodEnd = sub?.currentPeriodEnd?.toISOString() ?? null;
-  }
+  const currentPeriodEnd =
+    limits.cancelAtPeriodEnd && sub?.currentPeriodEnd
+      ? sub.currentPeriodEnd.toISOString()
+      : null;
+
+  // True when the org has an active Stripe subscription (false for LTD / one-time purchases).
+  const hasSubscription = !!sub?.stripeSubscriptionId;
 
   return NextResponse.json({
     user: session,
@@ -30,6 +35,7 @@ export async function GET() {
       limits: {
         ...limits,
         currentPeriodEnd,
+        hasSubscription,
       },
       appCount,
       userCount,

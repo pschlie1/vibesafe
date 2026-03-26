@@ -26,6 +26,17 @@ export default function BillingPage() {
     fetch("/api/auth/me").then((r) => r.json()).then(setData);
   }, []);
 
+  // Auto-trigger checkout if the user signed up via a plan CTA (e.g. /signup?plan=ltd)
+  // The plan is stored in sessionStorage by the signup page and cleared here after use.
+  useEffect(() => {
+    const pending = sessionStorage.getItem("pendingCheckoutPlan");
+    if (!pending) return;
+    sessionStorage.removeItem("pendingCheckoutPlan");
+    // Small delay to ensure the billing page is fully mounted
+    setTimeout(() => handleUpgrade(pending), 500);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   async function handleUpgrade(plan: string) {
     setLoading(plan);
     try {

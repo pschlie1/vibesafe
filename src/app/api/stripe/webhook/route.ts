@@ -6,6 +6,7 @@ import type { PlanKey } from "@/lib/stripe";
 import { trackEvent } from "@/lib/analytics";
 import type { SubscriptionTier } from "@prisma/client";
 import { errorResponse } from "@/lib/api-response";
+import { logApiError } from "@/lib/observability";
 
 /**
  * Map a Stripe PlanKey to a DB SubscriptionTier.
@@ -68,6 +69,8 @@ export async function POST(req: Request) {
     return errorResponse("BAD_REQUEST", "Invalid signature", undefined, 400);
   }
 
+  console.log("stripe webhook:", event.type, event.id);
+
   // Idempotency: all DB writes below use `upsert` keyed on orgId/stripeSubscriptionId,
   // so replayed events (Stripe guarantees at-least-once delivery) are safe no-ops.
   // If stricter deduplication is ever required, store event.id in a processed_events
@@ -89,27 +92,32 @@ export async function POST(req: Request) {
         select: { tier: true },
       });
 
-      await db.subscription.upsert({
-        where: { orgId },
-        update: {
-          tier: toTier,
-          status: "ACTIVE",
-          stripeSubscriptionId: subscriptionId,
-          stripePriceId: plan.priceId,
-          maxApps: plan.maxApps,
-          maxUsers: plan.maxUsers,
-          trialEndsAt: null,
-        },
-        create: {
-          orgId,
-          tier: toTier,
-          status: "ACTIVE",
-          stripeSubscriptionId: subscriptionId,
-          stripePriceId: plan.priceId,
-          maxApps: plan.maxApps,
-          maxUsers: plan.maxUsers,
-        },
-      });
+      try {
+        await db.subscription.upsert({
+          where: { orgId },
+          update: {
+            tier: toTier,
+            status: "ACTIVE",
+            stripeSubscriptionId: subscriptionId,
+            stripePriceId: plan.priceId,
+            maxApps: plan.maxApps,
+            maxUsers: plan.maxUsers,
+            trialEndsAt: null,
+          },
+          create: {
+            orgId,
+            tier: toTier,
+            status: "ACTIVE",
+            stripeSubscriptionId: subscriptionId,
+            stripePriceId: plan.priceId,
+            maxApps: plan.maxApps,
+            maxUsers: plan.maxUsers,
+          },
+        });
+      } catch (err) {
+        logApiError(err, { route: "/api/stripe/webhook", method: "POST", orgId, details: { event: event.type, eventId: event.id } });
+        break;
+      }
 
       await trackTierTransitionEvent({
         orgId,
@@ -138,20 +146,25 @@ export async function POST(req: Request) {
       const newPlan = newPlanKey ? PLANS[newPlanKey] : undefined;
       const nextTier = newPlanKey ? toDbTier(newPlanKey) : existing.tier;
 
-      await db.subscription.update({
-        where: { id: existing.id },
-        data: {
-          status: obj.status === "active" ? "ACTIVE" : obj.status === "past_due" ? "PAST_DUE" : "CANCELED",
-          cancelAtPeriodEnd: obj.cancel_at_period_end ?? false,
-          // Only update tier/limits if we can identify the new plan
-          ...(newPlan && newPlanKey ? {
-            tier: nextTier,
-            maxApps: newPlan.maxApps,
-            maxUsers: newPlan.maxUsers,
-            stripePriceId: newPriceId,
-          } : {}),
-        },
-      });
+      try {
+        await db.subscription.update({
+          where: { id: existing.id },
+          data: {
+            status: obj.status === "active" ? "ACTIVE" : obj.status === "past_due" ? "PAST_DUE" : "CANCELED",
+            cancelAtPeriodEnd: obj.cancel_at_period_end ?? false,
+            // Only update tier/limits if we can identify the new plan
+            ...(newPlan && newPlanKey ? {
+              tier: nextTier,
+              maxApps: newPlan.maxApps,
+              maxUsers: newPlan.maxUsers,
+              stripePriceId: newPriceId,
+            } : {}),
+          },
+        });
+      } catch (err) {
+        logApiError(err, { route: "/api/stripe/webhook", method: "POST", orgId: existing.orgId, details: { event: event.type, eventId: event.id } });
+        break;
+      }
 
       await trackTierTransitionEvent({
         orgId: existing.orgId,
@@ -174,10 +187,14 @@ export async function POST(req: Request) {
       });
       if (!existing) break;
 
-      await db.subscription.update({
-        where: { id: existing.id },
-        data: { status: "PAST_DUE" },
-      });
+      try {
+        await db.subscription.update({
+          where: { id: existing.id },
+          data: { status: "PAST_DUE" },
+        });
+      } catch (err) {
+        logApiError(err, { route: "/api/stripe/webhook", method: "POST", orgId: existing.orgId, details: { event: event.type, eventId: event.id } });
+      }
       break;
     }
 
@@ -188,17 +205,22 @@ export async function POST(req: Request) {
       });
       if (!existing) break;
 
-      await db.subscription.update({
-        where: { id: existing.id },
-        data: {
-          tier: "FREE",
-          status: "CANCELED",
-          maxApps: 1,
-          maxUsers: 1,
-          stripeSubscriptionId: null,
-          stripePriceId: null,
-        },
-      });
+      try {
+        await db.subscription.update({
+          where: { id: existing.id },
+          data: {
+            tier: "FREE",
+            status: "CANCELED",
+            maxApps: 1,
+            maxUsers: 1,
+            stripeSubscriptionId: null,
+            stripePriceId: null,
+          },
+        });
+      } catch (err) {
+        logApiError(err, { route: "/api/stripe/webhook", method: "POST", orgId: existing.orgId, details: { event: event.type, eventId: event.id } });
+        break;
+      }
 
       if (existing.tier !== "FREE") {
         await trackEvent({

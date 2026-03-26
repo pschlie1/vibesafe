@@ -1,11 +1,20 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
 
 type OrgData = {
   user: { orgName: string };
   org: {
-    limits: { tier: string; status: string; maxApps: number; maxUsers: number; trialEndsAt: string | null; cancelAtPeriodEnd: boolean };
+    limits: {
+      tier: string;
+      status: string;
+      maxApps: number;
+      maxUsers: number;
+      trialEndsAt: string | null;
+      cancelAtPeriodEnd: boolean;
+      currentPeriodEnd: string | null;
+    };
     appCount: number;
     userCount: number;
   };
@@ -21,10 +30,31 @@ const plans = [
 export default function BillingPage() {
   const [data, setData] = useState<OrgData | null>(null);
   const [loading, setLoading] = useState<string | null>(null);
+  const [portalError, setPortalError] = useState<string | null>(null);
+  const [successBanner, setSuccessBanner] = useState<string | null>(null);
+  const successTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const searchParams = useSearchParams();
 
   useEffect(() => {
     fetch("/api/auth/me").then((r) => r.json()).then(setData);
   }, []);
+
+  // FIX 2: read ?success=true&plan=X after Stripe checkout redirect
+  useEffect(() => {
+    const success = searchParams.get("success");
+    const plan = searchParams.get("plan");
+    if (success !== "true") return;
+
+    const planLabel = plan ? `Your ${plan} plan is now active.` : "Your plan is now active.";
+    setSuccessBanner(`Payment successful — ${planLabel}`);
+
+    successTimerRef.current = setTimeout(() => setSuccessBanner(null), 8000);
+
+    return () => {
+      if (successTimerRef.current) clearTimeout(successTimerRef.current);
+    };
+  }, [searchParams]);
 
   // Auto-trigger checkout if the user signed up via a plan CTA (e.g. /signup?plan=ltd)
   // The plan is stored in sessionStorage by the signup page and cleared here after use.
@@ -55,12 +85,20 @@ export default function BillingPage() {
     }
   }
 
+  // FIX 1: surface portal errors inline instead of silently failing
   async function handleManage() {
+    setPortalError(null);
     setLoading("portal");
     try {
       const res = await fetch("/api/stripe/portal", { method: "POST" });
       const { url } = await res.json();
-      if (url) window.location.href = url;
+      if (url) {
+        window.location.href = url;
+      } else {
+        setPortalError("Could not open billing portal. Please try again.");
+      }
+    } catch {
+      setPortalError("Could not open billing portal. Please try again.");
     } finally {
       setLoading(null);
     }
@@ -70,8 +108,38 @@ export default function BillingPage() {
 
   const { limits } = data.org;
 
+  // FIX 3: format cancel date when present
+  const cancelDate =
+    limits.cancelAtPeriodEnd && limits.currentPeriodEnd
+      ? new Date(limits.currentPeriodEnd).toLocaleDateString()
+      : null;
+
   return (
     <div className="space-y-6">
+      {/* FIX 2: payment success banner */}
+      {successBanner && (
+        <div className="flex items-center justify-between rounded-lg border border-success bg-surface-raised px-4 py-3 text-sm text-success">
+          <span>{successBanner}</span>
+          <button
+            onClick={() => {
+              setSuccessBanner(null);
+              if (successTimerRef.current) clearTimeout(successTimerRef.current);
+            }}
+            className="ml-4 text-success hover:text-heading"
+            aria-label="Dismiss"
+          >
+            ✕
+          </button>
+        </div>
+      )}
+
+      {/* FIX 3: cancel-at-period-end warning banner */}
+      {cancelDate && (
+        <div className="rounded-lg border border-warning bg-surface-raised px-4 py-3 text-sm text-warning">
+          Your plan is set to cancel on {cancelDate}. You will keep access until then.
+        </div>
+      )}
+
       {/* Current plan */}
       <div className="rounded-lg border bg-surface p-6">
         <h2 className="text-lg font-semibold">Current plan</h2>
@@ -87,13 +155,19 @@ export default function BillingPage() {
           </p>
         )}
         {limits.tier !== "FREE" && (
-          <button
-            onClick={handleManage}
-            disabled={loading === "portal"}
-            className="mt-4 rounded border px-3 py-1.5 text-sm hover:bg-surface-raised disabled:opacity-50"
-          >
-            {loading === "portal" ? "Opening…" : "Manage billing"}
-          </button>
+          <div className="mt-4">
+            <button
+              onClick={handleManage}
+              disabled={loading === "portal"}
+              className="rounded border px-3 py-1.5 text-sm hover:bg-surface-raised disabled:opacity-50"
+            >
+              {loading === "portal" ? "Opening…" : "Manage billing"}
+            </button>
+            {/* FIX 1: inline portal error message */}
+            {portalError && (
+              <p className="mt-2 text-sm text-error">{portalError}</p>
+            )}
+          </div>
         )}
       </div>
 

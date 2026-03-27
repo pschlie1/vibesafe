@@ -39,6 +39,10 @@ const articleSchema = {
   },
   url: "https://scantient.com/blog/securing-openai-api-integration",
   mainEntityOfPage: "https://scantient.com/blog/securing-openai-api-integration",
+  speakable: {
+    "@type": "SpeakableSpecification",
+    cssSelector: ["h1", ".article-lede"],
+  },
 };
 
 const breadcrumbSchema = {
@@ -120,7 +124,7 @@ export default function SecuringOpenAiApiIntegrationPage() {
           <h1 className="text-3xl font-extrabold tracking-tight text-ink-black-950 dark:text-alabaster-grey-50 sm:text-4xl">
             How to Secure Your OpenAI API Integration (And Not Get Charged $10,000 by Bots)
           </h1>
-          <p className="mt-4 text-lg text-dusty-denim-700 dark:text-dusty-denim-400">
+          <p className="mt-4 text-lg text-dusty-denim-700 dark:text-dusty-denim-400 article-lede">
             Developers share horror stories about waking up to five-figure OpenAI bills because
             a key leaked. It&apos;s not rare. Bots scan GitHub continuously for AI API keys. Here&apos;s how
             to make sure it doesn&apos;t happen to you.

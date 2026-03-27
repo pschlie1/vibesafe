@@ -39,6 +39,10 @@ const articleSchema = {
   },
   url: "https://scantient.com/blog/gdpr-api-security-guide",
   mainEntityOfPage: "https://scantient.com/blog/gdpr-api-security-guide",
+  speakable: {
+    "@type": "SpeakableSpecification",
+    cssSelector: ["h1", ".article-lede"],
+  },
 };
 
 const breadcrumbSchema = {
@@ -119,7 +123,7 @@ export default function GdprApiSecurityGuidePage() {
           <h1 className="text-3xl font-extrabold tracking-tight text-ink-black-950 dark:text-alabaster-grey-50 sm:text-4xl">
             GDPR and API Security: What European Founders Must Implement Before Launch
           </h1>
-          <p className="mt-4 text-lg text-dusty-denim-700 dark:text-dusty-denim-400">
+          <p className="mt-4 text-lg text-dusty-denim-700 dark:text-dusty-denim-400 article-lede">
             GDPR isn&apos;t just a privacy policy checkbox. It imposes concrete technical requirements
             on your APIs . and regulators are handing out fines to startups that treat it like an
             afterthought.

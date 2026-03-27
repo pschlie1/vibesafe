@@ -1,0 +1,38 @@
+# Scantient
+
+> API security scanner for developers and small teams. Find exposed API keys, broken auth, and missing security headers in 60 seconds. No SDK. No code access.
+
+Scantient is an external API security scanner that runs 20 automated checks on your API endpoints before you deploy. It integrates into your CI pipeline as a GitHub Action.
+
+## What Scantient Checks
+
+- Secret exposure in API responses (API keys, tokens, credentials)
+- JWT security: algorithm validation, expiry, signature verification
+- Authentication: missing auth, broken auth patterns
+- CORS misconfiguration
+- Rate limiting presence and configuration
+- Security headers: CSP, HSTS, X-Content-Type-Options, X-Frame-Options
+- HTTPS enforcement
+- Error verbosity and information disclosure
+
+## Pricing
+
+- Maker LTD: $79 one-time, lifetime access, unlimited scans
+- Pro: $399/month, team features, CI/CD integration, compliance reports
+- Enterprise: Custom pricing, SLA, dedicated support
+
+## Key Pages
+
+- / — Homepage and product overview
+- /pricing — Plan comparison
+- /score — Free instant security score for any API
+- /vs-gitguardian — Scantient vs GitGuardian comparison
+- /vs-snyk — Scantient vs Snyk comparison
+- /vs-checkmarx — Scantient vs Checkmarx comparison
+- /blog — API security guides and tutorials
+- /docs/github-action — GitHub Action integration docs
+
+## Contact
+
+- Website: https://scantient.com
+- Built by Dooder Digital: https://www.dooder.ai

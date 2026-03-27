@@ -40,6 +40,10 @@ const articleSchema = {
   },
   url: "https://scantient.com/blog/secret-scanning-guide",
   mainEntityOfPage: "https://scantient.com/blog/secret-scanning-guide",
+  speakable: {
+    "@type": "SpeakableSpecification",
+    cssSelector: ["h1", ".article-lede"],
+  },
 };
 
 const breadcrumbSchema = {
@@ -120,7 +124,7 @@ export default function SecretScanningGuidePage() {
           <h1 className="text-3xl font-extrabold tracking-tight text-ink-black-950 dark:text-alabaster-grey-50 sm:text-4xl">
             The Complete Guide to Secret Scanning & Credential Detection (2026)
           </h1>
-          <p className="mt-4 text-lg text-dusty-denim-700 dark:text-dusty-denim-400">
+          <p className="mt-4 text-lg text-dusty-denim-700 dark:text-dusty-denim-400 article-lede">
             API keys. Database passwords. Private encryption keys. OAuth tokens. One exposed
             credential gives an attacker full access to your infrastructure. Learn how they leak,
             how to find them before they&apos;re exploited, and which tools work.

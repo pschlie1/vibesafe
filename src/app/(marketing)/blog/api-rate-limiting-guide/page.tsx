@@ -39,6 +39,10 @@ const articleSchema = {
   },
   url: "https://scantient.com/blog/api-rate-limiting-guide",
   mainEntityOfPage: "https://scantient.com/blog/api-rate-limiting-guide",
+  speakable: {
+    "@type": "SpeakableSpecification",
+    cssSelector: ["h1", ".article-lede"],
+  },
 };
 
 const breadcrumbSchema = {
@@ -119,7 +123,7 @@ export default function ApiRateLimitingGuidePage() {
           <h1 className="text-3xl font-extrabold tracking-tight text-ink-black-950 dark:text-alabaster-grey-50 sm:text-4xl">
             API Rate Limiting: How to Implement It and Why Skipping It Costs You
           </h1>
-          <p className="mt-4 text-lg text-dusty-denim-700 dark:text-dusty-denim-400">
+          <p className="mt-4 text-lg text-dusty-denim-700 dark:text-dusty-denim-400 article-lede">
             APIs without rate limiting are open doors for brute force attacks, credential stuffing,
             expensive scraping, and denial-of-service. It&apos;s one of the OWASP API Top 10 for a
             reason . and one of the easiest controls to implement correctly.

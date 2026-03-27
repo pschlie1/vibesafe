@@ -39,6 +39,10 @@ const articleSchema = {
   },
   url: "https://scantient.com/blog/how-to-scan-production-api",
   mainEntityOfPage: "https://scantient.com/blog/how-to-scan-production-api",
+  speakable: {
+    "@type": "SpeakableSpecification",
+    cssSelector: ["h1", ".article-lede"],
+  },
 };
 
 const breadcrumbSchema = {
@@ -119,7 +123,7 @@ export default function HowToScanProductionApiPage() {
           <h1 className="text-3xl font-extrabold tracking-tight text-ink-black-950 dark:text-alabaster-grey-50 sm:text-4xl">
             How to Scan Your Production API for Vulnerabilities (Step-by-Step Guide)
           </h1>
-          <p className="mt-4 text-lg text-dusty-denim-700 dark:text-dusty-denim-400">
+          <p className="mt-4 text-lg text-dusty-denim-700 dark:text-dusty-denim-400 article-lede">
             Your code looks clean in review. Your tests pass. But what does your live API look like
             to someone probing it from the internet? This guide walks through how to find out .
             step by step.

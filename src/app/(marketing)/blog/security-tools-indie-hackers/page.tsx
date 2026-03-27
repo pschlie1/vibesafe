@@ -39,6 +39,10 @@ const articleSchema = {
   },
   url: "https://scantient.com/blog/security-tools-indie-hackers",
   mainEntityOfPage: "https://scantient.com/blog/security-tools-indie-hackers",
+  speakable: {
+    "@type": "SpeakableSpecification",
+    cssSelector: ["h1", ".article-lede"],
+  },
 };
 
 const breadcrumbSchema = {
@@ -119,7 +123,7 @@ export default function SecurityToolsIndieHackersPage() {
           <h1 className="text-3xl font-extrabold tracking-tight text-ink-black-950 dark:text-alabaster-grey-50 sm:text-4xl">
             The Best Security Tools for Indie Hackers in 2026 (Budget Under $100/Year)
           </h1>
-          <p className="mt-4 text-lg text-dusty-denim-700 dark:text-dusty-denim-400">
+          <p className="mt-4 text-lg text-dusty-denim-700 dark:text-dusty-denim-400 article-lede">
             Enterprise security stacks cost $30,000–$100,000 per year. You don&apos;t need that. You
             need the right five or six tools that cover the vulnerabilities actually likely to hit
             your project . without eating your MRR.

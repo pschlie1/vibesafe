@@ -39,6 +39,10 @@ const articleSchema = {
   },
   url: "https://scantient.com/blog/what-is-external-security-scanning",
   mainEntityOfPage: "https://scantient.com/blog/what-is-external-security-scanning",
+  speakable: {
+    "@type": "SpeakableSpecification",
+    cssSelector: ["h1", ".article-lede"],
+  },
 };
 
 const breadcrumbSchema = {
@@ -119,7 +123,7 @@ export default function WhatIsExternalSecurityScanningPage() {
           <h1 className="text-3xl font-extrabold tracking-tight text-ink-black-950 dark:text-alabaster-grey-50 sm:text-4xl">
             What Is External Security Scanning? (And Why Every Production API Needs It)
           </h1>
-          <p className="mt-4 text-lg text-dusty-denim-700 dark:text-dusty-denim-400">
+          <p className="mt-4 text-lg text-dusty-denim-700 dark:text-dusty-denim-400 article-lede">
             Your code review finds bugs. Your dependency scanner finds CVEs. But neither one can
             see what your live API looks like from the internet. External scanning can . and it
             reveals a completely different class of security problems.

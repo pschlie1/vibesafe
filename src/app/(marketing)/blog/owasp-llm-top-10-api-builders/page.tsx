@@ -39,6 +39,10 @@ const articleSchema = {
   },
   url: "https://scantient.com/blog/owasp-llm-top-10-api-builders",
   mainEntityOfPage: "https://scantient.com/blog/owasp-llm-top-10-api-builders",
+  speakable: {
+    "@type": "SpeakableSpecification",
+    cssSelector: ["h1", ".article-lede"],
+  },
 };
 
 const breadcrumbSchema = {
@@ -120,7 +124,7 @@ export default function OwaspLlmTop10ApiBuildersPage() {
           <h1 className="text-3xl font-extrabold tracking-tight text-ink-black-950 dark:text-alabaster-grey-50 sm:text-4xl">
             OWASP LLM Top 10: What API Builders Need to Know in 2026
           </h1>
-          <p className="mt-4 text-lg text-dusty-denim-700 dark:text-dusty-denim-400">
+          <p className="mt-4 text-lg text-dusty-denim-700 dark:text-dusty-denim-400 article-lede">
             OWASP published the LLM Top 10 to give developers a framework for securing AI
             applications. If you&apos;re building APIs that call language models . for completions,
             embeddings, agents, or RAG pipelines . these vulnerabilities apply directly to you.

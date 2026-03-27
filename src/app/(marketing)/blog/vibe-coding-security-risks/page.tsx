@@ -39,6 +39,10 @@ const articleSchema = {
   },
   url: "https://scantient.com/blog/vibe-coding-security-risks",
   mainEntityOfPage: "https://scantient.com/blog/vibe-coding-security-risks",
+  speakable: {
+    "@type": "SpeakableSpecification",
+    cssSelector: ["h1", ".article-lede"],
+  },
 };
 
 const breadcrumbSchema = {
@@ -119,7 +123,7 @@ export default function VibeCodingSecurityRisksPage() {
           <h1 className="text-3xl font-extrabold tracking-tight text-ink-black-950 dark:text-alabaster-grey-50 sm:text-4xl">
             Vibe Coding Security Risks: What AI-Generated Code Gets Wrong About APIs
           </h1>
-          <p className="mt-4 text-lg text-dusty-denim-700 dark:text-dusty-denim-400">
+          <p className="mt-4 text-lg text-dusty-denim-700 dark:text-dusty-denim-400 article-lede">
             Vibe coding ships product fast. It also ships with predictable, systematic security gaps
             . because AI models optimize for functional code, not secure code. Here&apos;s what to look
             for and fix before you go live.

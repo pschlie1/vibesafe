@@ -89,10 +89,8 @@ async function handler(req: Request): Promise<NextResponse> {
       responseTimeMs: result.responseTimeMs,
     });
   } catch (error) {
-    return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Scan failed" },
-      { status: 500 },
-    );
+    console.error("[v1/scan] Internal error:", error);
+    return NextResponse.json({ error: "Scan failed. Please try again." }, { status: 500 });
   }
 }
 

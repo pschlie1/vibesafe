@@ -37,6 +37,40 @@ export default function WhyCTOsChooseExternalScanningPage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Why do CTOs choose external security scanning over internal tools?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "External scanners provide an objective view of what an attacker sees — not what internal teams assume is secure. They also remove the bias of developers checking their own work and provide audit-ready documentation for compliance purposes."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What does external API security scanning check?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "External scanners test your API from the outside, checking authentication, authorization, rate limiting, CORS configuration, security headers, and common vulnerability patterns. They simulate what a real attacker would probe for."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How does Scantient fit into a CTO's security strategy?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Scantient runs as a pre-deploy check in your CI pipeline, catching security regressions before they reach production. CTOs use it to enforce a security baseline across engineering teams without requiring security expertise in every developer."
+      }
+    }
+  ]
+}) }}
+      />
+
       <article className="mx-auto max-w-3xl px-6 py-16 sm:py-24">
       {/* Header */}
       <div className="mb-10">

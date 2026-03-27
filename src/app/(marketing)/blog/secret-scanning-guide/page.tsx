@@ -32,7 +32,7 @@ const articleSchema = {
     "Comprehensive guide to secret scanning: what it is, how secrets leak, detection methods, tool comparison, and implementation strategies for developers and DevSecOps teams.",
   datePublished: "2026-03-22T00:00:00Z",
   dateModified: "2026-03-22T00:00:00Z",
-  author: { "@type": "Organization", name: "Scantient" },
+  author: { "@type": "Person", "name": "Peter Schliesmann", "url": "https://scantient.com/about", "jobTitle": "Founder", "sameAs": ["https://www.linkedin.com/in/peterschliesmann"] },
   publisher: {
     "@type": "Organization",
     name: "Scantient",
@@ -68,6 +68,40 @@ export default function SecretScanningGuidePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is secret scanning?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Secret scanning automatically detects credentials, API keys, tokens, and other sensitive values that have been accidentally committed to source code. It prevents exposed secrets from reaching public repositories or production systems."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What types of secrets do scanners detect?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Secret scanners detect API keys, OAuth tokens, private keys, database connection strings, passwords, AWS credentials, Stripe keys, GitHub tokens, and other credential patterns. Good scanners use regex patterns and entropy analysis to minimize false negatives."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What should I do if a secret is found in my repository?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Revoke and rotate the secret immediately — do not just delete the commit. The secret may already be in git history or cached by external systems. After rotating, remove it from git history using tools like git-filter-repo, and add the pattern to your secret scanner's blocklist."
+      }
+    }
+  ]
+}) }}
+      />
+
       <article className="mx-auto max-w-3xl px-6 py-16 sm:py-24">
         {/* Header */}
         <div className="mb-10">

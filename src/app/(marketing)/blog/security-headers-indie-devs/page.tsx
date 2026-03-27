@@ -54,6 +54,40 @@ export default function SecurityHeadersIndieDevsPage() {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What are security headers and why do they matter?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Security headers are HTTP response headers that instruct browsers on how to handle your content securely. They protect against XSS, clickjacking, content sniffing, and other client-side attacks. Missing security headers are a common finding in security audits."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Which security headers should every web app have?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "At minimum: Content-Security-Policy, X-Content-Type-Options, X-Frame-Options (or frame-ancestors CSP directive), Referrer-Policy, and Strict-Transport-Security. These cover the most common browser-level attack vectors."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I check if my app has the right security headers?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Scantient checks for security headers as part of its API security scan. You can also use securityheaders.com to check any public URL manually. Aim for an A rating and address any missing headers before launch."
+      }
+    }
+  ]
+}) }}
+      />
+
       <article className="mx-auto max-w-3xl px-6 py-16 sm:py-24">
         {/* Header */}
         <div className="mb-10">

@@ -54,6 +54,40 @@ export default function OwaspTop10ApiChecklistPage() {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the OWASP API Security Top 10?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The OWASP API Security Top 10 lists the most critical risks for APIs: broken object level authorization, broken authentication, broken object property level authorization, unrestricted resource consumption, broken function level authorization, server-side request forgery, security misconfiguration, lack of protection from automated threats, improper asset management, and unsafe consumption of APIs."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I check my API against the OWASP Top 10?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Run automated security scans that check for OWASP Top 10 issues as part of your CI pipeline. Scantient covers the most common OWASP API risks in its 20-point scan. Supplement with manual testing for complex authorization scenarios."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Which OWASP API risk causes the most breaches?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Broken object level authorization (BOLA/IDOR) is consistently the most exploited API vulnerability. It allows authenticated users to access other users' data by manipulating resource identifiers. Test every endpoint that returns user-specific data."
+      }
+    }
+  ]
+}) }}
+      />
+
       <article className="mx-auto max-w-3xl px-6 py-16 sm:py-24">
         {/* Header */}
         <div className="mb-10">

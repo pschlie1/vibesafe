@@ -31,7 +31,7 @@ const articleSchema = {
     "JSON Web Token vulnerabilities that developers miss. Eight JWT security mistakes with practical fixes for each.",
   datePublished: "2026-03-18T00:00:00Z",
   dateModified: "2026-03-21T00:00:00Z",
-  author: { "@type": "Organization", name: "Scantient" },
+  author: { "@type": "Person", "name": "Peter Schliesmann", "url": "https://scantient.com/about", "jobTitle": "Founder", "sameAs": ["https://www.linkedin.com/in/peterschliesmann"] },
   publisher: {
     "@type": "Organization",
     name: "Scantient",
@@ -67,6 +67,40 @@ export default function JwtSecurityBestPracticesPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What are JWT security best practices?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Always verify the JWT signature before trusting claims. Use strong algorithms (RS256 or ES256, not HS256 with weak secrets). Set short expiry times. Validate the algorithm in the header. Never store sensitive data in the payload. Implement token revocation for logout."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the algorithm confusion attack in JWT?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Algorithm confusion attacks exploit servers that accept the algorithm specified in the JWT header without validation. If a server expects RS256 but accepts HS256, an attacker can forge tokens using the public key as the HMAC secret. Always specify and enforce the expected algorithm server-side."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I check if my JWT implementation is secure?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Test that your API rejects tokens with modified algorithms, expired tokens, invalid signatures, and missing claims. Scantient checks for common JWT implementation issues in its API security scan."
+      }
+    }
+  ]
+}) }}
+      />
+
       <article className="mx-auto max-w-3xl px-6 py-16 sm:py-24">
         {/* Header */}
         <div className="mb-10">

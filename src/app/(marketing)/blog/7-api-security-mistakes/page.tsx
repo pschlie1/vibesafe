@@ -37,6 +37,40 @@ export default function SevenApiSecurityMistakesPage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What are the most common API security mistakes?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The most common API security mistakes include missing authentication on endpoints, exposing sensitive data in responses, skipping rate limiting, using insecure JWT configurations, and leaving debug endpoints in production. Most of these are preventable with pre-deploy security checks."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do API security mistakes get introduced?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Most API security mistakes happen during rapid development cycles when security checks are treated as a later step. Developers focus on shipping features and security gaps go undetected until a scan or a breach."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How can I check my API for security mistakes before deploying?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Run automated security scans as part of your CI pipeline. Scantient checks 20 API security issues including authentication, CORS, JWT, and rate limiting on every pull request — before code reaches production."
+      }
+    }
+  ]
+}) }}
+      />
+
       <article className="mx-auto max-w-3xl px-6 py-16 sm:py-24">
       {/* Header */}
       <div className="mb-10">

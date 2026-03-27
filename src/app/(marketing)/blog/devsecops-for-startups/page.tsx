@@ -31,7 +31,7 @@ const articleSchema = {
     "DevSecOps for startups: how to integrate security into your CI/CD pipeline without slowing down shipping. SAST, SCA, secrets scanning, container scanning, and external API monitoring . the lean startup security stack.",
   datePublished: "2026-02-22T00:00:00Z",
   dateModified: "2026-02-22T00:00:00Z",
-  author: { "@type": "Organization", name: "Scantient" },
+  author: { "@type": "Person", "name": "Peter Schliesmann", "url": "https://scantient.com/about", "jobTitle": "Founder", "sameAs": ["https://www.linkedin.com/in/peterschliesmann"] },
   publisher: {
     "@type": "Organization",
     name: "Scantient",
@@ -67,6 +67,40 @@ export default function DevSecOpsForStartupsPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is DevSecOps and why does it matter for startups?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "DevSecOps integrates security checks into your development and deployment pipeline rather than treating security as a final gate. For startups, this means catching vulnerabilities before they ship instead of scrambling to fix breaches after launch."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do startups implement DevSecOps without a dedicated security team?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Start with automated scanning in CI. Tools like Scantient run pre-deploy security checks without requiring security expertise. Add secret scanning, dependency audits, and basic SAST. Build from there as the team grows."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the minimum viable security setup for an early-stage startup?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "At minimum: secret scanning to prevent credential exposure, dependency vulnerability checks, and API security scanning before production deploys. These three cover the most common attack vectors without requiring significant time investment."
+      }
+    }
+  ]
+}) }}
+      />
+
       <article className="mx-auto max-w-3xl px-6 py-16 sm:py-24">
         {/* Header */}
         <div className="mb-10">

@@ -31,7 +31,7 @@ const articleSchema = {
     "API rate limiting prevents abuse, protects your infrastructure, and reduces costs. How to implement sliding window, token bucket, and fixed window rate limits . and what attackers do when you skip it.",
   datePublished: "2025-12-18T00:00:00Z",
   dateModified: "2025-12-18T00:00:00Z",
-  author: { "@type": "Organization", name: "Scantient" },
+  author: { "@type": "Person", "name": "Peter Schliesmann", "url": "https://scantient.com/about", "jobTitle": "Founder", "sameAs": ["https://www.linkedin.com/in/peterschliesmann"] },
   publisher: {
     "@type": "Organization",
     name: "Scantient",
@@ -67,6 +67,40 @@ export default function ApiRateLimitingGuidePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is API rate limiting?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "API rate limiting controls how many requests a client can make in a given time window. It protects your API from abuse, prevents denial-of-service attacks, and ensures fair resource allocation across all users."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What happens if an API has no rate limiting?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Without rate limiting, a single client can send unlimited requests and exhaust your server resources, cause outages for other users, or scrape your entire dataset. Rate limiting is a baseline security and reliability requirement."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I test if my API has proper rate limiting?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Scantient checks for rate limiting headers and behavior as part of its 20-point security scan. You can also test manually by sending rapid requests and verifying that 429 responses are returned after the threshold is hit."
+      }
+    }
+  ]
+}) }}
+      />
+
       <article className="mx-auto max-w-3xl px-6 py-16 sm:py-24">
         {/* Header */}
         <div className="mb-10">

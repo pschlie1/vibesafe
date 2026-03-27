@@ -37,6 +37,40 @@ export default function GitGuardianVsScantientPage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How does Scantient compare to GitGuardian?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "GitGuardian focuses on secret detection in source code and git history. Scantient focuses on API security scanning — checking your running API endpoints for misconfigurations, authentication gaps, and security header issues. They address different parts of the security surface."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does Scantient replace GitGuardian?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. GitGuardian is strong for secret detection in repositories. Scantient checks your deployed APIs for runtime security issues. Teams with strong security postures use both."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What does Scantient check that GitGuardian does not?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Scantient checks API behavior: JWT validation, CORS misconfiguration, rate limiting, authentication bypass, and security headers. GitGuardian checks for secrets in code. They are complementary tools targeting different attack surfaces."
+      }
+    }
+  ]
+}) }}
+      />
+
       <article className="mx-auto max-w-3xl px-6 py-16 sm:py-24">
       {/* Header */}
       <div className="mb-10">

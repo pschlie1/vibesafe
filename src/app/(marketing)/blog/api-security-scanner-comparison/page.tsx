@@ -31,7 +31,7 @@ const articleSchema = {
     "Honest comparison of the best API security scanners in 2026. What each one scans, what it misses, and which fits your startup stage.",
   datePublished: "2026-03-09T00:00:00Z",
   dateModified: "2026-03-09T00:00:00Z",
-  author: { "@type": "Organization", name: "Scantient" },
+  author: { "@type": "Person", "name": "Peter Schliesmann", "url": "https://scantient.com/about", "jobTitle": "Founder", "sameAs": ["https://www.linkedin.com/in/peterschliesmann"] },
   publisher: {
     "@type": "Organization",
     name: "Scantient",
@@ -67,6 +67,40 @@ export default function ApiSecurityScannerComparisonPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How do API security scanners differ from each other?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "API security scanners vary by depth, focus area, and when they run. Some focus on static analysis, others on runtime behavior. Scantient focuses on pre-deploy checks that run in CI — catching issues before they reach production rather than after."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What should I look for when choosing an API security scanner?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Look for CI pipeline integration, coverage of OWASP API Top 10, clear remediation guidance, false positive rate, and pricing that fits your team size. A scanner your team runs on every pull request is more valuable than one that runs monthly."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is Scantient a replacement for manual penetration testing?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. Scantient automates the checks that should run on every code change. Manual penetration testing provides deeper, creative attack scenarios that automated tools miss. The two approaches are complementary."
+      }
+    }
+  ]
+}) }}
+      />
+
       <article className="mx-auto max-w-3xl px-6 py-16 sm:py-24">
         {/* Header */}
         <div className="mb-10">

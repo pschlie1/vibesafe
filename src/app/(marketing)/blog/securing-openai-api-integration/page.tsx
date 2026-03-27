@@ -31,7 +31,7 @@ const articleSchema = {
     "OpenAI API abuse can generate thousands in unexpected charges within hours. How to secure your OpenAI integration . key management, rate limiting, input validation, monitoring . before bots find it.",
   datePublished: "2026-03-03T00:00:00Z",
   dateModified: "2026-03-03T00:00:00Z",
-  author: { "@type": "Organization", name: "Scantient" },
+  author: { "@type": "Person", "name": "Peter Schliesmann", "url": "https://scantient.com/about", "jobTitle": "Founder", "sameAs": ["https://www.linkedin.com/in/peterschliesmann"] },
   publisher: {
     "@type": "Organization",
     name: "Scantient",
@@ -67,6 +67,40 @@ export default function SecuringOpenAiApiIntegrationPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How do I secure my OpenAI API integration?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Store your OpenAI API key in environment variables, never in source code. Set usage limits in the OpenAI dashboard. Validate and sanitize all user inputs before passing to the API. Implement rate limiting on your endpoints. Monitor spending for anomalies that might indicate key compromise."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What happens if my OpenAI API key is leaked?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A leaked OpenAI key can be used to run expensive inference calls at your expense, access any data you've stored with OpenAI, and potentially expose your prompts. Rotate the key immediately if you suspect exposure and review your OpenAI usage logs."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How can I prevent prompt injection in an OpenAI integration?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Use the messages array to structurally separate system instructions from user input rather than concatenating them into a single string. Validate user inputs against expected formats. Treat all model outputs as untrusted before rendering them to users."
+      }
+    }
+  ]
+}) }}
+      />
+
       <article className="mx-auto max-w-3xl px-6 py-16 sm:py-24">
         {/* Header */}
         <div className="mb-10">

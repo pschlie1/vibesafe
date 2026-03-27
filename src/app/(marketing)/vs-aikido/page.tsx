@@ -11,10 +11,22 @@ const breadcrumbSchema = {
   ],
 };
 
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    { "@type": "Question", "name": "How does Scantient compare to Aikido Security?", "acceptedAnswer": { "@type": "Answer", "text": "Scantient focuses on API security and secret scanning with pre-deploy checks. Aikido covers a broader surface area including container scanning and SCA. For teams shipping APIs who want to catch secrets and misconfigurations before deployment, Scantient is purpose-built for that workflow." } },
+    { "@type": "Question", "name": "Does Scantient replace Aikido?", "acceptedAnswer": { "@type": "Answer", "text": "No. They address different priorities. Scantient specializes in API security and secret scanning. If your primary concern is shipping APIs without exposed credentials or misconfigurations, Scantient handles that faster and at lower cost." } },
+    { "@type": "Question", "name": "What security checks does Scantient run that Aikido does not?", "acceptedAnswer": { "@type": "Answer", "text": "Scantient runs 20 API-specific checks including JWT validation, CORS misconfiguration detection, authentication bypass testing, and rate limit verification. These are pre-deploy checks designed to run in your CI pipeline before code ships." } },
+    { "@type": "Question", "name": "Which tool is better for indie developers and small teams?", "acceptedAnswer": { "@type": "Answer", "text": "Scantient is built for indie developers and small teams. The LTD pricing and simple setup make it accessible without an enterprise contract or security team." } },
+  ],
+};
+
 export default function VsAikidoPage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       <div className="bg-alabaster-grey-50 dark:bg-ink-black-950 transition-colors">
       {/* Hero */}
       <section className="relative overflow-hidden px-6 pb-24 pt-24 sm:pb-32 sm:pt-32" style={{ background: "radial-gradient(ellipse at 50% 0%, #ebf2f9 0%, #f3f3f1 70%)" }}>

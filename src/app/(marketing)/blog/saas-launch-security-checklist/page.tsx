@@ -31,7 +31,7 @@ const articleSchema = {
     "The pre-launch security checklist for SaaS founders and indie devs. 15 security items to verify before your first user signs up.",
   datePublished: "2026-03-21T00:00:00Z",
   dateModified: "2026-03-21T00:00:00Z",
-  author: { "@type": "Organization", name: "Scantient" },
+  author: { "@type": "Person", "name": "Peter Schliesmann", "url": "https://scantient.com/about", "jobTitle": "Founder", "sameAs": ["https://www.linkedin.com/in/peterschliesmann"] },
   publisher: {
     "@type": "Organization",
     name: "Scantient",
@@ -67,6 +67,40 @@ export default function SaasLaunchSecurityChecklistPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What security checks should a SaaS app complete before launch?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Before launching, verify: HTTPS on all endpoints, authentication on every route that requires it, rate limiting on auth and API endpoints, no secrets in source code, security headers configured, dependency vulnerabilities addressed, and a basic API security scan completed."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the most common security mistake at SaaS launch?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Shipping with hardcoded API keys or credentials in the codebase is the most common and damaging launch mistake. Secret scanners catch this before it reaches production. The second most common issue is missing authentication on endpoints that developers assumed would be called only by trusted clients."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How long does a pre-launch security audit take?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A basic automated security audit takes under an hour with tools like Scantient. A thorough manual review takes 1-3 days. For a funded SaaS, budget for at least an automated scan before launch and a manual penetration test within the first six months."
+      }
+    }
+  ]
+}) }}
+      />
+
       <article className="mx-auto max-w-3xl px-6 py-16 sm:py-24">
         {/* Header */}
         <div className="mb-10">

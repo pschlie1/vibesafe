@@ -31,7 +31,7 @@ const articleSchema = {
     "SOC 2 API security requirements for startups. What auditors look for, common gaps, and how to prepare.",
   datePublished: "2026-01-15T00:00:00Z",
   dateModified: "2026-01-15T00:00:00Z",
-  author: { "@type": "Organization", name: "Scantient" },
+  author: { "@type": "Person", "name": "Peter Schliesmann", "url": "https://scantient.com/about", "jobTitle": "Founder", "sameAs": ["https://www.linkedin.com/in/peterschliesmann"] },
   publisher: {
     "@type": "Organization",
     name: "Scantient",
@@ -67,6 +67,40 @@ export default function Soc2ApiSecurityRequirementsPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What API security controls does SOC 2 require?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "SOC 2 Trust Services Criteria require logical access controls, encryption in transit and at rest, monitoring and logging, change management controls, and incident response. For APIs, this translates to authentication, HTTPS enforcement, audit logs, and documented security review processes."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does using Scantient help with SOC 2 compliance?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Running automated API security scans as part of your CI pipeline demonstrates continuous monitoring and change management controls. Scantient scan reports provide audit evidence showing security checks ran before every deployment."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How does SOC 2 treat API security?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "SOC 2 auditors look for evidence that access to APIs is controlled, that security is reviewed as part of change management, and that monitoring is in place. Automated scanning in CI is strong evidence of a security control operating continuously."
+      }
+    }
+  ]
+}) }}
+      />
+
       <article className="mx-auto max-w-3xl px-6 py-16 sm:py-24">
         {/* Header */}
         <div className="mb-10">

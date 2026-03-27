@@ -31,7 +31,7 @@ const articleSchema = {
     "GraphQL introduces unique security risks REST APIs don't have. Introspection attacks, batching abuse, depth limiting, and query complexity . what they are and how to fix them.",
   datePublished: "2025-11-20T00:00:00Z",
   dateModified: "2025-11-20T00:00:00Z",
-  author: { "@type": "Organization", name: "Scantient" },
+  author: { "@type": "Person", "name": "Peter Schliesmann", "url": "https://scantient.com/about", "jobTitle": "Founder", "sameAs": ["https://www.linkedin.com/in/peterschliesmann"] },
   publisher: {
     "@type": "Organization",
     name: "Scantient",
@@ -67,6 +67,40 @@ export default function GraphqlSecurityGuidePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What are the unique security risks of GraphQL APIs?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "GraphQL APIs face risks including introspection exposure, unbounded query depth, batching attacks, field-level authorization gaps, and overfetching of sensitive data. Many of these don't exist in REST APIs and require GraphQL-specific mitigations."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Should GraphQL introspection be disabled in production?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Generally yes. Introspection exposes your full schema to anyone who queries it, making reconnaissance easier for attackers. Disable it in production unless you have a specific requirement for public schema access."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I secure a GraphQL API?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Disable introspection in production, implement query depth and complexity limits, enforce field-level authorization, use persisted queries where possible, and add rate limiting. Run security scans before deploying changes to your schema."
+      }
+    }
+  ]
+}) }}
+      />
+
       <article className="mx-auto max-w-3xl px-6 py-16 sm:py-24">
         {/* Header */}
         <div className="mb-10">

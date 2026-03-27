@@ -32,7 +32,7 @@ async function sendPasswordResetEmail(to: string, resetLink: string) {
     </div>
   `;
 
-  await fetch("https://api.resend.com/emails", {
+  const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: {
       Authorization: `Bearer ${key}`,
@@ -40,6 +40,9 @@ async function sendPasswordResetEmail(to: string, resetLink: string) {
     },
     body: JSON.stringify({ from, to: [to], subject: "Reset your Scantient password", html }),
   });
+  if (!res.ok) {
+    console.error("[auth] Failed to send password reset email via Resend:", res.status, await res.text().catch(() => ""));
+  }
 }
 
 export async function POST(req: Request) {

@@ -50,10 +50,8 @@ async function handler(
     const result = await runHttpScanForApp(id, { source: "api" });
     return NextResponse.json({ result });
   } catch (error) {
-    return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Scan failed" },
-      { status: 500 },
-    );
+    console.error("[v1/scan/:id] Internal error:", error);
+    return NextResponse.json({ error: "Scan failed. Please try again." }, { status: 500 });
   }
 }
 

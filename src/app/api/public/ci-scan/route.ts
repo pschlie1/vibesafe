@@ -4,7 +4,7 @@ import { db } from "@/lib/db";
 import { authenticateApiKeyHeader } from "@/lib/api-auth";
 import { runHttpScanForApp } from "@/lib/scanner-http";
 import { getOrgLimits } from "@/lib/tenant";
-import { checkRateLimit } from "@/lib/rate-limit";
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 import { applyCors, corsPreflightResponse, CORS_HEADERS_PUBLIC } from "@/lib/cors";
 import { errorResponse, zodFieldErrors } from "@/lib/api-response";
 
@@ -49,6 +49,24 @@ function scoreToGrade(score: number): string {
 }
 
 async function handler(req: Request): Promise<NextResponse> {
+  // IP-based rate limit: 20 requests per hour per IP (defense-in-depth, matches /api/public/score pattern)
+  const ip = getClientIp(req);
+  const ipRateCheck = await checkRateLimit(`ci-scan-ip:${ip}`, {
+    maxAttempts: 20,
+    windowMs: 60 * 60 * 1000, // 1 hour
+  });
+  if (!ipRateCheck.allowed) {
+    return NextResponse.json(
+      { error: "Rate limit exceeded. Try again later.", retryAfterSeconds: ipRateCheck.retryAfterSeconds },
+      {
+        status: 429,
+        headers: ipRateCheck.retryAfterSeconds
+          ? { "Retry-After": String(ipRateCheck.retryAfterSeconds) }
+          : {},
+      },
+    );
+  }
+
   const orgId = await authenticateApiKeyHeader(req);
   if (!orgId) return errorResponse("UNAUTHORIZED", "Invalid API key", undefined, 401);
 

@@ -8,7 +8,11 @@ export async function GET(req: NextRequest) {
   let session;
   try {
     session = await requireRole(["ADMIN", "OWNER"]);
-  } catch {
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    if (msg.toLowerCase().includes("unauthorized")) {
+      return errorResponse("UNAUTHORIZED", "Unauthorized", undefined, 401);
+    }
     return errorResponse("FORBIDDEN", "Forbidden", undefined, 403);
   }
 

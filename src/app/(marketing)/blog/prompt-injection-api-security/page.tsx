@@ -31,7 +31,7 @@ const articleSchema = {
     "Prompt injection is the SQL injection of AI APIs. Learn how attacks work and concrete defenses for your LLM-powered application.",
   datePublished: "2026-03-19T00:00:00Z",
   dateModified: "2026-03-21T00:00:00Z",
-  author: { "@type": "Organization", name: "Scantient" },
+  author: { "@type": "Person", "name": "Peter Schliesmann", "url": "https://scantient.com/about", "jobTitle": "Founder", "sameAs": ["https://www.linkedin.com/in/peterschliesmann"] },
   publisher: {
     "@type": "Organization",
     name: "Scantient",
@@ -67,6 +67,40 @@ export default function PromptInjectionApiSecurityPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is a prompt injection attack?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Prompt injection is an attack where malicious input is crafted to manipulate the behavior of a language model. For APIs that pass user input to LLMs, this can cause the model to ignore system instructions, leak data, or perform unintended actions."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I prevent prompt injection in my API?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Separate system prompts from user input structurally rather than concatenating them. Validate and sanitize user inputs before passing to LLMs. Use output parsing that fails safely on unexpected formats. Implement monitoring to detect anomalous LLM outputs."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is prompt injection an API security issue or an LLM issue?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Both. Prompt injection is an LLM-specific vulnerability, but it manifests as an API security issue because the API is the interface that accepts and processes user input. API-level input validation and authorization controls are the primary defense layer."
+      }
+    }
+  ]
+}) }}
+      />
+
       <article className="mx-auto max-w-3xl px-6 py-16 sm:py-24">
         {/* Header */}
         <div className="mb-10">

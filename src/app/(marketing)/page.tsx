@@ -135,6 +135,13 @@ const organizationSchema = {
   description: "Scantient provides automated security scanning and monitoring for AI-generated and indie developer applications, catching vulnerabilities, misconfigurations, and compliance gaps before attackers do.",
 };
 
+const speakableSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "speakable": { "@type": "SpeakableSpecification", "cssSelector": ["h1", ".page-lede"] },
+  "url": "https://scantient.com",
+};
+
 const faqSchema = {
   "@context": "https://schema.org",
   "@type": "FAQPage",
@@ -212,6 +219,7 @@ export default function LandingPage() {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareAppSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(speakableSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }} />
       <div>
 
@@ -238,7 +246,7 @@ export default function LandingPage() {
             </h1>
 
             {/* Subhead */}
-            <p className="mx-auto max-w-2xl text-xl leading-relaxed mb-12" style={{ color: "var(--color-muted)" }}>
+            <p className="mx-auto max-w-2xl text-xl leading-relaxed mb-12 page-lede" style={{ color: "var(--color-muted)" }}>
               AI coding tools ship fast and ship vulnerable. Scantient finds exposed API keys, broken auth, and missing security headers in 60 seconds. No SDK. No code access. No setup.
             </p>
 

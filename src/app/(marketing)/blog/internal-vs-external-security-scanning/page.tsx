@@ -31,7 +31,7 @@ const articleSchema = {
     "SAST, DAST, internal and external security scanning explained. What each approach catches, what it misses, and why you should start with external scanning.",
   datePublished: "2026-02-26T00:00:00Z",
   dateModified: "2026-02-26T00:00:00Z",
-  author: { "@type": "Organization", name: "Scantient" },
+  author: { "@type": "Person", "name": "Peter Schliesmann", "url": "https://scantient.com/about", "jobTitle": "Founder", "sameAs": ["https://www.linkedin.com/in/peterschliesmann"] },
   publisher: {
     "@type": "Organization",
     name: "Scantient",
@@ -67,6 +67,40 @@ export default function InternalVsExternalSecurityScanningPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the difference between internal and external API security scanning?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Internal scanning tests your API from inside your network, catching issues that might only be reachable internally. External scanning tests from the outside, simulating real-world attacker access. Both are valuable but external scanning better represents your actual attack surface."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Which is more important: internal or external scanning?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "For APIs exposed to the internet, external scanning is the priority because it reflects real attacker perspective. For internal APIs, internal scanning is appropriate. Most production systems benefit from both."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does Scantient do internal or external scanning?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Scantient performs external scanning against your API endpoints, testing what any external client would see. This is the most relevant perspective for APIs accessed by third parties, mobile apps, and web frontends."
+      }
+    }
+  ]
+}) }}
+      />
+
       <article className="mx-auto max-w-3xl px-6 py-16 sm:py-24">
         {/* Header */}
         <div className="mb-10">

@@ -11,10 +11,22 @@ const breadcrumbSchema = {
   ],
 };
 
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    { "@type": "Question", "name": "How does Scantient compare to HostedScan?", "acceptedAnswer": { "@type": "Answer", "text": "HostedScan is a network and infrastructure scanner. Scantient focuses specifically on API and application security. For teams building APIs who need pre-deploy security checks, Scantient is the more focused tool." } },
+    { "@type": "Question", "name": "Does Scantient do network scanning like HostedScan?", "acceptedAnswer": { "@type": "Answer", "text": "No. Scantient focuses on application-layer API security. For network-level scanning, HostedScan is designed for that use case. The two tools are complementary." } },
+    { "@type": "Question", "name": "What does Scantient check that HostedScan misses?", "acceptedAnswer": { "@type": "Answer", "text": "Scantient checks API-specific issues: JWT security, authentication patterns, CORS headers, rate limiting, and secret exposure in API responses. These are application-layer checks that network scanners do not cover." } },
+    { "@type": "Question", "name": "Which tool is easier to set up?", "acceptedAnswer": { "@type": "Answer", "text": "Scantient integrates directly into your CI pipeline as a GitHub Action. Setup takes under 10 minutes and it runs on every pull request automatically." } },
+  ],
+};
+
 export default function VsHostedScanPage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       <div className="bg-alabaster-grey-50 dark:bg-ink-black-950 transition-colors">
       {/* Hero */}
       <section className="relative overflow-hidden px-6 pb-24 pt-24 sm:pb-32 sm:pt-32" style={{ background: "radial-gradient(ellipse at 50% 0%, #ebf2f9 0%, #f3f3f1 70%)" }}>

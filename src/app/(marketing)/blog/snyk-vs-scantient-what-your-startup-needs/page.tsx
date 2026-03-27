@@ -37,6 +37,40 @@ export default function SnykVsScantientPage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How does Scantient compare to Snyk?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Snyk focuses on dependency vulnerability scanning and static code analysis. Scantient focuses on API security scanning — testing your running API endpoints for misconfigurations and vulnerabilities. The tools address different parts of your security posture."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does Scantient replace Snyk?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. Snyk is strong for catching vulnerable dependencies and code-level issues. Scantient checks your deployed API for runtime security issues. Teams with thorough security programs use both."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Which is more important for a startup: Snyk or Scantient?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "It depends on your primary risk. If you rely heavily on third-party packages, Snyk addresses dependency vulnerabilities. If you are building APIs exposed to the internet, Scantient addresses API security. Most startups benefit from both, and the Scantient LTD makes the cost decision easy."
+      }
+    }
+  ]
+}) }}
+      />
+
       <article className="mx-auto max-w-3xl px-6 py-16 sm:py-24">
       {/* Header */}
       <div className="mb-10">

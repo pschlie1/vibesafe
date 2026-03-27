@@ -31,7 +31,7 @@ const articleSchema = {
     "External security scanning tests your live API the way an attacker would . from the outside. Learn what it covers, why code-level tools miss it, and why every production API needs it.",
   datePublished: "2026-03-16T00:00:00Z",
   dateModified: "2026-03-21T00:00:00Z",
-  author: { "@type": "Organization", name: "Scantient" },
+  author: { "@type": "Person", "name": "Peter Schliesmann", "url": "https://scantient.com/about", "jobTitle": "Founder", "sameAs": ["https://www.linkedin.com/in/peterschliesmann"] },
   publisher: {
     "@type": "Organization",
     name: "Scantient",
@@ -67,6 +67,40 @@ export default function WhatIsExternalSecurityScanningPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is external security scanning?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "External security scanning tests your application from outside your network, the same perspective a real attacker has. It checks what is visible and reachable from the public internet without any insider knowledge of your systems."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why is external scanning different from code review?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Code review catches issues in the source. External scanning tests the running system. A configuration mistake, a forgotten endpoint, or a deployment error won't show up in code review but will show up in an external scan."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How does Scantient perform external security scanning?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Scantient scans your API endpoints as an external client, running 20 automated checks including authentication verification, CORS testing, rate limiting checks, and security header analysis. It runs in your CI pipeline so every deployment is checked before it ships."
+      }
+    }
+  ]
+}) }}
+      />
+
       <article className="mx-auto max-w-3xl px-6 py-16 sm:py-24">
         {/* Header */}
         <div className="mb-10">

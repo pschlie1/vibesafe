@@ -37,6 +37,40 @@ export default function IndieDevSecurityChecklistPage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What security checks should indie developers run before launching?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Before launching, check for exposed API keys, verify HTTPS is enforced, review authentication on all endpoints, confirm rate limiting is in place, check CORS configuration, and scan for common security header issues. These take hours to fix before launch and weeks to fix after a breach."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is API security necessary for solo projects?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Even small projects get attacked. Bots scan for exposed credentials and common vulnerabilities continuously. Basic security hygiene protects your users and your reputation regardless of project size."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the fastest way for an indie developer to check API security?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Run Scantient on your API before you deploy. It takes under 10 minutes to set up and checks 20 security issues automatically. You get a report showing exactly what to fix before your users are exposed."
+      }
+    }
+  ]
+}) }}
+      />
+
       <article className="mx-auto max-w-3xl px-6 py-16 sm:py-24">
       {/* Header */}
       <div className="mb-10">

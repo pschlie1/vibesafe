@@ -31,7 +31,7 @@ const articleSchema = {
     "The most dangerous OAuth 2.0 security vulnerabilities . CSRF, open redirects, authorization code interception, token leakage . with practical fixes.",
   datePublished: "2026-03-12T00:00:00Z",
   dateModified: "2026-03-12T00:00:00Z",
-  author: { "@type": "Organization", name: "Scantient" },
+  author: { "@type": "Person", "name": "Peter Schliesmann", "url": "https://scantient.com/about", "jobTitle": "Founder", "sameAs": ["https://www.linkedin.com/in/peterschliesmann"] },
   publisher: {
     "@type": "Organization",
     name: "Scantient",
@@ -67,6 +67,40 @@ export default function OauthSecurityVulnerabilitiesPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What are common OAuth security vulnerabilities?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Common OAuth vulnerabilities include open redirects in redirect_uri parameters, CSRF attacks on the authorization flow, token leakage via referrer headers, insecure token storage, and overly broad scope grants. Each allows attackers to steal tokens or hijack user sessions."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I secure the OAuth redirect_uri?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Whitelist allowed redirect URIs on your authorization server and reject any request with an unregistered redirect_uri. Never use wildcard or partial matching. Validate the exact URI including scheme, host, and path."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is PKCE and when should I use it?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "PKCE (Proof Key for Code Exchange) prevents authorization code interception attacks in public clients like mobile apps and SPAs. Use PKCE for any OAuth flow where you cannot securely store a client secret, which includes all browser-based and native app flows."
+      }
+    }
+  ]
+}) }}
+      />
+
       <article className="mx-auto max-w-3xl px-6 py-16 sm:py-24">
         {/* Header */}
         <div className="mb-10">

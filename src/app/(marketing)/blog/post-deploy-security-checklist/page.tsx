@@ -135,6 +135,40 @@ export default function PostDeploySecurityChecklistPage() {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What security checks should run after deploying an API?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "After deploying, verify HTTPS is enforced, check that security headers are present, confirm rate limiting is active, test authentication on new endpoints, and review logs for unexpected traffic patterns. Run a full security scan to catch any regressions."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How often should I run security checks on a deployed API?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Run automated scans on every deployment using your CI pipeline. Run deeper manual checks before major releases. Monitor logs continuously for anomalous patterns that may indicate probing or attack."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the most common post-deploy security gap?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Forgetting to restrict debug endpoints and error verbosity in production is one of the most common gaps. Development conveniences like detailed stack traces and admin routes often make it into production when deployment processes aren't security-aware."
+      }
+    }
+  ]
+}) }}
+      />
+
       <article className="mx-auto max-w-3xl px-6 py-16 sm:py-24">
       {/* Header */}
       <div className="mb-10">

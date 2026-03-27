@@ -48,6 +48,40 @@ export default function SecuringAiAppApiPage() {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What are the main security risks when building AI-powered APIs?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "AI-powered APIs face standard API risks plus LLM-specific ones: prompt injection, model output trust, data leakage through model responses, and supply chain risks from third-party AI providers. Securing both the API layer and the AI integration is required."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How should I authenticate users on an AI-powered API?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Use the same authentication standards as any API: OAuth 2.0 or JWT with proper validation, short token expiry, and revocation capability. Apply rate limiting specifically to LLM-calling endpoints to prevent cost attacks and model denial of service."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does using a third-party AI API create security obligations?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Sending data to third-party AI providers may create data processing obligations under GDPR and other privacy regulations. Review the AI provider's data retention and processing policies, and avoid sending PII or sensitive data unless contractually protected."
+      }
+    }
+  ]
+}) }}
+      />
+
       <article className="mx-auto max-w-3xl px-6 py-16 sm:py-24">
       {/* Header */}
       <div className="mb-10">

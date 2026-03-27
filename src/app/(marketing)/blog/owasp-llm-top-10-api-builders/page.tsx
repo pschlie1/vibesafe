@@ -31,7 +31,7 @@ const articleSchema = {
     "The OWASP LLM Top 10 explained for API developers. What each vulnerability means for APIs that integrate LLMs, with practical mitigations.",
   datePublished: "2026-03-07T00:00:00Z",
   dateModified: "2026-03-07T00:00:00Z",
-  author: { "@type": "Organization", name: "Scantient" },
+  author: { "@type": "Person", "name": "Peter Schliesmann", "url": "https://scantient.com/about", "jobTitle": "Founder", "sameAs": ["https://www.linkedin.com/in/peterschliesmann"] },
   publisher: {
     "@type": "Organization",
     name: "Scantient",
@@ -67,6 +67,40 @@ export default function OwaspLlmTop10ApiBuildersPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the OWASP LLM Top 10?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The OWASP LLM Top 10 is a list of the most critical security risks for applications built with large language models. It covers prompt injection, insecure output handling, training data poisoning, model denial of service, and supply chain vulnerabilities."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How does prompt injection affect API security?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Prompt injection attacks manipulate LLM behavior by embedding instructions in user input. For APIs that pass user input to LLMs, this can cause data leakage, bypass of content filters, or execution of unintended actions. Validating and sanitizing inputs before passing them to LLMs is a key mitigation."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What API security controls are needed for LLM-powered applications?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "LLM-powered APIs need standard API security controls plus LLM-specific ones: input validation to prevent prompt injection, output sanitization to prevent insecure output handling, rate limiting to prevent model DoS, and audit logging to detect abuse."
+      }
+    }
+  ]
+}) }}
+      />
+
       <article className="mx-auto max-w-3xl px-6 py-16 sm:py-24">
         {/* Header */}
         <div className="mb-10">

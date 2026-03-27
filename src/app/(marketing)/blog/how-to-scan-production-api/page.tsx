@@ -31,7 +31,7 @@ const articleSchema = {
     "A step-by-step guide to scanning your production API for security vulnerabilities . headers, CORS, exposed endpoints, TLS, and data leakage. No expensive tools required.",
   datePublished: "2026-02-08T00:00:00Z",
   dateModified: "2026-02-08T00:00:00Z",
-  author: { "@type": "Organization", name: "Scantient" },
+  author: { "@type": "Person", "name": "Peter Schliesmann", "url": "https://scantient.com/about", "jobTitle": "Founder", "sameAs": ["https://www.linkedin.com/in/peterschliesmann"] },
   publisher: {
     "@type": "Organization",
     name: "Scantient",
@@ -67,6 +67,40 @@ export default function HowToScanProductionApiPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How do you scan a production API for security issues?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Use an automated scanner that runs targeted checks against your live API endpoints. Test authentication, rate limiting, CORS, security headers, and common injection points. Run scans during off-peak hours and ensure you have authorization to test."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is it safe to scan a production API?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Security scans that test for information disclosure, headers, and authentication flows are generally safe. Avoid aggressive fuzzing or payload injection on production systems. Scantient's checks are designed to be non-destructive and safe to run against live APIs."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How often should production APIs be scanned?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "At minimum, scan after every deployment. Continuous scanning catches regressions as code changes. For regulated industries, more frequent scans and audit logs are often required for compliance."
+      }
+    }
+  ]
+}) }}
+      />
+
       <article className="mx-auto max-w-3xl px-6 py-16 sm:py-24">
         {/* Header */}
         <div className="mb-10">

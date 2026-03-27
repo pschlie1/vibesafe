@@ -31,7 +31,7 @@ const articleSchema = {
     "The best security tools for indie hackers and solo developers in 2026 . free and under $100/year. Covers secret scanning, dependency checks, headers, external API scanning, and more.",
   datePublished: "2026-01-29T00:00:00Z",
   dateModified: "2026-01-29T00:00:00Z",
-  author: { "@type": "Organization", name: "Scantient" },
+  author: { "@type": "Person", "name": "Peter Schliesmann", "url": "https://scantient.com/about", "jobTitle": "Founder", "sameAs": ["https://www.linkedin.com/in/peterschliesmann"] },
   publisher: {
     "@type": "Organization",
     name: "Scantient",
@@ -67,6 +67,40 @@ export default function SecurityToolsIndieHackersPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What security tools do indie hackers and solo developers need?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Solo developers need: secret scanning to prevent credential exposure, dependency vulnerability checks, API security scanning, and HTTPS enforcement verification. These cover the most common attack vectors without requiring a full security team."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Are free security tools good enough for indie projects?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Free tiers of tools like Dependabot, GitHub secret scanning, and Scantient's LTD cover most of what indie developers need. The key is running these checks consistently, not the price tier."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How much time should a solo developer spend on security?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Most security basics take under a day to set up if you use automated tools. Secret scanning, dependency audits, and API security scans all run automatically once configured. The ongoing investment is near zero for standard projects."
+      }
+    }
+  ]
+}) }}
+      />
+
       <article className="mx-auto max-w-3xl px-6 py-16 sm:py-24">
         {/* Header */}
         <div className="mb-10">

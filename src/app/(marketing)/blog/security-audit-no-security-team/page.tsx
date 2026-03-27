@@ -31,7 +31,7 @@ const articleSchema = {
     "A practical guide to DIY security audits for solo founders and small startups. Find and fix your most critical vulnerabilities without a security team.",
   datePublished: "2026-02-15T00:00:00Z",
   dateModified: "2026-02-15T00:00:00Z",
-  author: { "@type": "Organization", name: "Scantient" },
+  author: { "@type": "Person", "name": "Peter Schliesmann", "url": "https://scantient.com/about", "jobTitle": "Founder", "sameAs": ["https://www.linkedin.com/in/peterschliesmann"] },
   publisher: {
     "@type": "Organization",
     name: "Scantient",
@@ -67,6 +67,40 @@ export default function SecurityAuditNoSecurityTeamPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How do you run a security audit without a dedicated security team?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Use automated tools to cover the fundamentals: dependency scanning, secret detection, and API security scanning. Tools like Scantient run in your CI pipeline without requiring security expertise. Document what you checked and when for audit evidence."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What can a small team audit themselves vs what needs external help?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Small teams can automate dependency checks, API security scanning, and secret detection. Penetration testing, complex authorization testing, and architecture reviews benefit from external expertise. Start with automation, then layer in external testing as the product matures."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do automated security tools help teams without security staff?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Automated tools encode security knowledge so developers don't need to be security experts. They catch common vulnerabilities consistently, run without human intervention, and provide actionable findings with remediation guidance."
+      }
+    }
+  ]
+}) }}
+      />
+
       <article className="mx-auto max-w-3xl px-6 py-16 sm:py-24">
         {/* Header */}
         <div className="mb-10">

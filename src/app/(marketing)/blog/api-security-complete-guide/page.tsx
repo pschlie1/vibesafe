@@ -31,7 +31,7 @@ const articleSchema = {
     "The definitive guide to API security for indie devs and startup CTOs. Covers common threats, authentication best practices, testing tools, and a practical checklist.",
   datePublished: "2026-03-14T00:00:00Z",
   dateModified: "2026-03-21T00:00:00Z",
-  author: { "@type": "Organization", name: "Scantient" },
+  author: { "@type": "Person", "name": "Peter Schliesmann", "url": "https://scantient.com/about", "jobTitle": "Founder", "sameAs": ["https://www.linkedin.com/in/peterschliesmann"] },
   publisher: {
     "@type": "Organization",
     name: "Scantient",
@@ -67,6 +67,40 @@ export default function ApiSecurityCompleteGuidePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What does a complete API security strategy include?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A complete API security strategy covers authentication, authorization, input validation, rate limiting, encryption in transit, secret management, logging, and regular security scanning. Each layer addresses different attack vectors."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How often should I audit my API security?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Run automated security checks on every code change using a CI pipeline integration. Conduct manual penetration testing at least annually, or before major launches. Continuous scanning catches regressions as your API evolves."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the OWASP API Security Top 10?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The OWASP API Security Top 10 is a list of the most critical API security risks, including broken object level authorization, broken authentication, excessive data exposure, lack of rate limiting, and broken function level authorization. Scantient checks for these in every scan."
+      }
+    }
+  ]
+}) }}
+      />
+
       <article className="mx-auto max-w-3xl px-6 py-16 sm:py-24">
         {/* Header */}
         <div className="mb-10">

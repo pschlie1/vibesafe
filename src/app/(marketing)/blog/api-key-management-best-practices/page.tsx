@@ -31,7 +31,7 @@ const articleSchema = {
     "How to store API keys securely, rotation policies, vault services, and what to do when a key is exposed. A practical guide to API key management.",
   datePublished: "2026-02-12T00:00:00Z",
   dateModified: "2026-02-12T00:00:00Z",
-  author: { "@type": "Organization", name: "Scantient" },
+  author: { "@type": "Person", "name": "Peter Schliesmann", "url": "https://scantient.com/about", "jobTitle": "Founder", "sameAs": ["https://www.linkedin.com/in/peterschliesmann"] },
   publisher: {
     "@type": "Organization",
     name: "Scantient",
@@ -67,6 +67,40 @@ export default function ApiKeyManagementBestPracticesPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What are API key management best practices?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Rotate API keys regularly, never commit them to source control, use environment variables or secret managers, apply least-privilege scoping, and audit key usage. Revoke keys immediately when team members leave."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do API keys get exposed?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "API keys most often get exposed through accidental commits to public repositories, hardcoded values in client-side code, or logging sensitive request headers. Automated secret scanning catches these before they ship."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the best way to store API keys securely?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Store API keys in environment variables at minimum. For production systems, use a dedicated secrets manager like AWS Secrets Manager, HashiCorp Vault, or your cloud provider's native solution. Never store keys in application code or database fields."
+      }
+    }
+  ]
+}) }}
+      />
+
       <article className="mx-auto max-w-3xl px-6 py-16 sm:py-24">
         {/* Header */}
         <div className="mb-10">

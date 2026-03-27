@@ -31,7 +31,7 @@ const articleSchema = {
     "GDPR API security requirements for European founders. What data protection law demands from your APIs, common compliance gaps, and a pre-launch checklist.",
   datePublished: "2026-01-06T00:00:00Z",
   dateModified: "2026-01-06T00:00:00Z",
-  author: { "@type": "Organization", name: "Scantient" },
+  author: { "@type": "Person", "name": "Peter Schliesmann", "url": "https://scantient.com/about", "jobTitle": "Founder", "sameAs": ["https://www.linkedin.com/in/peterschliesmann"] },
   publisher: {
     "@type": "Organization",
     name: "Scantient",
@@ -67,6 +67,40 @@ export default function GdprApiSecurityGuidePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What GDPR requirements apply to APIs?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "APIs that process personal data must implement appropriate security measures under GDPR Article 32. This includes encryption in transit, access controls, audit logging, data minimization in responses, and the ability to fulfill data deletion requests."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can an insecure API cause GDPR violations?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. An API that leaks personal data due to broken authentication, excessive data exposure, or missing encryption can constitute a data breach under GDPR, triggering notification requirements and potential fines up to 4% of global annual revenue."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How does Scantient help with GDPR compliance for APIs?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Scantient checks for common API security issues that create GDPR exposure: missing authentication, data leakage in responses, insecure headers, and missing HTTPS enforcement. Running these checks before every deploy reduces the risk of shipping a compliance gap."
+      }
+    }
+  ]
+}) }}
+      />
+
       <article className="mx-auto max-w-3xl px-6 py-16 sm:py-24">
         {/* Header */}
         <div className="mb-10">

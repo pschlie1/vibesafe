@@ -39,6 +39,10 @@ const articleSchema = {
   },
   url: "https://scantient.com/blog/api-security-scanner-comparison",
   mainEntityOfPage: "https://scantient.com/blog/api-security-scanner-comparison",
+  speakable: {
+    "@type": "SpeakableSpecification",
+    cssSelector: ["h1", ".article-lede"],
+  },
 };
 
 const breadcrumbSchema = {
@@ -119,7 +123,7 @@ export default function ApiSecurityScannerComparisonPage() {
           <h1 className="text-3xl font-extrabold tracking-tight text-ink-black-950 dark:text-alabaster-grey-50 sm:text-4xl">
             Best API Security Scanners in 2026: Compared for Indie Devs and Startups
           </h1>
-          <p className="mt-4 text-lg text-dusty-denim-700 dark:text-dusty-denim-400">
+          <p className="mt-4 text-lg text-dusty-denim-700 dark:text-dusty-denim-400 article-lede">
             Not all security scanners scan the same things. Some find secrets in your code. Some
             analyze your dependencies. Some test your running application. The right tool depends
             on what you&apos;re trying to protect . and your budget.

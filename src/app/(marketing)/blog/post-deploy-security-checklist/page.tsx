@@ -41,6 +41,10 @@ const articleSchema = {
   datePublished: "2026-02-05T00:00:00Z",
   publisher: { "@type": "Organization", name: "Scantient", url: "https://scantient.com" },
   mainEntityOfPage: "https://scantient.com/blog/post-deploy-security-checklist",
+  speakable: {
+    "@type": "SpeakableSpecification",
+    cssSelector: ["h1", ".article-lede"],
+  },
 };
 
 const checklistItems = [
@@ -184,7 +188,7 @@ export default function PostDeploySecurityChecklistPage() {
         <h1 className="text-3xl font-extrabold tracking-tight text-ink-black-950 dark:text-alabaster-grey-50 sm:text-4xl">
           Your Deploy Just Went Live. Now Run This Security Checklist.
         </h1>
-        <p className="mt-4 text-lg text-dusty-denim-700 dark:text-dusty-denim-400">
+        <p className="mt-4 text-lg text-dusty-denim-700 dark:text-dusty-denim-400 article-lede">
           Shipping is the goal. But in the five minutes between &quot;deployed to Vercel&quot; and &quot;posted the link on Twitter,&quot; automated scanners are already probing your new domain. Here&apos;s what to check . and how to check it in under 60 seconds.
         </p>
         <div className="mt-6 flex items-center gap-4 text-sm text-dusty-denim-500">

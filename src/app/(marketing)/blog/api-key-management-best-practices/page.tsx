@@ -39,6 +39,10 @@ const articleSchema = {
   },
   url: "https://scantient.com/blog/api-key-management-best-practices",
   mainEntityOfPage: "https://scantient.com/blog/api-key-management-best-practices",
+  speakable: {
+    "@type": "SpeakableSpecification",
+    cssSelector: ["h1", ".article-lede"],
+  },
 };
 
 const breadcrumbSchema = {
@@ -119,7 +123,7 @@ export default function ApiKeyManagementBestPracticesPage() {
           <h1 className="text-3xl font-extrabold tracking-tight text-ink-black-950 dark:text-alabaster-grey-50 sm:text-4xl">
             API Key Management: How to Store, Rotate, and Protect Your Keys
           </h1>
-          <p className="mt-4 text-lg text-dusty-denim-700 dark:text-dusty-denim-400">
+          <p className="mt-4 text-lg text-dusty-denim-700 dark:text-dusty-denim-400 article-lede">
             API keys are the most commonly leaked credential in production systems. They end up in
             GitHub repos, log files, Slack messages, and browser history. Here&apos;s how to manage
             them so a single exposure doesn&apos;t become a breach.

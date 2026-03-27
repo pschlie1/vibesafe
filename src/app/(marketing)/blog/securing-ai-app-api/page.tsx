@@ -41,6 +41,10 @@ const articleSchema = {
   datePublished: "2026-02-19T00:00:00Z",
   publisher: { "@type": "Organization", name: "Scantient", url: "https://scantient.com" },
   mainEntityOfPage: "https://scantient.com/blog/securing-ai-app-api",
+  speakable: {
+    "@type": "SpeakableSpecification",
+    cssSelector: ["h1", ".article-lede"],
+  },
 };
 
 export default function SecuringAiAppApiPage() {
@@ -97,7 +101,7 @@ export default function SecuringAiAppApiPage() {
         <h1 className="text-3xl font-extrabold tracking-tight text-ink-black-950 dark:text-alabaster-grey-50 sm:text-4xl">
           Securing Your AI App&apos;s API: What to Check Before Launch
         </h1>
-        <p className="mt-4 text-lg text-dusty-denim-700 dark:text-dusty-denim-400">
+        <p className="mt-4 text-lg text-dusty-denim-700 dark:text-dusty-denim-400 article-lede">
           You built something with GPT-4, Claude, or Gemini. You connected a vector database, wired up an API, and you&apos;re about to launch. Here&apos;s what&apos;s probably sitting in your security blind spot . and how to close it in 60 seconds.
         </p>
         <div className="mt-6 flex items-center gap-4 text-sm text-dusty-denim-500">

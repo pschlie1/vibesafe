@@ -39,6 +39,10 @@ const articleSchema = {
   },
   url: "https://scantient.com/blog/graphql-security-guide",
   mainEntityOfPage: "https://scantient.com/blog/graphql-security-guide",
+  speakable: {
+    "@type": "SpeakableSpecification",
+    cssSelector: ["h1", ".article-lede"],
+  },
 };
 
 const breadcrumbSchema = {
@@ -120,7 +124,7 @@ export default function GraphqlSecurityGuidePage() {
           <h1 className="text-3xl font-extrabold tracking-tight text-ink-black-950 dark:text-alabaster-grey-50 sm:text-4xl">
             GraphQL Security: The Unique Vulnerabilities API Builders Miss
           </h1>
-          <p className="mt-4 text-lg text-dusty-denim-700 dark:text-dusty-denim-400">
+          <p className="mt-4 text-lg text-dusty-denim-700 dark:text-dusty-denim-400 article-lede">
             GraphQL&apos;s flexibility is its biggest feature . and its biggest security risk. Developers
             who switch from REST often carry over REST-era assumptions that leave their GraphQL APIs
             wide open to attacks that simply don&apos;t exist in REST.

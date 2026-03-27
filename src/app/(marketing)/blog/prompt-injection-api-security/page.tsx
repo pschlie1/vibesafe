@@ -39,6 +39,10 @@ const articleSchema = {
   },
   url: "https://scantient.com/blog/prompt-injection-api-security",
   mainEntityOfPage: "https://scantient.com/blog/prompt-injection-api-security",
+  speakable: {
+    "@type": "SpeakableSpecification",
+    cssSelector: ["h1", ".article-lede"],
+  },
 };
 
 const breadcrumbSchema = {
@@ -119,7 +123,7 @@ export default function PromptInjectionApiSecurityPage() {
           <h1 className="text-3xl font-extrabold tracking-tight text-ink-black-950 dark:text-alabaster-grey-50 sm:text-4xl">
             Prompt Injection Attacks: How to Protect Your AI API (Developer Guide)
           </h1>
-          <p className="mt-4 text-lg text-dusty-denim-700 dark:text-dusty-denim-400">
+          <p className="mt-4 text-lg text-dusty-denim-700 dark:text-dusty-denim-400 article-lede">
             Prompt injection is to LLM applications what SQL injection was to web apps in 2003.
             It&apos;s the most significant new attack vector in AI-powered software . and most developers
             building AI apps have no defenses against it.

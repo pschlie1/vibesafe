@@ -39,6 +39,10 @@ const articleSchema = {
   },
   url: "https://scantient.com/blog/api-security-complete-guide",
   mainEntityOfPage: "https://scantient.com/blog/api-security-complete-guide",
+  speakable: {
+    "@type": "SpeakableSpecification",
+    cssSelector: ["h1", ".article-lede"],
+  },
 };
 
 const breadcrumbSchema = {
@@ -119,7 +123,7 @@ export default function ApiSecurityCompleteGuidePage() {
           <h1 className="text-3xl font-extrabold tracking-tight text-ink-black-950 dark:text-alabaster-grey-50 sm:text-4xl">
             API Security: The Complete Guide for Developers (2026)
           </h1>
-          <p className="mt-4 text-lg text-dusty-denim-700 dark:text-dusty-denim-400">
+          <p className="mt-4 text-lg text-dusty-denim-700 dark:text-dusty-denim-400 article-lede">
             Your API is the attack surface that matters most. This guide covers every major threat
             category, authentication pattern, and testing strategy . so you can ship fast without
             leaving the door open.

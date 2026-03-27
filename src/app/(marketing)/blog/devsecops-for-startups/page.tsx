@@ -39,6 +39,10 @@ const articleSchema = {
   },
   url: "https://scantient.com/blog/devsecops-for-startups",
   mainEntityOfPage: "https://scantient.com/blog/devsecops-for-startups",
+  speakable: {
+    "@type": "SpeakableSpecification",
+    cssSelector: ["h1", ".article-lede"],
+  },
 };
 
 const breadcrumbSchema = {
@@ -119,7 +123,7 @@ export default function DevSecOpsForStartupsPage() {
           <h1 className="text-3xl font-extrabold tracking-tight text-ink-black-950 dark:text-alabaster-grey-50 sm:text-4xl">
             DevSecOps for Startups: How to Bake Security Into Your CI/CD Without Slowing Down
           </h1>
-          <p className="mt-4 text-lg text-dusty-denim-700 dark:text-dusty-denim-400">
+          <p className="mt-4 text-lg text-dusty-denim-700 dark:text-dusty-denim-400 article-lede">
             &quot;We&apos;ll handle security after we have traction.&quot; It&apos;s the most expensive thing a
             startup can say. Retrofitting security into an established codebase is ten times harder
             than building it in from the start. Here&apos;s how to do it without sacrificing velocity.

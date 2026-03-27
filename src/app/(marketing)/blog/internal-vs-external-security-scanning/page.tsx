@@ -39,6 +39,10 @@ const articleSchema = {
   },
   url: "https://scantient.com/blog/internal-vs-external-security-scanning",
   mainEntityOfPage: "https://scantient.com/blog/internal-vs-external-security-scanning",
+  speakable: {
+    "@type": "SpeakableSpecification",
+    cssSelector: ["h1", ".article-lede"],
+  },
 };
 
 const breadcrumbSchema = {
@@ -119,7 +123,7 @@ export default function InternalVsExternalSecurityScanningPage() {
           <h1 className="text-3xl font-extrabold tracking-tight text-ink-black-950 dark:text-alabaster-grey-50 sm:text-4xl">
             Internal vs External Security Scanning: What&apos;s the Difference and Do You Need Both?
           </h1>
-          <p className="mt-4 text-lg text-dusty-denim-700 dark:text-dusty-denim-400">
+          <p className="mt-4 text-lg text-dusty-denim-700 dark:text-dusty-denim-400 article-lede">
             Security scanning is not one thing. SAST, DAST, internal scanning, external scanning .
             each sees a different slice of your attack surface. Here&apos;s what each type catches,
             what it misses, and how a small team should prioritize.

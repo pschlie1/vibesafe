@@ -39,6 +39,10 @@ const articleSchema = {
   },
   url: "https://scantient.com/blog/soc2-api-security-requirements",
   mainEntityOfPage: "https://scantient.com/blog/soc2-api-security-requirements",
+  speakable: {
+    "@type": "SpeakableSpecification",
+    cssSelector: ["h1", ".article-lede"],
+  },
 };
 
 const breadcrumbSchema = {
@@ -119,7 +123,7 @@ export default function Soc2ApiSecurityRequirementsPage() {
           <h1 className="text-3xl font-extrabold tracking-tight text-ink-black-950 dark:text-alabaster-grey-50 sm:text-4xl">
             SOC 2 and API Security: What Startup Founders Need to Know Before Certification
           </h1>
-          <p className="mt-4 text-lg text-dusty-denim-700 dark:text-dusty-denim-400">
+          <p className="mt-4 text-lg text-dusty-denim-700 dark:text-dusty-denim-400 article-lede">
             Enterprise deals stall on security questionnaires. SOC 2 certification unlocks those
             deals . but only if you&apos;ve built the right API security controls first. Here&apos;s
             what auditors actually look for.

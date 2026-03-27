@@ -47,6 +47,10 @@ const articleSchema = {
   datePublished: "2026-03-05T00:00:00Z",
   publisher: { "@type": "Organization", name: "Scantient", url: "https://scantient.com" },
   mainEntityOfPage: "https://scantient.com/blog/security-headers-indie-devs",
+  speakable: {
+    "@type": "SpeakableSpecification",
+    cssSelector: ["h1", ".article-lede"],
+  },
 };
 
 export default function SecurityHeadersIndieDevsPage() {
@@ -103,7 +107,7 @@ export default function SecurityHeadersIndieDevsPage() {
           <h1 className="text-3xl font-extrabold tracking-tight text-ink-black-950 dark:text-alabaster-grey-50 sm:text-4xl">
             5 Security Headers Every Indie Dev Should Set (And How to Check Them)
           </h1>
-          <p className="mt-4 text-lg text-dusty-denim-700 dark:text-dusty-denim-400">
+          <p className="mt-4 text-lg text-dusty-denim-700 dark:text-dusty-denim-400 article-lede">
             Security headers are free. They take 5 minutes to add. And most indie dev projects ship without a single one. Here are the 5 that matter, what each one does, and how to verify they&apos;re actually working.
           </p>
           <div className="mt-6 flex items-center gap-4 text-sm text-dusty-denim-500">

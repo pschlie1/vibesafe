@@ -39,6 +39,10 @@ const articleSchema = {
   },
   url: "https://scantient.com/blog/jwt-security-best-practices",
   mainEntityOfPage: "https://scantient.com/blog/jwt-security-best-practices",
+  speakable: {
+    "@type": "SpeakableSpecification",
+    cssSelector: ["h1", ".article-lede"],
+  },
 };
 
 const breadcrumbSchema = {
@@ -119,7 +123,7 @@ export default function JwtSecurityBestPracticesPage() {
           <h1 className="text-3xl font-extrabold tracking-tight text-ink-black-950 dark:text-alabaster-grey-50 sm:text-4xl">
             JWT Security Best Practices: 8 Mistakes That Expose Your API
           </h1>
-          <p className="mt-4 text-lg text-dusty-denim-700 dark:text-dusty-denim-400">
+          <p className="mt-4 text-lg text-dusty-denim-700 dark:text-dusty-denim-400 article-lede">
             JWTs are everywhere . and so are JWT vulnerabilities. Most of these mistakes are
             invisible in code review and only exploitable at runtime. Here&apos;s what to avoid, and
             what to do instead.

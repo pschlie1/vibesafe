@@ -39,6 +39,10 @@ const articleSchema = {
   },
   url: "https://scantient.com/blog/saas-launch-security-checklist",
   mainEntityOfPage: "https://scantient.com/blog/saas-launch-security-checklist",
+  speakable: {
+    "@type": "SpeakableSpecification",
+    cssSelector: ["h1", ".article-lede"],
+  },
 };
 
 const breadcrumbSchema = {
@@ -119,7 +123,7 @@ export default function SaasLaunchSecurityChecklistPage() {
           <h1 className="text-3xl font-extrabold tracking-tight text-ink-black-950 dark:text-alabaster-grey-50 sm:text-4xl">
             SaaS Launch Security Checklist: 15 Things to Check Before Going Live
           </h1>
-          <p className="mt-4 text-lg text-dusty-denim-700 dark:text-dusty-denim-400">
+          <p className="mt-4 text-lg text-dusty-denim-700 dark:text-dusty-denim-400 article-lede">
             You&apos;re about to announce your launch. Your app works. Your landing page is live. But
             have you actually checked whether your app is secure enough to accept real users and
             real data? Here are the 15 things to verify before you ship.

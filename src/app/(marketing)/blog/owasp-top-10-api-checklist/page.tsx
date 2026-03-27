@@ -47,6 +47,10 @@ const articleSchema = {
   datePublished: "2026-03-10T00:00:00Z",
   publisher: { "@type": "Organization", name: "Scantient", url: "https://scantient.com" },
   mainEntityOfPage: "https://scantient.com/blog/owasp-top-10-api-checklist",
+  speakable: {
+    "@type": "SpeakableSpecification",
+    cssSelector: ["h1", ".article-lede"],
+  },
 };
 
 export default function OwaspTop10ApiChecklistPage() {
@@ -103,7 +107,7 @@ export default function OwaspTop10ApiChecklistPage() {
           <h1 className="text-3xl font-extrabold tracking-tight text-ink-black-950 dark:text-alabaster-grey-50 sm:text-4xl">
             OWASP Top 10 for APIs: A Practical Checklist for 2026
           </h1>
-          <p className="mt-4 text-lg text-dusty-denim-700 dark:text-dusty-denim-400">
+          <p className="mt-4 text-lg text-dusty-denim-700 dark:text-dusty-denim-400 article-lede">
             The OWASP API Security Top 10 is the industry reference for API vulnerabilities. But most articles just
             list definitions. This one gives you actual fixes . and tells you which ones you can check in 60 seconds without touching code.
           </p>

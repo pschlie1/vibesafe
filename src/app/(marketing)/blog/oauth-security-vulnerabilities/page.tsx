@@ -39,6 +39,10 @@ const articleSchema = {
   },
   url: "https://scantient.com/blog/oauth-security-vulnerabilities",
   mainEntityOfPage: "https://scantient.com/blog/oauth-security-vulnerabilities",
+  speakable: {
+    "@type": "SpeakableSpecification",
+    cssSelector: ["h1", ".article-lede"],
+  },
 };
 
 const breadcrumbSchema = {
@@ -119,7 +123,7 @@ export default function OauthSecurityVulnerabilitiesPage() {
           <h1 className="text-3xl font-extrabold tracking-tight text-ink-black-950 dark:text-alabaster-grey-50 sm:text-4xl">
             OAuth 2.0 Security Vulnerabilities Every Developer Should Know (And How to Fix Them)
           </h1>
-          <p className="mt-4 text-lg text-dusty-denim-700 dark:text-dusty-denim-400">
+          <p className="mt-4 text-lg text-dusty-denim-700 dark:text-dusty-denim-400 article-lede">
             OAuth 2.0 is the backbone of modern API authorization . and one of the most
             frequently misimplemented security protocols in production. These vulnerabilities
             are subtle enough to pass code review and dangerous enough to cause account takeover.

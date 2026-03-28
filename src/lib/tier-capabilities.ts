@@ -1,4 +1,4 @@
-export type Tier = "FREE" | "STARTER" | "PRO" | "ENTERPRISE" | "ENTERPRISE_PLUS" | "EXPIRED";
+export type Tier = "FREE" | "STARTER" | "LTD" | "PRO" | "ENTERPRISE" | "ENTERPRISE_PLUS" | "EXPIRED";
 export type FeatureKey =
   | "jira"
   | "sso"
@@ -13,6 +13,7 @@ const rank: Record<Tier, number> = {
   EXPIRED: 0,
   FREE: 1,
   STARTER: 2,
+  LTD: 2.5,
   PRO: 3,
   ENTERPRISE: 4,
   ENTERPRISE_PLUS: 5,
@@ -48,6 +49,16 @@ export const tierCapabilities: Record<Tier, Record<FeatureKey, boolean>> = {
     apiAccess: false,
     evidenceReports: false,
     executiveReports: false,
+  },
+  LTD: {
+    jira: true,
+    sso: false,
+    githubIntegration: true,
+    teamsIntegration: true,
+    pagerdutyIntegration: false,
+    apiAccess: true,
+    evidenceReports: true,
+    executiveReports: true,
   },
   PRO: {
     jira: true,

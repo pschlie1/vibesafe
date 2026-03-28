@@ -561,7 +561,7 @@ describe("Fix 5: DELETE /api/team/[id] . member removal", () => {
     });
     expect(res.status).toBe(400);
     const body = await res.json();
-    expect(body.error).toContain("yourself");
+    expect(body.error.message).toContain("yourself");
   });
 
   it("cannot remove the OWNER . returns 403", async () => {
@@ -579,7 +579,7 @@ describe("Fix 5: DELETE /api/team/[id] . member removal", () => {
     });
     expect(res.status).toBe(403);
     const body = await res.json();
-    expect(body.error).toContain("owner");
+    expect(body.error.message).toContain("owner");
   });
 
   it("MEMBER role cannot delete . returns 403", async () => {
@@ -651,7 +651,7 @@ describe("Fix 5: PATCH /api/team/[id] . role change", () => {
     });
     expect(res.status).toBe(403);
     const body = await res.json();
-    expect(body.error).toContain("owner");
+    expect(body.error.message).toContain("owner");
   });
 
   it("cannot change own role . returns 400", async () => {
@@ -663,7 +663,7 @@ describe("Fix 5: PATCH /api/team/[id] . role change", () => {
     });
     expect(res.status).toBe(400);
     const body = await res.json();
-    expect(body.error).toContain("own role");
+    expect(body.error.message).toContain("own role");
   });
 
   it("cannot change the OWNER role . returns 403", async () => {
@@ -681,7 +681,7 @@ describe("Fix 5: PATCH /api/team/[id] . role change", () => {
     });
     expect(res.status).toBe(403);
     const body = await res.json();
-    expect(body.error).toContain("owner");
+    expect(body.error.message).toContain("owner");
   });
 
   it("invalid role value returns 400", async () => {

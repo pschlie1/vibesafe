@@ -313,7 +313,7 @@ describe("GET /api/reports/weekly . audit-23 timing-safe CRON_SECRET", () => {
     const res = await callWeekly();
     expect(res.status).toBe(403);
     const body = await res.json();
-    expect(body.error).toMatch(/Starter/i);
+    expect(body.error.message).toMatch(/Starter/i);
   });
 
   it("returns report data for authenticated STARTER+ user", async () => {
@@ -392,7 +392,7 @@ describe("GET /api/reports/evidence . audit-23 Content-Disposition filename safe
 
     expect(res.status).toBe(400);
     const body = await res.json();
-    expect(body.error).toMatch(/date/i);
+    expect(body.error.message).toMatch(/date/i);
   });
 
   it("returns 400 when 'to' is not a valid date", async () => {
@@ -414,7 +414,7 @@ describe("GET /api/reports/evidence . audit-23 Content-Disposition filename safe
 
     expect(res.status).toBe(400);
     const body = await res.json();
-    expect(body.error).toMatch(/'to' date must be after/i);
+    expect(body.error.message).toMatch(/'to' date must be after/i);
   });
 
   it("returns 400 for an invalid framework value", async () => {

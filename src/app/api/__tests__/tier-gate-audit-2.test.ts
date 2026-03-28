@@ -443,7 +443,7 @@ describe("H-2: POST /api/apps/[id]/agent-key", () => {
     const res = await POST(makeReq("POST"), { params: Promise.resolve({ id: "app_1" }) });
     expect(res.status).toBe(403);
     const json = await res.json();
-    expect(json.error).toContain("Pro plan");
+    expect(json.error.message).toContain("Pro plan");
   });
 
   it("returns 403 for STARTER tier", async () => {
@@ -483,7 +483,7 @@ describe("H-3: GET/PUT /api/apps/[id]/auth-config", () => {
     const res = await GET(makeReq("GET"), { params: Promise.resolve({ id: "app_1" }) });
     expect(res.status).toBe(403);
     const json = await res.json();
-    expect(json.error).toContain("Pro plan");
+    expect(json.error.message).toContain("Pro plan");
   });
 
   it("PUT returns 403 for FREE tier", async () => {
@@ -529,7 +529,7 @@ describe("H-4: GET /api/apps/[id]/trends", () => {
     const res = await GET(makeReq("GET"), { params: Promise.resolve({ id: "app_1" }) });
     expect(res.status).toBe(403);
     const json = await res.json();
-    expect(json.error).toContain("Pro plan");
+    expect(json.error.message).toContain("Pro plan");
   });
 
   it("returns 403 for STARTER tier", async () => {

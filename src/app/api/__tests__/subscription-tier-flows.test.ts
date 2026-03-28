@@ -197,8 +197,8 @@ describe("POST /api/apps . app limit enforcement per tier", () => {
     const res = await POST(postReq(validApp));
     expect(res.status).toBe(403);
     const json = await res.json();
-    expect(json.error).toContain("FREE plan allows 2 apps");
-    expect(json.error).toContain("Upgrade");
+    expect(json.error.message).toContain("FREE plan allows 2 apps");
+    expect(json.error.message).toContain("Upgrade");
   });
 
   it("STARTER: blocks adding app when at limit (5 of 5)", async () => {
@@ -212,7 +212,7 @@ describe("POST /api/apps . app limit enforcement per tier", () => {
     const res = await POST(postReq(validApp));
     expect(res.status).toBe(403);
     const json = await res.json();
-    expect(json.error).toContain("STARTER plan allows 5 apps");
+    expect(json.error.message).toContain("STARTER plan allows 5 apps");
   });
 
   it("PRO: allows adding app when under limit (3 of 15)", async () => {
@@ -236,7 +236,7 @@ describe("POST /api/apps . app limit enforcement per tier", () => {
     const res = await POST(postReq(validApp));
     expect(res.status).toBe(403);
     const json = await res.json();
-    expect(json.error).toContain("PRO plan allows 15 apps");
+    expect(json.error.message).toContain("PRO plan allows 15 apps");
   });
 
   it("EXPIRED: blocks all app creation (0 app limit)", async () => {
@@ -492,7 +492,7 @@ describe("POST /api/keys . API key access per tier", () => {
     const res = await POST(postReq({ name: "My Key" }));
     expect(res.status).toBe(403);
     const json = await res.json();
-    expect(json.error).toContain("Admin access required");
+    expect(json.error.message).toContain("Admin access required");
   });
 
   it("PRO: VIEWER role is blocked from creating API keys", async () => {
@@ -1345,7 +1345,7 @@ describe("POST /api/team . user limit enforcement per tier", () => {
     const res = await POST(postReq({ email: "new@test.com", role: "MEMBER" }));
     expect(res.status).toBe(403);
     const json = await res.json();
-    expect(json.error).toContain("FREE plan allows 1 users");
+    expect(json.error.message).toContain("FREE plan allows 1 users");
   });
 
   it("STARTER: allows inviting up to 2 users", async () => {
@@ -1374,7 +1374,7 @@ describe("POST /api/team . user limit enforcement per tier", () => {
     const res = await POST(postReq({ email: "third@test.com", role: "MEMBER" }));
     expect(res.status).toBe(403);
     const json = await res.json();
-    expect(json.error).toContain("STARTER plan allows 2 users");
+    expect(json.error.message).toContain("STARTER plan allows 2 users");
   });
 
   it("PRO: allows inviting up to 10 users", async () => {

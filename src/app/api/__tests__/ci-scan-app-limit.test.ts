@@ -103,7 +103,7 @@ describe("POST /api/public/ci-scan . app limit enforcement (CB-4)", () => {
     expect(res.status).toBe(403);
 
     const json = await res.json();
-    expect(json.error).toContain("App limit reached");
+    expect(json.error.message).toContain("App limit reached");
   });
 
   it("returns 403 when org exceeds app limit", async () => {

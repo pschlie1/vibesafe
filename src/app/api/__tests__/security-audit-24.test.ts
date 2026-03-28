@@ -164,8 +164,8 @@ describe("A24-1: API key deletion role check", () => {
     );
 
     expect(res.status).toBe(403);
-    const body = await res.json() as { error: string };
-    expect(body.error).toMatch(/admin/i);
+    const body = await res.json() as { error: { code: string; message: string } };
+    expect(body.error.message).toMatch(/admin/i);
   });
 
   it("returns 403 when VIEWER tries to delete an API key", async () => {

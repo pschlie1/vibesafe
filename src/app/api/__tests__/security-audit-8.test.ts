@@ -427,6 +427,8 @@ describe("A8-5: POST /api/public/ci-scan . rate limit enforced", () => {
   });
 
   it("returns 429 when rate limit exceeded", async () => {
+    // IP rate-limit check passes; tier-based CI scan limit fires
+    checkRateLimit.mockResolvedValueOnce({ allowed: true });
     checkRateLimit.mockResolvedValueOnce({ allowed: false, retryAfterSeconds: 3600 });
     const { POST } = await import("@/app/api/public/ci-scan/route");
     const res = await POST(postReq({ url: "https://app.example.com" }));
@@ -687,7 +689,7 @@ describe("A8-14: GET /api/reports/evidence . date range validation", () => {
     const res = await GET(makeNextReq({ from: "2026-06-01", to: "2026-01-01", framework: "soc2" }) as any);
     expect(res.status).toBe(400);
     const json = await res.json();
-    expect(json.error).toMatch(/'to' date must be after/);
+    expect(json.error.message).toMatch(/'to' date must be after/);
   });
 
   it("returns 400 when range exceeds 1 year", async () => {
@@ -696,7 +698,7 @@ describe("A8-14: GET /api/reports/evidence . date range validation", () => {
     const res = await GET(makeNextReq({ from: "2024-01-01", to: "2026-01-02", framework: "soc2" }) as any);
     expect(res.status).toBe(400);
     const json = await res.json();
-    expect(json.error).toMatch(/1 year/);
+    expect(json.error.message).toMatch(/1 year/);
   });
 
   it("returns 400 when framework is invalid", async () => {

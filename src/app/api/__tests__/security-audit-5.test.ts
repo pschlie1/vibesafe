@@ -167,7 +167,7 @@ describe("Fix 1: Public score SSRF guard", () => {
 
     expect(res.status).toBe(400);
     const body = await res.json();
-    expect(body.error).toBe("URL not allowed");
+    expect(body.error.message).toBe("URL not allowed");
   });
 
   it("valid public URL proceeds past SSRF check", async () => {
@@ -284,7 +284,7 @@ describe("Fix 3: Jira URL SSRF guard in POST /api/integrations/jira", () => {
 
     expect(res.status).toBe(400);
     const body = await res.json();
-    expect(body.error).toContain("public address");
+    expect(body.error.message).toContain("public address");
   });
 
   it("valid public Jira URL passes SSRF check and saves config", async () => {
@@ -358,7 +358,7 @@ describe("Fix 5: VIEWER role gets 403 on write operations", () => {
 
     expect(res.status).toBe(403);
     const body = await res.json();
-    expect(body.error).toContain("read-only");
+    expect(body.error.message).toContain("read-only");
   });
 
   it("MEMBER gets 403 on DELETE /api/apps/[id]", async () => {
@@ -371,7 +371,7 @@ describe("Fix 5: VIEWER role gets 403 on write operations", () => {
 
     expect(res.status).toBe(403);
     const body = await res.json();
-    expect(body.error).toContain("read-only");
+    expect(body.error.message).toContain("read-only");
   });
 
   it("MEMBER gets 403 on PATCH /api/apps/[id]", async () => {
@@ -413,7 +413,7 @@ describe("Fix 5: VIEWER role gets 403 on write operations", () => {
 
     expect(res.status).toBe(403);
     const body = await res.json();
-    expect(body.error).toContain("read-only");
+    expect(body.error.message).toContain("read-only");
   });
 
   it("MEMBER can PATCH /api/findings/[id] (not blocked)", async () => {
@@ -480,7 +480,7 @@ describe("Fix 5: VIEWER role gets 403 on write operations", () => {
 
     expect(res.status).toBe(403);
     const body = await res.json();
-    expect(body.error).toContain("read-only");
+    expect(body.error.message).toContain("read-only");
   });
 
   it("MEMBER gets 403 on POST /api/alerts", async () => {

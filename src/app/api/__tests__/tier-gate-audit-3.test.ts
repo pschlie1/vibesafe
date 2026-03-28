@@ -699,7 +699,7 @@ describe("NM-1: GET /api/ops/kpis . tier gate", () => {
     const res = await GET();
     expect(res.status).toBe(403);
     const json = await res.json();
-    expect(json.error).toContain("Starter");
+    expect(json.error.message).toContain("Starter");
   });
 
   it("returns 403 for EXPIRED tier", async () => {

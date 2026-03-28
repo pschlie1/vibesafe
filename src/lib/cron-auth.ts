@@ -16,6 +16,7 @@ export const PREMIUM_TIERS: SubscriptionTier[] = [
 export const NON_PREMIUM_TIERS: SubscriptionTier[] = [
   SubscriptionTier.FREE,
   SubscriptionTier.STARTER,
+  SubscriptionTier.LTD,
   SubscriptionTier.PRO,
   SubscriptionTier.EXPIRED,
 ];

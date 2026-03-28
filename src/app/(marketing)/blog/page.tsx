@@ -10,6 +10,16 @@ export const metadata: Metadata = {
 
 const posts = [
   {
+    slug: "/blog/vibe-coding-who-checks-ai-code",
+    category: "AI Security",
+    title: "The AI Writes the Code. Who's Checking What It Built?",
+    excerpt:
+      "69 vulnerabilities across 15 apps. SSRF in 100% of cases. Zero working CSRF protection. Zero security headers. The data on what vibe-coded applications ship with and how to check what yours exposes.",
+    date: "March 28, 2026",
+    readTime: "9 min read",
+    featured: false,
+  },
+  {
     slug: "/blog/vibe-coding-security-risks",
     category: "AI Security",
     title: "Vibe Coding Security Risks: What AI-Generated Code Gets Wrong About APIs",

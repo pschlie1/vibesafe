@@ -38,6 +38,7 @@
   ],
   "exclude": [
     "packages",
+    "github-action",
     "node_modules"
   ]
 }

@@ -10,13 +10,11 @@ import { logApiError } from "@/lib/observability";
 
 /**
  * Map a Stripe PlanKey to a DB SubscriptionTier.
- * Direct 1:1 mapping now that ENTERPRISE_PLUS is a first-class enum value.
+ * Direct 1:1 mapping — LTD and ENTERPRISE_PLUS are first-class enum values.
  */
 function toDbTier(planKey: PlanKey): SubscriptionTier {
   const map: Record<PlanKey, SubscriptionTier> = {
-    // LTD is a one-time purchase; maps to PRO tier in DB until a dedicated LTD tier is added to the schema.
-    // TODO(peter): Add LTD to SubscriptionTier enum in prisma/schema.prisma + run prisma migrate dev.
-    LTD: "PRO",
+    LTD: "LTD",
     FREE: "FREE",
     STARTER: "STARTER",
     PRO: "PRO",
@@ -81,7 +79,8 @@ export async function POST(req: Request) {
       const obj = event.data.object as Stripe.Checkout.Session;
       const orgId = obj.metadata?.orgId;
       const planKey = obj.metadata?.plan as PlanKey | undefined;
-      const subscriptionId = obj.subscription as string;
+      // For one-time purchases (LTD), obj.subscription is null — guard against that.
+      const subscriptionId = typeof obj.subscription === "string" ? obj.subscription : null;
 
       if (!orgId || !planKey) break;
 
@@ -98,7 +97,8 @@ export async function POST(req: Request) {
           update: {
             tier: toTier,
             status: "ACTIVE",
-            stripeSubscriptionId: subscriptionId,
+            // Only overwrite stripeSubscriptionId when we have one (LTD has none)
+            ...(subscriptionId ? { stripeSubscriptionId: subscriptionId } : {}),
             stripePriceId: plan.priceId,
             maxApps: plan.maxApps,
             maxUsers: plan.maxUsers,
@@ -108,7 +108,7 @@ export async function POST(req: Request) {
             orgId,
             tier: toTier,
             status: "ACTIVE",
-            stripeSubscriptionId: subscriptionId,
+            ...(subscriptionId ? { stripeSubscriptionId: subscriptionId } : {}),
             stripePriceId: plan.priceId,
             maxApps: plan.maxApps,
             maxUsers: plan.maxUsers,

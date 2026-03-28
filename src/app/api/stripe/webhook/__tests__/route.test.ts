@@ -137,10 +137,11 @@ describe("stripe webhook — checkout.session.completed", () => {
     );
   });
 
-  it("LTD planKey maps to PRO tier in DB", async () => {
+  it("LTD planKey maps to LTD tier in DB with no stripeSubscriptionId", async () => {
+    // LTD is a one-time payment — Stripe sets subscription to null
     const event = makeEvent("checkout.session.completed", {
       metadata: { orgId: "org_ltd", plan: "LTD" },
-      subscription: "sub_ltd",
+      subscription: null,
     });
     mockConstructEvent.mockReturnValue(event);
     mockFindUnique.mockResolvedValue({ tier: "FREE" });
@@ -152,10 +153,14 @@ describe("stripe webhook — checkout.session.completed", () => {
 
     expect(mockUpsert).toHaveBeenCalledWith(
       expect.objectContaining({
-        update: expect.objectContaining({ tier: "PRO" }),
-        create: expect.objectContaining({ tier: "PRO" }),
+        update: expect.objectContaining({ tier: "LTD" }),
+        create: expect.objectContaining({ tier: "LTD" }),
       }),
     );
+    // stripeSubscriptionId must NOT be present in the upsert payload for LTD
+    const call = mockUpsert.mock.calls[0][0];
+    expect(call.update).not.toHaveProperty("stripeSubscriptionId");
+    expect(call.create).not.toHaveProperty("stripeSubscriptionId");
   });
 
   it("missing orgId in metadata: no DB write, returns 200", async () => {

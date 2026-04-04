@@ -175,6 +175,36 @@ export async function POST(req: Request) {
       break;
     }
 
+    case "invoice.payment_succeeded": {
+      // When a past-due invoice is successfully paid, restore the subscription to ACTIVE.
+      // Without this handler, PAST_DUE subscriptions remain degraded even after payment recovery.
+      const obj = event.data.object as Stripe.Invoice;
+      const rawSubSucceeded = obj.parent?.subscription_details?.subscription;
+      const succeededSubId: string | null =
+        typeof rawSubSucceeded === "string"
+          ? rawSubSucceeded
+          : (rawSubSucceeded as Stripe.Subscription | null)?.id ?? null;
+      if (!succeededSubId) break;
+
+      const succeededSub = await db.subscription.findFirst({
+        where: { stripeSubscriptionId: succeededSubId },
+      });
+      if (!succeededSub) break;
+
+      // Only update if currently PAST_DUE — avoid stomping other valid statuses
+      if (succeededSub.status === "PAST_DUE") {
+        try {
+          await db.subscription.update({
+            where: { id: succeededSub.id },
+            data: { status: "ACTIVE" },
+          });
+        } catch (err) {
+          logApiError(err, { route: "/api/stripe/webhook", method: "POST", orgId: succeededSub.orgId, details: { event: event.type, eventId: event.id } });
+        }
+      }
+      break;
+    }
+
     case "invoice.payment_failed": {
       const obj = event.data.object as Stripe.Invoice;
       // Stripe SDK v20+: subscription ID lives under parent.subscription_details.subscription
@@ -204,6 +234,11 @@ export async function POST(req: Request) {
         where: { stripeSubscriptionId: obj.id },
       });
       if (!existing) break;
+
+      // LTD is a lifetime one-time purchase — it has no stripeSubscriptionId, so
+      // this guard is unlikely to fire, but explicitly protect LTD tier from
+      // accidental downgrade if an org had a prior subscription before going LTD.
+      if (existing.tier === "LTD") break;
 
       try {
         await db.subscription.update({

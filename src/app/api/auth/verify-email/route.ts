@@ -54,7 +54,7 @@ export async function GET(req: Request) {
     });
   }
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://scantient.com";
+  const appUrl = process.env.NEXT_PUBLIC_URL ?? "https://scantient.com";
   // First-time verification → redirect to dashboard with onboarding wizard
   const redirectUrl = wasAlreadyVerified
     ? `${appUrl}/dashboard`

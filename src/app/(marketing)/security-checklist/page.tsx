@@ -81,7 +81,7 @@ const items = [
   {
     num: 15,
     title: "Set Up Continuous Monitoring",
-    body: "Security isn't a one-time check. AI-generated apps change frequently; every prompt-driven update introduces new vulnerabilities. Set up continuous external monitoring to catch regressions before attackers do. Tools like Scantient automate this entire checklist on a recurring schedule.",
+    body: "Security isn't a one-time check. AI-generated apps change frequently. Every prompt-driven update introduces new vulnerabilities. Set up continuous external monitoring to catch regressions before attackers do. Tools like Scantient automate this entire checklist on a recurring schedule.",
   },
 ];
 

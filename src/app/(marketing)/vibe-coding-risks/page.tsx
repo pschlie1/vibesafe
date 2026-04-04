@@ -4,7 +4,7 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "The Hidden Security Risks of Vibe Coding | Scantient",
   description:
-    "Vibe coding is transforming software development, but it introduces serious security blind spots. Learn the risks CISOs and IT leaders need to understand.",
+    "Vibe coding ships production apps fast and without security guardrails. Learn the risks CISOs and IT leaders need to understand before it's too late.",
 };
 
 const risks = [
@@ -14,7 +14,7 @@ const risks = [
   },
   {
     title: "The Knowledge Gap Problem",
-    body: "Vibe coding democratizes development; that's the appeal. But the people building these apps often lack the security knowledge to evaluate what the AI generates. A marketing manager building an internal tool doesn't know to check for SQL injection. A sales leader creating a customer portal doesn't understand CORS implications. The builders aren't negligent; they're operating outside their expertise.",
+    body: "Vibe coding democratizes development. That's the appeal. But the people building these apps often lack the security knowledge to evaluate what the AI generates. A marketing manager building an internal tool doesn't know to check for SQL injection. A sales leader creating a customer portal doesn't understand CORS implications. The builders aren't negligent. They're operating outside their expertise.",
   },
   {
     title: "Velocity Without Oversight",
@@ -62,11 +62,11 @@ export default function VibeCodingRisksPage() {
         <div className="mt-20">
           <h2 className="text-2xl font-semibold">What IT Leaders Should Do Now</h2>
           <div className="mt-6 space-y-4 text-body">
-            <p><strong>1. Acknowledge the reality.</strong> Your organization is already vibe coding. The question isn&apos;t whether to allow it; it&apos;s how to govern it.</p>
+            <p><strong>1. Acknowledge the reality.</strong> Your organization is already vibe coding. The question isn't whether to allow it. It's how to govern it.</p>
             <p><strong>2. Create an inventory.</strong> Start by cataloging every AI-generated application deployed in your organization. You won&apos;t secure what you won&apos;t see.</p>
             <p><strong>3. Establish a baseline.</strong> Define minimum security requirements for AI-generated apps: security headers, authentication patterns, secrets management, dependency hygiene.</p>
             <p><strong>4. Automate monitoring.</strong> Manual audits don&apos;t scale. Implement continuous automated scanning that checks every app against your security baseline, without requiring developer involvement. For AI-powered apps specifically, see our guide on{" "}<Link href="/blog/securing-ai-app-api" className="underline hover:text-heading transition-colors">securing your AI app API</Link> before launch.</p>
-            <p><strong>5. Make security accessible.</strong> When you find a vulnerability, provide plain-language remediation guidance. The builders aren&apos;t security experts; meet them where they are.</p>
+            <p><strong>5. Make security accessible.</strong> When you find a vulnerability, provide plain-language remediation guidance. The builders aren't security experts. Meet them where they are.</p>
           </div>
         </div>
 

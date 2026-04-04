@@ -220,7 +220,7 @@ function UpgradeCTASection({ findingsCount, domain }: { findingsCount: number; d
         </h2>
         <p className="mt-1 text-sm text-heading">
           {hasIssues
-            ? "This is a one-time snapshot. These issues could change, worsen, or new ones could appear . and you won't know."
+            ? "This is a one-time snapshot. These issues may worsen, or new ones may appear, and you won't know."
             : "Clean scans can change. A new deploy, an expired cert, a misconfigured header. Without monitoring, you'll find out too late."}
         </p>
       </div>
@@ -292,7 +292,7 @@ function UpgradeCTASection({ findingsCount, domain }: { findingsCount: number; d
 
         {/* Urgency */}
         <p className="mt-2 text-xs font-medium text-warning">
-          ⏳ LTD pricing won&apos;t last forever . lock in $79 before it goes monthly-only
+          ⏳ LTD pricing won&apos;t last. Lock in $79 before it goes monthly-only
         </p>
 
         <div className="mt-5 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
@@ -300,7 +300,7 @@ function UpgradeCTASection({ findingsCount, domain }: { findingsCount: number; d
             href="/pricing"
             className="inline-flex items-center gap-2 rounded-lg bg-prussian-blue-600 px-7 py-3 text-sm font-bold text-white shadow-lg transition hover:bg-prussian-blue-700 hover:shadow-xl"
           >
-            Get Lifetime Access . $79 →
+            Get Lifetime Access: $79 →
           </Link>
           <Link
             href="/score"
@@ -475,7 +475,7 @@ function NotFoundCard({ domain }: { domain: string }) {
             {domain} isn&apos;t monitored yet
           </h1>
           <p className="mt-2 text-sm text-muted">
-            Run a free instant scan to get a security grade . no account needed.
+            Run a free instant scan to get a security grade. No account needed.
           </p>
         </div>
         <Link
@@ -503,7 +503,7 @@ function NotFoundCard({ domain }: { domain: string }) {
             { icon: "📡", label: "Daily automated scans" },
             { icon: "🔔", label: "Email alerts on changes" },
             { icon: "📄", label: "Monthly compliance PDFs" },
-            { icon: "♾️", label: "Lifetime . pay once" },
+            { icon: "♾️", label: "Lifetime: pay once" },
           ].map((item) => (
             <div key={item.label} className="flex items-center gap-2 text-sm text-heading">
               <span>{item.icon}</span>
@@ -514,13 +514,13 @@ function NotFoundCard({ domain }: { domain: string }) {
 
         <div className="text-center space-y-2">
           <p className="text-xs font-medium text-warning">
-            ⏳ LTD pricing won&apos;t last forever . lock in $79 before it goes monthly-only
+            ⏳ LTD pricing won&apos;t last. Lock in $79 before it goes monthly-only
           </p>
           <Link
             href="/pricing"
             className="inline-flex items-center gap-2 rounded-lg bg-prussian-blue-600 px-7 py-3 text-sm font-bold text-white shadow-lg transition hover:bg-prussian-blue-700"
           >
-            Get Lifetime Access . $79 →
+            Get Lifetime Access: $79 →
           </Link>
           <p className="text-xs text-muted">No subscription. No surprises.</p>
         </div>

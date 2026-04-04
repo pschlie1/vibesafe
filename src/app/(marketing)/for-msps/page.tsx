@@ -2,13 +2,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Scantient for MSPs . Compliance Confidence Across Every Client | Scantient",
+  title: "Scantient for MSPs: Compliance Monitoring Across Every Client | Scantient",
   description:
     "MSPs use Scantient to deliver security compliance monitoring across every client organization. Add clients, set policies, monitor centrally. Built for post-acquisition cleanups, compliance audits, and ongoing client security.",
   keywords:
     "MSP compliance monitoring, managed service provider security audit, AI compliance for MSPs, client compliance management",
   openGraph: {
-    title: "Scantient for MSPs . Compliance Confidence Across Every Client",
+    title: "Scantient for MSPs: Compliance Monitoring Across Every Client",
     description:
       "MSPs use Scantient to deliver security compliance monitoring across every client organization. Add clients, set policies, monitor centrally.",
     url: "https://scantient.com/for-msps",
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Scantient for MSPs . Compliance Confidence Across Every Client",
+    title: "Scantient for MSPs: Compliance Monitoring Across Every Client",
     description:
       "MSPs use Scantient to deliver security compliance monitoring across every client organization.",
   },
@@ -51,7 +51,7 @@ const faqSchema = {
       name: "How does Scantient work for managed service providers?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "MSPs get a multi-tenant Scantient account where each client is a separate, isolated organization. You add a client, connect their data sources (identity provider, DNS, endpoints), and Scantient begins monitoring immediately. All clients are visible from your central MSP dashboard . you can manage policies, review findings, and generate reports across all client orgs without switching accounts.",
+        text: "MSPs get a multi-tenant Scantient account where each client is a separate, isolated organization. You add a client, connect their data sources (identity provider, DNS, endpoints), and Scantient begins monitoring immediately. All clients are visible from your central MSP dashboard: manage policies, review findings, and generate reports across all client orgs without switching accounts.",
       },
     },
     {
@@ -67,7 +67,7 @@ const faqSchema = {
       name: "How does Scantient help with post-acquisition compliance cleanup?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Post-acquisition is one of the highest-risk windows for any organization . you're inheriting an unknown security posture. Scantient can onboard a new client organization and generate a full compliance baseline report within 24 hours: shadow AI tools, IAM gaps, misconfigurations, and compliance framework mapping. This gives your team a prioritized remediation roadmap from day one.",
+        text: "Post-acquisition is one of the highest-risk windows for any organization. You're inheriting an unknown security posture. Scantient onboards a new client organization and generates a full compliance baseline report within 24 hours: shadow AI tools, IAM gaps, misconfigurations, and compliance framework mapping. Your team gets a prioritized remediation roadmap from day one.",
       },
     },
     {
@@ -75,7 +75,7 @@ const faqSchema = {
       name: "Can MSPs white-label Scantient for their clients?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Yes. Scantient's MSP tier includes white-label reporting . compliance reports, executive summaries, and audit documents can be exported with your MSP's branding. This lets you package Scantient's findings as part of your service offering.",
+        text: "Yes. Scantient's MSP tier includes white-label reporting. Compliance reports, executive summaries, and audit documents export with your MSP's branding. Package Scantient's findings as part of your service offering.",
       },
     },
     {
@@ -83,7 +83,7 @@ const faqSchema = {
       name: "What compliance frameworks does Scantient cover for MSP clients?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Scantient supports SOC 2, ISO 27001, NIST CSF, HIPAA, GDPR, and AI-specific governance frameworks. Each client organization can have its own framework configuration based on their regulatory obligations. MSPs can set default frameworks that apply to all new clients, then customize per-client as needed.",
+        text: "Scantient supports SOC 2, ISO 27001, NIST CSF, HIPAA, GDPR, and AI-specific governance frameworks. Each client organization gets its own framework configuration based on its regulatory obligations. Set default frameworks that apply to all new clients, then customize per-client as needed.",
       },
     },
   ],
@@ -112,13 +112,13 @@ const useCases = [
   {
     title: "Post-Acquisition Cleanup",
     badge: "🔥 Hot Use Case",
-    desc: "When a client acquires a company or gets acquired, Scantient generates a full compliance baseline in 24 hours. Unknown apps, shadow AI tools, IAM misconfigurations, policy gaps . everything surfaces immediately so you can remediate before the auditors arrive.",
+    desc: "When a client acquires a company or gets acquired, Scantient generates a full compliance baseline in 24 hours. Unknown apps, shadow AI tools, IAM misconfigurations, policy gaps: everything surfaces immediately so your team remediates before the auditors arrive.",
     cta: "Learn more about acquisition due diligence →",
   },
   {
     title: "Compliance Audits",
     badge: "📋 Core Service",
-    desc: "Turn compliance audits from fire drills into a billable service. Scantient's continuous monitoring means audit evidence is always ready. Generate SOC 2, ISO 27001, or NIST CSF reports on demand . with control mapping already done.",
+    desc: "Turn compliance audits from fire drills into a billable service. Scantient's continuous monitoring means audit evidence is always ready. Generate SOC 2, ISO 27001, or NIST CSF reports on demand, with control mapping already done.",
     cta: "See compliance framework coverage →",
   },
   {
@@ -133,7 +133,7 @@ const howItWorks = [
   {
     step: "01",
     title: "Add a client organization",
-    desc: "Create a new client org in your MSP dashboard. Each client is fully isolated . their data never mixes with other clients.",
+    desc: "Create a new client org in your MSP dashboard. Each client is fully isolated. Their data never mixes with other clients.",
   },
   {
     step: "02",
@@ -159,7 +159,7 @@ const testimonials = [
     company: "Regional MSP, 45 clients",
   },
   {
-    quote: "Scantient's multi-client dashboard is the first tool that actually works for how MSPs operate. Everything else was built for single organizations.",
+    quote: "Scantient's multi-client dashboard is the first tool built for how MSPs operate. Everything else was built for single organizations.",
     author: "VP of Technical Operations",
     company: "Managed IT Provider",
   },
@@ -203,7 +203,7 @@ export default function ForMSPsPage() {
             </h1>
             <p className="mt-6 text-lg leading-relaxed text-muted">
               Scantient is the compliance layer MSPs deploy across their entire client portfolio. One platform,
-              every client, continuous monitoring . from shadow AI detection to full SOC 2 audit trail.
+              every client, continuous monitoring, from shadow AI detection to full SOC 2 audit trail.
             </p>
             <div className="mt-10 flex flex-col gap-4 sm:flex-row">
               <Link
@@ -287,7 +287,7 @@ export default function ForMSPsPage() {
         <div className="mx-auto max-w-6xl px-4">
           <p className="mb-4 text-sm font-medium uppercase tracking-widest text-muted">Use Cases</p>
           <h2 className="text-3xl font-bold leading-tight tracking-tight">
-            Built for how MSPs actually work
+            Built for how MSPs work
           </h2>
           <div className="mt-12 grid gap-8 lg:grid-cols-3">
             {useCases.map((uc, i) => (

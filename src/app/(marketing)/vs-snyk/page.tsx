@@ -163,7 +163,7 @@ export default function VsSnyKPage() {
         </div>
 
         <p className="mt-8 text-center text-dusty-denim-700 dark:text-dusty-denim-500 max-w-2xl mx-auto">
-          Both are checking security, just at different layers. Snyk checks code before deployment. Scantient checks deployed apps for runtime vulnerabilities.
+          Both check security, but at different layers. Snyk checks code before deployment. Scantient checks deployed apps for runtime vulnerabilities.
         </p>
       </section>
 

@@ -2,12 +2,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "AI App Security Scanner . Find Vulnerabilities Before Your Users Do | Scantient",
+  title: "AI App Security Scanner: Find Vulnerabilities Before Your Users Do | Scantient",
   description:
-    "AI apps have unique security risks that traditional scanners miss. Scantient checks API key exposure, prompt injection vectors, rate limiting, data leakage, and CORS . in 60 seconds, no code access required.",
+    "AI apps have unique security risks that traditional scanners miss. Scantient checks API key exposure, prompt injection vectors, rate limiting, data leakage, and CORS in 60 seconds. No code access required.",
   keywords: "AI app security, AI application security scanner, prompt injection detection, AI API security, LLM security testing, AI security vulnerabilities",
   openGraph: {
-    title: "AI App Security Scanner . Find Vulnerabilities Before Your Users Do",
+    title: "AI App Security Scanner: Find Vulnerabilities Before Your Users Do",
     description:
       "Your AI app has unique security risks: exposed API keys, prompt injection vectors, missing rate limits, data leakage, overpermissive CORS. Scantient finds all of them in 60 seconds.",
     url: "https://scantient.com/ai-security",
@@ -16,9 +16,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "AI App Security Scanner . Find Vulnerabilities Before Your Users Do",
+    title: "AI App Security Scanner: Find Vulnerabilities Before Your Users Do",
     description:
-      "API key exposure, prompt injection, rate limiting, data leakage, CORS . Scantient checks all AI-specific security risks in 60 seconds. No signup required.",
+      "API key exposure, prompt injection, rate limiting, data leakage, CORS: Scantient checks all AI-specific security risks in 60 seconds. No signup required.",
   },
 };
 
@@ -37,7 +37,7 @@ export default function AiSecurityPage() {
         </h1>
         <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-dusty-denim-700 dark:text-dusty-denim-400">
           AI apps built with LLMs, vector databases, and external API providers have a whole new attack surface.
-          Exposed keys, prompt injection, unprotected endpoints . Scantient scans your deployed app the same way
+          Exposed keys, prompt injection, unprotected endpoints: Scantient scans your deployed app the same way
           an attacker would, in 60 seconds, no code access required.
         </p>
         <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
@@ -63,7 +63,7 @@ export default function AiSecurityPage() {
         </h2>
         <p className="mt-4 text-base leading-relaxed text-dusty-denim-700 dark:text-dusty-denim-400">
           Traditional web app security is about protecting data. AI app security is about protecting data{" "}
-          <em>and</em> protecting the intelligent system that processes it . which can be manipulated, extracted
+          <em>and</em> protecting the intelligent system that processes it, which can be manipulated, extracted
           from, and abused in ways that a CRUD endpoint cannot.
         </p>
         <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -71,17 +71,17 @@ export default function AiSecurityPage() {
             {
               icon: "💸",
               title: "You pay per attack request",
-              body: "Every call to your LLM endpoint costs real money. An unprotected /api/chat endpoint doesn't just leak data . it lets attackers run up your OpenAI bill. $10,000 bills from stolen API keys are documented and not rare.",
+              body: "Every call to your LLM endpoint costs real money. An unprotected /api/chat endpoint leaks data and lets attackers run up your OpenAI bill. $10,000 bills from stolen API keys are documented and not rare.",
             },
             {
               icon: "🧠",
               title: "Prompt injection bypasses logic",
-              body: 'Attackers don\'t need code access. They craft inputs that hijack your LLM\'s behavior, override your system prompt, or trigger tool calls on your behalf. It\'s SQL injection . but the database is a language model.',
+              body: 'Attackers don\'t need code access. They craft inputs that hijack your LLM\'s behavior, override your system prompt, or trigger tool calls on your behalf. Think SQL injection, but the database is a language model.',
             },
             {
               icon: "🔑",
               title: "LLM keys are high-value targets",
-              body: "An exposed OPENAI_API_KEY or ANTHROPIC_API_KEY isn't just a credential . it's an open billing account. Unlike database credentials, attackers can monetize stolen LLM keys immediately.",
+              body: "An exposed OPENAI_API_KEY or ANTHROPIC_API_KEY is an open billing account. Unlike database credentials, attackers monetize stolen LLM keys immediately.",
             },
             {
               icon: "📊",
@@ -91,12 +91,12 @@ export default function AiSecurityPage() {
             {
               icon: "🌐",
               title: "CORS misconfig enables LLM abuse",
-              body: "A wildcard CORS policy on your AI endpoints lets any website call your backend, consume your LLM quota, and rack up inference costs . without ever visiting your app.",
+              body: "A wildcard CORS policy on your AI endpoints lets any website call your backend, consume your LLM quota, and rack up inference costs, without ever visiting your app.",
             },
             {
               icon: "🛡️",
               title: "Traditional tools scan the wrong layer",
-              body: "SAST tools scan code. SCA tools scan dependencies. Neither checks your deployed, running app the way an attacker does . from the outside, with no special access.",
+              body: "SAST tools scan code. SCA tools scan dependencies. Neither checks your deployed, running app the way an attacker does: from the outside, with no special access.",
             },
           ].map((item) => (
             <div
@@ -122,7 +122,7 @@ export default function AiSecurityPage() {
         </h2>
         <p className="mt-4 text-base leading-relaxed text-dusty-denim-700 dark:text-dusty-denim-400">
           Every scan covers the fundamentals plus the AI-specific risk layer. No code access, no SDK, no agents.
-          Just your URL.
+          Your URL is all it needs.
         </p>
         <div className="mt-8 space-y-4">
           {[
@@ -130,7 +130,7 @@ export default function AiSecurityPage() {
               title: "API Key Exposure",
               severity: "Critical",
               severityColor: "text-red-600 bg-red-50 border-red-200 dark:bg-red-950/30 dark:border-red-800",
-              body: "Scans your JavaScript bundle, API responses, and HTTP headers for 20+ API key patterns . including OpenAI, Anthropic, Gemini, Pinecone, Hugging Face, and other LLM providers. Exposed LLM keys are treated as critical severity because the financial and reputational damage is immediate.",
+              body: "Scans your JavaScript bundle, API responses, and HTTP headers for 20+ API key patterns, including OpenAI, Anthropic, Gemini, Pinecone, Hugging Face, and other LLM providers. Exposed LLM keys are treated as critical severity because the financial and reputational damage is immediate.",
             },
             {
               title: "Prompt Injection Vectors",
@@ -142,13 +142,13 @@ export default function AiSecurityPage() {
               title: "Rate Limiting on AI Endpoints",
               severity: "High",
               severityColor: "text-orange-600 bg-orange-50 border-orange-200 dark:bg-orange-950/30 dark:border-orange-800",
-              body: "Checks for X-RateLimit headers on endpoints that accept user input. Missing rate limits on LLM-backed endpoints are flagged as high severity . they're a direct path to bill abuse. Scantient tests per-IP and per-user rate limiting signals.",
+              body: "Checks for X-RateLimit headers on endpoints that accept user input. Missing rate limits on LLM-backed endpoints are flagged as high severity: a direct path to bill abuse. Scantient tests per-IP and per-user rate limiting signals.",
             },
             {
               title: "Data Leakage Signals",
               severity: "High",
               severityColor: "text-orange-600 bg-orange-50 border-orange-200 dark:bg-orange-950/30 dark:border-orange-800",
-              body: "Checks API responses for unintentional data exposure . internal server details, error stack traces, user data fields, and system prompt contents. Also flags verbose error messages that help attackers understand your backend architecture.",
+              body: "Checks API responses for unintentional data exposure: internal server details, error stack traces, user data fields, and system prompt contents. Also flags verbose error messages that help attackers understand your backend architecture.",
             },
             {
               title: "CORS Configuration",
@@ -193,24 +193,24 @@ export default function AiSecurityPage() {
           How it works
         </h2>
         <p className="mt-4 text-base leading-relaxed text-dusty-denim-700 dark:text-dusty-denim-400">
-          No setup. No SDK. No agents. Just your deployed URL.
+          No setup. No SDK. No agents. Your deployed URL is all it takes.
         </p>
         <div className="mt-10 grid gap-8 sm:grid-cols-3">
           {[
             {
               step: "01",
               title: "Enter your URL",
-              body: "Paste your app's URL . the live, deployed version. No staging environments, no localhost. Scantient scans the same surface an attacker sees.",
+              body: "Paste your app's URL, the live deployed version. No staging environments, no localhost. Scantient scans the same surface an attacker sees.",
             },
             {
               step: "02",
               title: "60-second scan",
-              body: "Scantient crawls your app, inspects HTTP responses, checks API routes, probes headers, and tests CORS . all from the outside. No code access, no npm install.",
+              body: "Scantient crawls your app, inspects HTTP responses, checks API routes, probes headers, and tests CORS, all from the outside. No code access, no npm install.",
             },
             {
               step: "03",
               title: "Actionable report",
-              body: "You get a scored security report: what's broken, how bad it is, and a specific one-liner to fix each issue. Not vague recommendations . exact fixes.",
+              body: "You get a scored security report: what's broken, how bad it is, and a specific one-liner to fix each issue. Not vague recommendations. Exact fixes.",
             },
           ].map((item) => (
             <div key={item.step} className="relative">
@@ -260,7 +260,7 @@ export default function AiSecurityPage() {
           Find your AI app&apos;s vulnerabilities before your users do
         </h2>
         <p className="mx-auto mt-3 max-w-xl text-base leading-relaxed text-dusty-denim-700 dark:text-dusty-denim-400">
-          No signup required. No credit card. Just paste your URL and get an instant security report.
+          No signup required. No credit card. Paste your URL and get an instant security report.
         </p>
         <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
           <Link

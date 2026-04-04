@@ -107,8 +107,8 @@ const faqs = [
     a: "Yes. We verify your SSL certificate status on every scan and alert you at 30, 14, and 7 days before expiry. A lapsed certificate takes your site offline for every user.",
   },
   {
-    q: "How fast is the setup?",
-    a: "Under 2 minutes. Choose a plan, add your app URL, and Scantient starts scanning immediately. No SDK integration, no configuration files, no developer tickets.",
+    q: "Does Scantient work on any framework or hosting platform?",
+    a: "Yes. Scantient scans any public URL regardless of framework or host. Next.js on Vercel, Django on Render, Rails on Heroku, PHP on shared hosting. If it has a URL, Scantient scans it.",
   },
 ];
 
@@ -326,7 +326,7 @@ export default function LandingPage() {
         <section id="features" className="px-6 py-24 sm:py-32" style={{ background: "linear-gradient(to bottom, var(--color-hero-edge) 0%, var(--color-findings-bg) 8%, var(--color-findings-bg) 100%)" }}>
           <div className="mx-auto max-w-[1200px]">
             <h2 className="mb-3 text-center text-3xl font-extrabold tracking-tight sm:text-4xl" style={{ color: "var(--color-heading)" }}>
-              20 Security Checks That Keep Your Users Safe
+              20 Checks. Every Scan. Zero Setup.
             </h2>
             <p className="mb-16 text-center" style={{ color: "var(--color-muted)" }}>
               20 essential security checks. Every scan. Zero setup. No developer required.
@@ -387,7 +387,7 @@ export default function LandingPage() {
 
         {/* ── INTEGRATIONS ── */}
         <section className="mx-auto max-w-[1200px] px-6 py-24 text-center sm:py-32" style={{ background: "var(--color-section-base)" }}>
-          <h2 className="mb-3 text-3xl font-extrabold tracking-tight sm:text-4xl" style={{ color: "var(--color-heading)" }}>Works with your stack</h2>
+          <h2 className="mb-3 text-3xl font-extrabold tracking-tight sm:text-4xl" style={{ color: "var(--color-heading)" }}>Drops into any stack in 60 seconds</h2>
           <p className="mb-12" style={{ color: "var(--color-muted)" }}>Integrates with the tools your team already uses</p>
 
           <div className="mb-4 flex items-center justify-center">

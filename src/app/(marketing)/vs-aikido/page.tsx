@@ -42,14 +42,14 @@ export default function VsAikidoPage() {
             <span className="text-prussian-blue-600 dark:text-prussian-blue-400 transition-colors">Dev-First Security Tools Compared</span>
           </h1>
           <p className="mx-auto mt-8 max-w-[640px] text-lg leading-relaxed text-dusty-denim-700 dark:text-dusty-denim-500 transition-colors">
-            Both tools are built for developers. But they attack the problem from opposite ends of the stack . one starts at the code, the other starts at the live app. Here&apos;s which one fits where you are.
+            Both tools are built for developers. But they attack the problem from opposite ends of the stack. One starts at the code, the other starts at the live app. Here's which one fits where you are.
           </p>
           <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link
               href="/score"
               className="rounded-lg bg-prussian-blue-600 dark:bg-prussian-blue-500 px-8 py-3.5 text-sm font-semibold text-white shadow-lg shadow-prussian-blue-600/25 dark:shadow-prussian-blue-500/20 transition-all hover:bg-prussian-blue-700 dark:hover:bg-prussian-blue-600 hover:shadow-xl hover:shadow-prussian-blue-700/40 dark:hover:shadow-prussian-blue-600/40 active:scale-95"
             >
-              Run a free scan . 60 seconds
+              Run a free scan, 60 seconds
             </Link>
             <Link
               href="/pricing"
@@ -65,13 +65,13 @@ export default function VsAikidoPage() {
       <section className="mx-auto max-w-[1200px] px-6 py-16">
         <div className="mx-auto max-w-3xl text-dusty-denim-700 dark:text-dusty-denim-400 space-y-6 text-base leading-relaxed">
           <p>
-            Aikido Security has built a compelling all-in-one developer security platform. They cover static analysis (SAST), dependency scanning (SCA), container scanning, secrets detection, cloud posture (CSPM), and dynamic scanning (DAST) . all in one dashboard. If you&apos;re building a product and want one security tool that handles everything from code commit to cloud deployment, Aikido is worth looking at seriously.
+            Aikido Security has built a compelling all-in-one developer security platform. They cover static analysis (SAST), dependency scanning (SCA), container scanning, secrets detection, cloud posture (CSPM), and dynamic scanning (DAST), all in one dashboard. If you're building a product and want one security tool that handles everything from code commit to cloud deployment, Aikido is worth looking at seriously.
           </p>
           <p>
-            Scantient does one thing: it scans your deployed app externally and tells you what your API security posture looks like right now . from the outside, the same way an attacker sees it. No code access, no CI/CD integration, no cloud credentials. Just a URL.
+            Scantient does one thing: it scans your deployed app externally and tells you what your API security posture looks like right now, from the outside, the same way an attacker sees it. No code access, no CI/CD integration, no cloud credentials. Just a URL.
           </p>
           <p>
-            The question isn&apos;t &quot;which is better.&quot; It&apos;s &quot;which problem are you actually trying to solve today?&quot;
+            The question isn't "which is better." It's "which problem are you trying to solve today?"
           </p>
         </div>
       </section>
@@ -102,7 +102,7 @@ export default function VsAikidoPage() {
                 { feature: "Secrets detection", aikido: "Yes (in-code)", scantient: "Yes (exposed in deployed app)" },
                 { feature: "DAST / external scanning", aikido: "Yes (part of platform)", scantient: "Primary feature" },
                 { feature: "API security headers check", aikido: "Partial", scantient: "Deep (CORS, CSP, HSTS, and 20+ checks)" },
-                { feature: "LTD pricing", aikido: "No (subscription only)", scantient: "Yes . $79 one-time" },
+                { feature: "LTD pricing", aikido: "No (subscription only)", scantient: "Yes: $79 one-time" },
                 { feature: "Starting price", aikido: "~$314/mo (Developer plan)", scantient: "$29/mo or $79 lifetime" },
                 { feature: "Target audience", aikido: "Dev teams, growing startups, enterprise", scantient: "Indie devs, solo founders, small SaaS teams" },
               ].map((row) => (
@@ -126,7 +126,7 @@ export default function VsAikidoPage() {
               <h3 className="text-xl font-bold text-ink-black-950 dark:text-alabaster-grey-50 mb-6">Choose Aikido when…</h3>
               <ul className="space-y-3">
                 {[
-                  "You want a single platform covering your full security surface . code, deps, containers, cloud",
+                  "You want a single platform covering your full security surface: code, deps, containers, cloud",
                   "Your team has a dedicated engineering workflow and can integrate tools into CI/CD",
                   "You're scaling past 10 developers and need security visibility across multiple repos",
                   "You have cloud infrastructure (AWS, GCP, Azure) and need posture management",
@@ -144,8 +144,8 @@ export default function VsAikidoPage() {
               <h3 className="text-xl font-bold text-ink-black-950 dark:text-alabaster-grey-50 mb-6">Choose Scantient when…</h3>
               <ul className="space-y-3">
                 {[
-                  "You just deployed and want to know your security posture in the next 60 seconds",
-                  "You don't want to connect a GitHub repo or cloud account . you just have a URL",
+                  "You deployed and want to know your security posture in the next 60 seconds",
+                  "You don't want to connect a GitHub repo or cloud account. You have a URL.",
                   "You're an indie dev or solo founder and $300+/mo isn't in the budget",
                   "You want a $79 lifetime deal and zero recurring security tooling costs",
                   "You care most about what attackers see: exposed secrets, CORS, headers, open endpoints",
@@ -171,13 +171,13 @@ export default function VsAikidoPage() {
               Aikido is one of the most impressive security platforms built for developers in recent memory. They&apos;ve crammed genuine security value into a developer-friendly interface, and their growth reflects that. If you&apos;re building a funded startup and have a team of developers shipping code regularly, Aikido is worth serious evaluation.
             </p>
             <p>
-              But Aikido requires you to give it access to your code repositories and cloud accounts. That&apos;s a meaningful ask . especially for early-stage founders, freelancers building client projects, or anyone who wants to audit a deployed app quickly without setting up an entire security program first.
+              But Aikido requires you to give it access to your code repositories and cloud accounts. That's a meaningful ask, especially for early-stage founders, freelancers building client projects, or anyone who wants to audit a deployed app quickly without setting up an entire security program first.
             </p>
             <p>
-              Scantient is more like a zero-friction security check. You get an external view of your app . the same one attackers get . without installing anything, connecting any account, or spending more than 60 seconds. For an indie dev who just pushed to Vercel and wants to know if they missed anything obvious before tweeting their launch, that&apos;s not a consolation prize. It&apos;s the right tool.
+              Scantient is more like a zero-friction security check. You get an external view of your app, the same one attackers get, without installing anything, connecting any account, or spending more than 60 seconds. For an indie dev who pushed to Vercel and wants to know if they missed anything obvious before tweeting their launch, that's not a consolation prize. It's the right tool.
             </p>
             <p>
-              There&apos;s also a strong &quot;both&quot; case here. Use Scantient for fast external spot-checks after every deploy. Use Aikido if and when you need comprehensive code-to-cloud coverage. They don&apos;t compete on the same dimension . one is a reconnaissance tool, the other is a full security program.
+              There's also a strong "both" case here. Use Scantient for fast external spot-checks after every deploy. Use Aikido if and when you need comprehensive code-to-cloud coverage. They don't compete on the same dimension. One is a reconnaissance tool, the other is a full security program.
             </p>
             <p>
               Start with the free scan. <Link href="/score" className="text-prussian-blue-600 hover:underline">Run it right now</Link> . no account, no setup, 60 seconds.
@@ -190,7 +190,7 @@ export default function VsAikidoPage() {
       <section className="border-t border-alabaster-grey-200 dark:border-ink-black-800 px-6 py-24">
         <div className="mx-auto max-w-[640px] text-center">
           <h2 className="text-3xl font-extrabold tracking-tight text-ink-black-950 dark:text-alabaster-grey-50">
-            See your external security score . free
+            See your external security score, free
           </h2>
           <p className="mt-4 text-base text-dusty-denim-700 dark:text-dusty-denim-400">
             Paste your URL. Get your security posture in 60 seconds. No GitHub access required.
@@ -206,7 +206,7 @@ export default function VsAikidoPage() {
               href="/pricing"
               className="rounded-lg border border-alabaster-grey-200 dark:border-ink-black-800 bg-white dark:bg-ink-black-900 px-8 py-3.5 text-sm font-semibold text-dusty-denim-700 dark:text-dusty-denim-100 transition-all hover:bg-alabaster-grey-50 active:scale-95"
             >
-              Get lifetime access . $79
+              Get lifetime access: $79
             </Link>
           </div>
           <p className="mt-6 text-xs text-dusty-denim-500">

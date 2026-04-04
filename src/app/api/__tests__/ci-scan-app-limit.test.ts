@@ -81,7 +81,6 @@ beforeEach(() => {
   apiFindFirst.mockResolvedValue(makeApiKey());
   apiUpdate.mockResolvedValue({ id: "key-1" });
   auditCreate.mockResolvedValue({ id: "audit-1" });
-  subscriptionFindUnique.mockResolvedValue({ tier: "PRO" });
   findApp.mockResolvedValue(null); // app not found → will try to create
   countApps.mockResolvedValue(0);
   createApp.mockResolvedValue({

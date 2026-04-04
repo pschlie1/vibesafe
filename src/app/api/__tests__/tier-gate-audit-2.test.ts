@@ -563,8 +563,8 @@ describe("H-5: authenticateApiKey . tier re-check", () => {
       keyHash: "hash",
       keyPrefix: "vs_test_",
       expiresAt: null,
+        org: { subscription: { tier: "FREE" } },
     });
-    subscriptionFindUnique.mockResolvedValue({ orgId: "org_downgraded", tier: "FREE" });
 
     const { authenticateApiKey } = await import("@/lib/api-auth");
     const req = new Request("http://localhost", {
@@ -581,8 +581,8 @@ describe("H-5: authenticateApiKey . tier re-check", () => {
       keyHash: "hash",
       keyPrefix: "vs_test_",
       expiresAt: null,
+        org: { subscription: null },
     });
-    subscriptionFindUnique.mockResolvedValue(null);
 
     const { authenticateApiKey } = await import("@/lib/api-auth");
     const req = new Request("http://localhost", {
@@ -599,8 +599,8 @@ describe("H-5: authenticateApiKey . tier re-check", () => {
       keyHash: "hash",
       keyPrefix: "vs_test_",
       expiresAt: null,
+        org: { subscription: { tier: "PRO" } },
     });
-    subscriptionFindUnique.mockResolvedValue({ orgId: "org_pro", tier: "PRO" });
     apiKeyUpdate.mockResolvedValue({});
     auditLogCreate.mockResolvedValue({});
 
@@ -619,8 +619,8 @@ describe("H-5: authenticateApiKey . tier re-check", () => {
       keyHash: "hash",
       keyPrefix: "vs_test_",
       expiresAt: null,
+        org: { subscription: { tier: "ENTERPRISE_PLUS" } },
     });
-    subscriptionFindUnique.mockResolvedValue({ orgId: "org_ep", tier: "ENTERPRISE_PLUS" });
     apiKeyUpdate.mockResolvedValue({});
     auditLogCreate.mockResolvedValue({});
 
@@ -639,8 +639,8 @@ describe("H-5: authenticateApiKey . tier re-check", () => {
       keyHash: "hash",
       keyPrefix: "vs_test_",
       expiresAt: null,
+        org: { subscription: { tier: "STARTER" } },
     });
-    subscriptionFindUnique.mockResolvedValue({ orgId: "org_starter", tier: "STARTER" });
 
     const { authenticateApiKey } = await import("@/lib/api-auth");
     const req = new Request("http://localhost", {

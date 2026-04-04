@@ -61,7 +61,7 @@ function makeRequest(url = "https://example.com") {
   });
 }
 
-function makeApiKey(orgId = "org-1") {
+function makeApiKey(orgId = "org-1", tier = "PRO") {
   return {
     id: "key-1",
     orgId,
@@ -70,6 +70,7 @@ function makeApiKey(orgId = "org-1") {
     expiresAt: null,
     keyHash: "abc123",
     keyPrefix: "vs_test",
+    org: { subscription: { tier } },
   };
 }
 

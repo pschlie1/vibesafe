@@ -49,6 +49,7 @@ const PUBLIC_PATHS = [
   "/api/auth/forgot-password",
   "/api/auth/verify-email",
   "/api/auth/resend-verification",
+  "/api/auth/confirm-email-change",
   "/api/auth/sso",
   "/api/stripe/webhook",
   "/api/cron/run",

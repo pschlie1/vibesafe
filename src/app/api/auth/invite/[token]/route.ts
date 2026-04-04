@@ -84,8 +84,13 @@ export async function POST(
     where: { email: invite.email },
   });
   if (existing) {
+    // The user already has an account. Since each account belongs to exactly one org,
+    // we can't auto-join them to this org. Direct them to contact support or the org owner.
     return NextResponse.json(
-      { error: "An account with this email already exists" },
+      {
+        error: "An account with this email already exists. Each account belongs to one organization — please contact the organization owner to transfer your account, or use a different email address.",
+        code: "ACCOUNT_EXISTS",
+      },
       { status: 409 },
     );
   }

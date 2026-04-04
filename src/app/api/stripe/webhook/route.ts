@@ -270,6 +270,40 @@ export async function POST(req: Request) {
       }
       break;
     }
+
+    case "customer.subscription.trial_will_end": {
+      // Fired 3 days before a trial ends. Mark the subscription as TRIALING
+      // (in case it was set otherwise) and fire an analytics event so we can
+      // trigger a trial-ending email via our email provider.
+      const obj = event.data.object as Stripe.Subscription;
+      const existing = await db.subscription.findFirst({
+        where: { stripeSubscriptionId: obj.id },
+      });
+      if (!existing) break;
+
+      try {
+        await db.subscription.update({
+          where: { id: existing.id },
+          data: {
+            status: "TRIALING",
+            trialEndsAt: obj.trial_end ? new Date(obj.trial_end * 1000) : null,
+          },
+        });
+      } catch (err) {
+        logApiError(err, { route: "/api/stripe/webhook", method: "POST", orgId: existing.orgId, details: { event: event.type, eventId: event.id } });
+        break;
+      }
+
+      await trackEvent({
+        event: "trial_will_end",
+        orgId: existing.orgId,
+        properties: {
+          source: "customer.subscription.trial_will_end",
+          trialEndsAt: obj.trial_end ? new Date(obj.trial_end * 1000).toISOString() : null,
+        },
+      });
+      break;
+    }
   }
 
   return NextResponse.json({ received: true });

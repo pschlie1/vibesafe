@@ -107,7 +107,7 @@ vi.mock("node:crypto", async (importOriginal) => {
 });
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
-function makeApiKey(orgId = "org-pro") {
+function makeApiKey(orgId = "org-pro", tier: string | null = "PRO") {
   return {
     id: "key-1",
     orgId,
@@ -115,6 +115,7 @@ function makeApiKey(orgId = "org-pro") {
     keyPrefix: "vs_test",
     expiresAt: null,
     lastUsedAt: null,
+    org: { subscription: tier ? { tier } : null },
   };
 }
 
@@ -128,13 +129,12 @@ function adminSession(orgId = "org-pro") {
 describe("NC-1: authenticateApiKeyHeader . tier check", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    apiKeyFindFirst.mockResolvedValue(makeApiKey("org-free"));
+    apiKeyFindFirst.mockResolvedValue(makeApiKey("org-free", "FREE"));
     apiKeyUpdate.mockResolvedValue({});
     auditLogCreate.mockResolvedValue({});
   });
 
   it("returns null for FREE org API key", async () => {
-    subscriptionFindUnique.mockResolvedValue({ tier: "FREE" });
     const { authenticateApiKeyHeader } = await import("@/lib/api-auth");
     const req = new Request("http://localhost", {
       headers: { "x-api-key": "vs_testkey" },
@@ -144,8 +144,7 @@ describe("NC-1: authenticateApiKeyHeader . tier check", () => {
   });
 
   it("returns null for STARTER org API key", async () => {
-    subscriptionFindUnique.mockResolvedValue({ tier: "STARTER" });
-    apiKeyFindFirst.mockResolvedValue(makeApiKey("org-starter"));
+    apiKeyFindFirst.mockResolvedValue(makeApiKey("org-starter", "STARTER"));
     const { authenticateApiKeyHeader } = await import("@/lib/api-auth");
     const req = new Request("http://localhost", {
       headers: { "x-api-key": "vs_testkey" },
@@ -155,7 +154,6 @@ describe("NC-1: authenticateApiKeyHeader . tier check", () => {
   });
 
   it("returns null when no subscription record exists (defaults to FREE)", async () => {
-    subscriptionFindUnique.mockResolvedValue(null);
     const { authenticateApiKeyHeader } = await import("@/lib/api-auth");
     const req = new Request("http://localhost", {
       headers: { "x-api-key": "vs_testkey" },
@@ -165,8 +163,7 @@ describe("NC-1: authenticateApiKeyHeader . tier check", () => {
   });
 
   it("returns orgId for PRO org API key", async () => {
-    subscriptionFindUnique.mockResolvedValue({ tier: "PRO" });
-    apiKeyFindFirst.mockResolvedValue(makeApiKey("org-pro"));
+    apiKeyFindFirst.mockResolvedValue(makeApiKey("org-pro", "PRO"));
     const { authenticateApiKeyHeader } = await import("@/lib/api-auth");
     const req = new Request("http://localhost", {
       headers: { "x-api-key": "vs_testkey" },
@@ -176,8 +173,7 @@ describe("NC-1: authenticateApiKeyHeader . tier check", () => {
   });
 
   it("returns orgId for ENTERPRISE org API key", async () => {
-    subscriptionFindUnique.mockResolvedValue({ tier: "ENTERPRISE" });
-    apiKeyFindFirst.mockResolvedValue(makeApiKey("org-ent"));
+    apiKeyFindFirst.mockResolvedValue(makeApiKey("org-ent", "ENTERPRISE"));
     const { authenticateApiKeyHeader } = await import("@/lib/api-auth");
     const req = new Request("http://localhost", {
       headers: { "x-api-key": "vs_testkey" },
@@ -187,8 +183,7 @@ describe("NC-1: authenticateApiKeyHeader . tier check", () => {
   });
 
   it("returns orgId for ENTERPRISE_PLUS org API key", async () => {
-    subscriptionFindUnique.mockResolvedValue({ tier: "ENTERPRISE_PLUS" });
-    apiKeyFindFirst.mockResolvedValue(makeApiKey("org-ep"));
+    apiKeyFindFirst.mockResolvedValue(makeApiKey("org-ep", "ENTERPRISE_PLUS"));
     const { authenticateApiKeyHeader } = await import("@/lib/api-auth");
     const req = new Request("http://localhost", {
       headers: { "x-api-key": "vs_testkey" },
@@ -390,9 +385,8 @@ describe("NC-2: customer.subscription.updated . tier sync", () => {
 describe("NH-1: MCP trigger_scan . rate limit", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    apiKeyFindFirst.mockResolvedValue(makeApiKey("org-pro"));
+    apiKeyFindFirst.mockResolvedValue(makeApiKey("org-pro", "PRO"));
     apiKeyUpdate.mockResolvedValue({});
-    subscriptionFindUnique.mockResolvedValue({ tier: "PRO" });
     auditLogCreate.mockResolvedValue({});
     monitoredAppFindFirst.mockResolvedValue({
       id: "app-1",

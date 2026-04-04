@@ -144,7 +144,7 @@ const faqs = [
   },
   {
     q: "Do you offer annual discounts?",
-    a: "Yes. Pro plans save up to 20% when billed annually. Enterprise customers can negotiate custom annual rates.",
+    a: "Yes. Pro plans save up to 20% when billed annually. Enterprise customers negotiate custom annual rates.",
   },
   {
     q: "What happens after the free trial?",
@@ -152,7 +152,7 @@ const faqs = [
   },
   {
     q: "Is there a minimum contract length?",
-    a: "No. All monthly plans can be canceled anytime. Annual plans renew after 12 months.",
+    a: "No. All monthly plans are cancelable anytime. Annual plans renew after 12 months.",
   },
   {
     q: "Who should choose which plan?",

@@ -19,7 +19,7 @@ const checks: Check[] = [
   { icon: "🚀", title: "Performance and Uptime Alerts", outcome: "Your outcome: Know about outages before your CEO calls.", desc: "We baseline your response time and alert if load time jumps to 8 seconds. Get notified of 500 errors within hours, before customers report them." },
   { icon: "🔗", title: "Malicious External Scripts", outcome: "Your outcome: No backdoors from compromised CDNs.", desc: "Every third-party script is a potential breach. We detect unencrypted loads, suspicious data URIs, and supply chain compromises." },
   { icon: "📋", title: "Form and API Security Flaws", outcome: "Your outcome: Forms submit to YOUR domain, not attacker's.", desc: "We catch forms submitting to wrong domains, missing CSRF tokens, and unencrypted API calls. The stuff compliance auditors find." },
-  { icon: "🌐", title: "CORS and API Exposure Issues", outcome: "Your outcome: Competitors can't read your customer data via API.", desc: "One misconfigured CORS header = your API exposed. We detect overpermissive access." },
+  { icon: "🌐", title: "CORS and API Exposure Issues", outcome: "Your outcome: Competitors are blocked from reading your customer data via API.", desc: "One misconfigured CORS header = your API exposed. We detect overpermissive access." },
   { icon: "🔐", title: "SSL Certificate Expiry", outcome: "Your outcome: Your site never goes dark due to expired SSL.", desc: "A lapsed certificate = 100% downtime. We alert 30, 14, and 7 days before expiry." },
   { icon: "📡", title: "Subdomain Takeover Risks", outcome: "Your outcome: Forgotten DNS records aren't free subdomains for attackers.", desc: "We detect DNS misconfigurations, orphaned CNAME records, and unused subdomains." },
   { icon: "⏱️", title: "Load Time Regression Detection", outcome: "Your outcome: Catch performance degradation before users bounce.", desc: "Baseline your app's speed. If it suddenly takes 8 seconds to load, you know before your users do." },
@@ -107,7 +107,7 @@ const faqs = [
     a: "Yes. We verify your SSL certificate status on every scan and alert you at 30, 14, and 7 days before expiry. A lapsed certificate takes your site offline for every user.",
   },
   {
-    q: "How quickly can I get started?",
+    q: "How fast is the setup?",
     a: "Under 2 minutes. Choose a plan, add your app URL, and Scantient starts scanning immediately. No SDK integration, no configuration files, no developer tickets.",
   },
 ];
@@ -178,7 +178,7 @@ function TerminalDemo() {
           <div className="w-3 h-3 rounded-full bg-white/10" />
           <div className="w-3 h-3 rounded-full bg-white/10" />
         </div>
-        <span className="text-xs text-muted mx-auto font-mono tracking-wide">scantient — api.myapp.com</span>
+        <span className="text-xs text-muted mx-auto font-mono tracking-wide">scantient: api.myapp.com</span>
         {phase >= 6 && (
           <span className="text-xs font-semibold text-severity-critical animate-pulse">3 critical</span>
         )}
@@ -364,7 +364,7 @@ export default function LandingPage() {
             <div className="grid gap-8 sm:grid-cols-3">
               {[
                 { step: "01", title: "Paste your URL", desc: "Drop in your app URL. No code changes, no SDK, no developer required. Takes 10 seconds.", icon: "🔗" },
-                { step: "02", title: "60-second scan", desc: "We run 20 external security checks — the same probes an attacker would run. Results appear before your coffee is ready.", icon: "⚡" },
+                { step: "02", title: "60-second scan", desc: "We run 20 external security checks, the same probes an attacker would run. Results appear before your coffee is ready.", icon: "⚡" },
                 { step: "03", title: "Instant security report", desc: "See exactly what is exposed, what to fix, and how urgent each issue is. Share with your team or export for compliance.", icon: "📋" },
               ].map((item) => (
                 <div key={item.step} className="rounded-2xl border p-8" style={{ background: "var(--color-card-bg)", borderColor: "var(--color-stroke)" }}>

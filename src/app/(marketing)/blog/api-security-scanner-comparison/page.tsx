@@ -82,7 +82,7 @@ export default function ApiSecurityScannerComparisonPage() {
       "name": "How do API security scanners differ from each other?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "API security scanners vary by depth, focus area, and when they run. Some focus on static analysis, others on runtime behavior. Scantient focuses on pre-deploy checks that run in CI — catching issues before they reach production rather than after."
+        "text": "API security scanners vary by depth, focus area, and when they run. Some focus on static analysis, others on runtime behavior. Scantient focuses on pre-deploy checks that run in CI, catching issues before they reach production rather than after."
       }
     },
     {

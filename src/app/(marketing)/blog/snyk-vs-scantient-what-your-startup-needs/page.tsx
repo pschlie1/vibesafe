@@ -48,7 +48,7 @@ export default function SnykVsScantientPage() {
       "name": "How does Scantient compare to Snyk?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Snyk focuses on dependency vulnerability scanning and static code analysis. Scantient focuses on API security scanning — testing your running API endpoints for misconfigurations and vulnerabilities. The tools address different parts of your security posture."
+        "text": "Snyk focuses on dependency vulnerability scanning and static code analysis. Scantient focuses on API security scanning, testing your running API endpoints for misconfigurations and vulnerabilities. The tools address different parts of your security posture."
       }
     },
     {

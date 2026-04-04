@@ -1,21 +1,22 @@
 import { db } from "@/lib/db";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
+import { SignJWT, jwtVerify, decodeJwt } from "jose";
 import { cookies } from "next/headers";
 import type { UserRole } from "@prisma/client";
 
-function getJwtSecret(): string {
+function getJwtSecret(): Uint8Array {
   const secret = process.env.JWT_SECRET;
   const isBuildPhase = process.env.NEXT_PHASE === "phase-production-build";
 
   // Allow Next.js build to import route modules without runtime secrets.
-  if (!secret && isBuildPhase) return "build-phase-placeholder-secret";
-  if (!secret) throw new Error("JWT_SECRET environment variable is required");
-  return secret;
+  const value = (!secret && isBuildPhase) ? "build-phase-placeholder-secret" : secret;
+  if (!value) throw new Error("JWT_SECRET environment variable is required");
+  return new TextEncoder().encode(value);
 }
+
 const SESSION_COOKIE = "scantient-session";
 const SESSION_DURATION = 24 * 60 * 60; // 24 hours in seconds
-/** Exported for tests only . frequency at which sessions are re-validated against the DB. */
+/** Exported for tests only — frequency at which sessions are re-validated against the DB. */
 export const REFRESH_THRESHOLD = 5 * 60; // 5 minutes in seconds
 
 function getSessionCookieOptions(isProductionOverride?: boolean) {
@@ -51,24 +52,23 @@ export async function verifyPassword(password: string, hash: string): Promise<bo
   return bcrypt.compare(password, hash);
 }
 
-function signToken(payload: SessionUser): string {
-  return jwt.sign(payload, getJwtSecret(), {
-    algorithm: "HS256",
-    expiresIn: SESSION_DURATION,
-    issuer: "scantient",
-    audience: "scantient-app",
-
-  });
+async function signToken(payload: SessionUser): Promise<string> {
+  return new SignJWT(payload as unknown as Record<string, unknown>)
+    .setProtectedHeader({ alg: "HS256" })
+    .setIssuer("scantient")
+    .setAudience("scantient-app")
+    .setExpirationTime(`${SESSION_DURATION}s`)
+    .setIssuedAt()
+    .sign(getJwtSecret());
 }
 
-function verifyToken(token: string): SessionUser | null {
+async function verifyToken(token: string): Promise<SessionUser | null> {
   try {
-    return jwt.verify(token, getJwtSecret(), {
-      algorithms: ["HS256"],
+    const { payload } = await jwtVerify(token, getJwtSecret(), {
       issuer: "scantient",
       audience: "scantient-app",
-
-    }) as unknown as SessionUser;
+    });
+    return payload as unknown as SessionUser;
   } catch {
     return null;
   }
@@ -92,7 +92,7 @@ export async function createSession(userId: string): Promise<SessionUser> {
     orgSlug: user.org.slug,
   };
 
-  const token = signToken(session);
+  const token = await signToken(session);
   const cookieStore = await cookies();
   cookieStore.set(SESSION_COOKIE, token, getSessionCookieOptions());
 
@@ -108,12 +108,12 @@ export async function getSession(): Promise<SessionUser | null> {
   const cookieStore = await cookies();
   const token = cookieStore.get(SESSION_COOKIE)?.value;
   if (!token) return null;
-  const session = verifyToken(token);
+  const session = await verifyToken(token);
   if (!session) return null;
 
   // Decode to get iat (issued-at) for session invalidation and refresh checks.
-  const decoded = jwt.decode(token) as { iat?: number } | null;
-  const tokenIat = decoded?.iat ?? 0;
+  const decoded = decodeJwt(token);
+  const tokenIat = decoded.iat ?? 0;
   const tokenIssuedAt = new Date(tokenIat * 1000);
   const age = Math.floor(Date.now() / 1000) - tokenIat;
 
@@ -143,7 +143,7 @@ export async function getSession(): Promise<SessionUser | null> {
       orgName: user.org.name,
       orgSlug: user.org.slug,
     };
-    const newToken = signToken(refreshed);
+    const newToken = await signToken(refreshed);
     const isSecureRefresh = process.env.NODE_ENV === "production" || process.env.VERCEL_ENV === "production";
     cookieStore.set(SESSION_COOKIE, newToken, getSessionCookieOptions(isSecureRefresh));
     return refreshed;

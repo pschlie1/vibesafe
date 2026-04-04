@@ -64,7 +64,7 @@ export default function SevenApiSecurityMistakesPage() {
       "name": "How can I check my API for security mistakes before deploying?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Run automated security scans as part of your CI pipeline. Scantient checks 20 API security issues including authentication, CORS, JWT, and rate limiting on every pull request — before code reaches production."
+        "text": "Run automated security scans as part of your CI pipeline. Scantient checks 20 API security issues including authentication, CORS, JWT, and rate limiting on every pull request, before code reaches production."
       }
     }
   ]

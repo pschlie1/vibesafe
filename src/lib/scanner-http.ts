@@ -16,6 +16,10 @@ import {
   checkDependencyVersions,
   checkExposedEndpoints,
   checkFormSecurity,
+  checkRateLimitEnforcement,
+  checkSQLInjection,
+  checkSubdomainTakeover,
+  checkSourceMapContents,
   checkInformationDisclosure,
   checkInlineScripts,
   checkMetaAndConfig,
@@ -303,10 +307,22 @@ export async function runHttpScanForApp(appId: string, context: ScanContext = {}
       },
     });
 
-    const [sslCertFindings, brokenLinkFindings, exposedEndpointFindings] = await Promise.all([
+    const [
+      sslCertFindings,
+      brokenLinkFindings,
+      exposedEndpointFindings,
+      rateLimitFindings,
+      sqlInjectionFindings,
+      subdomainTakeoverFindings,
+      sourceMapFindings,
+    ] = await Promise.all([
       checkSSLCertExpiry(app.url),
       checkBrokenLinks(html, app.url),
       checkExposedEndpoints(app.url),
+      checkRateLimitEnforcement(app.url),
+      checkSQLInjection(app.url),
+      checkSubdomainTakeover(app.url, html),
+      checkSourceMapContents(html, app.url),
     ]);
 
     const responseTimeMsSnapshot = Date.now() - start;
@@ -337,6 +353,10 @@ export async function runHttpScanForApp(appId: string, context: ScanContext = {}
       ...checkDependencyVersions(jsPayloads),
       ...sslCertFindings,
       ...brokenLinkFindings,
+      ...rateLimitFindings,
+      ...sqlInjectionFindings,
+      ...subdomainTakeoverFindings,
+      ...sourceMapFindings,
       // ── API-endpoint-only checks ─────────────────────────────────────────
       // Rate-limit headers, GraphQL introspection, API docs exposure, etc.
       // Only meaningful on /api/*, /v1/*, /graphql routes.

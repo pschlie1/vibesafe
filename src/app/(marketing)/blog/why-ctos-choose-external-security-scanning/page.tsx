@@ -48,7 +48,7 @@ export default function WhyCTOsChooseExternalScanningPage() {
       "name": "Why do CTOs choose external security scanning over internal tools?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "External scanners provide an objective view of what an attacker sees — not what internal teams assume is secure. They also remove the bias of developers checking their own work and provide audit-ready documentation for compliance purposes."
+        "text": "External scanners provide an objective view of what an attacker sees, not what internal teams assume is secure. They also remove the bias of developers checking their own work and provide audit-ready documentation for compliance purposes."
       }
     },
     {

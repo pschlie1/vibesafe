@@ -55,3 +55,7 @@ next-env.d.ts
 # GitHub Action build artifacts
 github-action/node_modules/
 # github-action/dist/ is intentionally committed - GitHub Actions requires the bundled index.js
+
+# Playwright
+/playwright-report/
+/test-results/

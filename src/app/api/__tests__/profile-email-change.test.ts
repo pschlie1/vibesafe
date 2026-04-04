@@ -215,8 +215,8 @@ describe("PATCH /api/auth/me", () => {
 // ─────────────────────────────────────────────────────────────────────────────
 
 describe("GET /api/auth/confirm-email-change", () => {
-  function makeToken(payload: object, expiresIn = "24h") {
-    return jwt.sign(payload, TEST_JWT_SECRET, { expiresIn });
+  function makeToken(payload: object, expiresIn: string | number = "24h") {
+    return jwt.sign(payload, TEST_JWT_SECRET, { expiresIn: expiresIn as import("jsonwebtoken").SignOptions["expiresIn"] });
   }
 
   it("returns 400 when token is missing", async () => {

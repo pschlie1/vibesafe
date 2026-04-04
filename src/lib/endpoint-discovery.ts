@@ -75,6 +75,73 @@ const FRAMEWORK_PATTERNS: Record<
       "/api/login",
     ],
   },
+  // Hono (Bun/Edge Workers — popular in vibe-coded apps 2025+)
+  hono: {
+    signals: [/hono/i, /x-powered-by.*hono/i, /\$hono/],
+    authPaths: [
+      "/api/auth/login",
+      "/api/auth/signup",
+      "/api/auth/logout",
+      "/api/auth/me",
+      "/auth/login",
+      "/auth/signup",
+    ],
+  },
+  // Elysia (Bun — common in vibe-coded Bun apps)
+  elysia: {
+    signals: [/elysia/i, /x-powered-by.*elysia/i],
+    authPaths: [
+      "/api/auth/login",
+      "/api/auth/signup",
+      "/api/auth/logout",
+      "/auth/login",
+      "/auth/signup",
+      "/user/login",
+    ],
+  },
+  // tRPC (commonly used in Next.js + Bun stacks)
+  trpc: {
+    signals: [/trpc/i, /__trpc/, /\/api\/trpc\//],
+    authPaths: [
+      "/api/trpc/auth.login",
+      "/api/trpc/auth.signup",
+      "/api/trpc/auth.logout",
+      "/api/trpc/user.me",
+    ],
+  },
+  // SvelteKit (popular in vibe-coded full-stack apps)
+  sveltekit: {
+    signals: [/__sveltekit/, /sveltekit/i, /\.svelte\./],
+    authPaths: [
+      "/api/auth/login",
+      "/api/auth/logout",
+      "/api/auth/register",
+      "/api/auth/session",
+      "/api/user",
+    ],
+  },
+  // Remix (React framework with server-side auth patterns)
+  remix: {
+    signals: [/__remix/, /remix/i, /\/\?_data=/],
+    authPaths: [
+      "/api/auth/login",
+      "/api/auth/logout",
+      "/api/auth/register",
+      "/auth/login",
+      "/auth/logout",
+    ],
+  },
+  // Fastify (Node.js . common in vibe-coded backend stacks)
+  fastify: {
+    signals: [/fastify/i, /x-powered-by.*fastify/i],
+    authPaths: [
+      "/api/auth/login",
+      "/api/auth/signup",
+      "/api/auth/logout",
+      "/auth/login",
+      "/auth/register",
+    ],
+  },
 };
 
 // ─── General auth wordlist ───────────────────────────────────────────────────
@@ -126,6 +193,16 @@ const AUTH_WORDLIST = [
   "/api/me",
   "/api/user",
   "/api/users/me",
+  // tRPC auth procedures (common in Next.js + Bun stacks)
+  "/api/trpc/auth.login",
+  "/api/trpc/auth.signup",
+  "/api/trpc/auth.signout",
+  "/api/trpc/user.me",
+  // Bun / Hono patterns
+  "/api/auth/me",
+  "/auth/me",
+  "/api/session",
+  "/session",
 ];
 
 // OpenAPI discovery paths

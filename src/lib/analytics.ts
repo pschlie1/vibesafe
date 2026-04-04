@@ -8,7 +8,8 @@ export type AnalyticsEventName =
   | "finding_resolved"
   | "builder_to_starter"
   | "starter_to_pro"
-  | "subscription_churned";
+  | "subscription_churned"
+  | "trial_will_end";
 
 interface AnalyticsEventInput {
   event: AnalyticsEventName;

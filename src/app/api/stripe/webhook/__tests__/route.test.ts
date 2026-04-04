@@ -515,6 +515,110 @@ describe("stripe webhook — replay idempotency", () => {
 });
 
 // ---------------------------------------------------------------------------
+// invoice.payment_succeeded
+// ---------------------------------------------------------------------------
+
+describe("stripe webhook — invoice.payment_succeeded", () => {
+  it("restores PAST_DUE subscription to ACTIVE on payment recovery", async () => {
+    const event = makeEvent("invoice.payment_succeeded", {
+      parent: { subscription_details: { subscription: "sub_recovery" } },
+    });
+    mockConstructEvent.mockReturnValue(event);
+    mockFindFirst.mockResolvedValue({
+      id: "sub_db_1",
+      orgId: "org_1",
+      stripeSubscriptionId: "sub_recovery",
+      status: "PAST_DUE",
+    });
+    mockUpdate.mockResolvedValue({});
+
+    const req = makeRequest("{}", { "stripe-signature": "sig" });
+    const res = await callRoute(req);
+
+    expect(res.status).toBe(200);
+    expect(mockUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: "sub_db_1" },
+        data: { status: "ACTIVE" },
+      }),
+    );
+  });
+
+  it("does not update subscription if already ACTIVE (idempotent)", async () => {
+    const event = makeEvent("invoice.payment_succeeded", {
+      parent: { subscription_details: { subscription: "sub_already_active" } },
+    });
+    mockConstructEvent.mockReturnValue(event);
+    mockFindFirst.mockResolvedValue({
+      id: "sub_db_2",
+      orgId: "org_2",
+      stripeSubscriptionId: "sub_already_active",
+      status: "ACTIVE",
+    });
+
+    const req = makeRequest("{}", { "stripe-signature": "sig" });
+    const res = await callRoute(req);
+
+    expect(res.status).toBe(200);
+    // Should NOT update since already ACTIVE
+    expect(mockUpdate).not.toHaveBeenCalled();
+  });
+
+  it("returns 200 with no DB write when subscription not found", async () => {
+    const event = makeEvent("invoice.payment_succeeded", {
+      parent: { subscription_details: { subscription: "sub_unknown" } },
+    });
+    mockConstructEvent.mockReturnValue(event);
+    mockFindFirst.mockResolvedValue(null);
+
+    const req = makeRequest("{}", { "stripe-signature": "sig" });
+    const res = await callRoute(req);
+
+    expect(res.status).toBe(200);
+    expect(mockUpdate).not.toHaveBeenCalled();
+  });
+
+  it("returns 200 when subscription ID is missing from invoice", async () => {
+    const event = makeEvent("invoice.payment_succeeded", {
+      parent: null,
+    });
+    mockConstructEvent.mockReturnValue(event);
+
+    const req = makeRequest("{}", { "stripe-signature": "sig" });
+    const res = await callRoute(req);
+
+    expect(res.status).toBe(200);
+    expect(mockUpdate).not.toHaveBeenCalled();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// customer.subscription.deleted — LTD protection
+// ---------------------------------------------------------------------------
+
+describe("stripe webhook — customer.subscription.deleted (LTD guard)", () => {
+  it("does NOT downgrade an LTD org even if a subscription deleted event arrives", async () => {
+    // Edge case: org was previously on a subscription before getting LTD;
+    // old subscription deletion should not overwrite LTD tier.
+    const event = makeEvent("customer.subscription.deleted", { id: "sub_old" });
+    mockConstructEvent.mockReturnValue(event);
+    mockFindFirst.mockResolvedValue({
+      id: "sub_db_ltd",
+      orgId: "org_ltd",
+      stripeSubscriptionId: "sub_old",
+      tier: "LTD",
+    });
+
+    const req = makeRequest("{}", { "stripe-signature": "sig" });
+    const res = await callRoute(req);
+
+    expect(res.status).toBe(200);
+    // LTD guard — should break early, no update
+    expect(mockUpdate).not.toHaveBeenCalled();
+  });
+});
+
+// ---------------------------------------------------------------------------
 // Unknown event type
 // ---------------------------------------------------------------------------
 

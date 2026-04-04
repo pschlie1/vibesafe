@@ -130,7 +130,7 @@ export async function POST(req: Request) {
       getJwtSecret(),
       { expiresIn: "24h" },
     );
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://scantient.com";
+    const appUrl = process.env.NEXT_PUBLIC_URL ?? "https://scantient.com";
     const verifyLink = `${appUrl}/verify-email?token=${verifyToken}`;
     await sendVerificationEmail(email, verifyLink);
   } catch (err) {
@@ -145,7 +145,7 @@ export async function POST(req: Request) {
   });
 
   // Fire-and-forget: onboarding welcome email
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? process.env.NEXT_PUBLIC_URL ?? "https://scantient.com";
+  const appUrl = process.env.NEXT_PUBLIC_URL ?? "https://scantient.com";
   const resendKey = process.env.RESEND_API_KEY;
   const fromEmail = process.env.ALERT_FROM_EMAIL ?? "noreply@scantient.com";
   if (resendKey) {

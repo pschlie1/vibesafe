@@ -86,7 +86,7 @@ export async function POST(req: Request) {
       { expiresIn: "1h" },
     );
 
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://scantient.com";
+    const appUrl = process.env.NEXT_PUBLIC_URL ?? "https://scantient.com";
     const resetLink = `${appUrl}/reset-password?token=${token}`;
 
     await sendPasswordResetEmail(email, resetLink);

@@ -20,6 +20,9 @@ import { z } from "zod";
 const envSchema = z.object({
   // ─── Required ──────────────────────────────────────────────────────────────
   DATABASE_URL: z.string().min(1, "DATABASE_URL is required"),
+  // DIRECT_URL is used for Prisma migrations and direct DB connections (bypassing PgBouncer).
+  // Not required for standard runtime ops but validated here when present.
+  DIRECT_URL: z.string().optional(),
   CRON_SECRET: z.string().min(16, "CRON_SECRET must be at least 16 characters"),
   JWT_SECRET: z.string().min(16, "JWT_SECRET must be at least 16 characters"),
 

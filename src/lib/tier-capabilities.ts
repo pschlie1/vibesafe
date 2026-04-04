@@ -13,7 +13,10 @@ const rank: Record<Tier, number> = {
   EXPIRED: 0,
   FREE: 1,
   STARTER: 2,
-  LTD: 2.5,
+  // LTD has identical capabilities to PRO (see tierCapabilities below).
+  // Rank must equal PRO so atLeast("LTD", "PRO") returns true and LTD users
+  // are not incorrectly blocked by feature gates that use atLeast.
+  LTD: 3,
   PRO: 3,
   ENTERPRISE: 4,
   ENTERPRISE_PLUS: 5,

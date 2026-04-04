@@ -193,21 +193,21 @@ describe("POST /api/stripe/portal", () => {
   it("returns 401 when unauthenticated", async () => {
     getSession.mockResolvedValueOnce(null);
     const { POST } = await import("@/app/api/stripe/portal/route");
-    const res = await POST(new Request("http://localhost/api/stripe/portal", { method: "POST" }));
+    const res = await POST();
     expect(res.status).toBe(401);
   });
 
   it("returns 404 when org has no stripeCustomerId", async () => {
     orgFindUnique.mockResolvedValueOnce({ id: "org_1", stripeCustomerId: null });
     const { POST } = await import("@/app/api/stripe/portal/route");
-    const res = await POST(new Request("http://localhost/api/stripe/portal", { method: "POST" }));
+    const res = await POST();
     expect(res.status).toBe(404);
   });
 
   it("returns 429 when rate limited", async () => {
     checkRateLimit.mockResolvedValueOnce({ allowed: false, retryAfterSeconds: 60 });
     const { POST } = await import("@/app/api/stripe/portal/route");
-    const res = await POST(new Request("http://localhost/api/stripe/portal", { method: "POST" }));
+    const res = await POST();
     expect(res.status).toBe(429);
   });
 
@@ -216,7 +216,7 @@ describe("POST /api/stripe/portal", () => {
     mockPortalCreate.mockResolvedValueOnce({ url: "https://billing.stripe.com/portal/abc" });
 
     const { POST } = await import("@/app/api/stripe/portal/route");
-    const res = await POST(new Request("http://localhost/api/stripe/portal", { method: "POST" }));
+    const res = await POST();
     expect(res.status).toBe(200);
 
     const json = await res.json();

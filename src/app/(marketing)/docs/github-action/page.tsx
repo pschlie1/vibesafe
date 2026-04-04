@@ -76,7 +76,7 @@ const steps = [
     step: "1",
     title: "Get your API key",
     content:
-      "Log in to Scantient and go to Settings > API Keys. Create a new key with a descriptive name like \"GitHub Actions\". Copy the key — it starts with vs_.",
+      "Log in to Scantient and go to Settings > API Keys. Create a new key with a descriptive name like \"GitHub Actions\". Copy the key (it starts with vs_).",
   },
   {
     step: "2",

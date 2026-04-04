@@ -284,12 +284,12 @@ function ScorePage() {
               <div className="rounded-xl border-2 border-warning/20 bg-warning/10 px-5 py-4">
                 <h2 className="text-base font-bold text-heading">
                   {result.findingsCount > 0
-                    ? `⚠️ You just found ${result.findingsCount} issue${result.findingsCount !== 1 ? "s" : ""}. What happens next?`
+                    ? `⚠️ Found ${result.findingsCount} issue${result.findingsCount !== 1 ? "s" : ""}. What happens next?`
                     : "✅ Clean scan! But what about next week?"}
                 </h2>
                 <p className="mt-1 text-sm text-heading">
                   {result.findingsCount > 0
-                    ? "This is a one-time snapshot. These issues could worsen, new ones could appear . and you won't know unless you scan again manually."
+                    ? "This is a one-time snapshot. These issues may worsen or new ones may appear, and you won't know unless you scan again manually."
                     : "Security posture changes constantly: new deploys, cert expirations, header regressions. Without monitoring, you'll find out too late."}
                 </p>
               </div>

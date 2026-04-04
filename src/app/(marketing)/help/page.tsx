@@ -15,7 +15,7 @@ const faqs = [
         a: "After signing in, go to your Dashboard and click 'Add App'. Enter the public URL of the application you want to monitor. Scantient will immediately run an initial security scan and begin continuous monitoring.",
       },
       {
-        q: "What does Scantient actually scan?",
+        q: "What does Scantient scan?",
         a: "Scantient performs HTTP-based security checks including: security headers (CSP, HSTS, X-Frame-Options), exposed API keys or credentials in JavaScript, client-side authentication bypass patterns, CORS misconfiguration, cookie security settings, SSL certificate validity and expiry, open redirects, information disclosure, and dependency exposure signals.",
       },
       {
@@ -54,7 +54,7 @@ const faqs = [
       },
       {
         q: "Can I change plans at any time?",
-        a: "Yes. You can upgrade or downgrade at any time from Settings → Billing. Upgrades take effect immediately; downgrades take effect at the next billing cycle.",
+        a: "Yes. Upgrades and downgrades are available any time from Settings → Billing. Upgrades take effect immediately. Downgrades take effect at the next billing cycle.",
       },
       {
         q: "Do you offer discounts for nonprofits or educational institutions?",
@@ -71,7 +71,7 @@ export default function HelpPage() {
         <p className="mb-4 text-sm font-medium uppercase tracking-widest text-muted">Help Center</p>
         <h1 className="text-4xl font-bold tracking-tight">How can we help?</h1>
         <p className="mt-4 text-lg text-muted">
-          Common questions about Scantient. Can&apos;t find what you&apos;re looking for?{" "}
+          Common questions about Scantient. Don&apos;t see your question?{" "}
           <Link href="/contact" className="text-heading underline hover:no-underline">
             Contact us
           </Link>.

@@ -209,7 +209,7 @@ export default function VsCheckmarxPage() {
       <section className="bg-ink-black-950 dark:bg-ink-black-900 px-6 py-24 text-center sm:py-32">
         <h2 className="text-3xl font-extrabold tracking-[-0.02em] text-white sm:text-4xl">Check your live app security in 60 seconds</h2>
         <p className="mx-auto mt-6 max-w-xl text-alabaster-grey-200">
-          Scantient Pro: Continuous monitoring for $399/mo. No setup. No developers. Just results.
+          Scantient Pro: Continuous monitoring for $399/mo. No setup. No developers. Pure results.
         </p>
         <Link
           href="/signup?plan=pro"

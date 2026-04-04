@@ -1707,6 +1707,384 @@ export function checkDependencyVersions(jsPayloads: string[]): SecurityFinding[]
 // SVG / XML escaping
 // ────────────────────────────────────────────
 
+// ────────────────────────────────────────────
+// 21. Behavioral rate-limit enforcement probe
+// ────────────────────────────────────────────
+
+/**
+ * Fires 6 rapid GET requests at an API endpoint and checks whether the server
+ * actually enforces rate limiting. Header-only checks miss misconfigured or
+ * missing middleware. A real 429 is the only reliable signal.
+ *
+ * Only called for API-classified URLs to avoid false positives on homepages.
+ */
+export async function checkRateLimitEnforcement(url: string): Promise<SecurityFinding[]> {
+  const findings: SecurityFinding[] = [];
+
+  // Only probe paths that look like API endpoints
+  let pathname: string;
+  try {
+    pathname = new URL(url).pathname;
+  } catch {
+    return findings;
+  }
+  if (!pathname.startsWith("/api/") && !pathname.startsWith("/v")) return findings;
+
+  try {
+    const PROBE_COUNT = 6;
+    const requests = Array.from({ length: PROBE_COUNT }, () =>
+      ssrfSafeFetch(url, {
+        method: "GET",
+        headers: { "User-Agent": "Scantient-Security-Scanner/1.0" },
+        signal: AbortSignal.timeout(4000),
+      }).then((r) => r.status),
+    );
+
+    const statuses = await Promise.all(requests);
+    const got429 = statuses.some((s) => s === 429);
+
+    if (!got429) {
+      findings.push({
+        code: "RATE_LIMIT_NOT_ENFORCED",
+        title: "Rate limiting not enforced on API endpoint",
+        description:
+          `${PROBE_COUNT} rapid requests to ${url} all succeeded without a 429 response. ` +
+          "Rate limiting may be misconfigured, disabled, or only enforced on POST requests.",
+        severity: "MEDIUM",
+        fixPrompt: buildFixPrompt(
+          "Rate limiting not enforced",
+          "Implement server-side rate limiting that returns HTTP 429 when thresholds are exceeded. " +
+            "Use middleware such as `express-rate-limit`, `@upstash/ratelimit`, or Next.js Edge Middleware. " +
+            "Ensure limits apply to GET and POST requests on all /api/* routes.",
+        ),
+      });
+    }
+  } catch {
+    // Network error or SSRF guard block — skip silently
+  }
+
+  return findings;
+}
+
+// ────────────────────────────────────────────
+// 22. Basic SQL injection probe
+// ────────────────────────────────────────────
+
+const DB_ERROR_PATTERNS = [
+  /syntax error/i,
+  /mysql_fetch/i,
+  /ORA-\d{4,5}/,
+  /pg_query/i,
+  /sqlite_/i,
+  /unclosed quotation/i,
+  /SQLSTATE/i,
+  /mysqli_/i,
+  /Warning: mysql/i,
+  /PostgreSQL.*ERROR/i,
+  /you have an error in your sql syntax/i,
+  /quoted string not properly terminated/i,
+  /invalid input syntax for type/i,
+];
+
+/**
+ * Appends basic SQL injection payloads to discovered query parameters and
+ * checks whether the server returns a database error string in the response
+ * body. Targets only API endpoints with an explorable parameter surface.
+ */
+export async function checkSQLInjection(url: string): Promise<SecurityFinding[]> {
+  const findings: SecurityFinding[] = [];
+
+  let parsed: URL;
+  try {
+    parsed = new URL(url);
+  } catch {
+    return findings;
+  }
+
+  // Only probe API-looking paths
+  if (!parsed.pathname.startsWith("/api/") && !parsed.pathname.startsWith("/v")) return findings;
+
+  // Build probe URLs: use existing params or inject a dummy ?id= param
+  const baseParams = [...parsed.searchParams.keys()];
+  const probeParam = baseParams[0] ?? "id";
+  const payloads = ["'", "' OR '1'='1"];
+
+  for (const payload of payloads) {
+    const probeUrl = new URL(parsed.toString());
+    probeUrl.searchParams.set(probeParam, (parsed.searchParams.get(probeParam) ?? "1") + payload);
+
+    try {
+      const res = await ssrfSafeFetch(probeUrl.toString(), {
+        method: "GET",
+        headers: { "User-Agent": "Scantient-Security-Scanner/1.0" },
+        signal: AbortSignal.timeout(6000),
+      });
+
+      if (res.status >= 500) {
+        const body = await res.text();
+        const matched = DB_ERROR_PATTERNS.some((p) => p.test(body));
+        if (matched) {
+          findings.push({
+            code: "SQL_INJECTION_LIKELY",
+            title: "Potential SQL injection vulnerability detected",
+            description:
+              `The endpoint at ${parsed.pathname} returned a database error when the parameter ` +
+              `\`${probeParam}\` was modified with payload \`${payload}\`. ` +
+              "The server may be passing user input directly to a SQL query.",
+            severity: "CRITICAL",
+            fixPrompt: buildFixPrompt(
+              "SQL injection vulnerability",
+              "Never interpolate user input directly into SQL queries. " +
+                "Use parameterised queries (e.g. Prisma, pg's $1 placeholders, or prepared statements). " +
+                "Validate and sanitise all query parameters with a schema library such as Zod.",
+            ),
+          });
+          break; // One finding per endpoint is enough
+        }
+      }
+    } catch {
+      // SSRF guard block or network error — skip
+    }
+  }
+
+  return findings;
+}
+
+// ────────────────────────────────────────────
+// 23. Subdomain takeover detection
+// ────────────────────────────────────────────
+
+/** Fingerprints for known "unclaimed" pages from major PaaS providers. */
+const TAKEOVER_FINGERPRINTS: Array<{ provider: string; pattern: RegExp }> = [
+  { provider: "Vercel", pattern: /The deployment is not found/i },
+  { provider: "Netlify", pattern: /Not Found - Request ID:/i },
+  { provider: "Heroku", pattern: /No such app/i },
+  { provider: "GitHub Pages", pattern: /There isn't a GitHub Pages site here/i },
+  { provider: "Render", pattern: /not found on this server/i },
+  { provider: "Railway", pattern: /Application not found/i },
+  { provider: "Fly.io", pattern: /404 from fly proxy/i },
+  { provider: "Surge.sh", pattern: /project not found/i },
+  { provider: "Fastly", pattern: /Fastly error: unknown domain/i },
+  { provider: "Azure", pattern: /404 Web Site not found/i },
+];
+
+/**
+ * Extracts same-root subdomains from HTML anchor hrefs and robots.txt, then
+ * probes each one for known "unclaimed project" pages from PaaS providers.
+ * Dangling CNAME records pointing at decommissioned deployments are a common
+ * vibe-coder oversight that can allow full subdomain takeover.
+ *
+ * Capped at 10 subdomains to avoid hammering the target.
+ */
+export async function checkSubdomainTakeover(
+  url: string,
+  html: string,
+): Promise<SecurityFinding[]> {
+  const findings: SecurityFinding[] = [];
+
+  let origin: URL;
+  try {
+    origin = new URL(url);
+  } catch {
+    return findings;
+  }
+
+  // Extract the root domain (e.g. "example.com" from "www.example.com")
+  const hostParts = origin.hostname.split(".");
+  const rootDomain =
+    hostParts.length >= 2 ? hostParts.slice(-2).join(".") : origin.hostname;
+
+  // Collect candidate subdomains from HTML links
+  const hrefMatches = Array.from(html.matchAll(/href=["']https?:\/\/([^"'/?#]+)/gi)).map(
+    (m) => m[1],
+  );
+
+  // Also pull robots.txt Disallow paths that expose subdomains
+  let robotsBody = "";
+  try {
+    const robotsRes = await ssrfSafeFetch(`${origin.protocol}//${origin.hostname}/robots.txt`, {
+      signal: AbortSignal.timeout(4000),
+    });
+    robotsBody = await robotsRes.text();
+  } catch {
+    // Non-fatal
+  }
+  const robotsHosts = Array.from(robotsBody.matchAll(/https?:\/\/([^/\s]+)/gi)).map((m) => m[1]);
+
+  // Unique subdomains that belong to the same root domain but differ from the scanned host
+  const candidates = [
+    ...new Set([...hrefMatches, ...robotsHosts]),
+  ]
+    .filter(
+      (h) =>
+        h !== origin.hostname &&
+        h.endsWith(`.${rootDomain}`) &&
+        !h.startsWith("www."),
+    )
+    .slice(0, 10);
+
+  for (const host of candidates) {
+    const probeUrl = `${origin.protocol}//${host}/`;
+    try {
+      const res = await ssrfSafeFetch(probeUrl, {
+        signal: AbortSignal.timeout(5000),
+        headers: { "User-Agent": "Scantient-Security-Scanner/1.0" },
+      });
+      const body = await res.text();
+
+      for (const { provider, pattern } of TAKEOVER_FINGERPRINTS) {
+        if (pattern.test(body)) {
+          findings.push({
+            code: "SUBDOMAIN_TAKEOVER_RISK",
+            title: `Subdomain takeover risk: ${host} (${provider})`,
+            description:
+              `The subdomain ${host} resolves but returns the unclaimed-project page from ${provider}. ` +
+              "An attacker can register this project on the platform and take control of the subdomain.",
+            severity: "CRITICAL",
+            fixPrompt: buildFixPrompt(
+              `Subdomain takeover: ${host}`,
+              `Remove the CNAME record for ${host} from your DNS provider, ` +
+                `or re-deploy the application on ${provider} using that subdomain. ` +
+                "Regularly audit DNS records and remove entries pointing at decommissioned deployments.",
+            ),
+          });
+          break;
+        }
+      }
+    } catch {
+      // SSRF guard, DNS failure, or timeout — skip this candidate
+    }
+  }
+
+  return findings;
+}
+
+// ────────────────────────────────────────────
+// 24. Source map secret and path scanning
+// ────────────────────────────────────────────
+
+const INTERNAL_PATH_PATTERNS = [
+  /^\/home\//,
+  /^\/Users\//,
+  /^\/root\//,
+  /^C:\\Users\\/i,
+  /^\/var\/task\//,
+  /^\/opt\/render\//,
+  /^\/vercel\/path/,
+];
+
+/**
+ * When a `sourceMappingURL` comment is found in the HTML, attempts to fetch
+ * the referenced `.map` file. If accessible, runs the full key-pattern scanner
+ * against its contents and checks the `sources` array for internal file paths
+ * that reveal server-side directory structure.
+ */
+export async function checkSourceMapContents(
+  html: string,
+  baseUrl: string,
+): Promise<SecurityFinding[]> {
+  const findings: SecurityFinding[] = [];
+
+  // Extract source map URL references from JS inline or the HTML itself
+  const mapUrlMatches = Array.from(
+    html.matchAll(/\/\/# sourceMappingURL=([^\s"']+)/g),
+  ).map((m) => m[1]);
+
+  if (mapUrlMatches.length === 0) return findings;
+
+  let base: URL;
+  try {
+    base = new URL(baseUrl);
+  } catch {
+    return findings;
+  }
+
+  // Check up to 3 source map files to avoid excessive requests
+  const toCheck = mapUrlMatches.slice(0, 3);
+
+  for (const mapRef of toCheck) {
+    // Skip data: URIs (inline source maps are not fetchable)
+    if (mapRef.startsWith("data:")) continue;
+
+    let mapUrl: string;
+    try {
+      mapUrl = new URL(mapRef, base.toString()).toString();
+    } catch {
+      continue;
+    }
+
+    try {
+      const res = await ssrfSafeFetch(mapUrl, {
+        signal: AbortSignal.timeout(6000),
+        headers: { "User-Agent": "Scantient-Security-Scanner/1.0" },
+      });
+
+      if (!res.ok) continue;
+
+      const mapContent = await res.text();
+
+      // 1. Run key-pattern scanner against map content
+      const secretFindings = scanJavaScriptForKeys([mapContent]);
+      if (secretFindings.length > 0) {
+        const labels = secretFindings
+          .map((f) => f.title)
+          .filter((v, i, a) => a.indexOf(v) === i)
+          .join(", ");
+        findings.push({
+          code: "SOURCE_MAP_SECRETS",
+          title: "Secret key(s) found inside an exposed source map",
+          description:
+            `The source map at ${mapUrl} is publicly accessible and contains what appear to be ` +
+            `secret keys or credentials: ${labels}. ` +
+            "Source maps expose original source code — any secrets bundled during build are readable.",
+          severity: "CRITICAL",
+          fixPrompt: buildFixPrompt(
+            "Secrets in source map",
+            "Remove all secret values from client-side code and environment variable bundles. " +
+              "Rotate any exposed keys immediately. " +
+              "Disable production source maps (`productionBrowserSourceMaps: false` in next.config.ts) " +
+              "or use hidden source maps uploaded only to your error tracking service.",
+          ),
+        });
+      }
+
+      // 2. Check `sources` array for internal paths
+      let parsed: { sources?: unknown[] } | null = null;
+      try {
+        parsed = JSON.parse(mapContent) as { sources?: unknown[] };
+      } catch {
+        // Not valid JSON — skip path check
+      }
+      if (parsed?.sources && Array.isArray(parsed.sources)) {
+        const internalPaths = (parsed.sources as unknown[])
+          .filter((s): s is string => typeof s === "string")
+          .filter((s) => INTERNAL_PATH_PATTERNS.some((p) => p.test(s)));
+
+        if (internalPaths.length > 0) {
+          findings.push({
+            code: "SOURCE_MAP_INTERNAL_PATHS",
+            title: "Source map exposes internal server file paths",
+            description:
+              `The source map at ${mapUrl} contains ${internalPaths.length} internal file path(s) ` +
+              `(e.g. \`${internalPaths[0]}\`) that reveal server-side directory structure. ` +
+              "This aids reconnaissance by exposing deployment environment details.",
+            severity: "LOW",
+            fixPrompt: buildFixPrompt(
+              "Source map exposes internal paths",
+              "Disable production source maps or configure your bundler to strip source paths. " +
+                "In Next.js: set `productionBrowserSourceMaps: false`.",
+            ),
+          });
+        }
+      }
+    } catch {
+      // Fetch failed or SSRF guard blocked — skip
+    }
+  }
+
+  return findings;
+}
+
 /**
  * Escape a string for safe embedding in SVG/XML text content and attribute values.
  * SVG is XML . user-controlled values must be escaped before interpolation to

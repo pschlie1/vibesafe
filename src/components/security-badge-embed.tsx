@@ -14,12 +14,12 @@ export function SecurityBadgeEmbed({ orgSlug, score }: SecurityBadgeEmbedProps) 
   const [copied, setCopied] = useState<Format | null>(null);
 
   const badgeUrl = `https://scantient.com/api/public/badge/${orgSlug}`;
-  const scoreUrl = `https://scantient.com/score`;
+  const scoreUrl = `https://scantient.com/security/${orgSlug}`;
 
   const snippets: Record<Format, string> = {
     svg: badgeUrl,
-    markdown: `[![Scantient Security Score](${badgeUrl})](${scoreUrl})`,
-    html: `<a href="${scoreUrl}"><img src="${badgeUrl}" alt="Scantient Security Score" /></a>`,
+    markdown: `[![Scantient Security Score](${badgeUrl})](${scoreUrl} "${orgSlug}'s security report")`,
+    html: `<a href="${scoreUrl}" title="${orgSlug}'s security report"><img src="${badgeUrl}" alt="Scantient Security Score" /></a>`,
   };
 
   async function copy(format: Format) {
@@ -37,7 +37,7 @@ export function SecurityBadgeEmbed({ orgSlug, score }: SecurityBadgeEmbedProps) 
       <div>
         <h2 className="text-lg font-semibold">Security badge</h2>
         <p className="mt-1 text-sm text-muted">
-          Embed a live security score badge in your README, docs, or landing page. Updates automatically with each scan.
+          Embed a live security score badge in your README, docs, or landing page. Badge clicks link to your public security transparency report. Updates automatically with each scan.
         </p>
       </div>
 
@@ -63,7 +63,7 @@ export function SecurityBadgeEmbed({ orgSlug, score }: SecurityBadgeEmbedProps) 
             <text x="950" y="140" transform="scale(.1)" textLength="380" lengthAdjust="spacing">{score} {grade}</text>
           </g>
         </svg>
-        <span className="text-xs text-muted">Live preview based on current score</span>
+        <span className="text-xs text-muted">Live preview — clicks link to <code className="text-xs">/security/{orgSlug}</code></span>
       </div>
 
       {/* Copy snippets */}

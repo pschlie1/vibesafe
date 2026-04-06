@@ -22,7 +22,7 @@ export async function GET() {
 const TIER_CHANNELS: Record<string, string[]> = {
   FREE: [],
   STARTER: ["EMAIL"],
-  PRO: ["EMAIL", "SLACK"],
+  PRO: ["EMAIL", "SLACK", "WEBHOOK"],
   ENTERPRISE: ["EMAIL", "SLACK", "WEBHOOK"],
   ENTERPRISE_PLUS: ["EMAIL", "SLACK", "WEBHOOK"],
   EXPIRED: [],

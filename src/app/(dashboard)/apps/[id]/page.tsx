@@ -17,6 +17,8 @@ import { safeHref } from "@/lib/url";
 import { isAiFinding, parseAiPolicyMeta } from "@/lib/ai-policy-scanner";
 import { AiPolicyBadge } from "@/components/ai-policy-badge";
 import { ShareScoreButton } from "@/components/share-score-button";
+import { SecurityBadgeEmbed } from "@/components/security-badge-embed";
+import { calcSecurityScore } from "@/lib/score";
 import type { ProbeResult } from "@/lib/probe-client";
 // import type { ConnectorResult } from "@/lib/connectors/types"; // TODO: disabled incomplete feature
 
@@ -53,6 +55,10 @@ export default async function AppDetailsPage({ params }: { params: Promise<{ id:
     select: { id: true, name: true, email: true },
     orderBy: { createdAt: "asc" },
   });
+
+  // ─── Latest security score ───────────────────────────────────────────────
+  const latestFindings = app.monitorRuns[0]?.findings ?? [];
+  const latestScore = calcSecurityScore(latestFindings);
 
   // ─── Scan diff: compare latest 2 runs to surface progress ────────────────
   let resolvedSinceLastScan = 0;
@@ -155,6 +161,11 @@ export default async function AppDetailsPage({ params }: { params: Promise<{ id:
           )}
         </div>
       )}
+
+      {/* Security badge embed */}
+      <div className="mb-8">
+        <SecurityBadgeEmbed orgSlug={session.orgSlug} score={latestScore} />
+      </div>
 
       <h2 className="mb-4 text-lg font-semibold">Scan history</h2>
       <div className="space-y-4">

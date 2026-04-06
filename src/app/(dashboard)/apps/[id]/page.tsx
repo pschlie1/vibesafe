@@ -371,13 +371,6 @@ interface ConnectorResult {
   checkedAt: string;
 }
 
-// Type definition for infrastructure health results
-interface ConnectorResult {
-  ok: boolean;
-  findings: Array<{ id: string }>;
-  checkedAt: string;
-}
-
 const CONNECTOR_LABELS: Record<string, string> = {
   vercel: "Vercel",
   github: "GitHub",

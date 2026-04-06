@@ -32,7 +32,7 @@ export async function PATCH(req: Request) {
   }
 
   const limits = await getOrgLimits(session.orgId);
-  if (!["STARTER", "PRO", "ENTERPRISE", "ENTERPRISE_PLUS"].includes(limits.tier)) {
+  if (!["STARTER", "LTD", "PRO", "ENTERPRISE", "ENTERPRISE_PLUS"].includes(limits.tier)) {
     return errorResponse(
       "FORBIDDEN",
       "Weekly digests require a Starter plan or higher.",

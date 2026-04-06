@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { FormInput, FormSelect } from "@/components/ui";
 
 type AlertConfig = {
   id: string;
@@ -211,8 +212,7 @@ export default function AlertsPage() {
 
         <form onSubmit={handleAdd} className="space-y-3">
           <div className="flex flex-wrap gap-3">
-            <select
-              className="rounded-lg border border-border bg-surface px-3 py-2 text-sm focus:border-primary-hover focus:outline-none focus:ring-1 focus:ring-primary-hover"
+            <FormSelect
               value={form.channel}
               onChange={(e) => setForm({ ...form, channel: e.target.value, destination: "" })}
             >
@@ -220,19 +220,18 @@ export default function AlertsPage() {
               <option value="SLACK">💬 Slack</option>
               <option value="TEAMS">🟦 Microsoft Teams</option>
               <option value="WEBHOOK">🔗 Custom webhook</option>
-            </select>
+            </FormSelect>
 
-            <input
+            <FormInput
               required
               type={form.channel === "EMAIL" ? "email" : "url"}
               placeholder={placeholder}
-              className="flex-1 min-w-[240px] rounded-lg border border-border px-3 py-2 text-sm focus:border-primary-hover focus:outline-none focus:ring-1 focus:ring-primary-hover"
+              className="flex-1 min-w-[240px]"
               value={form.destination}
               onChange={(e) => setForm({ ...form, destination: e.target.value })}
             />
 
-            <select
-              className="rounded-lg border border-border bg-surface px-3 py-2 text-sm focus:border-primary-hover focus:outline-none focus:ring-1 focus:ring-primary-hover"
+            <FormSelect
               value={form.minSeverity}
               onChange={(e) => setForm({ ...form, minSeverity: e.target.value })}
             >
@@ -240,7 +239,7 @@ export default function AlertsPage() {
               <option value="HIGH">High+</option>
               <option value="MEDIUM">Medium+</option>
               <option value="LOW">All findings</option>
-            </select>
+            </FormSelect>
 
             <button
               type="submit"

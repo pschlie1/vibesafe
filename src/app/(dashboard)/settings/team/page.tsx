@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { FormInput, FormSelect } from "@/components/ui";
 
 type Member = { id: string; name: string | null; email: string; role: string; lastLoginAt: string | null };
 
@@ -108,23 +109,23 @@ export default function TeamPage() {
         <h2 className="mb-1 text-lg font-semibold">Invite team member</h2>
         <p className="mb-4 text-sm text-muted">An email invitation will be sent. The role controls what they can do in Scantient.</p>
         <form onSubmit={handleInvite} className="flex gap-3 flex-wrap">
-          <input
+          <FormInput
             type="email"
             required
             placeholder="colleague@company.com"
-            className="flex-1 min-w-[200px] rounded-lg border px-3 py-2 text-sm focus:border-primary-hover focus:outline-none focus:ring-1 focus:ring-primary-hover"
+            className="flex-1 min-w-[200px]"
             value={inviteEmail}
             onChange={(e) => setInviteEmail(e.target.value)}
           />
-          <select
-            className="rounded-lg border px-3 py-2 text-sm"
+          <FormSelect
             value={inviteRole}
             onChange={(e) => setInviteRole(e.target.value)}
+            className="rounded-lg border px-3 py-2 text-sm"
           >
             <option value="MEMBER">Member — scan, resolve findings</option>
             <option value="ADMIN">Admin — full access except billing</option>
             <option value="VIEWER">Viewer — read only</option>
-          </select>
+          </FormSelect>
           <button
             type="submit"
             disabled={sending}

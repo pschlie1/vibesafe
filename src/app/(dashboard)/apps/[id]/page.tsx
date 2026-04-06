@@ -18,6 +18,7 @@ import { isAiFinding, parseAiPolicyMeta } from "@/lib/ai-policy-scanner";
 import { AiPolicyBadge } from "@/components/ai-policy-badge";
 import { ShareScoreButton } from "@/components/share-score-button";
 import { SecurityBadgeEmbed } from "@/components/security-badge-embed";
+import { calcSecurityScore } from "@/lib/score";
 import type { ProbeResult } from "@/lib/probe-client";
 // import type { ConnectorResult } from "@/lib/connectors/types"; // TODO: disabled incomplete feature
 
@@ -57,16 +58,7 @@ export default async function AppDetailsPage({ params }: { params: Promise<{ id:
 
   // ─── Latest security score ───────────────────────────────────────────────
   const latestFindings = app.monitorRuns[0]?.findings ?? [];
-  const latestScore = Math.max(
-    0,
-    100 -
-      latestFindings.reduce((acc, f) => {
-        if (f.severity === "CRITICAL") return acc + 25;
-        if (f.severity === "HIGH") return acc + 10;
-        if (f.severity === "MEDIUM") return acc + 5;
-        return acc + 1;
-      }, 0),
-  );
+  const latestScore = calcSecurityScore(latestFindings);
 
   // ─── Scan diff: compare latest 2 runs to surface progress ────────────────
   let resolvedSinceLastScan = 0;
@@ -373,6 +365,13 @@ function SubsystemRow({
 
 // ─── Infrastructure Health Card ───────────────────────────────────────────────
 
+interface ConnectorResult {
+  ok: boolean;
+  findings: Array<{ id: string }>;
+  checkedAt: string;
+}
+
+// Type definition for infrastructure health results
 interface ConnectorResult {
   ok: boolean;
   findings: Array<{ id: string }>;

@@ -376,4 +376,3 @@ model AnalyticsEvent {
   @@index([sessionId, createdAt])
   @@index([userId, createdAt])
 }
-// NOTE: added by feat/ux-five-features — see migration below

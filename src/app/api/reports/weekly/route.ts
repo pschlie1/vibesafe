@@ -5,6 +5,7 @@ import { getSession } from "@/lib/auth";
 import { getOrgLimits } from "@/lib/tenant";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { errorResponse } from "@/lib/api-response";
+import { calcSecurityScore } from "@/lib/score";
 
 type AppRow = {
   name: string;
@@ -15,25 +16,14 @@ type AppRow = {
   monitorRuns: Array<{ findings: Array<{ severity: string; title: string }> }>;
 };
 
-function calcScore(findings: Array<{ severity: string }>): number {
-  return Math.max(
-    0,
-    100 -
-      findings.reduce((acc, f) => {
-        if (f.severity === "CRITICAL") return acc + 25;
-        if (f.severity === "HIGH") return acc + 10;
-        if (f.severity === "MEDIUM") return acc + 5;
-        return acc + 1;
-      }, 0),
-  );
-}
+
 
 function buildReport(apps: AppRow[]) {
   return apps.map((app) => {
     const findings = app.monitorRuns.flatMap((r) => r.findings);
     const critical = findings.filter((f) => f.severity === "CRITICAL").length;
     const high = findings.filter((f) => f.severity === "HIGH").length;
-    const score = calcScore(findings);
+    const score = calcSecurityScore(findings);
     return {
       app: app.name,
       url: app.url,

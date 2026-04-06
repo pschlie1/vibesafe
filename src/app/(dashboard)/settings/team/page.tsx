@@ -110,6 +110,7 @@ export default function TeamPage() {
         <p className="mb-4 text-sm text-muted">An email invitation will be sent. The role controls what they can do in Scantient.</p>
         <form onSubmit={handleInvite} className="flex gap-3 flex-wrap">
           <FormInput
+            name="email"
             type="email"
             required
             placeholder="colleague@company.com"
@@ -118,6 +119,7 @@ export default function TeamPage() {
             onChange={(e) => setInviteEmail(e.target.value)}
           />
           <FormSelect
+            name="role"
             value={inviteRole}
             onChange={(e) => setInviteRole(e.target.value)}
             className="rounded-lg border px-3 py-2 text-sm"

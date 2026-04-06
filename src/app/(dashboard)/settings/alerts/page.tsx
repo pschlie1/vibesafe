@@ -213,6 +213,7 @@ export default function AlertsPage() {
         <form onSubmit={handleAdd} className="space-y-3">
           <div className="flex flex-wrap gap-3">
             <FormSelect
+              name="channel"
               value={form.channel}
               onChange={(e) => setForm({ ...form, channel: e.target.value, destination: "" })}
             >
@@ -223,6 +224,7 @@ export default function AlertsPage() {
             </FormSelect>
 
             <FormInput
+              name="destination"
               required
               type={form.channel === "EMAIL" ? "email" : "url"}
               placeholder={placeholder}
@@ -232,6 +234,7 @@ export default function AlertsPage() {
             />
 
             <FormSelect
+              name="minSeverity"
               value={form.minSeverity}
               onChange={(e) => setForm({ ...form, minSeverity: e.target.value })}
             >

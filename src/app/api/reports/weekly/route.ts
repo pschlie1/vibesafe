@@ -145,8 +145,8 @@ async function sendDigestEmail(to: string, subject: string, html: string) {
     body: JSON.stringify({ from, to: [to], subject, html }),
   });
   if (!res.ok) {
-    const err = await res.text();
-    console.error("[weekly-digest] Resend error:", err);
+    const body = await res.text();
+    throw new Error(`Resend API error (${res.status}): ${body}`);
   }
 }
 
@@ -158,7 +158,7 @@ export async function GET() {
   if (!session) return errorResponse("UNAUTHORIZED", "Unauthorized", undefined, 401);
 
   const limits = await getOrgLimits(session.orgId);
-  if (!["STARTER", "PRO", "ENTERPRISE", "ENTERPRISE_PLUS"].includes(limits.tier)) {
+  if (!["STARTER", "LTD", "PRO", "ENTERPRISE", "ENTERPRISE_PLUS"].includes(limits.tier)) {
     return errorResponse("FORBIDDEN", "Weekly reports require a Starter plan or higher.", undefined, 403);
   }
 
@@ -175,7 +175,6 @@ export async function GET() {
 
   const apps = await db.monitoredApp.findMany({
     where: { orgId: session.orgId },
-    take: 100,
     include: {
       monitorRuns: {
         where: { startedAt: { gte: since } },
@@ -199,7 +198,7 @@ export async function POST() {
   }
 
   const limits = await getOrgLimits(session.orgId);
-  if (!["STARTER", "PRO", "ENTERPRISE", "ENTERPRISE_PLUS"].includes(limits.tier)) {
+  if (!["STARTER", "LTD", "PRO", "ENTERPRISE", "ENTERPRISE_PLUS"].includes(limits.tier)) {
     return errorResponse("FORBIDDEN", "Weekly digests require a Starter plan or higher.", undefined, 403);
   }
 
@@ -222,7 +221,6 @@ export async function POST() {
 
   const apps = await db.monitoredApp.findMany({
     where: { orgId: session.orgId },
-    take: 100,
     include: {
       monitorRuns: {
         where: { startedAt: { gte: since } },
@@ -235,7 +233,16 @@ export async function POST() {
 
   const report = buildReport(apps);
   const html = buildEmailHtml(org.name, report, since);
-  await sendDigestEmail(ownerEmail, `[Scantient] Weekly security digest — ${org.name}`, html);
+
+  try {
+    await sendDigestEmail(ownerEmail, `[Scantient] Weekly security digest — ${org.name}`, html);
+  } catch (err) {
+    console.error("[weekly-digest] Failed to send digest email:", err);
+    return NextResponse.json(
+      { error: "Failed to send digest email. Please try again later." },
+      { status: 502 },
+    );
+  }
 
   return NextResponse.json({ sent: true, to: ownerEmail, appsIncluded: apps.length });
 }

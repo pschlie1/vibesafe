@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getSession } from "@/lib/auth";
+import { getOrgLimits } from "@/lib/tenant";
+import { atLeast } from "@/lib/tier-capabilities";
+import { errorResponse } from "@/lib/api-response";
 
 export const dynamic = "force-dynamic";
 
@@ -9,7 +12,12 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await getSession();
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session) return errorResponse("UNAUTHORIZED", "Unauthorized", undefined, 401);
+
+  const limits = await getOrgLimits(session.orgId);
+  if (!atLeast(limits.tier, "PRO")) {
+    return errorResponse("FORBIDDEN", "Scan history trends require a Pro plan or higher.", undefined, 403);
+  }
 
   const { id } = await params;
 
@@ -17,7 +25,7 @@ export async function GET(
     where: { id, orgId: session.orgId },
     select: { id: true },
   });
-  if (!app) return NextResponse.json({ error: "Not found" }, { status: 404 });
+  if (!app) return errorResponse("NOT_FOUND", "Not found", undefined, 404);
 
   const runs = await db.monitorRun.findMany({
     where: { appId: id },

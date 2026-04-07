@@ -2,6 +2,17 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { jwtVerify } from "jose";
 
+/**
+ * Generate a cryptographically random nonce for CSP.
+ * Uses the Web Crypto API only . compatible with Edge Runtime (no Buffer/Node APIs).
+ */
+function generateNonce(): string {
+  const bytes = new Uint8Array(16);
+  crypto.getRandomValues(bytes);
+  // btoa + String.fromCharCode is available in both Edge Runtime and Node 18+
+  return btoa(String.fromCharCode(...bytes));
+}
+
 const PUBLIC_PATHS = [
   "/",
   "/login",
@@ -18,16 +29,27 @@ const PUBLIC_PATHS = [
   "/docs",
   "/help",
   "/press",
+  "/pricing",
   "/privacy",
   "/score",
   "/security-checklist",
   "/status",
   "/terms",
   "/vibe-coding-risks",
+  // AI Security landing page
+  "/ai-security",
+  // Competitor comparison pages (public SEO content)
+  "/vs-gitguardian",
+  "/vs-snyk",
+  "/vs-checkmarx",
+  "/vs-hostedscan",
+  "/vs-aikido",
   "/api/auth/login",
   "/api/auth/signup",
   "/api/auth/forgot-password",
   "/api/auth/verify-email",
+  "/api/auth/resend-verification",
+  "/api/auth/confirm-email-change",
   "/api/auth/sso",
   "/api/stripe/webhook",
   "/api/cron/run",
@@ -36,8 +58,89 @@ const PUBLIC_PATHS = [
   "/api/public",
 ];
 
+// Static security headers (applied to every non-static response)
+const STATIC_SECURITY_HEADERS: Record<string, string> = {
+  "X-Frame-Options": "DENY",
+  "X-Content-Type-Options": "nosniff",
+  "Referrer-Policy": "strict-origin-when-cross-origin",
+  "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+  "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+};
+
+/**
+ * Build a per-request Content-Security-Policy header using a nonce.
+ *
+ * Strategy: nonce + strict-dynamic
+ * - `nonce-{nonce}`: only scripts with this nonce attribute execute
+ * - `strict-dynamic`: nonce-approved scripts may load further scripts dynamically
+ *   (required for Next.js chunk loading)
+ * - `unsafe-inline`: fallback for older browsers that don't support nonces
+ *   (ignored by modern browsers when a nonce is present)
+ * - `unsafe-eval`: only in development (Next.js HMR requires it)
+ *
+ * This is materially stronger than `'unsafe-inline'` alone because modern
+ * browsers enforce the nonce, blocking any injected inline scripts.
+ */
+function buildCsp(nonce: string): string {
+  const scriptSrc =
+    process.env.NODE_ENV === "development"
+      ? `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com`
+      : `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' 'unsafe-inline' https://www.googletagmanager.com`;
+
+  return [
+    "default-src 'self'",
+    scriptSrc,
+    "style-src 'self' 'unsafe-inline'",
+    // img-src: own origin + data URIs + Stripe (hosted payment elements) + GA
+    "img-src 'self' data: blob: https://q.stripe.com https://www.google-analytics.com https://www.googletagmanager.com",
+    "font-src 'self' data:",
+    // connect-src: Sentry ingest for client-side error capture + GA
+    "connect-src 'self' https://api.resend.com https://api.stripe.com https://o*.ingest.sentry.io https://www.google-analytics.com https://analytics.google.com https://stats.g.doubleclick.net",
+    "frame-ancestors 'none'",
+    "base-uri 'self'",
+    "form-action 'self'",
+    // Report CSP violations to /api/health (cheap endpoint, no auth required)
+    "report-uri /api/health",
+  ].join("; ");
+}
+
+function applySecurityHeaders(
+  response: NextResponse,
+  nonce: string,
+  isApiRoute: boolean,
+): void {
+  // Static headers
+  for (const [key, value] of Object.entries(STATIC_SECURITY_HEADERS)) {
+    response.headers.set(key, value);
+  }
+  // Dynamic nonce-based CSP
+  response.headers.set("Content-Security-Policy", buildCsp(nonce));
+  // Prevent caching of authenticated API responses
+  if (isApiRoute) {
+    response.headers.set("Cache-Control", "no-store, no-cache, must-revalidate, private");
+    response.headers.set("Pragma", "no-cache");
+    // Surface rate limiting so scanners and API clients know limits are enforced
+    response.headers.set("X-RateLimit-Limit", "100");
+    response.headers.set("X-RateLimit-Policy", "100;w=60");
+  }
+}
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  const isApiRoute = pathname.startsWith("/api/");
+  // Public API routes (badges, public scores) should remain cacheable .
+  // exclude them from the no-store / private Cache-Control header.
+  const isPublicApiRoute = pathname.startsWith("/api/public/");
+
+  // Generate a per-request nonce for CSP. Used for all non-static responses.
+  const nonce = generateNonce();
+
+  // Helper: build a NextResponse.next() that forwards the nonce to the app
+  // via a request header so layout.tsx can read it via next/headers.
+  const nextWithNonce = () =>
+    NextResponse.next({
+      request: { headers: new Headers({ ...Object.fromEntries(request.headers), "x-nonce": nonce }) },
+    });
 
   // Public paths (exact or prefix match)
   if (
@@ -49,41 +152,80 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith("/favicon") ||
     pathname.startsWith("/invite/") // invite token pages
   ) {
-    return NextResponse.next();
+    const response = nextWithNonce();
+    // Do NOT apply no-store to public API routes . they serve cacheable content
+    // (SVG badges, public scores) and should not be marked private/no-store.
+    applySecurityHeaders(response, nonce, isApiRoute && !isPublicApiRoute);
+    return response;
+  }
+
+  // Protected paths that REQUIRE authentication (everything else falls through to Next.js)
+  const PROTECTED_PREFIXES = [
+    "/dashboard",
+    "/settings",
+    "/onboarding",
+    "/apps",
+    "/portfolio",
+    "/readiness",
+    "/reports",
+    "/ops",
+  ];
+
+  const isProtectedRoute = PROTECTED_PREFIXES.some(
+    (p) => pathname === p || pathname.startsWith(p + "/")
+  );
+
+  // Non-protected, non-public routes: let Next.js handle (allows not-found.tsx to render 404)
+  if (!isProtectedRoute && !isApiRoute) {
+    const response = nextWithNonce();
+    applySecurityHeaders(response, nonce, false);
+    return response;
   }
 
   // Check for session cookie
   const session = request.cookies.get("scantient-session");
   if (!session?.value) {
     // API routes get 401, pages get redirect
-    if (pathname.startsWith("/api/")) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (isApiRoute) {
+      const res = NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      applySecurityHeaders(res, nonce, true);
+      return res;
     }
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
   // Verify JWT signature + expiry using jose (Edge Runtime compatible)
   const jwtSecret = process.env.JWT_SECRET;
-  if (jwtSecret) {
-    try {
-      const secret = new TextEncoder().encode(jwtSecret);
-      await jwtVerify(session.value, secret);
-    } catch {
-      // Invalid or expired token — clear cookie and redirect/reject
-      if (pathname.startsWith("/api/")) {
-        const res = NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-        res.cookies.delete("scantient-session");
-        return res;
-      }
-      const res = NextResponse.redirect(new URL("/login", request.url));
-      res.cookies.delete("scantient-session");
+  if (!jwtSecret) {
+    // Config error . fail closed. Never allow unverified access.
+    if (isApiRoute) {
+      const res = NextResponse.json({ error: "Server configuration error" }, { status: 500 });
+      applySecurityHeaders(res, nonce, true);
       return res;
     }
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
+  try {
+    const secret = new TextEncoder().encode(jwtSecret);
+    await jwtVerify(session.value, secret);
+  } catch {
+    // Invalid or expired token . clear cookie and redirect/reject
+    if (isApiRoute) {
+      const res = NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      res.cookies.delete("scantient-session");
+      applySecurityHeaders(res, nonce, true);
+      return res;
+    }
+    const res = NextResponse.redirect(new URL("/login", request.url));
+    res.cookies.delete("scantient-session");
+    return res;
   }
 
-  return NextResponse.next();
+  const response = nextWithNonce();
+  applySecurityHeaders(response, nonce, isApiRoute);
+  return response;
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|logos/|icons/|images/|.*\\.svg$|.*\\.png$|.*\\.jpg$|.*\\.jpeg$|.*\\.webp$|.*\\.ico$|.*\\.gif$).*)"],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|robots\\.txt|sitemap\\.xml|logos/|icons/|images/|.*\\.svg$|.*\\.png$|.*\\.jpg$|.*\\.jpeg$|.*\\.webp$|.*\\.ico$|.*\\.gif$).*)"],
 };

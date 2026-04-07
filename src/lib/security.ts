@@ -2,18 +2,28 @@ import * as tls from "tls";
 import { buildFixPrompt } from "@/lib/remediation";
 import type { SecurityFinding } from "@/lib/types";
 import { db } from "@/lib/db";
+import { ssrfSafeFetch } from "@/lib/ssrf-guard";
 
 // ────────────────────────────────────────────
 // 1. Exposed API keys in client-side JS
 // ────────────────────────────────────────────
 
 const KEY_PATTERNS: Array<{ pattern: RegExp; label: string }> = [
+  // AWS . AKIA is an access key ID; the pattern is consistent and well-known
+  { pattern: /AKIA[0-9A-Z]{16}/g, label: "AWS access key ID" },
+  // AWS secret access key (40 chars, base64url) . only flag when near an assignment
+  { pattern: /aws[_\-.]?secret[_\-.]?(?:access[_\-.]?)?key\s*[:=]\s*["'`]?[A-Za-z0-9/+=]{40}["'`]?/gi, label: "AWS secret access key" },
   { pattern: /sk-[a-zA-Z0-9]{20,}/g, label: "OpenAI secret key" },
   { pattern: /sk-ant-[a-zA-Z0-9\-_]{20,}/g, label: "Anthropic secret key" },
   { pattern: /AIza[0-9A-Za-z\-_]{35}/g, label: "Google API key" },
+  // GitHub tokens
   { pattern: /ghp_[A-Za-z0-9]{36,}/g, label: "GitHub personal access token" },
   { pattern: /gho_[A-Za-z0-9]{36,}/g, label: "GitHub OAuth token" },
+  { pattern: /github_pat_[A-Za-z0-9_]{22,}/g, label: "GitHub fine-grained personal access token" },
+  { pattern: /ghs_[A-Za-z0-9]{36,}/g, label: "GitHub Actions secret" },
+  // Slack
   { pattern: /xoxb-[0-9]{10,}-[0-9]{10,}-[a-zA-Z0-9]{20,}/g, label: "Slack bot token" },
+  { pattern: /xoxp-[0-9]{10,}-[0-9]{10,}-[0-9]{10,}-[a-zA-Z0-9]{20,}/g, label: "Slack user token" },
   {
     pattern: /eyJhbGciOi[A-Za-z0-9\-_]+\.eyJ[A-Za-z0-9\-_]+\.[A-Za-z0-9\-_]+/g,
     label: "JWT token (possibly service key)",
@@ -26,12 +36,63 @@ const KEY_PATTERNS: Array<{ pattern: RegExp; label: string }> = [
     pattern: /SUPABASE_ANON_KEY|supabaseKey|supabase_key/g,
     label: "Supabase anon key reference (verify not service key)",
   },
+  // Stripe . both live and test secret keys should not appear in client bundles
   { pattern: /stripe[_.]?secret[_.]?key\s*[:=]\s*["'`]sk_live_[^"'`]+["'`]/gi, label: "Stripe live secret key" },
   { pattern: /sk_live_[a-zA-Z0-9]{20,}/g, label: "Stripe live secret key" },
+  { pattern: /sk_test_[a-zA-Z0-9]{20,}/g, label: "Stripe test secret key (should not be in client bundle)" },
+  // npm auth tokens
+  { pattern: /npm_[A-Za-z0-9]{36}/g, label: "npm authentication token" },
+  // Twilio
+  { pattern: /AC[a-fA-F0-9]{32}/g, label: "Twilio Account SID" },
+  { pattern: /SK[a-fA-F0-9]{32}/g, label: "Twilio API key" },
+  // SendGrid
+  { pattern: /SG\.[A-Za-z0-9_\-]{22,}\.[A-Za-z0-9_\-]{43}/g, label: "SendGrid API key" },
+  // Resend (transactional email — common in vibe-coded apps)
+  { pattern: /re_[A-Za-z0-9_\-]{20,}/g, label: "Resend API key" },
+  // Vercel tokens
+  { pattern: /vercel_[a-zA-Z0-9]{24,}/gi, label: "Vercel API token" },
+  // Linear
+  { pattern: /lin_api_[A-Za-z0-9]{40,}/g, label: "Linear API key" },
+  // PlanetScale
+  { pattern: /pscale_tkn_[A-Za-z0-9_]{32,}/g, label: "PlanetScale token" },
+  // Database connection strings — extremely common in vibe-coded apps that accidentally expose env vars
+  {
+    pattern: /postgres(?:ql)?:\/\/[^:\s]+:[^@\s]{6,}@[^\s"'`]+/gi,
+    label: "PostgreSQL connection string (contains credentials)",
+  },
+  {
+    pattern: /mongodb(?:\+srv)?:\/\/[^:\s]+:[^@\s]{6,}@[^\s"'`]+/gi,
+    label: "MongoDB connection string (contains credentials)",
+  },
+  {
+    pattern: /mysql:\/\/[^:\s]+:[^@\s]{6,}@[^\s"'`]+/gi,
+    label: "MySQL connection string (contains credentials)",
+  },
+  {
+    pattern: /redis:\/\/(?:[^:\s]+:[^@\s]{4,}@)[^\s"'`]+/gi,
+    label: "Redis connection string (with password)",
+  },
+  // Generic JWT secret / session secret in env-style assignment (key part of the pair must be present)
+  {
+    pattern: /(?:JWT_SECRET|SESSION_SECRET|AUTH_SECRET|NEXTAUTH_SECRET|APP_SECRET)\s*[:=]\s*["'`]?[A-Za-z0-9/+=_\-]{16,}["'`]?/gi,
+    label: "JWT/session secret",
+  },
+  // Generic DB password in env-style assignment
+  {
+    pattern: /(?:DB_PASSWORD|DATABASE_PASSWORD|POSTGRES_PASSWORD|MYSQL_PASSWORD|MONGO_PASSWORD)\s*[:=]\s*["'`][^"'`\s]{6,}["'`]/gi,
+    label: "Database password",
+  },
+  // Generic API key/secret in env-style assignment (broad but anchored to assignment context)
+  {
+    pattern: /(?:API_KEY|SECRET_KEY|PRIVATE_KEY|ACCESS_SECRET)\s*[:=]\s*["'`][A-Za-z0-9/+=_\-]{20,}["'`]/gi,
+    label: "Generic API key or secret",
+  },
 ];
 
 // Known safe public keys to suppress false positives
-const SAFE_PREFIXES = ["pk_test_", "pk_live_", "sb-", "anon."];
+// pk_test_ / pk_live_ are Stripe publishable keys . safe to expose
+// AKID is a common placeholder in docs, not a real key
+const SAFE_PREFIXES = ["pk_test_", "pk_live_", "sb-", "anon.", "AKID"];
 
 function isFalsePositive(match: string): boolean {
   return SAFE_PREFIXES.some((p) => match.startsWith(p));
@@ -163,11 +224,11 @@ const AUTH_BYPASS_PATTERNS: Array<{ pattern: RegExp; description: string }> = [
   },
   {
     pattern: /if\s*\(\s*(?:user|currentUser|auth)\.(?:role|isAdmin|is_admin)\s*(?:===?|!==?)\s*['"]admin['"]/,
-    description: "Client-side admin role check — authorization decisions should be server-enforced.",
+    description: "Client-side admin role check . authorization decisions should be server-enforced.",
   },
   {
     pattern: /document\.cookie\.(?:includes|indexOf|match)\(['"](?:admin|role|auth_token)['"]/,
-    description: "Cookie-based auth check in client code — validate on server instead.",
+    description: "Cookie-based auth check in client code . validate on server instead.",
   },
 ];
 
@@ -209,8 +270,33 @@ export function checkInlineScripts(html: string): SecurityFinding[] {
     findings.push(...inlineKeyFindings);
   }
 
-  // Check for dangerouslySetInnerHTML patterns (React-specific XSS risk)
-  if (/dangerouslySetInnerHTML/i.test(html)) {
+  // Check for dangerouslySetInnerHTML patterns (React-specific XSS risk).
+  //
+  // Key insight: Next.js RSC hydration payloads (self.__next_f.push(...)) embed
+  // JSON strings that contain `"dangerouslySetInnerHTML":{"__html":...}` . the key
+  // is always double-quoted in JSON context. Real JSX/JS usage is never quoted:
+  //   JSX:      dangerouslySetInnerHTML={{ __html: ... }}
+  //   Compiled: dangerouslySetInnerHTML:{__html:...}
+  //
+  // Pattern: require a non-quote character immediately before the identifier.
+  // This skips JSON-encoded keys ("dangerouslySetInnerHTML") while catching real usage.
+  const INNER_HTML_ASSIGNMENT = /[^"']dangerouslySetInnerHTML\s*[:=]\s*\{/i;
+
+  // Only check non-RSC inline script bodies. RSC hydration chunks start with
+  // `self.__next_f.push`, `self.__next_s`, or contain `__NEXT_DATA__` . these
+  // are framework-generated JSON payloads, not user-authored JS.
+  const RSC_SCRIPT = /self\.__next_f\s*\.push|self\.__next_s|__NEXT_DATA__|__NEXT_FRAME__/;
+  const inlineScriptBodies = Array.from(
+    html.matchAll(/<script(?![^>]*src=)[^>]*>([\s\S]*?)<\/script>/gi),
+  )
+    .map((m) => m[1])
+    .filter((s) => !RSC_SCRIPT.test(s));
+
+  // hasJsxUsage: checks full HTML for unquoted JSX-style or compiled JS assignment.
+  // hasScriptUsage: checks non-RSC inline <script> bodies only.
+  const hasJsxUsage = INNER_HTML_ASSIGNMENT.test(html);
+  const hasScriptUsage = inlineScriptBodies.some((s) => INNER_HTML_ASSIGNMENT.test(s));
+  if (hasJsxUsage || hasScriptUsage) {
     findings.push({
       code: "DANGEROUS_INNER_HTML",
       title: "dangerouslySetInnerHTML usage detected",
@@ -223,6 +309,80 @@ export function checkInlineScripts(html: string): SecurityFinding[] {
       ),
     });
   }
+
+  return findings;
+}
+
+// ────────────────────────────────────────────
+// 4b. Inline script count vs CSP strength
+// ────────────────────────────────────────────
+
+/**
+ * Flags pages that ship many inline scripts without a strong Content-Security-Policy.
+ *
+ * Next.js and similar frameworks ship inline script blocks for hydration by default.
+ * This is acceptable ONLY when the CSP policy restricts which scripts can execute:
+ *   - Nonce-based CSP: `script-src 'nonce-{nonce}'` (plus optional `'strict-dynamic'`)
+ *   - Hash-based CSP: `script-src 'sha256-...'`
+ *
+ * If the CSP is absent or uses `unsafe-inline` (without a nonce), every inline
+ * script can run . defeating the purpose of CSP entirely.
+ *
+ * Threshold: > 5 inline scripts. Framework hydration produces several, but > 5
+ * with no meaningful CSP is a signal worth surfacing.
+ */
+export function checkInlineScriptCount(html: string, headers: Headers): SecurityFinding[] {
+  const findings: SecurityFinding[] = [];
+
+  // Count inline <script> blocks (no src attribute, non-empty body)
+  const inlineScripts = Array.from(
+    html.matchAll(/<script(?![^>]*\bsrc\s*=)[^>]*>([\s\S]*?)<\/script>/gi),
+  ).filter((m) => m[1].trim().length > 0);
+
+  const count = inlineScripts.length;
+  if (count <= 5) return findings; // Below threshold . not worth flagging
+
+  const csp = headers.get("content-security-policy") ?? "";
+
+  // Determine CSP strength for inline scripts
+  const hasNonce = /script-src[^;]*'nonce-/i.test(csp);
+  const hasHash = /script-src[^;]*'sha(?:256|384|512)-/i.test(csp);
+  const hasStrictDynamic = /script-src[^;]*'strict-dynamic'/i.test(csp);
+  const hasUnsafeInline = /script-src[^;]*'unsafe-inline'/i.test(csp);
+  const hasCsp = csp.length > 0;
+
+  // CSP is strong if it uses nonce/hash/strict-dynamic (even with unsafe-inline present
+  // . modern browsers ignore unsafe-inline when a nonce or hash is present)
+  const cspIsStrong = hasNonce || hasHash || (hasStrictDynamic && hasCsp);
+
+  if (cspIsStrong) return findings; // Inline scripts are acceptable with a strong CSP
+
+  const severity = hasCsp && hasUnsafeInline ? ("LOW" as const) : ("MEDIUM" as const);
+  const cspNote = !hasCsp
+    ? "No Content-Security-Policy header is set."
+    : "The CSP uses 'unsafe-inline' for scripts, which allows all inline scripts to run and negates CSP protection.";
+
+  findings.push({
+    code: "INLINE_SCRIPTS",
+    title: `${count} inline script blocks detected . CSP protection insufficient`,
+    description:
+      `${count} inline <script> blocks were found. ${cspNote} ` +
+      `Without a nonce- or hash-based CSP, any injected inline script can execute, ` +
+      `increasing XSS risk.`,
+    severity,
+    fixPrompt: buildFixPrompt(
+      "Inline scripts with weak/absent CSP",
+      "1. Add a Content-Security-Policy header that uses nonce-based or strict-dynamic protection.\n" +
+        "   In Next.js middleware:\n" +
+        "   - Generate a per-request nonce: `const nonce = Buffer.from(crypto.randomUUID()).toString('base64')`\n" +
+        "   - Set CSP: `script-src 'nonce-${nonce}' 'strict-dynamic' 'unsafe-inline'`\n" +
+        "     (unsafe-inline is ignored by modern browsers when a nonce is present)\n" +
+        "   - Pass nonce to the app via request header: `x-nonce: <nonce>`\n" +
+        "   - In layout.tsx, read `headers().get('x-nonce')` and apply to inline scripts.\n" +
+        "2. Alternatively, generate SHA-256 hashes of each inline script and list them in the CSP.\n" +
+        "3. Avoid adding new inline scripts; prefer external script files with SRI hashes.",
+    ),
+  });
 
   return findings;
 }
@@ -589,12 +749,16 @@ export function checkDependencyExposure(html: string): SecurityFinding[] {
 // 12. API Security
 // ────────────────────────────────────────────
 
-export function checkAPISecurity(html: string, headers: Headers): SecurityFinding[] {
+export function checkAPISecurity(html: string, headers: Headers, url?: string): SecurityFinding[] {
   const findings: SecurityFinding[] = [];
 
+  // Rate-limit headers only make sense on /api/* routes.
+  // Skip this check for non-API URLs to avoid false positives on homepages/marketing pages.
+  const pathname = url ? new URL(url).pathname : "";
+  const isApiPath = pathname.startsWith("/api/");
   const rateLimitHeaders = ["x-ratelimit-limit", "x-rate-limit-limit", "ratelimit-limit", "retry-after"];
   const hasRateLimit = rateLimitHeaders.some((h) => headers.get(h));
-  if (!hasRateLimit) {
+  if (isApiPath && !hasRateLimit) {
     findings.push({
       code: "NO_RATE_LIMITING",
       title: "No rate limiting headers detected",
@@ -714,7 +878,7 @@ export async function checkSSLCertExpiry(url: string): Promise<SecurityFinding[]
       });
     }
   } catch {
-    // Cannot connect or read cert — skip silently
+    // Cannot connect or read cert . skip silently
   }
 
   return findings;
@@ -786,9 +950,18 @@ const COMPROMISED_CDNS = [
   "eval.js",
   "cdn.polyfill.io",
   "polyfill.io",
+  // polyfill.io attack derivatives (post-2024 incident)
+  "polyfill.com",
+  "polyfill.dev",
+  "polyfil.io",
+  "polyfills.io",
+  // Chinese mirror CDNs with documented supply chain issues
   "bootcss.com",
   "staticfile.org",
   "cdnjson.com",
+  // Additional known-bad domains
+  "statically.io", // historically used in malvertising campaigns
+  "jscrambler.com", // flagged in specific malware campaigns (not the vendor itself, but domain spoofing)
 ];
 
 export function checkThirdPartyScripts(html: string, baseUrl: string): SecurityFinding[] {
@@ -902,7 +1075,7 @@ const CSRF_TOKEN_NAMES = [
 
 const API_ENDPOINT_PATTERN = /^\/?api[/\\]/i;
 
-export function checkFormSecurity(html: string): SecurityFinding[] {
+export function checkFormSecurity(html: string, baseUrl?: string): SecurityFinding[] {
   const findings: SecurityFinding[] = [];
 
   const formMatches = Array.from(html.matchAll(/<form([^>]*)>([\s\S]*?)<\/form>/gi));
@@ -961,6 +1134,17 @@ export function checkFormSecurity(html: string): SecurityFinding[] {
         actionDomain = new URL(action).hostname;
       } catch {
         continue;
+      }
+
+      // If the action URL is on the same host as the scanned page, it is NOT external.
+      // Absolute URLs on the same domain are common in CMSes and SPAs.
+      if (baseUrl) {
+        try {
+          const baseHostname = new URL(baseUrl).hostname;
+          if (actionDomain === baseHostname) continue;
+        } catch {
+          // baseUrl parse failed . fall through to flag as external
+        }
       }
 
       findings.push({
@@ -1040,7 +1224,7 @@ export async function checkBrokenLinks(
       continue;
     }
     if (href.startsWith("http://") || href.startsWith("https://")) {
-      // External — skip
+      // External . skip
       try {
         const linkOrigin = new URL(href).origin;
         if (linkOrigin !== baseOrigin) continue;
@@ -1146,7 +1330,7 @@ export async function checkPerformanceRegression(
       });
     }
   } catch {
-    // Database unavailable — skip silently
+    // Database unavailable . skip silently
   }
 
   return findings;
@@ -1166,29 +1350,49 @@ const SENSITIVE_CONTENT_PATTERNS = [
   /-----BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY-----/,
 ];
 
-const SENSITIVE_FILE_PATHS = ["/.env", "/.env.local", "/.env.production", "/.git/HEAD", "/phpinfo.php"];
-const ADMIN_DEBUG_PATHS = ["/api/admin", "/api/debug"];
+const SENSITIVE_FILE_PATHS = ["/.env", "/.env.local", "/.env.production", "/.env.development", "/.git/HEAD", "/.git/config", "/phpinfo.php"];
+const ADMIN_DEBUG_PATHS = ["/api/admin", "/api/debug", "/api/env", "/api/system", "/api/internal"];
 
 const PROBE_PATHS = [
+  // Environment / config files
   "/.env",
   "/.env.local",
   "/.env.production",
+  "/.env.development",
+  "/.env.staging",
   "/config.json",
+  "/app-config.json",
   "/settings.json",
+  // Git exposure (extremely common in vibe-coded apps with bad deploy configs)
+  "/.git/HEAD",
+  "/.git/config",
+  "/.git/COMMIT_EDITMSG",
+  // Admin / debug API endpoints (commonly generated by Cursor/Copilot)
   "/api/admin",
   "/api/debug",
+  "/api/env",
   "/api/config",
+  "/api/system",
+  "/api/internal",
   "/api/users",
   "/api/keys",
+  // PHP / legacy
   "/phpinfo.php",
   "/server-status",
+  // Java/Spring Boot actuator
   "/actuator",
   "/actuator/health",
   "/actuator/env",
+  "/actuator/beans",
+  "/actuator/mappings",
+  // GraphQL introspection endpoint
   "/graphql",
-  "/.git/HEAD",
+  // Public metadata
   "/robots.txt",
-].slice(0, 15);
+  // Node.js / package exposure
+  "/node_modules/.package-lock.json",
+  "/package.json",
+]; // probe all paths (each with 5s timeout, run in parallel)
 
 function looksLikeJson(body: string): boolean {
   const trimmed = body.trim();
@@ -1212,24 +1416,33 @@ export async function checkExposedEndpoints(baseUrl: string): Promise<SecurityFi
   const results = await Promise.allSettled(
     PROBE_PATHS.map(async (path) => {
       const url = `${origin}${path}`;
-      const res = await fetch(url, {
+      // Use ssrfSafeFetch so every redirect hop is validated against the
+      // SSRF guard . prevents a probe path redirecting to 169.254.169.254.
+      const res = await ssrfSafeFetch(url, {
         method: "GET",
         signal: AbortSignal.timeout(5000),
-        redirect: "follow",
       });
+      const contentType = res.headers.get("content-type") ?? "";
       const body = res.status === 200 ? await res.text() : "";
-      return { path, url, status: res.status, body };
+      return { path, url, status: res.status, body, contentType };
     }),
   );
 
   for (const settled of results) {
     if (settled.status !== "fulfilled") continue;
-    const { path, url, status, body } = settled.value;
+    const { path, url, status, body, contentType } = settled.value;
 
     if (status !== 200) continue;
 
+    // Skip HTML responses for sensitive file checks . SPAs return 200 HTML for
+    // all paths (catch-all routing), which would produce mass false positives.
+    const isHtmlResponse = contentType.includes("text/html") || body.trimStart().startsWith("<!") || body.trimStart().startsWith("<html");
+
     // Sensitive file publicly accessible
     if (SENSITIVE_FILE_PATHS.includes(path)) {
+      // Only flag if the response looks like the actual file, not an HTML page.
+      // A real .env file starts with KEY=value lines; .git/HEAD starts with "ref: ".
+      if (isHtmlResponse) continue;
       findings.push({
         code: "SENSITIVE_FILE_EXPOSED",
         title: `Sensitive file publicly accessible: ${path}`,
@@ -1243,16 +1456,49 @@ export async function checkExposedEndpoints(baseUrl: string): Promise<SecurityFi
       continue;
     }
 
+    // Git directory exposure — .git/config or .git/COMMIT_EDITMSG
+    if (path.startsWith("/.git/") && !isHtmlResponse) {
+      const isConfig = path === "/.git/config";
+      findings.push({
+        code: "SENSITIVE_FILE_EXPOSED",
+        title: `Git repository files publicly accessible: ${path}`,
+        description: `The file "${path}" is publicly accessible. This may allow reconstruction of source code and exposure of secrets stored in git history.`,
+        severity: "CRITICAL",
+        fixPrompt: buildFixPrompt(
+          `Git files exposed: ${path}`,
+          isConfig
+            ? "Block access to /.git/ in your web server config (e.g., Nginx: location ~* \\.git { deny all; }). Redeploy without exposing the .git directory."
+            : "Block access to /.git/ directory in your web server or CDN configuration. Never deploy .git/ to a publicly accessible location.",
+        ),
+      });
+      continue;
+    }
+
+    // package.json exposure — reveals dependency versions and scripts
+    if (path === "/package.json" && !isHtmlResponse && looksLikeJson(body)) {
+      findings.push({
+        code: "DEPENDENCY_FILE_EXPOSED",
+        title: "package.json publicly accessible",
+        description: "The package.json file is publicly accessible. It reveals all dependency names and versions, helping attackers identify vulnerable packages.",
+        severity: "MEDIUM",
+        fixPrompt: buildFixPrompt(
+          "package.json exposed",
+          "Configure your web server to block access to package.json and other project configuration files. Add them to a deny list in your CDN/proxy config.",
+        ),
+      });
+      continue;
+    }
+
     // Admin/debug endpoint accessible
     if (ADMIN_DEBUG_PATHS.includes(path) && looksLikeJson(body)) {
       findings.push({
         code: "ADMIN_DEBUG_ENDPOINT_EXPOSED",
         title: `Admin/debug endpoint accessible without authentication: ${path}`,
-        description: `The endpoint "${url}" is publicly accessible and returns JSON data. This may expose sensitive application internals.`,
+        description: `The endpoint "${url}" is publicly accessible and returns JSON data. This may expose sensitive application internals including environment variables, system config, or user data.`,
         severity: "HIGH",
         fixPrompt: buildFixPrompt(
           `Admin/debug endpoint accessible: ${path}`,
-          "Add authentication middleware to all admin and debug endpoints. Remove debug endpoints in production environments.",
+          "Add authentication middleware to all admin and debug endpoints. Remove or disable debug/env endpoints in production. Never expose process.env contents via an API endpoint.",
         ),
       });
       continue;
@@ -1282,7 +1528,9 @@ export async function checkExposedEndpoints(baseUrl: string): Promise<SecurityFi
     }
 
     // Sensitive data in response body
-    if (containsSensitiveData(body)) {
+    // Skip HTML pages . words like "secret" or "api_key" appear in marketing
+    // copy, documentation, and navigation menus on many legitimate sites.
+    if (!isHtmlResponse && containsSensitiveData(body)) {
       findings.push({
         code: "SENSITIVE_DATA_EXPOSED",
         title: `Sensitive data exposed at ${path}`,
@@ -1453,4 +1701,400 @@ export function checkDependencyVersions(jsPayloads: string[]): SecurityFinding[]
   }
 
   return findings;
+}
+
+// ────────────────────────────────────────────
+// SVG / XML escaping
+// ────────────────────────────────────────────
+
+// ────────────────────────────────────────────
+// 21. Behavioral rate-limit enforcement probe
+// ────────────────────────────────────────────
+
+/**
+ * Fires 6 rapid GET requests at an API endpoint and checks whether the server
+ * actually enforces rate limiting. Header-only checks miss misconfigured or
+ * missing middleware. A real 429 is the only reliable signal.
+ *
+ * Only called for API-classified URLs to avoid false positives on homepages.
+ */
+export async function checkRateLimitEnforcement(url: string): Promise<SecurityFinding[]> {
+  const findings: SecurityFinding[] = [];
+
+  // Only probe paths that look like API endpoints
+  let pathname: string;
+  try {
+    pathname = new URL(url).pathname;
+  } catch {
+    return findings;
+  }
+  if (!pathname.startsWith("/api/") && !pathname.startsWith("/v")) return findings;
+
+  try {
+    const PROBE_COUNT = 6;
+    const requests = Array.from({ length: PROBE_COUNT }, () =>
+      ssrfSafeFetch(url, {
+        method: "GET",
+        headers: { "User-Agent": "Scantient-Security-Scanner/1.0" },
+        signal: AbortSignal.timeout(4000),
+      }).then((r) => r.status),
+    );
+
+    const statuses = await Promise.all(requests);
+    const got429 = statuses.some((s) => s === 429);
+
+    if (!got429) {
+      findings.push({
+        code: "RATE_LIMIT_NOT_ENFORCED",
+        title: "Rate limiting not enforced on API endpoint",
+        description:
+          `${PROBE_COUNT} rapid requests to ${url} all succeeded without a 429 response. ` +
+          "Rate limiting may be misconfigured, disabled, or only enforced on POST requests.",
+        severity: "MEDIUM",
+        fixPrompt: buildFixPrompt(
+          "Rate limiting not enforced",
+          "Implement server-side rate limiting that returns HTTP 429 when thresholds are exceeded. " +
+            "Use middleware such as `express-rate-limit`, `@upstash/ratelimit`, or Next.js Edge Middleware. " +
+            "Ensure limits apply to GET and POST requests on all /api/* routes.",
+        ),
+      });
+    }
+  } catch {
+    // Network error or SSRF guard block — skip silently
+  }
+
+  return findings;
+}
+
+// ────────────────────────────────────────────
+// 22. Basic SQL injection probe
+// ────────────────────────────────────────────
+
+const DB_ERROR_PATTERNS = [
+  /syntax error/i,
+  /mysql_fetch/i,
+  /ORA-\d{4,5}/,
+  /pg_query/i,
+  /sqlite_/i,
+  /unclosed quotation/i,
+  /SQLSTATE/i,
+  /mysqli_/i,
+  /Warning: mysql/i,
+  /PostgreSQL.*ERROR/i,
+  /you have an error in your sql syntax/i,
+  /quoted string not properly terminated/i,
+  /invalid input syntax for type/i,
+];
+
+/**
+ * Appends basic SQL injection payloads to discovered query parameters and
+ * checks whether the server returns a database error string in the response
+ * body. Targets only API endpoints with an explorable parameter surface.
+ */
+export async function checkSQLInjection(url: string): Promise<SecurityFinding[]> {
+  const findings: SecurityFinding[] = [];
+
+  let parsed: URL;
+  try {
+    parsed = new URL(url);
+  } catch {
+    return findings;
+  }
+
+  // Only probe API-looking paths
+  if (!parsed.pathname.startsWith("/api/") && !parsed.pathname.startsWith("/v")) return findings;
+
+  // Build probe URLs: use existing params or inject a dummy ?id= param
+  const baseParams = [...parsed.searchParams.keys()];
+  const probeParam = baseParams[0] ?? "id";
+  const payloads = ["'", "' OR '1'='1"];
+
+  for (const payload of payloads) {
+    const probeUrl = new URL(parsed.toString());
+    probeUrl.searchParams.set(probeParam, (parsed.searchParams.get(probeParam) ?? "1") + payload);
+
+    try {
+      const res = await ssrfSafeFetch(probeUrl.toString(), {
+        method: "GET",
+        headers: { "User-Agent": "Scantient-Security-Scanner/1.0" },
+        signal: AbortSignal.timeout(6000),
+      });
+
+      if (res.status >= 500) {
+        const body = await res.text();
+        const matched = DB_ERROR_PATTERNS.some((p) => p.test(body));
+        if (matched) {
+          findings.push({
+            code: "SQL_INJECTION_LIKELY",
+            title: "Potential SQL injection vulnerability detected",
+            description:
+              `The endpoint at ${parsed.pathname} returned a database error when the parameter ` +
+              `\`${probeParam}\` was modified with payload \`${payload}\`. ` +
+              "The server may be passing user input directly to a SQL query.",
+            severity: "CRITICAL",
+            fixPrompt: buildFixPrompt(
+              "SQL injection vulnerability",
+              "Never interpolate user input directly into SQL queries. " +
+                "Use parameterised queries (e.g. Prisma, pg's $1 placeholders, or prepared statements). " +
+                "Validate and sanitise all query parameters with a schema library such as Zod.",
+            ),
+          });
+          break; // One finding per endpoint is enough
+        }
+      }
+    } catch {
+      // SSRF guard block or network error — skip
+    }
+  }
+
+  return findings;
+}
+
+// ────────────────────────────────────────────
+// 23. Subdomain takeover detection
+// ────────────────────────────────────────────
+
+/** Fingerprints for known "unclaimed" pages from major PaaS providers. */
+const TAKEOVER_FINGERPRINTS: Array<{ provider: string; pattern: RegExp }> = [
+  { provider: "Vercel", pattern: /The deployment is not found/i },
+  { provider: "Netlify", pattern: /Not Found - Request ID:/i },
+  { provider: "Heroku", pattern: /No such app/i },
+  { provider: "GitHub Pages", pattern: /There isn't a GitHub Pages site here/i },
+  { provider: "Render", pattern: /not found on this server/i },
+  { provider: "Railway", pattern: /Application not found/i },
+  { provider: "Fly.io", pattern: /404 from fly proxy/i },
+  { provider: "Surge.sh", pattern: /project not found/i },
+  { provider: "Fastly", pattern: /Fastly error: unknown domain/i },
+  { provider: "Azure", pattern: /404 Web Site not found/i },
+];
+
+/**
+ * Extracts same-root subdomains from HTML anchor hrefs and robots.txt, then
+ * probes each one for known "unclaimed project" pages from PaaS providers.
+ * Dangling CNAME records pointing at decommissioned deployments are a common
+ * vibe-coder oversight that can allow full subdomain takeover.
+ *
+ * Capped at 10 subdomains to avoid hammering the target.
+ */
+export async function checkSubdomainTakeover(
+  url: string,
+  html: string,
+): Promise<SecurityFinding[]> {
+  const findings: SecurityFinding[] = [];
+
+  let origin: URL;
+  try {
+    origin = new URL(url);
+  } catch {
+    return findings;
+  }
+
+  // Extract the root domain (e.g. "example.com" from "www.example.com")
+  const hostParts = origin.hostname.split(".");
+  const rootDomain =
+    hostParts.length >= 2 ? hostParts.slice(-2).join(".") : origin.hostname;
+
+  // Collect candidate subdomains from HTML links
+  const hrefMatches = Array.from(html.matchAll(/href=["']https?:\/\/([^"'/?#]+)/gi)).map(
+    (m) => m[1],
+  );
+
+  // Also pull robots.txt Disallow paths that expose subdomains
+  let robotsBody = "";
+  try {
+    const robotsRes = await ssrfSafeFetch(`${origin.protocol}//${origin.hostname}/robots.txt`, {
+      signal: AbortSignal.timeout(4000),
+    });
+    robotsBody = await robotsRes.text();
+  } catch {
+    // Non-fatal
+  }
+  const robotsHosts = Array.from(robotsBody.matchAll(/https?:\/\/([^/\s]+)/gi)).map((m) => m[1]);
+
+  // Unique subdomains that belong to the same root domain but differ from the scanned host
+  const candidates = [
+    ...new Set([...hrefMatches, ...robotsHosts]),
+  ]
+    .filter(
+      (h) =>
+        h !== origin.hostname &&
+        h.endsWith(`.${rootDomain}`) &&
+        !h.startsWith("www."),
+    )
+    .slice(0, 10);
+
+  for (const host of candidates) {
+    const probeUrl = `${origin.protocol}//${host}/`;
+    try {
+      const res = await ssrfSafeFetch(probeUrl, {
+        signal: AbortSignal.timeout(5000),
+        headers: { "User-Agent": "Scantient-Security-Scanner/1.0" },
+      });
+      const body = await res.text();
+
+      for (const { provider, pattern } of TAKEOVER_FINGERPRINTS) {
+        if (pattern.test(body)) {
+          findings.push({
+            code: "SUBDOMAIN_TAKEOVER_RISK",
+            title: `Subdomain takeover risk: ${host} (${provider})`,
+            description:
+              `The subdomain ${host} resolves but returns the unclaimed-project page from ${provider}. ` +
+              "An attacker can register this project on the platform and take control of the subdomain.",
+            severity: "CRITICAL",
+            fixPrompt: buildFixPrompt(
+              `Subdomain takeover: ${host}`,
+              `Remove the CNAME record for ${host} from your DNS provider, ` +
+                `or re-deploy the application on ${provider} using that subdomain. ` +
+                "Regularly audit DNS records and remove entries pointing at decommissioned deployments.",
+            ),
+          });
+          break;
+        }
+      }
+    } catch {
+      // SSRF guard, DNS failure, or timeout — skip this candidate
+    }
+  }
+
+  return findings;
+}
+
+// ────────────────────────────────────────────
+// 24. Source map secret and path scanning
+// ────────────────────────────────────────────
+
+const INTERNAL_PATH_PATTERNS = [
+  /^\/home\//,
+  /^\/Users\//,
+  /^\/root\//,
+  /^C:\\Users\\/i,
+  /^\/var\/task\//,
+  /^\/opt\/render\//,
+  /^\/vercel\/path/,
+];
+
+/**
+ * When a `sourceMappingURL` comment is found in the HTML, attempts to fetch
+ * the referenced `.map` file. If accessible, runs the full key-pattern scanner
+ * against its contents and checks the `sources` array for internal file paths
+ * that reveal server-side directory structure.
+ */
+export async function checkSourceMapContents(
+  html: string,
+  baseUrl: string,
+): Promise<SecurityFinding[]> {
+  const findings: SecurityFinding[] = [];
+
+  // Extract source map URL references from JS inline or the HTML itself
+  const mapUrlMatches = Array.from(
+    html.matchAll(/\/\/# sourceMappingURL=([^\s"']+)/g),
+  ).map((m) => m[1]);
+
+  if (mapUrlMatches.length === 0) return findings;
+
+  let base: URL;
+  try {
+    base = new URL(baseUrl);
+  } catch {
+    return findings;
+  }
+
+  // Check up to 3 source map files to avoid excessive requests
+  const toCheck = mapUrlMatches.slice(0, 3);
+
+  for (const mapRef of toCheck) {
+    // Skip data: URIs (inline source maps are not fetchable)
+    if (mapRef.startsWith("data:")) continue;
+
+    let mapUrl: string;
+    try {
+      mapUrl = new URL(mapRef, base.toString()).toString();
+    } catch {
+      continue;
+    }
+
+    try {
+      const res = await ssrfSafeFetch(mapUrl, {
+        signal: AbortSignal.timeout(6000),
+        headers: { "User-Agent": "Scantient-Security-Scanner/1.0" },
+      });
+
+      if (!res.ok) continue;
+
+      const mapContent = await res.text();
+
+      // 1. Run key-pattern scanner against map content
+      const secretFindings = scanJavaScriptForKeys([mapContent]);
+      if (secretFindings.length > 0) {
+        const labels = secretFindings
+          .map((f) => f.title)
+          .filter((v, i, a) => a.indexOf(v) === i)
+          .join(", ");
+        findings.push({
+          code: "SOURCE_MAP_SECRETS",
+          title: "Secret key(s) found inside an exposed source map",
+          description:
+            `The source map at ${mapUrl} is publicly accessible and contains what appear to be ` +
+            `secret keys or credentials: ${labels}. ` +
+            "Source maps expose original source code — any secrets bundled during build are readable.",
+          severity: "CRITICAL",
+          fixPrompt: buildFixPrompt(
+            "Secrets in source map",
+            "Remove all secret values from client-side code and environment variable bundles. " +
+              "Rotate any exposed keys immediately. " +
+              "Disable production source maps (`productionBrowserSourceMaps: false` in next.config.ts) " +
+              "or use hidden source maps uploaded only to your error tracking service.",
+          ),
+        });
+      }
+
+      // 2. Check `sources` array for internal paths
+      let parsed: { sources?: unknown[] } | null = null;
+      try {
+        parsed = JSON.parse(mapContent) as { sources?: unknown[] };
+      } catch {
+        // Not valid JSON — skip path check
+      }
+      if (parsed?.sources && Array.isArray(parsed.sources)) {
+        const internalPaths = (parsed.sources as unknown[])
+          .filter((s): s is string => typeof s === "string")
+          .filter((s) => INTERNAL_PATH_PATTERNS.some((p) => p.test(s)));
+
+        if (internalPaths.length > 0) {
+          findings.push({
+            code: "SOURCE_MAP_INTERNAL_PATHS",
+            title: "Source map exposes internal server file paths",
+            description:
+              `The source map at ${mapUrl} contains ${internalPaths.length} internal file path(s) ` +
+              `(e.g. \`${internalPaths[0]}\`) that reveal server-side directory structure. ` +
+              "This aids reconnaissance by exposing deployment environment details.",
+            severity: "LOW",
+            fixPrompt: buildFixPrompt(
+              "Source map exposes internal paths",
+              "Disable production source maps or configure your bundler to strip source paths. " +
+                "In Next.js: set `productionBrowserSourceMaps: false`.",
+            ),
+          });
+        }
+      }
+    } catch {
+      // Fetch failed or SSRF guard blocked — skip
+    }
+  }
+
+  return findings;
+}
+
+/**
+ * Escape a string for safe embedding in SVG/XML text content and attribute values.
+ * SVG is XML . user-controlled values must be escaped before interpolation to
+ * prevent XML injection (broken markup or injected elements).
+ */
+export function escapeSvg(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#x27;");
 }

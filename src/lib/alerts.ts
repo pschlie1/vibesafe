@@ -1,5 +1,19 @@
+import { createHmac, randomUUID } from "crypto";
 import { db } from "@/lib/db";
+import { getOrgLimits } from "@/lib/tenant";
 import type { SecurityFinding } from "@/lib/types";
+import { sendTeamsNotification } from "@/lib/teams-notify";
+import { createPagerDutyIncident } from "@/lib/pagerduty-notify";
+import { signWebhookPayload } from "@/lib/webhook-signature";
+
+const TIER_CHANNELS: Record<string, string[]> = {
+  FREE: [],
+  STARTER: ["EMAIL"],
+  PRO: ["EMAIL", "SLACK", "WEBHOOK"],
+  ENTERPRISE: ["EMAIL", "SLACK", "WEBHOOK"],
+  ENTERPRISE_PLUS: ["EMAIL", "SLACK", "WEBHOOK"],
+  EXPIRED: [],
+};
 
 /**
  * Retry a function with exponential backoff.
@@ -91,11 +105,50 @@ function isTeamsWebhookUrl(url: string): boolean {
   return url.includes(".webhook.office.com/") || url.includes(".logic.azure.com/");
 }
 
+/**
+ * Derive a per-endpoint HMAC signing key.
+ *
+ * Previously the webhook URL itself was used as the raw HMAC key.  This meant
+ * anyone who knew the URL (e.g., from server logs or interception) could forge
+ * a valid signature.  The fix derives the signing key with
+ * HMAC-SHA256(url, WEBHOOK_SIGNING_SECRET) so the signature is bound to a
+ * server-side secret that the webhook destination cannot independently produce.
+ *
+ * Backwards-compat: if WEBHOOK_SIGNING_SECRET is not configured the function
+ * falls back to the old URL-only key and emits a warning.  Set
+ * WEBHOOK_SIGNING_SECRET to a long random string in production.
+ */
+function deriveWebhookSigningKey(url: string): string {
+  const masterSecret = process.env.WEBHOOK_SIGNING_SECRET;
+  if (!masterSecret) {
+    console.warn(
+      "[alerts] WEBHOOK_SIGNING_SECRET not set . webhook signatures use URL as key (insecure). " +
+        "Set WEBHOOK_SIGNING_SECRET to a long random secret in your environment.",
+    );
+    return url; // legacy fallback
+  }
+  return createHmac("sha256", masterSecret).update(url, "utf8").digest("hex");
+}
+
 async function sendWebhook(url: string, payload: Record<string, unknown>) {
+  // Add webhookId nonce to the signed body . prevents replay attacks.
+  // Since the HMAC signature covers the entire body string, including the
+  // unique webhookId makes every delivery cryptographically distinct.
+  // Recipients can store seen webhookIds and reject duplicates.
+  const webhookId = randomUUID();
+  const signedPayload = { ...payload, webhookId };
+  const body = JSON.stringify(signedPayload);
+  const signingKey = deriveWebhookSigningKey(url);
+  const signature = signWebhookPayload(body, signingKey);
   await fetch(url, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
+    headers: {
+      "Content-Type": "application/json",
+      "X-Scantient-Signature": signature,
+      "X-Scantient-Timestamp": new Date().toISOString(),
+      "X-Scantient-Webhook-Id": webhookId,
+    },
+    body,
   });
 }
 
@@ -125,13 +178,41 @@ export async function sendCriticalFindingsAlert(appId: string, findings: Securit
     return;
   }
 
+  // Enforce tier-based channel restrictions before dispatching
+  const limits = await getOrgLimits(app.orgId);
+  const allowedChannels = TIER_CHANNELS[limits.tier] ?? [];
+
   for (const config of configs) {
+    if (!allowedChannels.includes(config.channel)) {
+      console.warn(
+        `[alerts] Skipping ${config.channel} alert config ${config.id} . channel not allowed for org ${app.orgId} on tier ${limits.tier}. Config is stale.`,
+      );
+      continue;
+    }
     const minOrder = SEVERITY_ORDER[config.minSeverity as keyof typeof SEVERITY_ORDER] ?? 1;
     const relevant = findings.filter(
       (f) => (SEVERITY_ORDER[f.severity as keyof typeof SEVERITY_ORDER] ?? 3) <= minOrder,
     );
 
     if (relevant.length === 0) continue;
+
+    // ── Cooldown: skip if a notification was already delivered for this config
+    //    within the last hour to prevent alert storms on repeated scans.
+    const ALERT_COOLDOWN_MS = 60 * 60 * 1000; // 1 hour
+    const recentNotif = await db.notification.findFirst({
+      where: {
+        alertConfigId: config.id,
+        delivered: true,
+        sentAt: { gte: new Date(Date.now() - ALERT_COOLDOWN_MS) },
+      },
+      orderBy: { sentAt: "desc" },
+    });
+    if (recentNotif) {
+      console.log(
+        `[alerts] Skipping alert config ${config.id} . cooldown active (last sent ${recentNotif.sentAt.toISOString()})`,
+      );
+      continue;
+    }
 
     try {
       switch (config.channel) {
@@ -155,12 +236,23 @@ export async function sendCriticalFindingsAlert(appId: string, findings: Securit
               facts,
             ));
           } else {
+            const dashboardUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? "https://scantient.com"}/dashboard`;
+            const topFinding = relevant[0];
             await withRetry(() => sendWebhook(config.destination, {
-              event: "findings.detected",
+              event: topFinding?.severity === "CRITICAL" ? "finding.critical" : "finding.new",
+              org: { id: app.orgId, name: app.org.name },
               app: { id: app.id, name: app.name, url: app.url },
-              findings: relevant,
+              findings: relevant.map((f) => ({
+                code: f.code,
+                title: f.title,
+                severity: f.severity,
+                description: f.description,
+                fixPrompt: f.fixPrompt,
+              })),
+              findingsCount: relevant.length,
+              dashboardUrl,
               timestamp: new Date().toISOString(),
-            }));
+            }), 3, 1000);
           }
           break;
         }
@@ -187,11 +279,101 @@ export async function sendCriticalFindingsAlert(appId: string, findings: Securit
       });
     }
   }
+
+  // Fire Teams integration (from IntegrationConfig, if configured)
+  await fireTeamsIntegration(app.orgId, app.name, app.url, findings);
+
+  // Fire PagerDuty for CRITICAL findings (ENTERPRISE+ only, from IntegrationConfig)
+  const criticals = findings.filter((f) => f.severity === "CRITICAL");
+  if (criticals.length > 0) {
+    await firePagerDutyIntegration(app.orgId, app.name, app.url, criticals, app.org.name);
+  }
+}
+
+async function firePagerDutyIntegration(
+  orgId: string,
+  appName: string,
+  appUrl: string,
+  criticals: SecurityFinding[],
+  orgName: string,
+) {
+  try {
+    const { decrypt } = await import("@/lib/crypto-util");
+    const pdIntegration = await db.integrationConfig.findUnique({
+      where: { orgId_type: { orgId, type: "pagerduty" } },
+    });
+    if (!pdIntegration || !pdIntegration.enabled) return;
+
+    const cfg = pdIntegration.config as Record<string, string>;
+    const routingKey = decrypt(cfg.routingKey);
+
+    const summary = `[Scantient] ${criticals.length} CRITICAL finding(s) on ${appName}: ${criticals[0]?.title ?? "Security issue detected"}`;
+    await createPagerDutyIncident(routingKey, {
+      summary,
+      severity: "critical",
+      source: appUrl,
+      component: appName,
+      group: orgName,
+      customDetails: {
+        findings_count: String(criticals.length),
+        top_finding: criticals[0]?.title ?? "",
+        app_url: appUrl,
+        dashboard_url: "https://scantient.com/dashboard",
+      },
+    });
+  } catch (err) {
+    // Non-fatal: PagerDuty integration errors should not block alert delivery
+    console.warn("[alerts] PagerDuty integration error (non-fatal):", err instanceof Error ? err.message : err);
+  }
+}
+
+async function fireTeamsIntegration(
+  orgId: string,
+  appName: string,
+  appUrl: string,
+  findings: SecurityFinding[],
+) {
+  try {
+    const { decrypt } = await import("@/lib/crypto-util");
+    const teamsIntegration = await db.integrationConfig.findUnique({
+      where: { orgId_type: { orgId, type: "teams" } },
+    });
+    if (!teamsIntegration || !teamsIntegration.enabled) return;
+
+    const cfg = teamsIntegration.config as Record<string, string>;
+    const webhookUrl = decrypt(cfg.webhookUrl);
+
+    const criticals = findings.filter((f) => f.severity === "CRITICAL");
+    const highs = findings.filter((f) => f.severity === "HIGH");
+    const topSeverity = criticals.length > 0 ? "critical" : highs.length > 0 ? "high" : "medium";
+
+    const lines = findings.slice(0, 5).map((f) => `• [${f.severity}] ${f.title}`).join("\n");
+    await sendTeamsNotification(webhookUrl, {
+      title: `⚠️ Scantient Alert: ${appName}`,
+      text: `${findings.length} security issue(s) detected on ${appUrl}\n\n${lines}`,
+      severity: topSeverity,
+      appName,
+      appUrl,
+      dashboardUrl: "https://scantient.com/dashboard",
+    });
+  } catch (err) {
+    // Non-fatal: Teams integration errors should not block alert delivery
+    console.warn("[alerts] Teams integration error (non-fatal):", err instanceof Error ? err.message : err);
+  }
 }
 
 export async function sendTestNotification(configId: string) {
   const config = await db.alertConfig.findUnique({ where: { id: configId } });
   if (!config) throw new Error("Alert config not found");
+
+  // Check that the org still has a tier that supports this channel
+  const testLimits = await getOrgLimits(config.orgId);
+  const testAllowedChannels = TIER_CHANNELS[testLimits.tier] ?? [];
+  if (!testAllowedChannels.includes(config.channel)) {
+    throw new Error(
+      `${config.channel} alerts are not available on your current ${testLimits.tier} plan.`,
+    );
+  }
 
   const subject = "✅ Scantient Test Notification";
   const body = "This is a test notification from Scantient. Your alert channel is working correctly!";
@@ -244,7 +426,17 @@ export async function sendChangeDetectedAlert(appId: string, appName: string, ap
   const subject = `🔄 Scantient: ${appName} has changed`;
   const message = `Deployment change detected on ${appName} (${appUrl}). The application content has changed since the last scan.`;
 
+  // Enforce tier-based channel restrictions before dispatching
+  const changeLimits = await getOrgLimits(app.orgId);
+  const changeAllowedChannels = TIER_CHANNELS[changeLimits.tier] ?? [];
+
   for (const config of configs) {
+    if (!changeAllowedChannels.includes(config.channel)) {
+      console.warn(
+        `[alerts] Skipping ${config.channel} change-detected alert config ${config.id} . channel not allowed for org ${app.orgId} on tier ${changeLimits.tier}. Config is stale.`,
+      );
+      continue;
+    }
     try {
       switch (config.channel) {
         case "EMAIL":
@@ -268,20 +460,36 @@ export async function sendChangeDetectedAlert(appId: string, appName: string, ap
   }
 }
 
+/**
+ * Escape HTML special characters to prevent XSS in email templates.
+ * Applied to all user-controlled values (app name, URL, finding titles/descriptions)
+ * before interpolation into HTML template strings.
+ */
+export function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#x27;");
+}
+
 function buildAlertHtml(appName: string, appUrl: string, findings: SecurityFinding[]): string {
+  const safeName = escapeHtml(appName);
+  const safeUrl = escapeHtml(appUrl);
   return `
     <div style="font-family: -apple-system, sans-serif; max-width: 600px;">
-      <h2 style="margin-bottom: 4px;">⚠️ Scantient Alert: ${appName}</h2>
+      <h2 style="margin-bottom: 4px;">⚠️ Scantient Alert: ${safeName}</h2>
       <p style="color: #666; margin-top: 0;">
-        <a href="${appUrl}">${appUrl}</a>
+        <a href="${safeUrl}">${safeUrl}</a>
       </p>
       <p>We detected <strong>${findings.length}</strong> security issue(s):</p>
       ${findings
         .map(
           (f) => `
         <div style="border-left: 3px solid ${f.severity === "CRITICAL" ? "#dc2626" : "#f59e0b"}; padding: 8px 12px; margin: 12px 0; background: #f9fafb;">
-          <strong>[${f.severity}] ${f.title}</strong>
-          <p style="margin: 4px 0; font-size: 14px; color: #555;">${f.description}</p>
+          <strong>[${f.severity}] ${escapeHtml(f.title)}</strong>
+          <p style="margin: 4px 0; font-size: 14px; color: #555;">${escapeHtml(f.description)}</p>
         </div>
       `,
         )

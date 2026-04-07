@@ -1,9 +1,16 @@
 import { NextResponse } from "next/server";
+import { z } from "zod";
 import { authenticateApiKey } from "@/lib/api-auth";
 import { db } from "@/lib/db";
 import { runHttpScanForApp } from "@/lib/scanner-http";
 import { logApiError } from "@/lib/observability";
+import { checkRateLimit } from "@/lib/rate-limit";
+import { getOrgLimits } from "@/lib/tenant";
 import type { FindingSeverity, FindingStatus } from "@prisma/client";
+
+// Maximum JSON body size accepted by the MCP endpoint (64 KB).
+// Rejects over-large payloads before parsing to protect against memory exhaustion.
+const MAX_PAYLOAD_BYTES = 64_000;
 
 // MCP JSON-RPC compatible endpoint
 // Spec: https://modelcontextprotocol.io
@@ -87,6 +94,39 @@ const TOOLS = [
   },
 ];
 
+// ── Zod schemas for each tool's input parameters ────────────────────────────
+// These enforce the shapes declared in the TOOLS inputSchema above at runtime.
+// Unknown tools are rejected before executeTool is called.
+
+const findingStatusEnum = z.enum(["OPEN", "ACKNOWLEDGED", "IN_PROGRESS", "RESOLVED", "IGNORED"]);
+const findingSeverityEnum = z.enum(["LOW", "MEDIUM", "HIGH", "CRITICAL"]);
+
+const TOOL_SCHEMAS: Record<string, z.ZodTypeAny> = {
+  list_apps: z.object({}),
+  get_app_status: z.object({
+    appId: z.string().min(1).max(256),
+  }),
+  get_findings: z.object({
+    appId: z.string().min(1).max(256),
+    status: findingStatusEnum.optional(),
+    severity: findingSeverityEnum.optional(),
+  }),
+  trigger_scan: z.object({
+    appId: z.string().min(1).max(256),
+  }),
+  get_security_score: z.object({
+    appId: z.string().min(1).max(256).optional(),
+  }),
+  resolve_finding: z.object({
+    findingId: z.string().min(1).max(256),
+    status: findingStatusEnum,
+  }),
+  get_remediation_metrics: z.object({}),
+};
+
+// Known tool names derived from the schema map above (single source of truth)
+const ALLOWED_TOOL_NAMES = new Set(Object.keys(TOOL_SCHEMAS));
+
 // --- Helper: compute security score from finding severity counts ---
 function computeScore(counts: { CRITICAL: number; HIGH: number; MEDIUM: number; LOW: number }) {
   const penalty = counts.CRITICAL * 25 + counts.HIGH * 10 + counts.MEDIUM * 3 + counts.LOW * 1;
@@ -111,12 +151,14 @@ async function verifyAppOwnership(appId: string, orgId: string) {
 
 // --- Get severity counts for open findings of an app ---
 async function getSeverityCounts(appId: string) {
+  // Cap at 2 000 . sufficient for accurate scoring; prevents OOM on large apps.
   const findings = await db.finding.findMany({
     where: {
       run: { appId },
       status: { in: ["OPEN", "ACKNOWLEDGED", "IN_PROGRESS"] },
     },
     select: { severity: true },
+    take: 2000,
   });
   const counts = { CRITICAL: 0, HIGH: 0, MEDIUM: 0, LOW: 0 };
   for (const f of findings) {
@@ -133,6 +175,7 @@ async function executeTool(name: string, args: Record<string, unknown>, orgId: s
         where: { orgId },
         select: { id: true, name: true, url: true, status: true, lastCheckedAt: true },
         orderBy: { name: "asc" },
+        take: 200,
       });
       return { apps };
     }
@@ -189,6 +232,23 @@ async function executeTool(name: string, args: Record<string, unknown>, orgId: s
       const appId = args.appId as string;
       const app = await verifyAppOwnership(appId, orgId);
       if (!app) return { error: "App not found or access denied" };
+
+      // Enforce per-tier rate limits (same thresholds as /api/scan/[id])
+      const limits = await getOrgLimits(orgId);
+      const scanTier = limits.tier;
+      const maxScans =
+        scanTier === "ENTERPRISE" || scanTier === "ENTERPRISE_PLUS" ? 200
+        : scanTier === "PRO" ? 50
+        : scanTier === "STARTER" ? 10
+        : 3;
+
+      const rl = await checkRateLimit(`mcp-scan:${orgId}`, {
+        maxAttempts: maxScans,
+        windowMs: 86400000,
+      });
+      if (!rl.allowed) {
+        return { error: "Rate limit exceeded. Upgrade for more scans." };
+      }
 
       const result = await runHttpScanForApp(appId);
       return {
@@ -256,12 +316,16 @@ async function executeTool(name: string, args: Record<string, unknown>, orgId: s
       const appIds = await db.monitoredApp.findMany({
         where: { orgId },
         select: { id: true },
+        take: 200,
       });
       const appIdList = appIds.map((a) => a.id);
 
+      // Cap at 5000 findings . sufficient for metrics; prevents OOM on large orgs
       const allFindings = await db.finding.findMany({
         where: { run: { appId: { in: appIdList } } },
         select: { status: true, createdAt: true, resolvedAt: true, acknowledgedAt: true },
+        orderBy: { createdAt: "desc" },
+        take: 5000,
       });
 
       const byStatus: Record<string, number> = {};
@@ -310,9 +374,26 @@ export async function POST(req: Request) {
     );
   }
 
+  // Reject over-large payloads before parsing JSON
+  const contentLength = req.headers.get("content-length");
+  if (contentLength && parseInt(contentLength, 10) > MAX_PAYLOAD_BYTES) {
+    return err(null, -32700, "Payload too large");
+  }
+
+  let rawText: string;
+  try {
+    rawText = await req.text();
+  } catch {
+    return err(null, -32700, "Parse error");
+  }
+
+  if (rawText.length > MAX_PAYLOAD_BYTES) {
+    return err(null, -32700, "Payload too large");
+  }
+
   let body: JsonRpcRequest;
   try {
-    body = await req.json();
+    body = JSON.parse(rawText) as JsonRpcRequest;
   } catch {
     return err(null, -32700, "Parse error");
   }
@@ -337,7 +418,21 @@ export async function POST(req: Request) {
 
   if (method === "tools/call") {
     const toolName = (params as Record<string, unknown>)?.name as string;
-    const toolArgs = ((params as Record<string, unknown>)?.arguments ?? {}) as Record<string, unknown>;
+    const rawArgs = ((params as Record<string, unknown>)?.arguments ?? {}) as Record<string, unknown>;
+
+    // Reject unknown tool names (allowlist check)
+    if (!toolName || !ALLOWED_TOOL_NAMES.has(toolName)) {
+      return err(id, -32602, `Unknown tool: ${String(toolName)}`);
+    }
+
+    // Validate tool arguments against the Zod schema for this tool
+    const schema = TOOL_SCHEMAS[toolName];
+    const parsed = schema.safeParse(rawArgs);
+    if (!parsed.success) {
+      const issues = parsed.error.issues.map((i) => `${i.path.join(".")}: ${i.message}`).join("; ");
+      return err(id, -32602, `Invalid params for tool "${toolName}": ${issues}`);
+    }
+    const toolArgs = parsed.data as Record<string, unknown>;
 
     try {
       const result = await executeTool(toolName, toolArgs, orgId);

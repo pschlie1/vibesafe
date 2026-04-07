@@ -1,0 +1,18 @@
+<svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="scantient-grad" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#3B82F6"/>
+      <stop offset="100%" stop-color="#06B6D4"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="40" height="40" rx="10" fill="url(#scantient-grad)" fill-opacity="0.1" />
+
+  <path d="M26 12C26 10.8954 25.1046 10 24 10H14C12.8954 10 12 10.8954 12 12V18C12 19.1046 12.8954 20 14 20H26C27.1046 20 28 20.8954 28 22V28C28 29.1046 27.1046 30 26 30H16C14.8954 30 14 29.1046 14 28"
+    stroke="url(#scantient-grad)"
+    stroke-width="4.5"
+    stroke-linecap="round"
+    stroke-linejoin="round"/>
+
+  <circle cx="20" cy="20" r="2.5" fill="white" />
+</svg>

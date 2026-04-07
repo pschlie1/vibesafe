@@ -2,10 +2,11 @@ import { subDays } from "date-fns";
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getSession } from "@/lib/auth";
+import { errorResponse } from "@/lib/api-response";
 
 export async function GET() {
   const session = await getSession();
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session) return errorResponse("UNAUTHORIZED", "Unauthorized", undefined, 401);
 
   const sevenDaysAgo = subDays(new Date(), 7);
 
@@ -24,7 +25,14 @@ export async function GET() {
         startedAt: { gte: sevenDaysAgo },
         app: { orgId: session.orgId },
       },
-      include: { app: true, findings: true },
+      include: {
+        app: true,
+        findings: {
+          select: { id: true, code: true, title: true, severity: true, status: true },
+          take: 50,
+          orderBy: { severity: "asc" },
+        },
+      },
       orderBy: { startedAt: "desc" },
       take: 30,
     }),

@@ -127,7 +127,7 @@ export async function autoTriageFinding(findingId: string): Promise<void> {
     timestamp: new Date().toISOString(),
     actor: "system",
     action: "triaged",
-    details: `Auto-triaged as ${priority}${pastAssignment ? ` — suggested assignee: ${pastAssignment.user.name ?? pastAssignment.user.email}` : ""}`,
+    details: `Auto-triaged as ${priority}${pastAssignment ? ` . suggested assignee: ${pastAssignment.user.name ?? pastAssignment.user.email}` : ""}`,
   });
 
   await db.finding.update({
@@ -188,7 +188,7 @@ export async function linkPRToFinding(
     timestamp: new Date().toISOString(),
     actor: pr.linkedBy,
     action: "pr_linked",
-    details: `Linked PR: ${pr.url}${pr.title ? ` — ${pr.title}` : ""}`,
+    details: `Linked PR: ${pr.url}${pr.title ? ` . ${pr.title}` : ""}`,
   });
 
   await db.finding.update({
@@ -202,59 +202,107 @@ export async function linkPRToFinding(
 // ─── Verification ───────────────────────────────────
 
 /**
- * After a scan completes, verify resolved findings.
- * - If the finding's code is still detected in the new scan → reopen
- * - If the finding's code is NOT detected → close with evidence
+ * After a scan completes, reconcile findings against the new scan's results:
+ *
+ * 1. RESOLVED findings still in newFindingCodes → reopen (regression).
+ * 2. RESOLVED findings not in newFindingCodes → close with evidence (verified fixed).
+ * 3. OPEN/ACKNOWLEDGED/IN_PROGRESS findings NOT in newFindingCodes → auto-resolve
+ *    (the issue went away . most likely fixed or no longer applicable).
+ *
+ * Previously only case 1 & 2 were handled, so OPEN findings would stay OPEN
+ * forever even after the underlying issue was remediated.
  */
 export async function verifyResolvedFindings(appId: string, newFindingCodes: Set<string>): Promise<void> {
-  // Find all RESOLVED findings for this app that are pending verification
-  const resolvedFindings = await db.finding.findMany({
-    where: {
-      status: "RESOLVED",
-      run: { appId },
-    },
-    include: { run: { select: { appId: true } } },
-  });
+  // ── Fetch findings that need reconciliation ────────────────────────────────
+  const [resolvedFindings, activeFindings] = await Promise.all([
+    // Already-resolved findings: verify they're still gone
+    db.finding.findMany({
+      where: { status: "RESOLVED", run: { appId } },
+      include: { run: { select: { appId: true } } },
+    }),
+    // Active (open/wip) findings: auto-resolve any no longer detected
+    db.finding.findMany({
+      where: {
+        status: { in: ["OPEN", "ACKNOWLEDGED", "IN_PROGRESS"] },
+        run: { appId },
+      },
+      include: { run: { select: { appId: true } } },
+    }),
+  ]);
 
-  for (const finding of resolvedFindings) {
-    const { userNotes, meta } = parseRemediationMeta(finding.notes);
+  const now = new Date().toISOString();
 
-    if (newFindingCodes.has(finding.code)) {
-      // Still present — reopen
-      meta.lifecycleStage = "TRIAGED";
-      meta.verificationPending = false;
-      meta.timeline.push({
-        timestamp: new Date().toISOString(),
-        actor: "system",
-        action: "verification_failed",
-        details: "Automated verification failed — issue still present in latest scan",
-      });
+  // ── 1 & 2: Reconcile RESOLVED findings ────────────────────────────────────
+  await Promise.all(
+    resolvedFindings.map(async (finding) => {
+      const { userNotes, meta } = parseRemediationMeta(finding.notes);
 
-      await db.finding.update({
-        where: { id: finding.id },
-        data: {
-          status: "OPEN",
-          resolvedAt: null,
-          notes: serializeWithMeta(userNotes, meta),
-        },
-      });
-    } else {
-      // Gone — close with evidence
+      if (newFindingCodes.has(finding.code)) {
+        // Still present . reopen
+        meta.lifecycleStage = "TRIAGED";
+        meta.verificationPending = false;
+        meta.timeline.push({
+          timestamp: now,
+          actor: "system",
+          action: "verification_failed",
+          details: "Automated verification failed . issue still present in latest scan",
+        });
+
+        await db.finding.update({
+          where: { id: finding.id },
+          data: {
+            status: "OPEN",
+            resolvedAt: null,
+            notes: serializeWithMeta(userNotes, meta),
+          },
+        });
+      } else {
+        // Gone . close with evidence
+        meta.lifecycleStage = "CLOSED";
+        meta.verificationPending = false;
+        meta.timeline.push({
+          timestamp: now,
+          actor: "system",
+          action: "verified_closed",
+          details: "Verified fixed by automated re-scan . issue no longer detected",
+        });
+
+        await db.finding.update({
+          where: { id: finding.id },
+          data: {
+            notes: serializeWithMeta(userNotes, meta),
+          },
+        });
+      }
+    }),
+  );
+
+  // ── 3: Auto-resolve OPEN findings no longer detected ──────────────────────
+  const findingsToAutoResolve = activeFindings.filter(
+    (f) => !newFindingCodes.has(f.code),
+  );
+
+  await Promise.all(
+    findingsToAutoResolve.map(async (finding) => {
+      const { userNotes, meta } = parseRemediationMeta(finding.notes);
+
       meta.lifecycleStage = "CLOSED";
-      meta.verificationPending = false;
       meta.timeline.push({
-        timestamp: new Date().toISOString(),
+        timestamp: now,
         actor: "system",
-        action: "verified_closed",
-        details: "Verified fixed by automated re-scan — issue no longer detected",
+        action: "auto_resolved",
+        details:
+          "Finding auto-resolved: issue no longer detected in the latest scan",
       });
 
       await db.finding.update({
         where: { id: finding.id },
         data: {
+          status: "RESOLVED",
+          resolvedAt: new Date(),
           notes: serializeWithMeta(userNotes, meta),
         },
       });
-    }
-  }
+    }),
+  );
 }

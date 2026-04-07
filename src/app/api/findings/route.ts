@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { db } from "@/lib/db";
 import { getSession } from "@/lib/auth";
+import { errorResponse, zodFieldErrors } from "@/lib/api-response";
 
 const querySchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
@@ -14,7 +15,7 @@ const querySchema = z.object({
 
 export async function GET(req: Request) {
   const session = await getSession();
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session) return errorResponse("UNAUTHORIZED", "Unauthorized", undefined, 401);
 
   const { searchParams } = new URL(req.url);
   const parsed = querySchema.safeParse({
@@ -25,7 +26,7 @@ export async function GET(req: Request) {
   });
 
   if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+    return errorResponse("VALIDATION_ERROR", "Validation failed", zodFieldErrors(parsed.error.flatten().fieldErrors), 400);
   }
 
   const { page, limit, status, severity } = parsed.data;

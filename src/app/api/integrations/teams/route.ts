@@ -1,0 +1,137 @@
+import { NextResponse } from "next/server";
+import { z } from "zod";
+import { db } from "@/lib/db";
+import { requireRole } from "@/lib/auth";
+import { getOrgLimits } from "@/lib/tenant";
+import { encrypt } from "@/lib/crypto-util";
+import { isPrivateUrl } from "@/lib/ssrf-guard";
+import { checkRateLimit } from "@/lib/rate-limit";
+import { hasFeature } from "@/lib/tier-capabilities";
+import { errorResponse, zodFieldErrors } from "@/lib/api-response";
+
+
+const TEAMS_URL_PATTERN = /https:\/\/.+(webhook|office|teams|logic)/i;
+
+const teamsConfigSchema = z.object({
+  webhookUrl: z
+    .string()
+    .url()
+    .refine(
+      (url) => url.startsWith("https://") && TEAMS_URL_PATTERN.test(url),
+      "Webhook URL must be a valid Microsoft Teams, Office 365, or Logic App webhook URL.",
+    ),
+});
+
+function maskWebhookUrl(url: string): string {
+  try {
+    const parsed = new URL(url);
+    return `${parsed.protocol}//${parsed.hostname}/••••••`;
+  } catch {
+    return "••••••••";
+  }
+}
+
+export async function GET() {
+  try {
+    const session = await requireRole(["ADMIN", "OWNER"]);
+    const limits = await getOrgLimits(session.orgId);
+    if (!hasFeature(limits.tier, "teamsIntegration")) {
+      return NextResponse.json(
+        { error: "Microsoft Teams alerts are available on Pro and Enterprise plans." },
+        { status: 403 },
+      );
+    }
+    const integration = await db.integrationConfig.findUnique({
+      where: { orgId_type: { orgId: session.orgId, type: "teams" } },
+    });
+    if (!integration) return NextResponse.json(null);
+    const cfg = integration.config as Record<string, string>;
+    return NextResponse.json({
+      webhookUrl: maskWebhookUrl(cfg.webhookUrl ?? ""),
+      enabled: integration.enabled,
+    });
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : "Unauthorized";
+    return errorResponse(msg === "Forbidden" ? "FORBIDDEN" : "UNAUTHORIZED", msg, undefined, msg === "Forbidden" ? 403 : 401);
+  }
+}
+
+export async function POST(req: Request) {
+  try {
+    const session = await requireRole(["ADMIN", "OWNER"]);
+    const limits = await getOrgLimits(session.orgId);
+    if (!hasFeature(limits.tier, "teamsIntegration")) {
+      return NextResponse.json(
+        { error: "Microsoft Teams alerts are available on Pro and Enterprise plans." },
+        { status: 403 },
+      );
+    }
+    const rl = await checkRateLimit(`integration-teams:${session.orgId}`, {
+      maxAttempts: 20,
+      windowMs: 60 * 60 * 1000,
+    });
+    if (!rl.allowed) {
+      return errorResponse("RATE_LIMITED", "Too many requests. Please try again later.", undefined, 429, { "Retry-After": String(rl.retryAfterSeconds ?? 60) });
+    }
+    const body = await req.json();
+    const parsed = teamsConfigSchema.safeParse(body);
+    if (!parsed.success) {
+      return errorResponse("VALIDATION_ERROR", "Validation failed", zodFieldErrors(parsed.error.flatten().fieldErrors), 400);
+    }
+    const { webhookUrl } = parsed.data;
+    if (await isPrivateUrl(webhookUrl)) {
+      return NextResponse.json(
+        { error: "Webhook URL must point to a public address" },
+        { status: 400 },
+      );
+    }
+    const config = { webhookUrl: encrypt(webhookUrl) };
+    const integration = await db.integrationConfig.upsert({
+      where: { orgId_type: { orgId: session.orgId, type: "teams" } },
+      create: { orgId: session.orgId, type: "teams", config, enabled: true },
+      update: { config, enabled: true },
+    });
+    return NextResponse.json({ id: integration.id, ok: true });
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : "Unauthorized";
+    return errorResponse(msg === "Forbidden" ? "FORBIDDEN" : "UNAUTHORIZED", msg, undefined, msg === "Forbidden" ? 403 : 401);
+  }
+}
+
+export async function DELETE() {
+  try {
+    const session = await requireRole(["ADMIN", "OWNER"]);
+    const limits = await getOrgLimits(session.orgId);
+    if (!hasFeature(limits.tier, "teamsIntegration")) {
+      return NextResponse.json(
+        { error: "Microsoft Teams alerts are available on Pro and Enterprise plans." },
+        { status: 403 },
+      );
+    }
+    const rl = await checkRateLimit(`integration-teams:${session.orgId}`, {
+      maxAttempts: 20,
+      windowMs: 60 * 60 * 1000,
+    });
+    if (!rl.allowed) {
+      return errorResponse("RATE_LIMITED", "Too many requests. Please try again later.", undefined, 429, { "Retry-After": String(rl.retryAfterSeconds ?? 60) });
+    }
+    await db.integrationConfig.deleteMany({
+      where: { orgId: session.orgId, type: "teams" },
+    });
+    return NextResponse.json({ ok: true });
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : "Unauthorized";
+    return errorResponse(msg === "Forbidden" ? "FORBIDDEN" : "UNAUTHORIZED", msg, undefined, msg === "Forbidden" ? 403 : 401);
+  }
+}
+
+/** Internal: get Teams config (decrypted) for a given org */
+export async function getTeamsConfig(orgId: string) {
+  const { decrypt } = await import("@/lib/crypto-util");
+  const integration = await db.integrationConfig.findUnique({
+    where: { orgId_type: { orgId, type: "teams" } },
+  });
+  if (!integration || !integration.enabled) return null;
+  const cfg = integration.config as Record<string, string>;
+  return { webhookUrl: decrypt(cfg.webhookUrl) };
+}

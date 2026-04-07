@@ -1,0 +1,16 @@
+{
+  "name": "scantient",
+  "version": "1.0.0",
+  "description": "External API security scanner — scan production URLs for vulnerabilities",
+  "endpoint": "https://scantient.com/api/mcp",
+  "authentication": { "type": "bearer", "description": "API key from Scantient dashboard" },
+  "tools": [
+    { "name": "list_apps", "description": "List all monitored applications" },
+    { "name": "get_app_status", "description": "Get app security status and score" },
+    { "name": "get_findings", "description": "Get security findings filtered by status/severity" },
+    { "name": "trigger_scan", "description": "Run a security scan on an app" },
+    { "name": "get_security_score", "description": "Get security score for app or portfolio" },
+    { "name": "resolve_finding", "description": "Update finding status" },
+    { "name": "get_remediation_metrics", "description": "Get org-level fix rate and MTTR" }
+  ]
+}

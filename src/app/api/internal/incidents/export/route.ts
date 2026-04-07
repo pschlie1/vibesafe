@@ -1,10 +1,28 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSession } from "@/lib/auth";
+import { requireRole } from "@/lib/auth";
+import { getOrgLimits } from "@/lib/tenant";
 import { getIncidentEvidenceExport, parseRange } from "@/lib/wave3-reporting";
+import { errorResponse } from "@/lib/api-response";
 
 export async function GET(req: NextRequest) {
-  const session = await getSession();
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  let session;
+  try {
+    session = await requireRole(["ADMIN", "OWNER"]);
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    if (msg.toLowerCase().includes("unauthorized")) {
+      return errorResponse("UNAUTHORIZED", "Unauthorized", undefined, 401);
+    }
+    return errorResponse("FORBIDDEN", "Forbidden", undefined, 403);
+  }
+
+  const limits = await getOrgLimits(session.orgId);
+  if (!["ENTERPRISE", "ENTERPRISE_PLUS"].includes(limits.tier)) {
+    return NextResponse.json(
+      { error: "Incident evidence export requires an Enterprise plan." },
+      { status: 403 },
+    );
+  }
 
   const range = parseRange({
     from: req.nextUrl.searchParams.get("from"),

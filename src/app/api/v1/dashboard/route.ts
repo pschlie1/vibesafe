@@ -2,10 +2,16 @@ import { subDays } from "date-fns";
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { authenticateApiKey } from "@/lib/api-auth";
+import { applyCors, corsPreflightResponse, CORS_HEADERS_API } from "@/lib/cors";
+import { errorResponse } from "@/lib/api-response";
 
-export async function GET(req: Request) {
+export function OPTIONS() {
+  return corsPreflightResponse(CORS_HEADERS_API);
+}
+
+async function handler(req: Request): Promise<NextResponse> {
   const orgId = await authenticateApiKey(req);
-  if (!orgId) return NextResponse.json({ error: "Invalid API key" }, { status: 401 });
+  if (!orgId) return errorResponse("UNAUTHORIZED", "Invalid API key", undefined, 401);
 
   const sevenDaysAgo = subDays(new Date(), 7);
 
@@ -13,6 +19,7 @@ export async function GET(req: Request) {
     db.monitoredApp.findMany({
       where: { orgId },
       select: { id: true, name: true, status: true, lastCheckedAt: true, avgResponseMs: true },
+      take: 200,
     }),
     db.finding.count({
       where: {
@@ -38,4 +45,8 @@ export async function GET(req: Request) {
     },
     apps,
   });
+}
+
+export async function GET(req: Request) {
+  return applyCors(await handler(req), CORS_HEADERS_API);
 }

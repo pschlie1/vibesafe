@@ -32,7 +32,7 @@ async function sendPasswordResetEmail(to: string, resetLink: string) {
     </div>
   `;
 
-  await fetch("https://api.resend.com/emails", {
+  const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: {
       Authorization: `Bearer ${key}`,
@@ -40,6 +40,9 @@ async function sendPasswordResetEmail(to: string, resetLink: string) {
     },
     body: JSON.stringify({ from, to: [to], subject: "Reset your Scantient password", html }),
   });
+  if (!res.ok) {
+    console.error("[auth] Failed to send password reset email via Resend:", res.status, await res.text().catch(() => ""));
+  }
 }
 
 export async function POST(req: Request) {
@@ -66,18 +69,29 @@ export async function POST(req: Request) {
   const user = await db.user.findFirst({ where: { email } });
 
   if (user) {
+    // Fix 6: Per-email rate limit to prevent email bombing via proxy rotation
+    const emailLimit = await checkRateLimit(`forgot-password-email:${email.toLowerCase()}`, {
+      maxAttempts: 3,
+      windowMs: 60 * 60 * 1000,
+      fallbackMode: "fail-open",
+    });
+    if (!emailLimit.allowed) {
+      // Return 200 to avoid leaking email existence
+      return NextResponse.json({ ok: true });
+    }
+
     const token = jwt.sign(
       { sub: user.id, purpose: "password-reset" },
       getJwtSecret(),
       { expiresIn: "1h" },
     );
 
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://scantient.com";
+    const appUrl = process.env.NEXT_PUBLIC_URL ?? "https://scantient.com";
     const resetLink = `${appUrl}/reset-password?token=${token}`;
 
     await sendPasswordResetEmail(email, resetLink);
   }
 
-  // Always return 200 — don't leak user existence
+  // Always return 200 . don't leak user existence
   return NextResponse.json({ ok: true });
 }

@@ -3,18 +3,29 @@ import { db } from "@/lib/db";
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
 import { createSession } from "@/lib/auth";
+import { canAddUser, logAudit } from "@/lib/tenant";
 import * as client from "openid-client";
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 
-const JWT_SECRET = (() => {
+function getJwtSecret(): string {
   const s = process.env.JWT_SECRET;
+  const isBuildPhase = process.env.NEXT_PHASE === "phase-production-build";
+  if (!s && isBuildPhase) return "build-phase-placeholder-secret";
   if (!s) throw new Error("JWT_SECRET environment variable is required");
   return s;
-})();
-const STATE_COOKIE = "vs_sso_state";
+}
+const STATE_COOKIE = "scantient_sso_state";
 
 interface StatePayload { codeVerifier: string; state: string; orgId: string; domain: string; }
 
 export async function GET(req: Request) {
+  const ip = getClientIp(req);
+  const rl = await checkRateLimit(`sso-callback:${ip}`, { maxAttempts: 10, windowMs: 60_000 });
+  if (!rl.allowed) {
+    const requestUrl = new URL(req.url);
+    return NextResponse.redirect(new URL(`/login?error=too_many_requests`, requestUrl.origin));
+  }
+
   const requestUrl = new URL(req.url);
   try {
     const cookieStore = await cookies();
@@ -23,7 +34,7 @@ export async function GET(req: Request) {
 
     let statePayload: StatePayload;
     try {
-      statePayload = jwt.verify(stateToken, JWT_SECRET) as StatePayload;
+      statePayload = jwt.verify(stateToken, getJwtSecret()) as StatePayload;
     } catch {
       cookieStore.delete(STATE_COOKIE);
       return NextResponse.redirect(new URL("/login?error=sso_failed", requestUrl.origin));
@@ -36,8 +47,8 @@ export async function GET(req: Request) {
       return NextResponse.redirect(new URL("/login?error=sso_failed", requestUrl.origin));
     }
 
-    const { deobfuscate } = await import("@/lib/crypto-util");
-    const clientSecret = ssoConfig.clientSecret ? deobfuscate(ssoConfig.clientSecret) : undefined;
+    const { decrypt } = await import("@/lib/crypto-util");
+    const clientSecret = ssoConfig.clientSecret ? decrypt(ssoConfig.clientSecret) : undefined;
     const oidcConfig = await client.discovery(new URL(ssoConfig.discoveryUrl), ssoConfig.clientId, clientSecret);
     const tokens = await client.authorizationCodeGrant(oidcConfig, requestUrl, {
       pkceCodeVerifier: codeVerifier,
@@ -52,11 +63,27 @@ export async function GET(req: Request) {
       return NextResponse.redirect(new URL("/login?error=sso_failed", requestUrl.origin));
     }
 
+    // Fix 2: Validate that the email domain matches the configured SSO domain
+    const emailDomain = email.toLowerCase().split("@")[1] ?? "";
+    const allowedDomain = ssoConfig.domain.toLowerCase();
+    if (emailDomain !== allowedDomain) {
+      cookieStore.delete(STATE_COOKIE);
+      return NextResponse.redirect(new URL("/login?error=sso_domain_mismatch", requestUrl.origin));
+    }
+
     let user = await db.user.findFirst({ where: { email: email.toLowerCase(), orgId } });
     if (!user) {
+      // Fix 1: Check user limit before creating a new user via SSO
+      const { allowed } = await canAddUser(orgId);
+      if (!allowed) {
+        cookieStore.delete(STATE_COOKIE);
+        return NextResponse.redirect(new URL("/login?error=user_limit_reached", requestUrl.origin));
+      }
       user = await db.user.create({ data: { email: email.toLowerCase(), name, orgId, role: "MEMBER", emailVerified: true } });
     }
-    await createSession(user.id);
+    const session = await createSession(user.id);
+    // Audit log: SSO login (fire-and-forget)
+    logAudit(session, "user.login", "auth", `sso:${ssoConfig.domain}`).catch(() => { /* non-fatal */ });
     cookieStore.delete(STATE_COOKIE);
     return NextResponse.redirect(new URL("/dashboard", requestUrl.origin));
   } catch (err) {

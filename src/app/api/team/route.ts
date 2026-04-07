@@ -4,15 +4,18 @@ import { addDays } from "date-fns";
 import { db } from "@/lib/db";
 import { getSession } from "@/lib/auth";
 import { canAddUser, logAudit } from "@/lib/tenant";
+import { checkRateLimit } from "@/lib/rate-limit";
+import { errorResponse, zodFieldErrors } from "@/lib/api-response";
 
 export async function GET() {
   const session = await getSession();
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session) return errorResponse("UNAUTHORIZED", "Unauthorized", undefined, 401);
 
   const members = await db.user.findMany({
     where: { orgId: session.orgId },
     select: { id: true, name: true, email: true, role: true, lastLoginAt: true },
     orderBy: { createdAt: "asc" },
+    take: 200,
   });
 
   return NextResponse.json({ members });
@@ -89,24 +92,37 @@ async function sendInviteEmail(
 
 export async function POST(req: Request) {
   const session = await getSession();
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session) return errorResponse("UNAUTHORIZED", "Unauthorized", undefined, 401);
+
+  // Fix 4: Rate limit invitations per org to prevent spam (10 per hour)
+  const inviteLimit = await checkRateLimit(`team-invite:${session.orgId}`, {
+    maxAttempts: 10,
+    windowMs: 60 * 60 * 1000,
+    fallbackMode: "fail-closed",
+  });
+  if (!inviteLimit.allowed) {
+    return NextResponse.json(
+      { error: "Too many invitations sent. Try again later." },
+      { status: 429 },
+    );
+  }
 
   // Only OWNER and ADMIN can invite
   if (!["OWNER", "ADMIN"].includes(session.role)) {
-    return NextResponse.json({ error: "Only admins can invite team members" }, { status: 403 });
+    return errorResponse("FORBIDDEN", "Admin access required to invite team members", undefined, 403);
   }
 
   const body = await req.json();
   const parsed = inviteSchema.safeParse(body);
   if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+    return errorResponse("VALIDATION_ERROR", "Validation failed", zodFieldErrors(parsed.error.flatten().fieldErrors), 400);
   }
 
   const { email, role } = parsed.data;
 
   const { allowed, reason } = await canAddUser(session.orgId);
   if (!allowed) {
-    return NextResponse.json({ error: reason }, { status: 403 });
+    return errorResponse("FORBIDDEN", reason ?? "Plan limit reached", undefined, 403);
   }
 
   // Check if user already in org
@@ -114,7 +130,7 @@ export async function POST(req: Request) {
     where: { email, orgId: session.orgId },
   });
   if (existing) {
-    return NextResponse.json({ error: "User already in team" }, { status: 409 });
+    return errorResponse("CONFLICT", "User already in team", undefined, 409);
   }
 
   // Check if there's already a pending invite for this email in this org
@@ -122,7 +138,7 @@ export async function POST(req: Request) {
     where: { email, orgId: session.orgId, expiresAt: { gt: new Date() } },
   });
   if (existingInvite) {
-    return NextResponse.json({ error: "An active invite already exists for this email" }, { status: 409 });
+    return errorResponse("CONFLICT", "An active invite already exists for this email", undefined, 409);
   }
 
   // Fetch org name for the email
@@ -145,12 +161,12 @@ export async function POST(req: Request) {
 
   await logAudit(session, "user.invited", invite.id, `Invited ${email} as ${role}`);
 
-  // Send invite email (fire — failures are logged but don't block response)
+  // Send invite email (fire . failures are logged but don't block response)
   try {
     await sendInviteEmail(email, org?.name ?? session.orgName, session.name, role, token);
   } catch (err) {
     console.warn("[team] Failed to send invite email:", err);
   }
 
-  return NextResponse.json({ message: "Invite sent" }, { status: 201 });
+  return NextResponse.json({ ok: true, message: "Invite sent" }, { status: 201 });
 }

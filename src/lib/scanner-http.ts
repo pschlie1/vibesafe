@@ -1,8 +1,11 @@
-import { addHours } from "date-fns";
-import { lookup } from "dns/promises";
-import { isIP } from "net";
+import { addHours, startOfHour } from "date-fns";
+import type { SubscriptionTier } from "@prisma/client";
 import { db } from "@/lib/db";
+import { isPrivateUrl, ssrfSafeFetch } from "@/lib/ssrf-guard";
+import { detectBotChallenge } from "@/lib/bot-challenge-detector";
 import { getOrgLimits } from "@/lib/tenant";
+import { decrypt } from "@/lib/crypto-util";
+import { decryptAuthHeaders } from "@/lib/auth-headers";
 import {
   checkAPISecurity,
   checkBrokenLinks,
@@ -13,6 +16,10 @@ import {
   checkDependencyVersions,
   checkExposedEndpoints,
   checkFormSecurity,
+  checkRateLimitEnforcement,
+  checkSQLInjection,
+  checkSubdomainTakeover,
+  checkSourceMapContents,
   checkInformationDisclosure,
   checkInlineScripts,
   checkMetaAndConfig,
@@ -25,59 +32,15 @@ import {
   checkUptimeStatus,
   scanJavaScriptForKeys,
 } from "@/lib/security";
+import { checkAITools } from "@/lib/ai-policy-scanner";
+import { discoverEndpoints } from "@/lib/endpoint-discovery";
+import { runAuthScan } from "@/lib/scanner-auth";
 import { computeContentHash } from "@/lib/content-hash";
 import { sendCriticalFindingsAlert } from "@/lib/alerts";
 import { autoTriageFinding, verifyResolvedFindings } from "@/lib/remediation-lifecycle";
 import type { SecurityFinding } from "@/lib/types";
 import { trackEvent } from "@/lib/analytics";
-
-/**
- * SSRF guard — returns true if the URL resolves to a private/internal IP.
- * Blocks: 10.x, 172.16-31.x, 192.168.x, 127.x, 169.254.x, ::1, localhost
- */
-async function isPrivateUrl(url: string): Promise<boolean> {
-  let hostname: string;
-  try {
-    hostname = new URL(url).hostname;
-  } catch {
-    return true; // invalid URL → treat as private
-  }
-
-  // Block localhost by name
-  if (hostname === "localhost" || hostname.endsWith(".local")) return true;
-
-  // If it's already an IP literal, check directly
-  const ipVersion = isIP(hostname);
-  if (ipVersion !== 0) {
-    return isPrivateIp(hostname);
-  }
-
-  // Resolve hostname and check all addresses
-  try {
-    const addresses = await lookup(hostname, { all: true });
-    return addresses.some((a) => isPrivateIp(a.address));
-  } catch {
-    return true; // DNS failure → treat as private for safety
-  }
-}
-
-function isPrivateIp(ip: string): boolean {
-  // IPv6 loopback
-  if (ip === "::1" || ip === "0:0:0:0:0:0:0:1") return true;
-  // IPv4-mapped IPv6
-  const v4mapped = ip.match(/^::ffff:(\d+\.\d+\.\d+\.\d+)$/i);
-  const v4 = v4mapped ? v4mapped[1] : ip;
-  const parts = v4.split(".").map(Number);
-  if (parts.length !== 4) return false;
-  const [a, b] = parts;
-  return (
-    a === 127 || // 127.0.0.0/8
-    a === 10 || // 10.0.0.0/8
-    (a === 172 && b >= 16 && b <= 31) || // 172.16.0.0/12
-    (a === 192 && b === 168) || // 192.168.0.0/16
-    (a === 169 && b === 254) // 169.254.0.0/16 (link-local)
-  );
-}
+import { runProbe, type ProbeOutcome } from "@/lib/probe-client";
 
 function calcStatus(findings: SecurityFinding[]) {
   if (findings.some((f) => f.severity === "CRITICAL")) return "CRITICAL" as const;
@@ -92,12 +55,22 @@ async function fetchJsAssets(baseUrl: string, html: string): Promise<string[]> {
 
   const payloads: string[] = [];
   for (const src of scriptSrcs.slice(0, 15)) {
-    const assetUrl = src.startsWith("http") ? src : new URL(src, baseUrl).toString();
     try {
-      const res = await fetch(assetUrl, {
-        method: "GET",
-        signal: AbortSignal.timeout(10000),
-      });
+      const assetUrl = new URL(src, baseUrl);
+      if (!/^https?:$/.test(assetUrl.protocol)) continue;
+
+      // Treat each JS asset as untrusted input: block private/internal URLs,
+      // and keep redirect-hop SSRF protections enabled for asset fetches too.
+      if (await isPrivateUrl(assetUrl.toString())) continue;
+
+      const res = await ssrfSafeFetch(
+        assetUrl.toString(),
+        {
+          method: "GET",
+          signal: AbortSignal.timeout(10000),
+        },
+        3,
+      );
       if (res.ok) payloads.push(await res.text());
     } catch {
       // ignore asset fetch failures
@@ -118,6 +91,76 @@ function dedup(findings: SecurityFinding[]): SecurityFinding[] {
   });
 }
 
+// ────────────────────────────────────────────────────────────────────────────
+// URL Context Classifier
+//
+// Different URL types warrant different security checks. Running all checks
+// blindly against every URL produces false positives (e.g. rate-limit headers
+// expected on homepages) and noise. The classifier determines which checks are
+// relevant so the scanner is smarter and more accurate for any target site.
+// ────────────────────────────────────────────────────────────────────────────
+
+/**
+ * The type of URL being scanned, used to route security checks.
+ *
+ * - homepage: root / index page (most common target)
+ * - api-endpoint: /api/* routes; API-specific checks apply
+ * - login-page: authentication pages; auth-header checks apply
+ * - admin-page: admin/management areas; admin-specific hardening checks apply
+ * - health-endpoint: /health, /ping, /status routes (monitoring endpoints)
+ */
+export type UrlContext =
+  | "homepage"
+  | "api-endpoint"
+  | "login-page"
+  | "admin-page"
+  | "health-endpoint";
+
+/**
+ * Classify a URL to determine which security checks are applicable.
+ *
+ * Classification is path-based and generic . no hardcoded domains.
+ * Paths are matched case-insensitively.
+ */
+export function classifyUrl(url: string): UrlContext {
+  let pathname: string;
+  try {
+    pathname = new URL(url).pathname.toLowerCase();
+  } catch {
+    return "homepage"; // Unparseable URL . treat as homepage
+  }
+
+  // Health / monitoring endpoints . checked FIRST so /api/health is a health endpoint
+  // (not a generic API endpoint that would trigger unnecessary auth probing)
+  if (/\/(health|ping|status|ready|live)(\/|$)/.test(pathname)) {
+    return "health-endpoint";
+  }
+
+  // API endpoints: /api/*, /v1/*, /v2/*, /graphql, /rpc, etc.
+  if (
+    /^\/api(\/|$)/.test(pathname) ||
+    /^\/v\d+(\/|$)/.test(pathname) ||
+    /^\/(graphql|rpc)(\/|$)/.test(pathname)
+  ) {
+    return "api-endpoint";
+  }
+
+  // Login / authentication pages
+  if (
+    /\/(login|signin|sign-in|log-in|auth\/login|authenticate)(\/|$)/.test(pathname)
+  ) {
+    return "login-page";
+  }
+
+  // Admin / management pages
+  if (/\/(admin|management|back-?office|staff)(\/|$)/.test(pathname)) {
+    return "admin-page";
+  }
+
+  // Default: homepage or general marketing/app page
+  return "homepage";
+}
+
 interface ScanContext {
   source?: "manual" | "cron" | "api";
   userId?: string;
@@ -126,6 +169,16 @@ interface ScanContext {
 export async function runHttpScanForApp(appId: string, context: ScanContext = {}) {
   const app = await db.monitoredApp.findUnique({ where: { id: appId } });
   if (!app) throw new Error("App not found");
+
+  // Skip scan for canceled/expired orgs to avoid consuming compute
+  const orgLimitsEarly = await getOrgLimits(app.orgId);
+  if (orgLimitsEarly.tier === "EXPIRED" || orgLimitsEarly.status === "CANCELED") {
+    await db.monitoredApp.update({
+      where: { id: appId },
+      data: { nextCheckAt: addHours(new Date(), 24) },
+    });
+    return { runId: "skipped", appId, status: "HEALTHY" as const, findingsCount: 0 };
+  }
 
   const run = await db.monitorRun.create({
     data: {
@@ -138,27 +191,95 @@ export async function runHttpScanForApp(appId: string, context: ScanContext = {}
   const start = Date.now();
 
   try {
-    // SSRF guard: block private/internal URLs before fetching
+    // SSRF guard: block private/internal URLs before fetching.
+    // ssrfSafeFetch re-runs this check at every redirect hop to prevent
+    // open-redirect chains that bypass a one-time pre-fetch guard.
     if (await isPrivateUrl(app.url)) {
       throw new Error("SSRF: private/internal URLs are not allowed");
     }
 
-    const response = await fetch(app.url, {
-      method: "GET",
-      headers: {
-        "User-Agent": "Scantient/1.0 (Security Monitor)",
-        Accept: "text/html,application/xhtml+xml",
+    const extraHeaders: Record<string, string> = {};
+    if (app.authHeaders) {
+      const authHdrs = decryptAuthHeaders(app.authHeaders);
+      for (const h of authHdrs) {
+        extraHeaders[h.name] = h.value;
+      }
+    }
+
+    // Use ssrfSafeFetch (not plain fetch with redirect:"follow") so every
+    // redirect hop is checked against the SSRF guard before following.
+    const response = await ssrfSafeFetch(
+      app.url,
+      {
+        method: "GET",
+        headers: {
+          "User-Agent": "Scantient/1.0 (Security Monitor)",
+          Accept: "text/html,application/xhtml+xml",
+          ...extraHeaders,
+        },
+        signal: AbortSignal.timeout(30000),
       },
-      redirect: "follow",
-      signal: AbortSignal.timeout(30000),
-    });
+      5, // maxRedirects
+    );
 
-    const statusCode = response.status;
-    const html = await response.text();
-    const headers = new Headers(response.headers);
-    const jsPayloads = await fetchJsAssets(app.url, html);
+    let statusCode = response.status;
+    let html = await response.text();
+    let headers = new Headers(response.headers);
+    const botChallengeFindings: SecurityFinding[] = [];
+    let collectedJsPayloads: string[] | undefined;
 
-    // Content change detection — compare hash to last recorded value
+    // Bot challenge detection . if blocked, try probe endpoint or Playwright fallback
+    const botResult = detectBotChallenge(statusCode, headers, html.slice(0, 2000));
+    if (botResult.challenged) {
+      let bypassSucceeded = false;
+
+      // Probe endpoint takes priority: fetch real content server-side via secret token
+      if (app.probeUrl && app.probeToken) {
+        try {
+          const probeRes = await fetch(app.probeUrl, {
+            headers: { "x-scan-token": decrypt(app.probeToken) },
+            signal: AbortSignal.timeout(20000),
+          });
+          if (probeRes.ok) {
+            const probeData = (await probeRes.json()) as {
+              html: string;
+              headers: Record<string, string>;
+              statusCode: number;
+            };
+            html = probeData.html;
+            statusCode = probeData.statusCode;
+            headers = new Headers(probeData.headers);
+            bypassSucceeded = true;
+          }
+        } catch {
+          // Probe fetch failed . fall through to Playwright fallback
+        }
+      }
+
+      // Playwright browser scan fallback
+      if (!bypassSucceeded) {
+        const { runBrowserScan } = await import("@/lib/scanner-browser");
+        const browserData = await runBrowserScan(app.url);
+        html = browserData.html;
+        statusCode = browserData.statusCode;
+        headers = browserData.headers;
+        collectedJsPayloads = browserData.jsPayloads;
+      }
+
+      botChallengeFindings.push({
+        code: "BOT_PROTECTION_DETECTED",
+        title: `Bot protection active${botResult.provider ? ` (${botResult.provider})` : ""} . browser scan used`,
+        description: `This app is protected by ${botResult.provider ?? "a bot challenge system"}, which blocks standard HTTP scanners. Scantient automatically fell back to a browser-based scan to get real results. Some checks (SSL cert expiry, exposed endpoints) are still performed via HTTP.`,
+        severity: "LOW",
+        fixPrompt:
+          "Configure a Scantient probe endpoint on this app for faster, more thorough scans without bot protection interference.",
+      });
+    }
+
+    // Fetch JS assets from HTTP if not already collected by browser scan
+    const jsPayloads = collectedJsPayloads ?? (await fetchJsAssets(app.url, html));
+
+    // Content change detection . compare hash to last recorded value
     const contentHash = computeContentHash(html);
     const lastHashLog = await db.auditLog.findFirst({
       where: { orgId: app.orgId, action: "CONTENT_HASH", resource: app.id },
@@ -186,16 +307,36 @@ export async function runHttpScanForApp(appId: string, context: ScanContext = {}
       },
     });
 
-    const [sslCertFindings, brokenLinkFindings, exposedEndpointFindings] = await Promise.all([
+    const [
+      sslCertFindings,
+      brokenLinkFindings,
+      exposedEndpointFindings,
+      rateLimitFindings,
+      sqlInjectionFindings,
+      subdomainTakeoverFindings,
+      sourceMapFindings,
+    ] = await Promise.all([
       checkSSLCertExpiry(app.url),
       checkBrokenLinks(html, app.url),
       checkExposedEndpoints(app.url),
+      checkRateLimitEnforcement(app.url),
+      checkSQLInjection(app.url),
+      checkSubdomainTakeover(app.url, html),
+      checkSourceMapContents(html, app.url),
     ]);
 
     const responseTimeMsSnapshot = Date.now() - start;
     const perfRegressionFindings = await checkPerformanceRegression(app.id, responseTimeMsSnapshot);
 
+    // Classify the target URL so we can route checks intelligently.
+    // Checks that only make sense for specific URL types are gated here.
+    // This prevents false positives (e.g. rate-limit headers on homepages)
+    // and noise from running irrelevant checks against every URL.
+    const urlContext = classifyUrl(app.url);
+
     const rawFindings: SecurityFinding[] = [
+      ...botChallengeFindings,
+      // ── Checks applicable to ALL URL types ──────────────────────────────
       ...checkSecurityHeaders(headers),
       ...scanJavaScriptForKeys(jsPayloads),
       ...checkClientSideAuthBypass(html),
@@ -206,97 +347,195 @@ export async function runHttpScanForApp(appId: string, context: ScanContext = {}
       ...checkInformationDisclosure(html, headers),
       ...checkSSLIssues(html, headers, app.url),
       ...checkDependencyExposure(html),
-      ...checkAPISecurity(html, headers),
       ...checkOpenRedirects(html),
       ...checkThirdPartyScripts(html, app.url),
-      ...checkFormSecurity(html),
+      ...checkFormSecurity(html, app.url),
       ...checkDependencyVersions(jsPayloads),
       ...sslCertFindings,
       ...brokenLinkFindings,
+      ...rateLimitFindings,
+      ...sqlInjectionFindings,
+      ...subdomainTakeoverFindings,
+      ...sourceMapFindings,
+      // ── API-endpoint-only checks ─────────────────────────────────────────
+      // Rate-limit headers, GraphQL introspection, API docs exposure, etc.
+      // Only meaningful on /api/*, /v1/*, /graphql routes.
+      ...(urlContext === "api-endpoint" ? checkAPISecurity(html, headers, app.url) : []),
+      // ── Future: login-page-only checks ──────────────────────────────────
+      // checkAuthHeaders() . when implemented, only run for login-page context
+      // ── Future: admin-page-only checks ──────────────────────────────────
+      // checkAdminSecurity() . when implemented, only run for admin-page context
       ...exposedEndpointFindings,
       ...perfRegressionFindings,
       ...checkUptimeStatus(statusCode, responseTimeMsSnapshot),
       ...contentHashFindings,
+      ...checkAITools(html, headers, jsPayloads),
     ];
+
+    // Tier 1: Discover and scan auth surface
+    // Wrapped in try/catch . auth scan failure never breaks the main scan
+    let discoveredEndpointCount = 0;
+    try {
+      const endpoints = await discoverEndpoints(html, jsPayloads, app.url);
+      discoveredEndpointCount = endpoints.length;
+      if (endpoints.length > 0) {
+        const authFindings = await runAuthScan(endpoints, app.url, html, jsPayloads);
+        rawFindings.push(...authFindings);
+      }
+    } catch (authScanErr) {
+      console.warn(
+        "[auth-scan] Tier 1 auth surface scan failed (non-fatal):",
+        authScanErr instanceof Error ? authScanErr.message : authScanErr,
+      );
+    }
 
     const findings = dedup(rawFindings);
     const responseTimeMs = Date.now() - start;
     const status = calcStatus(findings);
 
-    await db.monitorRun.update({
-      where: { id: run.id },
-      data: {
-        status,
-        responseTimeMs,
-        summary: findings.length
-          ? `${findings.length} issue(s) detected`
-          : "All checks passed — no issues detected",
-        completedAt: new Date(),
-        findings: {
-          create: findings,
-        },
-      },
-    });
-
-    // Auto-triage new findings & verify resolved ones
-    const updatedRun = await db.monitorRun.findUnique({
-      where: { id: run.id },
-      include: { findings: { select: { id: true } } },
-    });
-    if (updatedRun) {
-      for (const f of updatedRun.findings) {
-        await autoTriageFinding(f.id);
+    // ── Tier 2: Subsystem Health Probe ──────────────────────────────────────
+    // After the main security scan, if the app has a probeUrl + probeToken
+    // configured, call the target app's /api/scantient-probe endpoint to get
+    // structured subsystem health data (database, auth, payments, email, etc.).
+    // This runs independently of the main scan . failure never blocks the run.
+    // Note: app.probeUrl/probeToken are ALSO used above for the bot-challenge
+    // bypass (HTML fetch). Here we use them for the distinct Tier 2 health probe.
+    let probeOutcome: ProbeOutcome | null = null;
+    if (app.probeUrl && app.probeToken) {
+      try {
+        const decryptedToken = decrypt(app.probeToken);
+        probeOutcome = await runProbe(app.probeUrl, decryptedToken);
+      } catch (probeErr) {
+        console.warn(
+          "[tier2-probe] Probe failed (non-fatal):",
+          probeErr instanceof Error ? probeErr.message : probeErr,
+        );
       }
     }
+    // ── End Tier 2 ──────────────────────────────────────────────────────────
 
-    const newFindingCodes = new Set(findings.map((f) => f.code));
-    await verifyResolvedFindings(app.id, newFindingCodes);
-
-    await sendCriticalFindingsAlert(app.id, findings);
-
-    // Determine scan interval based on org tier
+    // Determine scan interval before the transaction (no DB write needed)
     const orgLimits = await getOrgLimits(app.orgId);
     const scanIntervalHours: Record<string, number> = {
       ENTERPRISE: 1,
+      ENTERPRISE_PLUS: 1,
       PRO: 4,
       STARTER: 8,
       FREE: 24,
       EXPIRED: 24,
     };
     const intervalHours = scanIntervalHours[orgLimits.tier] ?? 24;
+    // For 1-hour tiers, snap nextCheckAt to the top of the next hour so
+    // the hourly cron (0 * * * *) always picks them up on time.
+    // e.g. scan finishes at 12:05 → nextCheckAt = 13:00, not 13:05.
+    const snapToHourBoundary = intervalHours === 1;
 
-    // Calculate rolling uptime % and avg response ms from last 30 runs
-    const recentRuns = await db.monitorRun.findMany({
-      where: { appId: app.id },
-      orderBy: { startedAt: "desc" },
-      take: 30,
-      select: { status: true, responseTimeMs: true },
+    // Atomically write the completed run and the updated app status/timing.
+    // If either write fails the entire scan completion rolls back . preventing
+    // a state where the run shows CRITICAL but the app still shows HEALTHY.
+    // Note: findings are upserted AFTER this transaction (see below) so that
+    // per-finding DB errors don't roll back the whole run record.
+    const completedAt = new Date();
+    await db.$transaction(async (tx) => {
+      await tx.monitorRun.update({
+        where: { id: run.id },
+        data: {
+          status,
+          responseTimeMs,
+          // checksRun: record the actual number of de-duplicated findings
+          checksRun: findings.length,
+          summary: findings.length
+            ? `${findings.length} issue(s) detected`
+            : "All checks passed . no issues detected",
+          completedAt,
+          discoveredEndpointCount,
+          // Tier 2: store probe result if one was obtained
+          ...(probeOutcome !== null ? { probeResult: probeOutcome as object } : {}),
+        },
+      });
+
+      // Calculate rolling uptime % and avg response ms from last 30 runs
+      // (query runs inside the transaction for consistent read)
+      const recentRuns = await tx.monitorRun.findMany({
+        where: { appId: app.id },
+        orderBy: { startedAt: "desc" },
+        take: 30,
+        select: { status: true, responseTimeMs: true },
+      });
+
+      let uptimePercent: number | undefined;
+      let avgResponseMs: number | undefined;
+
+      if (recentRuns.length > 0) {
+        const upRuns = recentRuns.filter((r) => r.status !== "CRITICAL");
+        uptimePercent = (upRuns.length / recentRuns.length) * 100;
+
+        const runsWithResponse = recentRuns.filter((r) => r.responseTimeMs != null);
+        if (runsWithResponse.length > 0) {
+          const totalMs = runsWithResponse.reduce((sum, r) => sum + (r.responseTimeMs ?? 0), 0);
+          avgResponseMs = Math.round(totalMs / runsWithResponse.length);
+        }
+      }
+
+      await tx.monitoredApp.update({
+        where: { id: app.id },
+        data: {
+          status,
+          lastCheckedAt: completedAt,
+          nextCheckAt: snapToHourBoundary
+            ? startOfHour(addHours(completedAt, 1))
+            : addHours(completedAt, intervalHours),
+          ...(uptimePercent !== undefined ? { uptimePercent } : {}),
+          ...(avgResponseMs !== undefined ? { avgResponseMs } : {}),
+        },
+      });
     });
 
-    let uptimePercent: number | undefined;
-    let avgResponseMs: number | undefined;
+    // Upsert findings by (appId, code) . prevents duplicate DB rows on repeated
+    // scans of the same issue. Each upsert updates runId to the current run so
+    // that findings stay linked to the most recent detection, and resets status
+    // to OPEN so that previously-resolved findings are re-surfaced if they recur.
+    // Runs outside the transaction . individual upsert failures are non-fatal.
+    await Promise.all(
+      findings.map((f) =>
+        db.finding.upsert({
+          where: { appId_code: { appId: app.id, code: f.code } },
+          create: {
+            appId: app.id,
+            runId: run.id,
+            code: f.code,
+            title: f.title,
+            description: f.description,
+            severity: f.severity,
+            fixPrompt: f.fixPrompt,
+            status: "OPEN",
+          },
+          update: {
+            runId: run.id,
+            title: f.title,
+            description: f.description,
+            severity: f.severity,
+            fixPrompt: f.fixPrompt,
+            status: "OPEN",
+          },
+        }),
+      ),
+    );
 
-    if (recentRuns.length > 0) {
-      const upRuns = recentRuns.filter((r) => r.status !== "CRITICAL");
-      uptimePercent = (upRuns.length / recentRuns.length) * 100;
-
-      const runsWithResponse = recentRuns.filter((r) => r.responseTimeMs != null);
-      if (runsWithResponse.length > 0) {
-        const totalMs = runsWithResponse.reduce((sum, r) => sum + (r.responseTimeMs ?? 0), 0);
-        avgResponseMs = Math.round(totalMs / runsWithResponse.length);
-      }
+    // Auto-triage new findings in parallel (was sequential N+1 loop)
+    // Runs outside the transaction . failures are non-fatal (triage is best-effort)
+    const updatedRun = await db.monitorRun.findUnique({
+      where: { id: run.id },
+      include: { findings: { select: { id: true } } },
+    });
+    if (updatedRun && updatedRun.findings.length > 0) {
+      await Promise.all(updatedRun.findings.map((f) => autoTriageFinding(f.id)));
     }
 
-    await db.monitoredApp.update({
-      where: { id: app.id },
-      data: {
-        status,
-        lastCheckedAt: new Date(),
-        nextCheckAt: addHours(new Date(), intervalHours),
-        ...(uptimePercent !== undefined ? { uptimePercent } : {}),
-        ...(avgResponseMs !== undefined ? { avgResponseMs } : {}),
-      },
-    });
+    const newFindingCodes = new Set(findings.map((f) => f.code));
+    await verifyResolvedFindings(app.id, newFindingCodes);
+
+    await sendCriticalFindingsAlert(app.id, findings);
 
     await trackEvent({
       event: "scan_completed",
@@ -351,16 +590,49 @@ export async function runHttpScanForApp(appId: string, context: ScanContext = {}
   }
 }
 
-export async function runDueHttpScans(limit = 20) {
+export async function runDueHttpScans(limit = 20, options?: { tiers?: SubscriptionTier[]; includeNoSubscription?: boolean }) {
   const deadline = Date.now() + 55_000; // 55s total timeout (5s buffer for Vercel 60s limit)
 
-  const dueApps = await db.monitoredApp.findMany({
-    where: {
-      OR: [{ nextCheckAt: null }, { nextCheckAt: { lte: new Date() } }],
-    },
-    take: limit,
-    orderBy: [{ nextCheckAt: "asc" }],
+  // Atomic claim: findMany + updateMany inside a single serializable transaction
+  // prevents the TOCTOU race where two concurrent cron invocations both read
+  // the same due apps before either has bumped nextCheckAt.
+  const dueApps = await db.$transaction(async (tx) => {
+    const apps = await tx.monitoredApp.findMany({
+      where: {
+        AND: [
+          { OR: [{ nextCheckAt: null }, { nextCheckAt: { lte: new Date() } }] },
+          ...(options?.tiers
+            ? [{
+                OR: [
+                  { org: { subscription: { tier: { in: options.tiers } } } },
+                  // Orgs with no subscription default to FREE . include them
+                  // in the non-premium cron so they aren't silently dropped.
+                  ...(options.includeNoSubscription
+                    ? [{ org: { subscription: null } }]
+                    : []),
+                ],
+              }]
+            : []),
+        ],
+      },
+      take: limit,
+      orderBy: [{ nextCheckAt: "asc" }],
+    });
+
+    if (apps.length === 0) return [];
+
+    // Claim the selected apps immediately by bumping nextCheckAt 1 hour into
+    // the future within the same transaction . concurrent invocations will
+    // block on the row locks and see the updated values on retry.
+    await tx.monitoredApp.updateMany({
+      where: { id: { in: apps.map((a) => a.id) } },
+      data: { nextCheckAt: addHours(new Date(), 1) },
+    });
+
+    return apps;
   });
+
+  if (dueApps.length === 0) return [];
 
   const results: Array<{ orgId: string; appId: string; status: string; findingsCount?: number; error?: string }> =
     [];

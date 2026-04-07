@@ -5,6 +5,10 @@
       "schedule": "0 */4 * * *"
     },
     {
+      "path": "/api/cron/run-premium",
+      "schedule": "0 * * * *"
+    },
+    {
       "path": "/api/reports/weekly",
       "schedule": "0 12 * * 1"
     }

@@ -11,7 +11,7 @@
   --color-ink-black-600: #30649c;
   --color-ink-black-700: #244b75;
   --color-ink-black-800: #18324e;
-  --color-ink-black-900: #0c1927;
+  --color-ink-black-900: #0d1b2a;
   --color-ink-black-950: #08121b;
 
   /* Prussian Blue */
@@ -23,44 +23,174 @@
   --color-prussian-blue-500: #5071af;
   --color-prussian-blue-600: #405b8c;
   --color-prussian-blue-700: #304469;
-  --color-prussian-blue-800: #202d46;
+  --color-prussian-blue-800: #1b263b;
   --color-prussian-blue-900: #101723;
 
   /* Dusk Blue */
   --color-dusk-blue-200: #bdcbdb;
-  --color-dusk-blue-500: #5b7da4;
+  --color-dusk-blue-500: #415a77;
 
   /* Dusty Denim */
   --color-dusty-denim-100: #e0e5eb;
-  --color-dusty-denim-500: #627c9d;
+  --color-dusty-denim-500: #8a9bb5;
   --color-dusty-denim-600: #4f637d;
   --color-dusty-denim-700: #3b4a5e;
   --color-dusty-denim-900: #14191f;
 
   /* Alabaster Grey */
   --color-alabaster-grey-50: #f3f3f1;
-  --color-alabaster-grey-100: #e6e7e4;
+  --color-alabaster-grey-100: #e0e1dd;
   --color-alabaster-grey-200: #cecfc9;
+  --color-alabaster-grey-400: #9ca3af;
+  --color-alabaster-grey-600: #6b7280;
   --color-alabaster-grey-900: #1a1b18;
+
+  /* Semantic Colors */
+  --color-page: #0d1b2a;
+  --color-surface-band: #111f2e;
+  --color-surface: #1b263b;
+  --color-surface-raised: #243347;
+  --color-border: #415a77;
+  --color-border-subtle: #2d3f56;
+  --color-heading: #e0e1dd;
+  --color-body: #e0e1dd;
+  --color-muted: #8a9bb5;
+  --color-primary: #415a77;
+  --color-primary-hover: #5b7da4;
+
+  /* Severity */
+  --color-severity-critical: #ef4444;
+  --color-severity-high: #f97316;
+  --color-severity-medium: #eab308;
+  --color-severity-low: #778da9;
+
+  /* Status */
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+
+  /* Band backgrounds */
+  --color-findings-bg: #1E293B;
+  --color-how-it-works-bg: #1E293B;
+  --color-hero-center: #1E293B;
+  --color-hero-edge: #0F172A;
+  --color-cta-deep: #020617;
+  --color-warning-soft: #FDA4AF;
+
+  /* Footer palette */
+  --color-footer-bg: #0B1222;
+  --color-footer-text-secondary: #94A3B8;
+  --color-footer-text-tertiary: #475569;
+  --color-footer-border: #1E293B;
+  --color-footer-badge-bg: rgba(30,41,59,0.5);
+  --color-footer-input-bg: rgba(255,255,255,0.05);
+  --color-footer-input-border: rgba(255,255,255,0.08);
+  --color-cta-green: #22C55E;
+  --color-cta-green-dark: #16A34A;
+  --color-cta-green-glow: rgba(34,197,94,0.35);
+  --color-cta-green-faint: rgba(34,197,94,0.06);
+  --color-badge-new-bg: rgba(34,197,94,0.08);
+  --color-badge-new-border: rgba(34,197,94,0.33);
+  --color-info: #3b82f6;
+
+  /* Monochromatic design system */
+  --color-section-base: #0B1222;
+  --color-section-lift: #111827;
+  --color-card-bg: #161D2F;
+  --color-stroke: #334155;
+  --color-stroke-subtle: #1F2937;
+
+  /* Layout */
+  --width-content: 1200px;
 }
 
-/* Semantic CSS variables */
+/* Dark-first defaults */
 :root {
-  --bg-page: var(--color-alabaster-grey-50);
-  --bg-surface: #ffffff;
-  --bg-dark: var(--color-ink-black-950);
-  --text-heading: var(--color-ink-black-950);
-  --text-body: var(--color-dusty-denim-700);
-  --text-muted: var(--color-dusty-denim-600);
-  --text-on-dark: var(--color-alabaster-grey-50);
-  --primary: var(--color-prussian-blue-600);
-  --primary-hover: var(--color-prussian-blue-700);
-  --accent: var(--color-ink-black-600);
-  --border-light: var(--color-alabaster-grey-200);
-  --border-focus: var(--color-prussian-blue-300);
+  color-scheme: dark;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
+  --shadow-md: 0 4px 6px rgba(0,0,0,0.4);
+  --shadow-lg: 0 10px 15px rgba(0,0,0,0.4);
+  --shadow-xl: 0 20px 25px rgba(0,0,0,0.4);
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Light mode override (future use) */
+html.light {
+  color-scheme: light;
+  --shadow-sm: 0 1px 2px rgba(12,25,39,0.05);
+  --shadow-md: 0 4px 6px rgba(12,25,39,0.1);
+  --shadow-lg: 0 10px 15px rgba(12,25,39,0.1);
+  --shadow-xl: 0 20px 25px rgba(12,25,39,0.1);
 }
 
 body {
-  background: var(--bg-page);
-  color: var(--text-body);
+  background: var(--color-page);
+  color: var(--color-body);
+  transition: background-color var(--transition-normal), color var(--transition-normal);
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 128px 128px;
+}
+
+/* Smooth font rendering */
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  scroll-behavior: smooth;
+}
+
+/* Premium animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Button micro-interactions */
+button, a[role="button"], input[type="button"], input[type="submit"] {
+  transition: all var(--transition-fast);
+}
+
+button:active, a[role="button"]:active {
+  transform: scale(0.98);
+}
+
+/* Smooth section animations */
+section {
+  animation: fadeIn 0.6s ease-out;
+}
+
+@layer utilities {
+  .container-page {
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
 }

@@ -3,6 +3,10 @@ import { z } from "zod";
 import { db } from "@/lib/db";
 import { getSession } from "@/lib/auth";
 import { parseRemediationMeta, linkPRToFinding } from "@/lib/remediation-lifecycle";
+import { getOrgLimits } from "@/lib/tenant";
+import { checkRateLimit } from "@/lib/rate-limit";
+import { atLeast } from "@/lib/tier-capabilities";
+import { errorResponse, zodFieldErrors } from "@/lib/api-response";
 
 const linkSchema = z.object({
   url: z.string().url().refine(
@@ -14,7 +18,24 @@ const linkSchema = z.object({
 
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await getSession();
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session) return errorResponse("UNAUTHORIZED", "Unauthorized", undefined, 401);
+
+  if (session.role === "VIEWER") {
+    return errorResponse("FORBIDDEN", "Viewers have read-only access", undefined, 403);
+  }
+
+  const rl = await checkRateLimit(`finding-link:${session.orgId}`, {
+    maxAttempts: 60,
+    windowMs: 60 * 60 * 1000,
+  });
+  if (!rl.allowed) {
+    return errorResponse("RATE_LIMITED", "Too many requests. Please try again later.", undefined, 429, { "Retry-After": String(rl.retryAfterSeconds ?? 60) });
+  }
+
+  const limits = await getOrgLimits(session.orgId);
+  if (!atLeast(limits.tier, "PRO")) {
+    return errorResponse("FORBIDDEN", "PR linking requires a Pro plan or higher.", undefined, 403);
+  }
 
   const { id } = await params;
 
@@ -22,11 +43,11 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   const finding = await db.finding.findFirst({
     where: { id, run: { app: { orgId: session.orgId } } },
   });
-  if (!finding) return NextResponse.json({ error: "Not found" }, { status: 404 });
+  if (!finding) return errorResponse("NOT_FOUND", "Not found", undefined, 404);
 
   const body = await req.json();
   const parsed = linkSchema.safeParse(body);
-  if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+  if (!parsed.success) return errorResponse("VALIDATION_ERROR", "Validation failed", zodFieldErrors(parsed.error.flatten().fieldErrors), 400);
 
   const meta = await linkPRToFinding(id, {
     url: parsed.data.url,
@@ -50,13 +71,18 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
 export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await getSession();
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session) return errorResponse("UNAUTHORIZED", "Unauthorized", undefined, 401);
+
+  const limits = await getOrgLimits(session.orgId);
+  if (!atLeast(limits.tier, "PRO")) {
+    return errorResponse("FORBIDDEN", "PR linking requires a Pro plan or higher.", undefined, 403);
+  }
 
   const { id } = await params;
   const finding = await db.finding.findFirst({
     where: { id, run: { app: { orgId: session.orgId } } },
   });
-  if (!finding) return NextResponse.json({ error: "Not found" }, { status: 404 });
+  if (!finding) return errorResponse("NOT_FOUND", "Not found", undefined, 404);
 
   const { meta } = parseRemediationMeta(finding.notes);
   return NextResponse.json({ linkedPRs: meta.linkedPRs });

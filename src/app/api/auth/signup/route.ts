@@ -1,10 +1,20 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import crypto from "node:crypto";
 import jwt from "jsonwebtoken";
 import { db } from "@/lib/db";
 import { hashPassword, createSession } from "@/lib/auth";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 import { trackEvent } from "@/lib/analytics";
+import { extractSuggestedDomain } from "@/lib/onboarding";
+import { logAudit } from "@/lib/tenant";
+import { passwordSchema, isReservedSlug } from "@/lib/validation";
+import { errorResponse, zodFieldErrors } from "@/lib/api-response";
+
+/** 4-character alphanumeric suffix to disambiguate reserved org slugs. */
+function slugSuffix(): string {
+  return crypto.randomBytes(3).toString("base64url").slice(0, 4).toLowerCase();
+}
 
 function getJwtSecret(): string {
   const secret = process.env.JWT_SECRET;
@@ -42,9 +52,9 @@ async function sendVerificationEmail(to: string, verifyLink: string) {
 
 const signupSchema = z.object({
   email: z.string().email(),
-  password: z.string().min(12, "Password must be at least 12 characters"),
-  name: z.string().min(2),
-  orgName: z.string().min(2),
+  password: passwordSchema,
+  name: z.string().min(2).max(100),
+  orgName: z.string().min(2).max(64),
 });
 
 export async function POST(req: Request) {
@@ -55,17 +65,14 @@ export async function POST(req: Request) {
     fallbackMode: "fail-closed",
   });
   if (!limit.allowed) {
-    return NextResponse.json({ error: "Too many signup attempts. Please try again later." }, {
-      status: 429,
-      headers: { "Retry-After": String(limit.retryAfterSeconds ?? 60) },
-    });
+    return errorResponse("RATE_LIMITED", "Too many signup attempts. Please try again later.", undefined, 429, { "Retry-After": String(limit.retryAfterSeconds ?? 60) });
   }
 
   const body = await req.json();
   const parsed = signupSchema.safeParse(body);
 
   if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+    return errorResponse("VALIDATION_ERROR", "Validation failed", zodFieldErrors(parsed.error.flatten().fieldErrors), 400);
   }
 
   const { email, password, name, orgName } = parsed.data;
@@ -73,15 +80,17 @@ export async function POST(req: Request) {
   // Check if user already exists
   const existing = await db.user.findFirst({ where: { email } });
   if (existing) {
-    return NextResponse.json({ error: "An account with this email already exists" }, { status: 409 });
+    return errorResponse("CONFLICT", "An account with this email already exists", undefined, 409);
   }
 
   // Create org + user + free subscription in a transaction
-  const slug = orgName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  let slug = orgName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  // If the base slug matches a reserved path segment, append a random suffix to
+  // avoid shadowing Next.js API routes or public pages (e.g. "api", "admin").
+  if (isReservedSlug(slug)) {
+    slug = `${slug}-${slugSuffix()}`;
+  }
   const passwordHash = await hashPassword(password);
-
-  const trialEnd = new Date();
-  trialEnd.setDate(trialEnd.getDate() + 14); // 14-day trial
 
   const org = await db.organization.create({
     data: {
@@ -99,10 +108,9 @@ export async function POST(req: Request) {
       subscription: {
         create: {
           tier: "FREE",
-          status: "TRIALING",
+          status: "ACTIVE",
           maxApps: 2,
           maxUsers: 1,
-          trialEndsAt: trialEnd,
         },
       },
     },
@@ -112,6 +120,9 @@ export async function POST(req: Request) {
   const user = org.users[0];
   const session = await createSession(user.id);
 
+  // Audit log: record org creation for compliance trail
+  await logAudit(session, "org.created", org.id, `Organization created: ${org.name}`);
+
   // Send email verification
   try {
     const verifyToken = jwt.sign(
@@ -119,7 +130,7 @@ export async function POST(req: Request) {
       getJwtSecret(),
       { expiresIn: "24h" },
     );
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://scantient.com";
+    const appUrl = process.env.NEXT_PUBLIC_URL ?? "https://scantient.com";
     const verifyLink = `${appUrl}/verify-email?token=${verifyToken}`;
     await sendVerificationEmail(email, verifyLink);
   } catch (err) {
@@ -130,11 +141,11 @@ export async function POST(req: Request) {
     event: "signup_completed",
     orgId: org.id,
     userId: user.id,
-    properties: { planTier: "FREE", trialDays: 14 },
+    properties: { planTier: "FREE" },
   });
 
   // Fire-and-forget: onboarding welcome email
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? process.env.NEXT_PUBLIC_URL ?? "https://scantient.com";
+  const appUrl = process.env.NEXT_PUBLIC_URL ?? "https://scantient.com";
   const resendKey = process.env.RESEND_API_KEY;
   const fromEmail = process.env.ALERT_FROM_EMAIL ?? "noreply@scantient.com";
   if (resendKey) {
@@ -155,14 +166,14 @@ export async function POST(req: Request) {
             <span style="flex-shrink: 0; width: 28px; height: 28px; background: #f3f4f6; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; color: #111;">1</span>
             <div>
               <p style="margin: 0 0 4px 0; font-weight: 600; font-size: 15px;">Verify your email</p>
-              <p style="margin: 0; color: #666; font-size: 14px;">Click the verification link we just sent to activate your account.</p>
+              <p style="margin: 0; color: #666; font-size: 14px;">Click the verification link sent to your email to activate your account.</p>
             </div>
           </li>
           <li style="display: flex; gap: 16px; margin-bottom: 20px;">
             <span style="flex-shrink: 0; width: 28px; height: 28px; background: #f3f4f6; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; color: #111;">2</span>
             <div>
               <p style="margin: 0 0 4px 0; font-weight: 600; font-size: 15px;">Add your first app</p>
-              <p style="margin: 0; color: #666; font-size: 14px;">Paste a URL — we'll scan it for security issues in seconds.</p>
+              <p style="margin: 0; color: #666; font-size: 14px;">Paste a URL and we'll scan it for security issues in seconds.</p>
             </div>
           </li>
           <li style="display: flex; gap: 16px;">
@@ -182,7 +193,7 @@ export async function POST(req: Request) {
         </a>
 
         <p style="margin-top: 32px; font-size: 12px; color: #aaa;">
-          If you have questions, just reply to this email — we read every one.
+          If you have questions, reply to this email. We read every one.
         </p>
       </div>
     `;
@@ -196,11 +207,12 @@ export async function POST(req: Request) {
       body: JSON.stringify({
         from: fromEmail,
         to: [email],
-        subject: "Welcome to Scantient — here's how to get started",
+        subject: "Welcome to Scantient: here's how to get started",
         html: onboardingHtml,
       }),
     }).catch((err) => console.warn("[auth] Failed to send onboarding email:", err));
   }
 
-  return NextResponse.json({ user: session }, { status: 201 });
+  const suggestedDomain = extractSuggestedDomain(email);
+  return NextResponse.json({ user: session, suggestedDomain }, { status: 201 });
 }

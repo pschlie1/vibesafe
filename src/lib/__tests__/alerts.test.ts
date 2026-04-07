@@ -10,22 +10,32 @@ import type { SecurityFinding } from "@/lib/types";
 
 // ── DB mocks ──────────────────────────────────────────────────────────────────
 const monitoredAppFindUnique = vi.fn();
+const alertConfigFindUnique = vi.fn();
 const alertConfigFindMany = vi.fn();
 const notificationCreate = vi.fn();
+const notificationFindFirst = vi.fn();
 
 vi.mock("@/lib/db", () => ({
   db: {
     monitoredApp: { findUnique: monitoredAppFindUnique },
-    alertConfig: { findMany: alertConfigFindMany },
-    notification: { create: notificationCreate },
+    alertConfig: { findUnique: alertConfigFindUnique, findMany: alertConfigFindMany },
+    notification: { create: notificationCreate, findFirst: notificationFindFirst },
   },
 }));
+
+// ── Tenant mocks ──────────────────────────────────────────────────────────────
+const getOrgLimits = vi.fn();
+vi.mock("@/lib/tenant", () => ({ getOrgLimits }));
 
 // ── Use fake timers so withRetry delays don't slow tests ──────────────────────
 beforeEach(() => {
   vi.useFakeTimers();
   vi.clearAllMocks();
   notificationCreate.mockResolvedValue({});
+  // Default: no recent notification (cooldown inactive) . allows alerts through
+  notificationFindFirst.mockResolvedValue(null);
+  // Default to ENTERPRISE so existing tests with configs continue to pass
+  getOrgLimits.mockResolvedValue({ tier: "ENTERPRISE", status: "ACTIVE" });
 });
 
 afterEach(() => {
@@ -61,7 +71,7 @@ const MOCK_APP = {
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
-// sendCriticalFindingsAlert — no-op when no findings
+// sendCriticalFindingsAlert . no-op when no findings
 // ─────────────────────────────────────────────────────────────────────────────
 describe("sendCriticalFindingsAlert", () => {
   it("returns immediately when findings array is empty", async () => {
@@ -218,6 +228,77 @@ describe("sendCriticalFindingsAlert", () => {
       expect.objectContaining({
         data: expect.objectContaining({ delivered: false, error: "Persistent failure" }),
       }),
+    );
+  });
+});
+
+// ─── Alert Cooldown / De-duplication ────────────────────────────────────────
+
+describe("sendCriticalFindingsAlert . cooldown", () => {
+  it("skips alert when cooldown is active (recent delivered notification exists)", async () => {
+    process.env.RESEND_API_KEY = "test-key-cooldown";
+    monitoredAppFindUnique.mockResolvedValueOnce(MOCK_APP);
+    alertConfigFindMany.mockResolvedValueOnce([
+      {
+        id: "cfg_cooldown",
+        channel: "EMAIL",
+        destination: "security@example.com",
+        minSeverity: "HIGH",
+        enabled: true,
+        orgId: "org_a",
+      },
+    ]);
+
+    // Simulate a notification sent 30 minutes ago (within 1-hour cooldown window)
+    notificationFindFirst.mockResolvedValueOnce({
+      id: "notif_recent",
+      alertConfigId: "cfg_cooldown",
+      sentAt: new Date(Date.now() - 30 * 60 * 1000),
+      delivered: true,
+    });
+
+    const mockFetch = vi.fn();
+    vi.stubGlobal("fetch", mockFetch);
+
+    const { sendCriticalFindingsAlert } = await import("@/lib/alerts");
+    const promise = sendCriticalFindingsAlert("app_1", [HIGH_FINDING]);
+    await vi.runAllTimersAsync();
+    await promise;
+
+    // No email should fire . cooldown is active
+    expect(mockFetch).not.toHaveBeenCalled();
+    expect(notificationCreate).not.toHaveBeenCalled();
+  });
+
+  it("sends alert when cooldown has expired (no recent notification)", async () => {
+    process.env.RESEND_API_KEY = "test-key-expired-cooldown";
+    monitoredAppFindUnique.mockResolvedValueOnce(MOCK_APP);
+    alertConfigFindMany.mockResolvedValueOnce([
+      {
+        id: "cfg_expired",
+        channel: "EMAIL",
+        destination: "security@example.com",
+        minSeverity: "HIGH",
+        enabled: true,
+        orgId: "org_a",
+      },
+    ]);
+
+    // No recent notification → cooldown not active
+    notificationFindFirst.mockResolvedValueOnce(null);
+
+    const mockFetch = vi.fn().mockResolvedValue(new Response("{}", { status: 200 }));
+    vi.stubGlobal("fetch", mockFetch);
+
+    const { sendCriticalFindingsAlert } = await import("@/lib/alerts");
+    const promise = sendCriticalFindingsAlert("app_1", [HIGH_FINDING]);
+    await vi.runAllTimersAsync();
+    await promise;
+
+    // Alert should fire since cooldown has expired
+    expect(mockFetch).toHaveBeenCalled();
+    expect(notificationCreate).toHaveBeenCalledWith(
+      expect.objectContaining({ data: expect.objectContaining({ delivered: true }) }),
     );
   });
 });

@@ -12,7 +12,7 @@ function getEncryptionKey(): Buffer {
   return createHash("sha256").update(k).digest();
 }
 
-export function obfuscate(value: string): string {
+export function encrypt(value: string): string {
   const iv = randomBytes(12);
   const cipher = createCipheriv("aes-256-gcm", getEncryptionKey(), iv);
   const encrypted = Buffer.concat([cipher.update(value, "utf8"), cipher.final()]);
@@ -21,7 +21,7 @@ export function obfuscate(value: string): string {
   return Buffer.concat([iv, authTag, encrypted]).toString("base64");
 }
 
-export function deobfuscate(encoded: string): string {
+export function decrypt(encoded: string): string {
   const data = Buffer.from(encoded, "base64");
   const iv = data.subarray(0, 12);
   const authTag = data.subarray(12, 28);
@@ -31,6 +31,8 @@ export function deobfuscate(encoded: string): string {
   return Buffer.concat([decipher.update(ciphertext), decipher.final()]).toString("utf8");
 }
 
-// Named aliases for clarity
-export const encrypt = obfuscate;
-export const decrypt = deobfuscate;
+// Backward-compatible aliases — prefer encrypt/decrypt in new code
+/** @deprecated Use `encrypt` instead */
+export const obfuscate = encrypt;
+/** @deprecated Use `decrypt` instead */
+export const deobfuscate = decrypt;

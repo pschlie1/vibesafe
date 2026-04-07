@@ -2,10 +2,18 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getSession } from "@/lib/auth";
 import { parseRemediationMeta } from "@/lib/remediation-lifecycle";
+import { getOrgLimits } from "@/lib/tenant";
+import { atLeast } from "@/lib/tier-capabilities";
+import { errorResponse } from "@/lib/api-response";
 
 export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await getSession();
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session) return errorResponse("UNAUTHORIZED", "Unauthorized", undefined, 401);
+
+  const limits = await getOrgLimits(session.orgId);
+  if (!atLeast(limits.tier, "PRO")) {
+    return errorResponse("FORBIDDEN", "Remediation timeline requires a Pro plan or higher.", undefined, 403);
+  }
 
   const { id } = await params;
   const finding = await db.finding.findFirst({
@@ -17,7 +25,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
       },
     },
   });
-  if (!finding) return NextResponse.json({ error: "Not found" }, { status: 404 });
+  if (!finding) return errorResponse("NOT_FOUND", "Not found", undefined, 404);
 
   const { meta } = parseRemediationMeta(finding.notes);
 

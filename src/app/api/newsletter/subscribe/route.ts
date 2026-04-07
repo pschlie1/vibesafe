@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
+import { errorResponse, zodFieldErrors } from "@/lib/api-response";
 
 const subscribeSchema = z.object({
   email: z.string().email(),
@@ -29,7 +30,7 @@ export async function POST(req: Request) {
   const parsed = subscribeSchema.safeParse(body);
 
   if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+    return errorResponse("VALIDATION_ERROR", "Validation failed", zodFieldErrors(parsed.error.flatten().fieldErrors), 400);
   }
 
   const { email } = parsed.data;
@@ -41,7 +42,7 @@ export async function POST(req: Request) {
 
   // Add to Resend audience (gracefully degrade if not configured)
   if (!audienceId) {
-    console.log("[newsletter] RESEND_AUDIENCE_ID not set — skipping audience add for:", email);
+    console.log("[newsletter] RESEND_AUDIENCE_ID not set . skipping audience add");
   } else if (resendKey) {
     try {
       await fetch(`https://api.resend.com/audiences/${audienceId}/contacts`, {
@@ -92,7 +93,7 @@ export async function POST(req: Request) {
       body: JSON.stringify({
         from: fromEmail,
         to: [email],
-        subject: "Thanks for subscribing to Scantient — we'll keep you posted on security insights",
+        subject: "Thanks for subscribing to Scantient. We'll keep you posted on security insights",
         html: welcomeHtml,
       }),
     }).catch((err) => console.warn("[newsletter] Failed to send welcome email:", err));

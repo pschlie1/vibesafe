@@ -1,47 +1,19 @@
 import { NextResponse } from "next/server";
 import { runDueHttpScans } from "@/lib/scanner-http";
 import { logApiError } from "@/lib/observability";
-import { db } from "@/lib/db";
+import { validateCronAuth, logCronHeartbeat, NON_PREMIUM_TIERS } from "@/lib/cron-auth";
+import { errorResponse } from "@/lib/api-response";
 
 export async function GET(req: Request) {
-  const cronSecret = process.env.CRON_SECRET;
-
-  if (!cronSecret) {
-    return NextResponse.json({ error: "CRON_SECRET not configured" }, { status: 503 });
-  }
-
-  const auth = req.headers.get("authorization");
-  if (auth !== `Bearer ${cronSecret}`) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const authResult = validateCronAuth(req);
+  if (!authResult.authorized) {
+    return authResult.errorResponse!;
   }
 
   try {
-    const results = await runDueHttpScans(50);
+    const results = await runDueHttpScans(50, { tiers: NON_PREMIUM_TIERS, includeNoSubscription: true });
 
-    const byOrg = new Map<string, { processed: number; critical: number; warning: number }>();
-    for (const r of results) {
-      if (!byOrg.has(r.orgId)) byOrg.set(r.orgId, { processed: 0, critical: 0, warning: 0 });
-      const bucket = byOrg.get(r.orgId)!;
-      bucket.processed += 1;
-      if (r.status === "CRITICAL") bucket.critical += 1;
-      if (r.status === "WARNING") bucket.warning += 1;
-    }
-
-    if (byOrg.size > 0) {
-      await db.auditLog.createMany({
-        data: Array.from(byOrg.entries()).map(([orgId, agg]) => ({
-          orgId,
-          action: "CRON_HEARTBEAT",
-          resource: "scan_scheduler",
-          details: JSON.stringify({
-            processed: agg.processed,
-            critical: agg.critical,
-            warning: agg.warning,
-            timestamp: new Date().toISOString(),
-          }),
-        })),
-      });
-    }
+    await logCronHeartbeat(results);
 
     return NextResponse.json({ ok: true, processed: results.length, results });
   } catch (error) {
@@ -52,6 +24,6 @@ export async function GET(req: Request) {
       details: { requestedLimit: 50 },
     });
 
-    return NextResponse.json({ error: "Failed to execute scheduled scans" }, { status: 500 });
+    return errorResponse("INTERNAL_ERROR", "Failed to execute scheduled scans", undefined, 500);
   }
 }

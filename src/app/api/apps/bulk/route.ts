@@ -2,15 +2,19 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { db } from "@/lib/db";
 import { getSession } from "@/lib/auth";
-import { getOrgLimits } from "@/lib/tenant";
+import { getOrgLimits, logAudit } from "@/lib/tenant";
 import { logApiError } from "@/lib/observability";
+import { urlSchema } from "@/lib/validation";
+import { isPrivateUrl } from "@/lib/ssrf-guard";
+import { checkRateLimit } from "@/lib/rate-limit";
+import { errorResponse, zodFieldErrors } from "@/lib/api-response";
 
 const bulkAppSchema = z.object({
   apps: z
     .array(
       z.object({
-        url: z.string().url("Each URL must be a valid URL"),
-        name: z.string().optional(),
+        url: urlSchema,
+        name: z.string().max(100, "App name must be 100 characters or fewer").optional(),
         ownerEmail: z.string().email().optional(),
         criticality: z.enum(["low", "medium", "high", "critical"]).optional(),
       }),
@@ -21,14 +25,35 @@ const bulkAppSchema = z.object({
 
 export async function POST(req: Request) {
   const session = await getSession();
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session) return errorResponse("UNAUTHORIZED", "Unauthorized", undefined, 401);
+
+  if (["VIEWER", "MEMBER"].includes(session.role)) {
+    return errorResponse("FORBIDDEN", "Viewers have read-only access", undefined, 403);
+  }
+
+  // audit-23: Rate limit bulk add . 5 requests per hour per org (each can add up to 50 apps).
+  // Without this limit the endpoint could be used to exhaust storage or create thousands of
+  // scan jobs in rapid succession by bypassing the per-request app-count checks.
+  const rl = await checkRateLimit(`apps-bulk:${session.orgId}`, {
+    maxAttempts: 5,
+    windowMs: 60 * 60 * 1000,
+  });
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { error: "Too many bulk-add requests. Please try again later." },
+      {
+        status: 429,
+        headers: { "Retry-After": String(rl.retryAfterSeconds ?? 3600) },
+      },
+    );
+  }
 
   try {
     const body = await req.json();
     const parsed = bulkAppSchema.safeParse(body);
 
     if (!parsed.success) {
-      return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+      return errorResponse("VALIDATION_ERROR", "Validation failed", zodFieldErrors(parsed.error.flatten().fieldErrors), 400);
     }
 
     const { apps } = parsed.data;
@@ -39,21 +64,18 @@ export async function POST(req: Request) {
 
     if (currentCount >= limits.maxApps) {
       return NextResponse.json(
-        {
-          error: {
-            message: `Your ${limits.tier} plan allows ${limits.maxApps} apps. Upgrade to add more.`,
-          },
-        },
+        { error: `Your ${limits.tier} plan allows ${limits.maxApps} apps. Upgrade to add more.` },
         { status: 403 },
       );
     }
 
     const remainingSlots = limits.maxApps - currentCount;
 
-    // Fetch existing URLs for dedup check
+    // Fetch existing URLs for dedup check (capped above any plan's app limit)
     const existingApps = await db.monitoredApp.findMany({
       where: { orgId: session.orgId },
       select: { url: true },
+      take: 1000,
     });
     const existingUrls = new Set(existingApps.map((a) => a.url));
 
@@ -74,6 +96,24 @@ export async function POST(req: Request) {
       // Skip duplicates
       if (existingUrls.has(appInput.url)) {
         skipped++;
+        continue;
+      }
+
+      // audit-23: SSRF guard . reject private/internal URLs per-entry.
+      // The single-app POST /api/apps correctly blocks these, but the bulk endpoint
+      // previously skipped this check, letting attackers register internal addresses
+      // (e.g. 169.254.169.254, 10.x.x.x) that would then be fetched by the scanner.
+      let blocked = false;
+      try {
+        blocked = await isPrivateUrl(appInput.url);
+      } catch {
+        blocked = true;
+      }
+      if (blocked) {
+        errors.push({
+          url: appInput.url,
+          reason: "App URL must be a public address. Private and internal URLs are not allowed.",
+        });
         continue;
       }
 
@@ -104,6 +144,17 @@ export async function POST(req: Request) {
       }
     }
 
+    // audit-23: Audit log for bulk add operations . ensures compliance trail matches
+    // single-app create behaviour (which always calls logAudit).
+    if (created > 0) {
+      await logAudit(
+        session,
+        "app.bulk_created",
+        "bulk",
+        `Bulk registered ${created} app(s); skipped ${skipped}; errors ${errors.length}`,
+      );
+    }
+
     return NextResponse.json({ created, skipped, errors });
   } catch (error) {
     logApiError(error, {
@@ -114,6 +165,6 @@ export async function POST(req: Request) {
       statusCode: 500,
     });
 
-    return NextResponse.json({ error: "Failed to process bulk add" }, { status: 500 });
+    return errorResponse("INTERNAL_ERROR", "Failed to process bulk add", undefined, 500);
   }
 }

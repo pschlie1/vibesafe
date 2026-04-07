@@ -1,0 +1,136 @@
+import { NextResponse } from "next/server";
+import { z } from "zod";
+import { createHash } from "crypto";
+import { addHours } from "date-fns";
+import { db } from "@/lib/db";
+import { getOrgLimits } from "@/lib/tenant";
+import { sendCriticalFindingsAlert } from "@/lib/alerts";
+import { VALID_FINDING_CODES } from "@/lib/finding-codes";
+import type { SecurityFinding } from "@/lib/types";
+import { checkRateLimit } from "@/lib/rate-limit";
+import { errorResponse, zodFieldErrors } from "@/lib/api-response";
+
+function sha256(input: string): string {
+  return createHash("sha256").update(input).digest("hex");
+}
+
+const findingSchema = z.object({
+  code: z.string().refine(
+    (c) => (VALID_FINDING_CODES as readonly string[]).includes(c),
+    { message: "Invalid finding code. Must be a recognized Scantient finding code." },
+  ),
+  title: z.string().max(200),
+  description: z.string().max(1000),
+  severity: z.enum(["LOW", "MEDIUM", "HIGH", "CRITICAL"]),
+  fixPrompt: z.string().max(2000),
+});
+
+const bodySchema = z.object({
+  findings: z.array(findingSchema).max(200, "Maximum 200 findings per scan submission"),
+  responseTimeMs: z.number().optional(),
+  statusCode: z.number().optional(),
+});
+
+function calcStatus(findings: SecurityFinding[]): "HEALTHY" | "WARNING" | "CRITICAL" {
+  if (findings.some((f) => f.severity === "CRITICAL")) return "CRITICAL";
+  if (findings.some((f) => f.severity === "HIGH")) return "WARNING";
+  return "HEALTHY";
+}
+
+async function resolveAppFromBearer(authHeader: string | null) {
+  if (!authHeader?.startsWith("Bearer ")) return null;
+  const token = authHeader.slice(7);
+  if (!token.startsWith("sa_")) return null;
+
+  const hash = sha256(token);
+  const app = await db.monitoredApp.findFirst({ where: { agentKeyHash: hash, agentEnabled: true } });
+  if (!app) return null;
+
+  // Verify org still has PRO+ subscription
+  const limits = await getOrgLimits(app.orgId);
+  if (!["PRO", "ENTERPRISE", "ENTERPRISE_PLUS"].includes(limits.tier)) return null;
+
+  return app;
+}
+
+/** POST . agent pushes scan results */
+export async function POST(req: Request) {
+  const app = await resolveAppFromBearer(req.headers.get("authorization"));
+  if (!app) return errorResponse("UNAUTHORIZED", "Unauthorized", undefined, 401);
+
+  // audit-24: Rate-limit scan submissions per app to prevent DB flooding.
+  // 120 per hour = one every 30 seconds; well above real-world agent cadence.
+  const rl = await checkRateLimit(`agent-scan:${app.id}`, {
+    maxAttempts: 120,
+    windowMs: 60 * 60 * 1000,
+  });
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { error: "Scan submission rate limit exceeded. Back off and retry." },
+      { status: 429, headers: { "Retry-After": String(rl.retryAfterSeconds ?? 60) } },
+    );
+  }
+
+  let rawBody: unknown;
+  try {
+    rawBody = await req.json();
+  } catch {
+    return errorResponse("BAD_REQUEST", "Invalid JSON", undefined, 400);
+  }
+
+  const parsed = bodySchema.safeParse(rawBody);
+  if (!parsed.success) {
+    return errorResponse("VALIDATION_ERROR", "Validation failed", zodFieldErrors(parsed.error.flatten().fieldErrors), 400);
+  }
+
+  const { findings, responseTimeMs, statusCode } = parsed.data;
+  const status = calcStatus(findings as SecurityFinding[]);
+
+  // Create the monitor run
+  const run = await db.monitorRun.create({
+    data: {
+      appId: app.id,
+      status,
+      responseTimeMs: responseTimeMs ?? null,
+      summary: `Agent scan: ${findings.length} finding(s) . status ${statusCode ?? "N/A"}`,
+      checksRun: findings.length,
+      completedAt: new Date(),
+      findings: {
+        create: findings.map((f) => ({
+          code: f.code,
+          title: f.title,
+          description: f.description,
+          severity: f.severity,
+          fixPrompt: f.fixPrompt,
+        })),
+      },
+    },
+  });
+
+  // Determine next check interval from org tier
+  const orgLimits = await getOrgLimits(app.orgId);
+  const scanIntervalHours: Record<string, number> = {
+    ENTERPRISE: 1,
+    ENTERPRISE_PLUS: 1,
+    PRO: 4,
+    STARTER: 8,
+    FREE: 24,
+    EXPIRED: 24,
+  };
+  const intervalHours = scanIntervalHours[orgLimits.tier] ?? 24;
+
+  await db.monitoredApp.update({
+    where: { id: app.id },
+    data: {
+      status,
+      lastCheckedAt: new Date(),
+      nextCheckAt: addHours(new Date(), intervalHours),
+      agentLastSeenAt: new Date(),
+    },
+  });
+
+  // Send alerts for critical findings
+  await sendCriticalFindingsAlert(app.id, findings as SecurityFinding[]);
+
+  return NextResponse.json({ runId: run.id, status, findingsCount: findings.length });
+}

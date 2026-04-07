@@ -4,8 +4,9 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import type { SessionUser } from "@/lib/auth";
+import { ScantientLogo } from "@/components/scantient-logo";
 
-const navItems = [
+const baseNavItems = [
   { href: "/dashboard", label: "Dashboard" },
   { href: "/portfolio", label: "Portfolio" },
   { href: "/reports", label: "Reports" },
@@ -18,6 +19,7 @@ export function Nav() {
   const pathname = usePathname();
   const router = useRouter();
   const [user, setUser] = useState<SessionUser | null>(null);
+  const [showMsp, setShowMsp] = useState(false);
 
   useEffect(() => {
     fetch("/api/auth/me")
@@ -25,20 +27,33 @@ export function Nav() {
       .then((data) => data && setUser(data.user));
   }, []);
 
+  useEffect(() => {
+    fetch("/api/msp/client-count")
+      .then((r) => (r.ok ? r.json() : { count: 0 }))
+      .then((data: { count: number }) => setShowMsp(data.count > 0))
+      .catch(() => setShowMsp(false));
+  }, []);
+
+  const navItems = showMsp
+    ? [
+        ...baseNavItems.slice(0, 1),
+        { href: "/dashboard/msp", label: "MSP View" },
+        ...baseNavItems.slice(1),
+      ]
+    : baseNavItems;
+
   async function handleLogout() {
     await fetch("/api/auth/logout", { method: "POST" });
     router.push("/login");
   }
 
   return (
-    <nav className="border-b bg-white">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6">
+    <nav className="border-b border-border-subtle bg-surface">
+      <div className="mx-auto flex max-w-[1200px] items-center justify-between px-6 py-3">
         <div className="flex items-center gap-6">
-          <Link href="/dashboard" className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-black">
-              <span className="text-sm font-bold text-white">V</span>
-            </div>
-            <span className="text-sm font-bold">Scantient</span>
+          <Link href="/dashboard" className="flex items-center">
+            <ScantientLogo iconOnly height={28} />
+            <span className="ml-2 text-sm font-bold text-heading">Scantient</span>
           </Link>
 
           <div className="hidden items-center gap-1 sm:flex">
@@ -48,8 +63,8 @@ export function Nav() {
                 href={item.href}
                 className={`rounded-md px-3 py-1.5 text-sm transition ${
                   pathname.startsWith(item.href)
-                    ? "bg-gray-100 font-medium text-gray-900"
-                    : "text-gray-500 hover:text-gray-900"
+                    ? "bg-surface-raised font-medium text-heading"
+                    : "text-muted hover:text-heading"
                 }`}
               >
                 {item.label}
@@ -61,13 +76,13 @@ export function Nav() {
         <div className="flex items-center gap-3">
           {user && (
             <>
-              <span className="hidden text-xs text-gray-500 sm:inline">{user.orgName}</span>
-              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-gray-200 text-xs font-medium">
+              <span className="hidden text-xs text-muted sm:inline">{user.orgName}</span>
+              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-surface-raised text-xs font-medium text-heading">
                 {(user.name ?? user.email)[0].toUpperCase()}
               </div>
               <button
                 onClick={handleLogout}
-                className="text-xs text-gray-500 hover:text-gray-900"
+                className="text-xs text-muted hover:text-heading"
               >
                 Sign out
               </button>

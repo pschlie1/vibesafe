@@ -2,3 +2,4 @@ coverage
 .next
 node_modules
 src/generated
+github-action/

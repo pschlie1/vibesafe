@@ -19,6 +19,7 @@ const userUpdate = vi.fn();
 const userCreate = vi.fn();
 const inviteFindUnique = vi.fn();
 const inviteDelete = vi.fn();
+const dbTransaction = vi.fn();
 
 vi.mock("@/lib/db", () => ({
   db: {
@@ -32,6 +33,7 @@ vi.mock("@/lib/db", () => ({
       findUnique: inviteFindUnique,
       delete: inviteDelete,
     },
+    $transaction: dbTransaction,
   },
 }));
 
@@ -50,10 +52,23 @@ vi.mock("@/lib/rate-limit", () => ({ checkRateLimit, getClientIp }));
 // --- Analytics mock ---
 vi.mock("@/lib/analytics", () => ({ trackEvent: vi.fn() }));
 
+// --- Tenant mock (canAddUser used in invite acceptance) ---
+const canAddUser = vi.fn();
+const logAudit = vi.fn();
+vi.mock("@/lib/tenant", () => ({ canAddUser, logAudit }));
+
 beforeEach(() => {
-  vi.clearAllMocks();
+  vi.resetAllMocks();
+  // Restore defaults cleared by resetAllMocks
+  hashPassword.mockResolvedValue("hashed-password");
+  createSession.mockResolvedValue({ id: "user_1", email: "test@example.com" });
   checkRateLimit.mockResolvedValue({ allowed: true });
   getClientIp.mockReturnValue("1.2.3.4");
+  canAddUser.mockResolvedValue({ allowed: true });
+  logAudit.mockResolvedValue(undefined);
+  dbTransaction.mockImplementation((cb: (tx: unknown) => unknown) =>
+    cb({ user: { findFirst: userFindFirst, findUnique: userFindUnique, update: userUpdate, create: userCreate }, invite: { findUnique: inviteFindUnique, delete: inviteDelete } })
+  );
 });
 
 // Helper to build a Request
@@ -94,7 +109,7 @@ describe("POST /api/auth/forgot-password", () => {
     expect(res.status).toBe(200);
   });
 
-  it("returns 200 (not 429) when rate limited — avoids email-existence leak", async () => {
+  it("returns 200 (not 429) when rate limited . avoids email-existence leak", async () => {
     checkRateLimit.mockResolvedValueOnce({ allowed: false });
     const { POST } = await import("@/app/api/auth/forgot-password/route");
     const res = await POST(makeReq({ email: "a@b.com" }));
@@ -140,10 +155,11 @@ describe("POST /api/auth/reset-password", () => {
     userUpdate.mockResolvedValueOnce({});
 
     const { POST } = await import("@/app/api/auth/reset-password/route");
-    const res = await POST(makeReq({ token, password: "newpassword123" }));
+    const res = await POST(makeReq({ token, password: "Newpassword123!" }));
     expect(res.status).toBe(200);
+    // Use objectContaining for data so the updatedAt field added by Audit-19 doesn't break this assertion
     expect(userUpdate).toHaveBeenCalledWith(
-      expect.objectContaining({ where: { id: "user_1" }, data: { passwordHash: "hashed-password" } }),
+      expect.objectContaining({ where: { id: "user_1" }, data: expect.objectContaining({ passwordHash: "hashed-password" }) }),
     );
   });
 });
@@ -199,7 +215,7 @@ describe("POST /api/auth/invite/[token]", () => {
   it("returns 404 when invite not found", async () => {
     inviteFindUnique.mockResolvedValueOnce(null);
     const { POST } = await import("@/app/api/auth/invite/[token]/route");
-    const res = await POST(makeReq({ name: "Alice", password: "password123" }), {
+    const res = await POST(makeReq({ name: "Alice", password: "password123456" }), {
       params: Promise.resolve({ token: "no-such-token" }),
     });
     expect(res.status).toBe(404);
@@ -215,7 +231,7 @@ describe("POST /api/auth/invite/[token]", () => {
       org: { name: "TestOrg", id: "org_1" },
     });
     const { POST } = await import("@/app/api/auth/invite/[token]/route");
-    const res = await POST(makeReq({ name: "Alice", password: "password123" }), {
+    const res = await POST(makeReq({ name: "Alice", password: "password123456" }), {
       params: Promise.resolve({ token: "expired-token" }),
     });
     expect(res.status).toBe(410);
@@ -237,7 +253,7 @@ describe("POST /api/auth/invite/[token]", () => {
     createSession.mockResolvedValueOnce({ id: "new_user_1", email: "new@example.com" });
 
     const { POST } = await import("@/app/api/auth/invite/[token]/route");
-    const res = await POST(makeReq({ name: "Alice", password: "password123" }), {
+    const res = await POST(makeReq({ name: "Alice", password: "Password123456!" }), {
       params: Promise.resolve({ token: "valid-token" }),
     });
     expect(res.status).toBe(201);

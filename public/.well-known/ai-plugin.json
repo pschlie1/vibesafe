@@ -1,0 +1,15 @@
+{
+  "schema_version": "v1",
+  "name_for_human": "Scantient",
+  "name_for_model": "scantient",
+  "description_for_human": "Scan any URL for API security vulnerabilities in 60 seconds.",
+  "description_for_model": "External API security scanner. Use this to check if a website or API has security vulnerabilities including missing security headers, SSL issues, CORS misconfigurations, exposed API keys, and more. Input a URL, get back a security score (0-100), grade (A-F), and list of findings with severity levels and fix recommendations. No authentication required for basic scans.",
+  "auth": { "type": "none" },
+  "api": {
+    "type": "openapi",
+    "url": "https://scantient.com/openapi.json"
+  },
+  "logo_url": "https://scantient.com/icon.png",
+  "contact_email": "support@scantient.com",
+  "legal_info_url": "https://scantient.com/terms"
+}

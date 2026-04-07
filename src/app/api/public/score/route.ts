@@ -1,7 +1,5 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { lookup } from "dns/promises";
-import { isIP } from "net";
 import {
   checkSecurityHeaders,
   checkMetaAndConfig,
@@ -10,43 +8,13 @@ import {
   checkCORSMisconfiguration,
 } from "@/lib/security";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
+import { isPrivateUrl } from "@/lib/ssrf-guard";
 import type { SecurityFinding } from "@/lib/types";
+import { applyCors, corsPreflightResponse, CORS_HEADERS_PUBLIC } from "@/lib/cors";
+import { errorResponse, zodFieldErrors } from "@/lib/api-response";
 
-/**
- * SSRF guard — returns true if the URL resolves to a private/internal IP.
- */
-async function isPrivateUrl(url: string): Promise<boolean> {
-  let hostname: string;
-  try {
-    hostname = new URL(url).hostname;
-  } catch {
-    return true;
-  }
-  if (hostname === "localhost" || hostname.endsWith(".local")) return true;
-  const ipVersion = isIP(hostname);
-  if (ipVersion !== 0) return isPrivateIp(hostname);
-  try {
-    const addresses = await lookup(hostname, { all: true });
-    return addresses.some((a) => isPrivateIp(a.address));
-  } catch {
-    return true;
-  }
-}
-
-function isPrivateIp(ip: string): boolean {
-  if (ip === "::1" || ip === "0:0:0:0:0:0:0:1") return true;
-  const v4mapped = ip.match(/^::ffff:(\d+\.\d+\.\d+\.\d+)$/i);
-  const v4 = v4mapped ? v4mapped[1] : ip;
-  const parts = v4.split(".").map(Number);
-  if (parts.length !== 4) return false;
-  const [a, b] = parts;
-  return (
-    a === 127 ||
-    a === 10 ||
-    (a === 172 && b >= 16 && b <= 31) ||
-    (a === 192 && b === 168) ||
-    (a === 169 && b === 254)
-  );
+export function OPTIONS() {
+  return corsPreflightResponse(CORS_HEADERS_PUBLIC);
 }
 
 const requestSchema = z.object({
@@ -74,7 +42,7 @@ function computeStatus(score: number): "healthy" | "warning" | "critical" {
   return "critical";
 }
 
-export async function POST(req: Request) {
+async function handler(req: Request): Promise<NextResponse> {
   // Rate limiting: 10 requests per hour per IP
   const ip = getClientIp(req);
   const rateResult = await checkRateLimit(`public-score:${ip}`, {
@@ -98,22 +66,19 @@ export async function POST(req: Request) {
   try {
     body = await req.json();
   } catch {
-    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+    return errorResponse("BAD_REQUEST", "Invalid JSON", undefined, 400);
   }
 
   const parsed = requestSchema.safeParse(body);
   if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+    return errorResponse("VALIDATION_ERROR", "Validation failed", zodFieldErrors(parsed.error.flatten().fieldErrors), 400);
   }
 
   const { url } = parsed.data;
 
-  // SSRF guard: block private/internal URLs before fetching
+  // SSRF guard: block private and internal addresses
   if (await isPrivateUrl(url)) {
-    return NextResponse.json(
-      { error: "SSRF: private/internal URLs are not allowed" },
-      { status: 400 },
-    );
+    return errorResponse("BAD_REQUEST", "URL not allowed", undefined, 400);
   }
 
   // Fetch the URL with 30s timeout
@@ -145,14 +110,14 @@ export async function POST(req: Request) {
         scannedAt: new Date().toISOString(),
         upgradeUrl: "https://scantient.com/signup",
         message:
-          "Full scan available with Scantient account — monitors 10x more attack vectors",
+          "Full scan available with a Scantient account: monitors 10x more attack vectors",
         error: "Could not reach URL",
       },
       { status: 200 },
     );
   }
 
-  // Run lite checks (sync only — fast)
+  // Run lite checks (sync only . fast)
   const allFindings: SecurityFinding[] = [
     ...checkSecurityHeaders(headers),
     ...checkMetaAndConfig(html, headers),
@@ -208,6 +173,10 @@ export async function POST(req: Request) {
     scannedAt: new Date().toISOString(),
     upgradeUrl: "https://scantient.com/signup",
     message:
-      "Full scan available with Scantient account — monitors 10x more attack vectors",
+      "Full scan available with a Scantient account: monitors 10x more attack vectors",
   });
+}
+
+export async function POST(req: Request) {
+  return applyCors(await handler(req), CORS_HEADERS_PUBLIC);
 }

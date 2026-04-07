@@ -8,40 +8,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { db } from "@/lib/db";
+import { calcSecurityScore, scoreToGrade, gradeColor } from "@/lib/score";
 
-// ─── Scoring helpers ──────────────────────────────────────────────────────────
-
-const SEVERITY_DEDUCTION: Record<string, number> = {
-  CRITICAL: 25,
-  HIGH: 15,
-  MEDIUM: 5,
-  LOW: 2,
-};
-
-function computeScore(findings: { severity: string; status: string }[]): number {
-  let score = 100;
-  for (const f of findings) {
-    // Only count open / in-progress / acknowledged findings against the score
-    if (f.status === "RESOLVED" || f.status === "IGNORED") continue;
-    score -= SEVERITY_DEDUCTION[f.severity] ?? 2;
-  }
-  return Math.max(0, score);
-}
-
-function computeGrade(score: number): "A" | "B" | "C" | "D" | "F" {
-  if (score >= 90) return "A";
-  if (score >= 75) return "B";
-  if (score >= 60) return "C";
-  if (score >= 45) return "D";
-  return "F";
-}
-
-function gradeColor(grade: string): string {
-  if (grade === "A" || grade === "B") return "#16a34a"; // green-600
-  if (grade === "C") return "#ca8a04"; // yellow-600
-  if (grade === "D") return "#ea580c"; // orange-600
-  return "#dc2626"; // red-600
-}
+// ─── Scoring helpers (page-specific) ──────────────────────────────────────────
 
 function gradeBg(grade: string): string {
   if (grade === "A" || grade === "B") return "#f0fdf4"; // green-50
@@ -122,8 +91,8 @@ async function getScoreData(domainParam: string): Promise<ScoreData | null> {
   if (!bestApp || !bestApp.monitorRuns[0]) return null;
 
   const run = bestApp.monitorRuns[0];
-  const score = computeScore(run.findings);
-  const grade = computeGrade(score);
+  const score = calcSecurityScore(run.findings);
+  const grade = scoreToGrade(score) as "A" | "B" | "C" | "D" | "F";
 
   // Count all open findings
   const openFindings = run.findings.filter(

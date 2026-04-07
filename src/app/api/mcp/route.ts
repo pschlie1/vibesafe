@@ -6,6 +6,7 @@ import { runHttpScanForApp } from "@/lib/scanner-http";
 import { logApiError } from "@/lib/observability";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { getOrgLimits } from "@/lib/tenant";
+import { calcScoreFromCounts, scoreToGrade } from "@/lib/score";
 import type { FindingSeverity, FindingStatus } from "@prisma/client";
 
 // Maximum JSON body size accepted by the MCP endpoint (64 KB).
@@ -128,20 +129,7 @@ const TOOL_SCHEMAS: Record<string, z.ZodTypeAny> = {
 const ALLOWED_TOOL_NAMES = new Set(Object.keys(TOOL_SCHEMAS));
 
 // --- Helper: compute security score from finding severity counts ---
-function computeScore(counts: { CRITICAL: number; HIGH: number; MEDIUM: number; LOW: number }) {
-  const penalty = counts.CRITICAL * 25 + counts.HIGH * 10 + counts.MEDIUM * 3 + counts.LOW * 1;
-  return Math.max(0, 100 - penalty);
-}
-
-function gradeFromScore(score: number): string {
-  if (score >= 95) return "A+";
-  if (score >= 90) return "A";
-  if (score >= 85) return "B+";
-  if (score >= 80) return "B";
-  if (score >= 70) return "C";
-  if (score >= 60) return "D";
-  return "F";
-}
+// Score calculation centralized in @/lib/score — use calcScoreFromCounts + scoreToGrade
 
 // --- Verify app belongs to org ---
 async function verifyAppOwnership(appId: string, orgId: string) {
@@ -191,14 +179,14 @@ async function executeTool(name: string, args: Record<string, unknown>, orgId: s
       });
 
       const counts = await getSeverityCounts(app.id);
-      const score = computeScore(counts);
+      const score = calcScoreFromCounts(counts);
 
       return {
         app: { id: app.id, name: app.name, url: app.url, status: app.status },
         latestRun,
         findingCounts: counts,
         securityScore: score,
-        grade: gradeFromScore(score),
+        grade: scoreToGrade(score),
       };
     }
 
@@ -264,8 +252,8 @@ async function executeTool(name: string, args: Record<string, unknown>, orgId: s
         const app = await verifyAppOwnership(args.appId as string, orgId);
         if (!app) return { error: "App not found or access denied" };
         const counts = await getSeverityCounts(app.id);
-        const score = computeScore(counts);
-        return { appId: app.id, name: app.name, score, grade: gradeFromScore(score) };
+        const score = calcScoreFromCounts(counts);
+        return { appId: app.id, name: app.name, score, grade: scoreToGrade(score) };
       }
 
       // Portfolio-wide
@@ -276,12 +264,12 @@ async function executeTool(name: string, args: Record<string, unknown>, orgId: s
       const appScores: Array<{ appId: string; name: string; score: number }> = [];
       for (const app of apps) {
         const counts = await getSeverityCounts(app.id);
-        const score = computeScore(counts);
+        const score = calcScoreFromCounts(counts);
         total += score;
         appScores.push({ appId: app.id, name: app.name, score });
       }
       const avg = Math.round(total / apps.length);
-      return { score: avg, grade: gradeFromScore(avg), appCount: apps.length, apps: appScores };
+      return { score: avg, grade: scoreToGrade(avg), appCount: apps.length, apps: appScores };
     }
 
     case "resolve_finding": {

@@ -54,6 +54,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "api-security-scanner-comparison",
     "vibe-coding-security-risks",
     // Existing posts
+    "secret-scanning-guide",
     "ai-policy-compliance-engineering",
     "7-api-security-mistakes",
     "snyk-vs-scantient-what-your-startup-needs",

@@ -11,17 +11,17 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Scantient: AI App Security Monitoring for IT Directors",
+  title: "Scantient — API Security Scanner for Developers | Ship with Confidence",
   description:
-    "Scantient scans every AI-generated app in your portfolio for security vulnerabilities, exposed API keys, and compliance gaps. No SDK required.",
+    "Scantient scans your API for security vulnerabilities, exposed keys, and compliance gaps. No SDK required. Get your first report in 60 seconds.",
   metadataBase: new URL("https://scantient.com"),
   alternates: {
     canonical: "https://scantient.com",
   },
   openGraph: {
-    title: "Scantient: AI App Security Monitoring for IT Directors",
+    title: "Scantient — API Security Scanner for Developers | Ship with Confidence",
     description:
-      "Scantient scans every AI-generated app in your portfolio for security vulnerabilities, exposed API keys, and compliance gaps. No SDK required.",
+      "Scantient scans your API for security vulnerabilities, exposed keys, and compliance gaps. No SDK required. Get your first report in 60 seconds.",
     url: "https://scantient.com",
     siteName: "Scantient",
     type: "website",
@@ -30,15 +30,15 @@ export const metadata: Metadata = {
         url: "https://scantient.com/og-image.png",
         width: 1200,
         height: 630,
-        alt: "Scantient – AI App Security Monitoring",
+        alt: "Scantient — API Security Scanner for Developers",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Scantient: AI App Security Monitoring for IT Directors",
+    title: "Scantient — API Security Scanner for Developers | Ship with Confidence",
     description:
-      "Scantient scans every AI-generated app in your portfolio for security vulnerabilities, exposed API keys, and compliance gaps. No SDK required.",
+      "Scantient scans your API for security vulnerabilities, exposed keys, and compliance gaps. No SDK required. Get your first report in 60 seconds.",
     images: ["https://scantient.com/og-image.png"],
   },
 };

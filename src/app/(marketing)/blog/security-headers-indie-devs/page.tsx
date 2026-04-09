@@ -4,7 +4,7 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "5 Security Headers Every Indie Dev Should Set (And How to Check Them) | Scantient Blog",
   description:
-    "A practical guide to the 5 HTTP security headers every web app needs: Content-Security-Policy, X-Frame-Options, Strict-Transport-Security, X-Content-Type-Options, and Referrer-Policy. What each does, the one-liner to add it, and what happens without it.",
+    "The 5 HTTP security headers every web app needs: CSP, X-Frame-Options, HSTS, X-Content-Type-Options, Referrer-Policy. What each does, the one-liner to set it.",
   keywords: "security headers, check security headers, HTTP security headers guide, Content-Security-Policy, X-Frame-Options, HSTS, web security headers",
   openGraph: {
     title: "5 Security Headers Every Indie Dev Should Set (And How to Check Them)",

@@ -4,7 +4,7 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "DevSecOps for Startups: How to Bake Security Into Your CI/CD Without Slowing Down | Scantient Blog",
   description:
-    "DevSecOps for startups: how to integrate security into your CI/CD pipeline without slowing down shipping. SAST, SCA, secrets scanning, container scanning, and external API monitoring . the lean startup security stack.",
+    "Integrate security into your CI/CD pipeline without slowing down shipping. SAST, SCA, secrets scanning, container scanning, and external API monitoring for startups.",
   keywords: "DevSecOps for startups, security in CI/CD pipeline, DevSecOps small team, shift-left security startup, CI/CD security checks, startup security pipeline",
   openGraph: {
     title: "DevSecOps for Startups: How to Bake Security Into Your CI/CD Without Slowing Down",
@@ -28,7 +28,7 @@ const articleSchema = {
   "@type": "Article",
   headline: "DevSecOps for Startups: How to Bake Security Into Your CI/CD Without Slowing Down",
   description:
-    "DevSecOps for startups: how to integrate security into your CI/CD pipeline without slowing down shipping. SAST, SCA, secrets scanning, container scanning, and external API monitoring . the lean startup security stack.",
+    "Integrate security into your CI/CD pipeline without slowing down shipping. SAST, SCA, secrets scanning, container scanning, and external API monitoring for startups.",
   datePublished: "2026-02-22T00:00:00Z",
   dateModified: "2026-02-22T00:00:00Z",
   author: { "@type": "Person", "name": "Peter Schliesmann", "url": "https://scantient.com/about", "jobTitle": "Founder", "sameAs": ["https://www.linkedin.com/in/peterschliesmann"] },
